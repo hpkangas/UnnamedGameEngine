@@ -11,18 +11,18 @@ Player::Player(const char *texturesheet, int x, int y)
     ypos = y;
     flipType = SDL_FLIP_NONE;
 
-    sourceRect.h = 128;
-    sourceRect.w = 128;
+    sourceRect.h = PLAYER_HEIGHT;
+    sourceRect.w = PLAYER_WIDTH;
     sourceRect.x = 0;
-    sourceRect.y = 256;
+    sourceRect.y = STILL_FRAME;
 
     destinationRect.x = x;
     destinationRect.y = y;
     destinationRect.w = sourceRect.w;
     destinationRect.h = sourceRect.h;
 
-    collisionRect.w = 128;
-    collisionRect.h = 128;
+    collisionRect.w = PLAYER_HEIGHT;
+    collisionRect.h = PLAYER_WIDTH;
 
     this->animationFrame = 1;
     WALKING_ANIMATION_FRAMES = 8;
@@ -50,7 +50,7 @@ void Player::update()
         // playerFrame args should be enums probably, or separate func playStill
         // need to think of a way to get sprite/frame information
 
-        playFrame(0, 256 , 128, 128, 0);
+        playFrame(0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, 0);
         break;
     case WALKING:
         if (xvel < 0)
@@ -62,7 +62,7 @@ void Player::update()
             flipType = SDL_FLIP_NONE;
         }
 
-        playFrame(0, 0, 128, 128, animationFrame / WALKING_ANIMATION_FRAMES);
+        playFrame(0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / WALKING_ANIMATION_FRAMES);
         animationFrame++;
         if (animationFrame / WALKING_ANIMATION_FRAMES >= WALKING_ANIMATION_FRAMES)
         {
