@@ -9,16 +9,14 @@ public:
     Player(const char *texturesheet, int x, int y);
     Player();
     ~Player();
-
     playerState state;
-
-    void lowerHealth();
-    int health;
-    bool isVulnerable = true;
-    bool dead = false;
-    int timeWhenShot;
-    int timeWhenHit;
-    int timeSinceHit;
+    int animationFrame ;
+    int WALKING_ANIMATION_FRAMES;
+    SDL_RendererFlip flipType;
+    void playAnimation(SDL_Rect sourceRect);
+    void playAnimation(SDL_Rect sourceRect, SDL_RendererFlip flip);
+    void playFrame(int x, int y, int w, int h, int frame);
+   
 
     void update();
     void render();

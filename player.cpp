@@ -3,71 +3,36 @@
 #include "texturemanager.hpp"
 #include <iostream>
 
-
-
 Player::Player(const char *texturesheet, int x, int y)
 {
     objTexture = TextureManager::LoadTexture(texturesheet);
 
-
-    
-
     xpos = x;
     ypos = y;
-    int animationFrame = 0;
+    flipType = SDL_FLIP_NONE;
 
-    const int WALKING_ANIMATION_FRAMES = 8;
-    SDL_Rect walkClips[WALKING_ANIMATION_FRAMES];
+    sourceRect.h = 128;
+    sourceRect.w = 128;
+    sourceRect.x = 0;
+    sourceRect.y = 256;
 
-    walkClips[0].x = 0;
-    walkClips[0].y = 0;
-    walkClips[0].w = 64;
-    walkClips[0].h = 64;
+    destinationRect.x = x;
+    destinationRect.y = y;
+    destinationRect.w = sourceRect.w;
+    destinationRect.h = sourceRect.h;
 
-    walkClips[1].x = 64;
-    walkClips[1].y = 0;
-    walkClips[1].w = 64;
-    walkClips[1].h = 64;
+    collisionRect.w = 128;
+    collisionRect.h = 128;
 
-    walkClips[2].x = 128;
-    walkClips[2].y = 0;
-    walkClips[2].w = 64;
-    walkClips[2].h = 64;
-
-    walkClips[3].x = 192;
-    walkClips[3].y = 0;
-    walkClips[3].w = 64;
-    walkClips[3].h = 64;
-
-    walkClips[4].x = 256;
-    walkClips[4].y = 0;
-    walkClips[4].w = 64;
-    walkClips[4].h = 64;
-
-    walkClips[5].x = 320;
-    walkClips[5].y = 0;
-    walkClips[5].w = 64;
-    walkClips[5].h = 64;
-
-    walkClips[6].x = 384;
-    walkClips[6].y = 0;
-    walkClips[6].w = 64;
-    walkClips[6].h = 64;
-
-    walkClips[7].x = 448;
-    walkClips[7].y = 0;
-    walkClips[7].w = 64;
-    walkClips[7].h = 64;
-
+    this->animationFrame = 1;
+    WALKING_ANIMATION_FRAMES = 8;
 }
 
 Player::Player() {}
-Player::~Player() {
-}
+Player::~Player() {}
 
 void Player::update()
 {
-std::cout<<state;
 
     if (!(xvel == 0))
     {
@@ -79,41 +44,57 @@ std::cout<<state;
         ypos += yvel;
     }
 
-    // height and width taken from image
-    // x and y coordinates of image
-    sourceRect.h = 32;
-    sourceRect.w = 32;
-    sourceRect.x = 0;
-    sourceRect.y = 64;
+    switch (state)
+    {
+    case STILL:
+        // playerFrame args should be enums probably, or separate func playStill
+        // need to think of a way to get sprite/frame information
+
+        playFrame(0, 256 , 128, 128, 0);
+        break;
+    case WALKING:
+        if (xvel < 0)
+        {
+            flipType = SDL_FLIP_HORIZONTAL;
+        }
+        else
+        {
+            flipType = SDL_FLIP_NONE;
+        }
+
+        playFrame(0, 0, 128, 128, animationFrame / WALKING_ANIMATION_FRAMES);
+        animationFrame++;
+        if (animationFrame / WALKING_ANIMATION_FRAMES >= WALKING_ANIMATION_FRAMES)
+        {
+            animationFrame = 0;
+        }
+
+        break;
+    default:
+        break;
+    }
 
     destinationRect.x = xpos;
     destinationRect.y = ypos;
-    destinationRect.w = sourceRect.w;
-    destinationRect.h = sourceRect.h;
 
     collisionRect.x = xpos;
     collisionRect.y = ypos;
-    collisionRect.w = 320;
-    collisionRect.h = 320;
 }
 
 void Player::render()
 {
-   switch (state)
-   {
-   case STILL:
-   SDL_RenderCopy(Game::renderer, objTexture, &sourceRect, &destinationRect);
-    break;
-   case WALKING:
-   //animate
-   break;
-   default:
-    break;
-   }
+    playAnimation(sourceRect, flipType);
 }
 
-void Player::lowerHealth()
+void Player::playAnimation(SDL_Rect sourceRect, SDL_RendererFlip flip)
 {
-    health--;
+    SDL_RenderCopyEx(Game::renderer, objTexture, &sourceRect, &destinationRect, 0, NULL, flip);
 }
 
+void Player::playFrame(int x, int y, int w, int h, int frame)
+{
+    sourceRect.h = h;
+    sourceRect.w = w;
+    sourceRect.x = x + w * frame;
+    sourceRect.y = y;
+}
