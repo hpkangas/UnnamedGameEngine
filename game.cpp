@@ -5,20 +5,16 @@
 #include <list>
 #include <stdlib.h>
 #include "player.hpp"
+#include "block.hpp"
+#include "physics.cpp"
 
 SDL_Renderer *Game::renderer = nullptr;
 TTF_Font *Game::gFont = nullptr;
 
-std::list<GameObject *> objects;
+std::vector<GameObject *> objects;
+std::vector<Block *> blocks;
 Player *player = nullptr;
-
-Game::Game()
-{
-}
-
-Game::~Game()
-{
-}
+Block *block = nullptr;
 
 void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bool fullscreen)
 {
@@ -51,9 +47,16 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
         isRunning = false;
     }
 
-    player = new Player("assets/baleog.png", 80, 280);
+    player = new Player("assets/baleog.png", 80, 300);
+    block = new Block("assets/tiles.png", 0, 0, 80, 428);
+    GameText *text = new GameText("TEST TEXT", 200, 200);
+    blocks.emplace_back(block);
 
-    objects.emplace_back(player);
+    // objects.emplace_back(player);
+    objects.emplace_back(block);
+    objects.emplace_back(text);
+
+    // miten katsoa collision vain tietyille objekteille? Jos käytän listaa, miten nopeutan hakua?
 }
 
 void Game::handleEvents()
@@ -77,13 +80,13 @@ void Game::handleEvents()
                 break;
             case SDLK_RIGHT:
                 player->xvel = 4;
-                 player->state = WALKING;
+                player->state = WALKING;
                 break;
             case SDLK_LEFT:
                 player->xvel = -4;
                 player->state = WALKING;
-            break;
-            
+                break;
+
             default:
                 break;
             }
@@ -92,7 +95,7 @@ void Game::handleEvents()
         case SDL_KEYUP:
             switch (event.key.keysym.sym)
             {
-                case SDLK_UP:
+            case SDLK_UP:
                 if (player->yvel < 0)
                     player->yvel = 0;
                 break;
@@ -103,12 +106,12 @@ void Game::handleEvents()
             case SDLK_RIGHT:
                 if (player->xvel > 0)
                     player->xvel = 0;
-                    player->state = STILL;
+                player->state = STILL;
                 break;
             case SDLK_LEFT:
                 if (player->xvel < 0)
                     player->xvel = 0;
-                    player->state = STILL;
+                player->state = STILL;
                 break;
             default:
                 break;
@@ -120,10 +123,66 @@ void Game::handleEvents()
 
 void Game::update()
 {
+    for (auto &block : blocks)
+    {
+
+        // player comes from right
+        if (player->collisionRect.x >= block->collisionRect.x + block->collisionRect.w)
+        {
+
+            if (player->collisionRect.x + player->xvel <= block->collisionRect.x + block->collisionRect.w &&
+                player->collisionRect.y <= block->collisionRect.y + block->collisionRect.h &&
+                player->collisionRect.y + PLAYER_HEIGHT >= block->collisionRect.y)
+
+            {
+                player->xpos -= player->xvel;
+            }
+        }
+
+        // player comes from left
+        if (player->collisionRect.x + player->collisionRect.w <= block->collisionRect.x)
+        {
+
+            if (player->collisionRect.x + player->collisionRect.w + player->xvel >= block->collisionRect.x &&
+                player->collisionRect.y <= block->collisionRect.y + block->collisionRect.h &&
+                player->collisionRect.y + PLAYER_HEIGHT >= block->collisionRect.y)
+
+            {
+                player->xpos -= player->xvel;
+            }
+        }
+
+        // player comes from above
+        if (player->collisionRect.y + player->collisionRect.h <= block->collisionRect.y)
+        {
+
+            if (player->collisionRect.y + player->collisionRect.h + player->yvel >= block->collisionRect.y &&
+                player->collisionRect.x <= block->collisionRect.x + block->collisionRect.w &&
+                player->collisionRect.x + PLAYER_WIDTH >= block->collisionRect.x)
+
+            {
+                player->ypos -= player->yvel;
+            }
+        }
+
+        // player comes from below
+        if (player->collisionRect.y >= block->collisionRect.y + block->collisionRect.h)
+        {
+
+            if (player->collisionRect.y + player->yvel <= block->collisionRect.y + block->collisionRect.h &&
+                player->collisionRect.x <= block->collisionRect.x + block->collisionRect.w &&
+                player->collisionRect.x + PLAYER_WIDTH >= block->collisionRect.x)
+
+            {
+                player->ypos -= player->yvel;
+            }
+        }
+    }
     for (auto &object : objects)
     {
         object->update();
     }
+    player->update();
 }
 
 void Game::render()
@@ -133,6 +192,7 @@ void Game::render()
     {
         object->render();
     }
+    player->render();
 
     SDL_RenderPresent(renderer);
 }

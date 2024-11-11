@@ -40,6 +40,13 @@ void GameObject::render()
     SDL_RenderCopy(Game::renderer, objTexture, &sourceRect, &destinationRect);
 }
 
+void GameObject::printCoordinates(SDL_Rect sourceRect, SDL_Rect destinationRect, SDL_Rect collisionRect)
+{
+    printf("Sprite drawn from x %d, y %d, h %d, w %d \n", sourceRect.x, sourceRect.y, sourceRect.h, sourceRect.w );
+    printf("Sprite drawn to x %d, y %d, h %d, w %d \n", destinationRect.x, destinationRect.y, destinationRect.h, destinationRect.w );
+    printf("Collision rect in x %d, y %d, h %d, w %d \n", collisionRect.x, collisionRect.y, collisionRect.h, collisionRect.w );
+}
+
 Background::Background(const char *texturesheet, int x, int y, int sizew, int sizeh, int xvelocity)
 {
     objTexture = TextureManager::LoadTexture(texturesheet);
@@ -115,8 +122,11 @@ void GameText::render()
     // text = std::to_string(Game::score);
     SDL_Color white = {255, 255, 255};
     SDL_Surface *textSurface = TTF_RenderText_Solid(Game::gFont, text.c_str(), white);
+    SDL_GetClipRect(textSurface, &destinationRect);
     objTexture = SDL_CreateTextureFromSurface(Game::renderer, textSurface);
-    SDL_RenderCopy(Game::renderer, objTexture, &sourceRect, &destinationRect);
+    SDL_RenderCopy(Game::renderer, objTexture, NULL, &destinationRect);
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(objTexture);
 }
+
+

@@ -1,6 +1,7 @@
 #include "gameobject.hpp"
 #include "player.hpp"
 #include "texturemanager.hpp"
+#include "physics.cpp"
 #include <iostream>
 
 Player::Player(const char *texturesheet, int x, int y)
@@ -21,8 +22,10 @@ Player::Player(const char *texturesheet, int x, int y)
     destinationRect.w = sourceRect.w;
     destinationRect.h = sourceRect.h;
 
-    collisionRect.w = PLAYER_HEIGHT;
-    collisionRect.h = PLAYER_WIDTH;
+    collisionRect.h = PLAYER_HEIGHT;
+    collisionRect.w = PLAYER_WIDTH;
+    collisionRect.x = xpos;
+    collisionRect.y = ypos;
 
     this->animationFrame = 1;
     WALKING_ANIMATION_FRAMES = 8;
@@ -36,12 +39,12 @@ void Player::update()
 
     if (!(xvel == 0))
     {
-        xpos += xvel;
+            xpos += xvel;
     }
 
     if (!(yvel == 0))
     {
-        ypos += yvel;
+            ypos += yvel;
     }
 
     switch (state)

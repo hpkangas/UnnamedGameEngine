@@ -9,9 +9,6 @@
 class Game
 {
 public:
-    Game();
-    ~Game();
-
     void init(const char *title, int xpos, int ypos, int width, int heigth, bool fullscreen);
 
     void handleEvents();
@@ -19,17 +16,13 @@ public:
     void render();
     void clean();
 
-  
     int getCurrentTime();
-   
 
     Uint32 currentTime;
     bool running() { return isRunning; }
 
-
     static SDL_Renderer *renderer;
     static TTF_Font *gFont;
-
 
 private:
     int count = 0;

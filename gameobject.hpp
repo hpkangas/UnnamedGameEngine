@@ -19,6 +19,7 @@ public:
     int xvel=0;
     int yvel=0;
 
+    void printCoordinates(SDL_Rect sourceRect, SDL_Rect destinationRect, SDL_Rect collisionRect);
 
 
     SDL_Texture *objTexture;
@@ -44,6 +45,7 @@ class GameText : public GameObject
     GameText(int x, int y, int width, int height);
     void update();
     void render();
+
     
     std::string text;
 };
