@@ -14,7 +14,12 @@ TTF_Font *Game::gFont = nullptr;
 std::vector<GameObject *> objects;
 std::vector<Block *> blocks;
 Player *player = nullptr;
-Block *block = nullptr;
+Block *block1 = nullptr;
+Block *block2 = nullptr;
+Block *block3 = nullptr;
+Block *block4 = nullptr;
+Block *block5 = nullptr;
+Block *block6 = nullptr;
 
 void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bool fullscreen)
 {
@@ -48,12 +53,28 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     }
 
     player = new Player("assets/baleog.png", 80, 300);
-    block = new Block("assets/tiles.png", 0, 0, 80, 428);
     GameText *text = new GameText("TEST TEXT", 200, 200);
-    blocks.emplace_back(block);
+
+    block1 = new Block("assets/tiles.png", 0, 0, 80, 428);
+    block2 = new Block("assets/tiles.png", 0, 0, 80 + 128, 428);
+    block3 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128, 428);
+    block4 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128, 428);
+    block5 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128, 428);
+    block6 = new Block("assets/tiles.png", 0, 0, 80, 428 - 128);
+    blocks.emplace_back(block1);
+    blocks.emplace_back(block2);
+    blocks.emplace_back(block3);
+    blocks.emplace_back(block4);
+    blocks.emplace_back(block5);
+    blocks.emplace_back(block6);
 
     // objects.emplace_back(player);
-    objects.emplace_back(block);
+    objects.emplace_back(block1);
+    objects.emplace_back(block2);
+    objects.emplace_back(block3);
+    objects.emplace_back(block4);
+    objects.emplace_back(block5);
+    objects.emplace_back(block6);
     objects.emplace_back(text);
 
     // miten katsoa collision vain tietyille objekteille? Jos käytän listaa, miten nopeutan hakua?
@@ -70,21 +91,20 @@ void Game::handleEvents()
         case SDL_KEYDOWN:
             switch (event.key.keysym.sym)
             {
+            // quit game
             case SDLK_q:
                 isRunning = false;
             case SDLK_UP:
-                player->yvel = -4;
+                player->moveUp();
                 break;
             case SDLK_DOWN:
-                player->yvel = 4;
+                player->moveDown();
                 break;
             case SDLK_RIGHT:
-                player->xvel = 4;
-                player->state = WALKING;
+                player->moveRight();
                 break;
             case SDLK_LEFT:
-                player->xvel = -4;
-                player->state = WALKING;
+                player->moveLeft();
                 break;
 
             default:
@@ -96,22 +116,16 @@ void Game::handleEvents()
             switch (event.key.keysym.sym)
             {
             case SDLK_UP:
-                if (player->yvel < 0)
-                    player->yvel = 0;
+                player->stopY();
                 break;
             case SDLK_DOWN:
-                if (player->yvel > 0)
-                    player->yvel = 0;
+                player->stopY();
                 break;
             case SDLK_RIGHT:
-                if (player->xvel > 0)
-                    player->xvel = 0;
-                player->state = STILL;
+                player->stopX();
                 break;
             case SDLK_LEFT:
-                if (player->xvel < 0)
-                    player->xvel = 0;
-                player->state = STILL;
+                player->stopX();
                 break;
             default:
                 break;
@@ -136,6 +150,7 @@ void Game::update()
 
             {
                 player->xpos -= player->xvel;
+                player->animationState = PUSHING;
             }
         }
 
@@ -149,6 +164,7 @@ void Game::update()
 
             {
                 player->xpos -= player->xvel;
+                player->animationState = PUSHING;
             }
         }
 

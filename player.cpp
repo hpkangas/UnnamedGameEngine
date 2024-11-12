@@ -29,6 +29,8 @@ Player::Player(const char *texturesheet, int x, int y)
 
     this->animationFrame = 1;
     WALKING_ANIMATION_FRAMES = 8;
+
+    playerSpeed = 4;
 }
 
 Player::Player() {}
@@ -39,17 +41,18 @@ void Player::update()
 
     if (!(xvel == 0))
     {
-            xpos += xvel;
+        xpos += xvel;
     }
 
     if (!(yvel == 0))
     {
-            ypos += yvel;
+        ypos += yvel;
     }
 
-    switch (state)
+    switch (animationState)
     {
     case STILL:
+        animationFrame = 0;
         // playerFrame args should be enums probably, or separate func playStill
         // need to think of a way to get sprite/frame information
 
@@ -73,6 +76,21 @@ void Player::update()
         }
 
         break;
+    case PUSHING:
+        if (xvel < 0)
+        {
+            flipType = SDL_FLIP_HORIZONTAL;
+        }
+        else
+        {
+            flipType = SDL_FLIP_NONE;
+        }
+        playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 4);
+        animationFrame++;
+        if (animationFrame / 4 >= 4)
+        {
+            animationFrame = 0;
+        }
     default:
         break;
     }
@@ -100,4 +118,45 @@ void Player::playFrame(int x, int y, int w, int h, int frame)
     sourceRect.w = w;
     sourceRect.x = x + w * frame;
     sourceRect.y = y;
+}
+
+void Player::moveRight()
+{
+    this->animationState = WALKING;
+    this->xvel = playerSpeed;
+}
+
+void Player::moveLeft()
+{
+    this->animationState = WALKING;
+    this->xvel = -playerSpeed;
+}
+
+void Player::moveUp()
+{
+    this->yvel = -playerSpeed;
+}
+
+void Player::moveDown()
+{
+    this->yvel = playerSpeed;
+}
+
+void Player::stopX()
+{
+    if (xvel > 0 || xvel < 0)
+    {
+        this->xvel = 0;
+    }
+    this->animationState = STILL;
+
+}
+
+void Player::stopY()
+{
+    if (yvel > 0 || yvel < 0)
+    {
+        this->yvel = 0;
+    }
+    this->animationState = STILL;
 }

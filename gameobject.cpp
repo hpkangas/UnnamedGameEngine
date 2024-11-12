@@ -128,5 +128,3 @@ void GameText::render()
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(objTexture);
 }
-
-
