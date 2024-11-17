@@ -9,6 +9,7 @@ public:
     Player();
     ~Player();
     int playerSpeed;
+    int updatedX;
 
     AnimationState animationState;
     int animationFrame;
@@ -18,12 +19,17 @@ public:
     void playAnimation(SDL_Rect sourceRect, SDL_RendererFlip flip);
     void playFrame(int x, int y, int w, int h, int frame);
 
+    void moveToX(int position);
+
     void moveRight();
     void moveLeft();
     void moveUp();
     void moveDown();
     void stopX();
-    void stopY();
+    void stopXR();
+    void stopXL();
+    void stopYU();
+    void stopYD();
 
     void update();
     void render();

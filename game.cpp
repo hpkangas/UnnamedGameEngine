@@ -52,12 +52,12 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
         isRunning = false;
     }
 
-    player = new Player("assets/baleog.png", 80, 300);
+    player = new Player("assets/baleog.png", 80, 80);
     GameText *text = new GameText("TEST TEXT", 200, 200);
 
     block1 = new Block("assets/tiles.png", 0, 0, 80, 428);
     block2 = new Block("assets/tiles.png", 0, 0, 80 + 128, 428);
-    block3 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128, 428);
+    block3 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128, 488);
     block4 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128, 428);
     block5 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128, 428);
     block6 = new Block("assets/tiles.png", 0, 0, 80, 428 - 128);
@@ -116,16 +116,16 @@ void Game::handleEvents()
             switch (event.key.keysym.sym)
             {
             case SDLK_UP:
-                player->stopY();
+                player->stopYU();
                 break;
             case SDLK_DOWN:
-                player->stopY();
+                player->stopYD();
                 break;
             case SDLK_RIGHT:
-                player->stopX();
+                player->stopXR();
                 break;
             case SDLK_LEFT:
-                player->stopX();
+                player->stopXL();
                 break;
             default:
                 break;
@@ -137,6 +137,7 @@ void Game::handleEvents()
 
 void Game::update()
 {
+
     for (auto &block : blocks)
     {
 
@@ -144,11 +145,17 @@ void Game::update()
         if (player->collisionRect.x >= block->collisionRect.x + block->collisionRect.w)
         {
 
-            if (player->collisionRect.x + player->xvel <= block->collisionRect.x + block->collisionRect.w &&
-                player->collisionRect.y <= block->collisionRect.y + block->collisionRect.h &&
-                player->collisionRect.y + PLAYER_HEIGHT >= block->collisionRect.y)
+            if (player->collisionRect.x + player->xvel < block->collisionRect.x + block->collisionRect.w -1 &&
+                player->collisionRect.y < block->collisionRect.y + block->collisionRect.h -1 &&
+                player->collisionRect.y + player->collisionRect.h -1 > block->collisionRect.y)
 
             {
+                // tää pitäisi pystyä tekemään siistimmin ja modulaarisemmin
+                //älä säädä pelaajan xposia tässä vaan playerin metodissa
+                // tai anna uusi arvo playerille, mitä käytetään player->updatessa
+               // player->xvel = 0;
+               // player->moveToX(block->collisionRect.x + block->collisionRect.w);
+                //printf("player blocked from LEFT\n");
                 player->xpos -= player->xvel;
                 player->animationState = PUSHING;
             }
@@ -158,11 +165,12 @@ void Game::update()
         if (player->collisionRect.x + player->collisionRect.w <= block->collisionRect.x)
         {
 
-            if (player->collisionRect.x + player->collisionRect.w + player->xvel >= block->collisionRect.x &&
-                player->collisionRect.y <= block->collisionRect.y + block->collisionRect.h &&
-                player->collisionRect.y + PLAYER_HEIGHT >= block->collisionRect.y)
+            if (player->collisionRect.x + player->collisionRect.w + player->xvel > block->collisionRect.x &&
+                player->collisionRect.y < block->collisionRect.y + block->collisionRect.h -1 &&
+                player->collisionRect.y + player->collisionRect.h -1 > block->collisionRect.y)
 
             {
+                //printf("p blocked from RIGHT\n");
                 player->xpos -= player->xvel;
                 player->animationState = PUSHING;
             }
@@ -172,11 +180,12 @@ void Game::update()
         if (player->collisionRect.y + player->collisionRect.h <= block->collisionRect.y)
         {
 
-            if (player->collisionRect.y + player->collisionRect.h + player->yvel >= block->collisionRect.y &&
-                player->collisionRect.x <= block->collisionRect.x + block->collisionRect.w &&
-                player->collisionRect.x + PLAYER_WIDTH >= block->collisionRect.x)
+            if (player->collisionRect.y + player->collisionRect.h + player->yvel  > block->collisionRect.y &&
+                player->collisionRect.x < block->collisionRect.x + block->collisionRect.w -1 &&
+                player->collisionRect.x + player->collisionRect.w -1 > block->collisionRect.x)
 
             {
+                //printf("p blocked from BELOW\n");
                 player->ypos -= player->yvel;
             }
         }
@@ -185,11 +194,12 @@ void Game::update()
         if (player->collisionRect.y >= block->collisionRect.y + block->collisionRect.h)
         {
 
-            if (player->collisionRect.y + player->yvel <= block->collisionRect.y + block->collisionRect.h &&
-                player->collisionRect.x <= block->collisionRect.x + block->collisionRect.w &&
-                player->collisionRect.x + PLAYER_WIDTH >= block->collisionRect.x)
+            if (player->collisionRect.y + player->yvel  < block->collisionRect.y + block->collisionRect.h &&
+                player->collisionRect.x < block->collisionRect.x + block->collisionRect.w &&
+                player->collisionRect.x + player->collisionRect.w -1 > block->collisionRect.x)
 
             {
+                //printf("p blocked from ABOVE\n");
                 player->ypos -= player->yvel;
             }
         }
@@ -199,6 +209,7 @@ void Game::update()
         object->update();
     }
     player->update();
+
 }
 
 void Game::render()

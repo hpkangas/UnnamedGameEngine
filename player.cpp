@@ -10,6 +10,9 @@ Player::Player(const char *texturesheet, int x, int y)
 
     xpos = x;
     ypos = y;
+
+    updatedX;
+
     flipType = SDL_FLIP_NONE;
 
     sourceRect.h = PLAYER_HEIGHT;
@@ -23,8 +26,9 @@ Player::Player(const char *texturesheet, int x, int y)
     destinationRect.h = sourceRect.h;
 
     collisionRect.h = PLAYER_HEIGHT;
-    collisionRect.w = PLAYER_WIDTH;
-    collisionRect.x = xpos;
+    //baelog sprite offsets
+    collisionRect.w = PLAYER_WIDTH - 56;
+    collisionRect.x = xpos + 28;
     collisionRect.y = ypos;
 
     this->animationFrame = 1;
@@ -39,14 +43,15 @@ Player::~Player() {}
 void Player::update()
 {
 
-    if (!(xvel == 0))
+    // printf("updated %d\n", this->updatedX);
+    if (!(this->xvel == 0))
     {
-        xpos += xvel;
+        this->xpos += this->xvel;
     }
 
-    if (!(yvel == 0))
+    if (!(this->yvel == 0))
     {
-        ypos += yvel;
+        this->ypos += this->yvel;
     }
 
     switch (animationState)
@@ -85,6 +90,7 @@ void Player::update()
         {
             flipType = SDL_FLIP_NONE;
         }
+        //baelog animaatiossa destination rectille pitäisi olla ehkä joku offset
         playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 4);
         animationFrame++;
         if (animationFrame / 4 >= 4)
@@ -98,7 +104,8 @@ void Player::update()
     destinationRect.x = xpos;
     destinationRect.y = ypos;
 
-    collisionRect.x = xpos;
+    //baelog sprite offsets
+    collisionRect.x = xpos + 28;
     collisionRect.y = ypos;
 }
 
@@ -120,16 +127,23 @@ void Player::playFrame(int x, int y, int w, int h, int frame)
     sourceRect.y = y;
 }
 
+void Player::moveToX(int position)
+{
+    updatedX = position;
+}
+
 void Player::moveRight()
 {
     this->animationState = WALKING;
     this->xvel = playerSpeed;
+    // updatedX = this->xvel;
 }
 
 void Player::moveLeft()
 {
     this->animationState = WALKING;
     this->xvel = -playerSpeed;
+    // updatedX = this->xvel;
 }
 
 void Player::moveUp()
@@ -142,19 +156,35 @@ void Player::moveDown()
     this->yvel = playerSpeed;
 }
 
-void Player::stopX()
+void Player::stopXR()
 {
-    if (xvel > 0 || xvel < 0)
+    if (this->xvel > 0)
     {
         this->xvel = 0;
     }
     this->animationState = STILL;
-
+}
+void Player::stopXL()
+{
+    if (this->xvel < 0)
+    {
+        this->xvel = 0;
+    }
+    this->animationState = STILL;
 }
 
-void Player::stopY()
+void Player::stopYU()
 {
-    if (yvel > 0 || yvel < 0)
+    if (this->yvel < 0)
+    {
+        this->yvel = 0;
+    }
+    this->animationState = STILL;
+}
+
+void Player::stopYD()
+{
+    if (this->yvel > 0)
     {
         this->yvel = 0;
     }
