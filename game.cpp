@@ -106,6 +106,9 @@ void Game::handleEvents()
             case SDLK_LEFT:
                 player->moveLeft();
                 break;
+            case SDLK_d:
+                player->yvel = 80;
+                break;
 
             default:
                 break;
@@ -142,74 +145,46 @@ void Game::update()
     {
 
         // player comes from right
-        if (player->collisionRect.x >= block->collisionRect.x + block->collisionRect.w)
+        if (Physics::playerCollisionLeft(*player, *block) == true)
         {
-
-            if (player->collisionRect.x + player->xvel < block->collisionRect.x + block->collisionRect.w -1 &&
-                player->collisionRect.y < block->collisionRect.y + block->collisionRect.h -1 &&
-                player->collisionRect.y + player->collisionRect.h -1 > block->collisionRect.y)
-
-            {
-                // tää pitäisi pystyä tekemään siistimmin ja modulaarisemmin
-                //älä säädä pelaajan xposia tässä vaan playerin metodissa
-                // tai anna uusi arvo playerille, mitä käytetään player->updatessa
-               // player->xvel = 0;
-               // player->moveToX(block->collisionRect.x + block->collisionRect.w);
-                //printf("player blocked from LEFT\n");
-                player->xpos -= player->xvel;
-                player->animationState = PUSHING;
-            }
+            // tää pitäisi pystyä tekemään siistimmin ja modulaarisemmin
+            // älä säädä pelaajan xposia tässä vaan playerin metodissa
+            // tai anna uusi arvo playerille, mitä käytetään player->updatessa
+            // player->xvel = 0;
+            // player->moveToX(block->collisionRect.x + block->collisionRect.w);
+            player->xpos -= player->xvel;
+            player->animationState = PUSHING;
         }
 
         // player comes from left
-        if (player->collisionRect.x + player->collisionRect.w <= block->collisionRect.x)
+        if (Physics::playerCollisionRight(*player, *block) == true)
         {
-
-            if (player->collisionRect.x + player->collisionRect.w + player->xvel > block->collisionRect.x &&
-                player->collisionRect.y < block->collisionRect.y + block->collisionRect.h -1 &&
-                player->collisionRect.y + player->collisionRect.h -1 > block->collisionRect.y)
-
-            {
-                //printf("p blocked from RIGHT\n");
-                player->xpos -= player->xvel;
-                player->animationState = PUSHING;
-            }
+            player->xpos -= player->xvel;
+            player->animationState = PUSHING;
         }
 
         // player comes from above
-        if (player->collisionRect.y + player->collisionRect.h <= block->collisionRect.y)
+
+        if (Physics::playerCollisionDown(*player, *block) == true)
         {
 
-            if (player->collisionRect.y + player->collisionRect.h + player->yvel  > block->collisionRect.y &&
-                player->collisionRect.x < block->collisionRect.x + block->collisionRect.w -1 &&
-                player->collisionRect.x + player->collisionRect.w -1 > block->collisionRect.x)
-
-            {
-                //printf("p blocked from BELOW\n");
-                player->ypos -= player->yvel;
-            }
+            player->ypos -= player->yvel;
+            player->canJump = true;
         }
 
         // player comes from below
-        if (player->collisionRect.y >= block->collisionRect.y + block->collisionRect.h)
+        if (Physics::playerCollisionUp(*player, *block) == true)
         {
 
-            if (player->collisionRect.y + player->yvel  < block->collisionRect.y + block->collisionRect.h &&
-                player->collisionRect.x < block->collisionRect.x + block->collisionRect.w &&
-                player->collisionRect.x + player->collisionRect.w -1 > block->collisionRect.x)
-
-            {
-                //printf("p blocked from ABOVE\n");
-                player->ypos -= player->yvel;
-            }
+            player->ypos -= player->yvel;
         }
     }
+
     for (auto &object : objects)
     {
         object->update();
     }
     player->update();
-
 }
 
 void Game::render()

@@ -26,7 +26,7 @@ Player::Player(const char *texturesheet, int x, int y)
     destinationRect.h = sourceRect.h;
 
     collisionRect.h = PLAYER_HEIGHT;
-    //baelog sprite offsets
+    // baelog sprite offsets
     collisionRect.w = PLAYER_WIDTH - 56;
     collisionRect.x = xpos + 28;
     collisionRect.y = ypos;
@@ -42,7 +42,8 @@ Player::~Player() {}
 
 void Player::update()
 {
-
+    //yvel = GRAVITY;
+    
     // printf("updated %d\n", this->updatedX);
     if (!(this->xvel == 0))
     {
@@ -90,10 +91,10 @@ void Player::update()
         {
             flipType = SDL_FLIP_NONE;
         }
-        //baelog animaatiossa destination rectille pitäisi olla ehkä joku offset
-        playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 4);
+        // baelog animaatiossa destination rectille pitäisi olla ehkä joku offset
+        playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 8);
         animationFrame++;
-        if (animationFrame / 4 >= 4)
+        if (animationFrame /8 >= 8)
         {
             animationFrame = 0;
         }
@@ -104,7 +105,7 @@ void Player::update()
     destinationRect.x = xpos;
     destinationRect.y = ypos;
 
-    //baelog sprite offsets
+    // baelog sprite offsets
     collisionRect.x = xpos + 28;
     collisionRect.y = ypos;
 }
@@ -161,16 +162,16 @@ void Player::stopXR()
     if (this->xvel > 0)
     {
         this->xvel = 0;
+        this->animationState = STILL;
     }
-    this->animationState = STILL;
 }
 void Player::stopXL()
 {
     if (this->xvel < 0)
     {
         this->xvel = 0;
+        this->animationState = STILL;
     }
-    this->animationState = STILL;
 }
 
 void Player::stopYU()
@@ -178,8 +179,8 @@ void Player::stopYU()
     if (this->yvel < 0)
     {
         this->yvel = 0;
+        this->animationState = STILL;
     }
-    this->animationState = STILL;
 }
 
 void Player::stopYD()
@@ -187,6 +188,6 @@ void Player::stopYD()
     if (this->yvel > 0)
     {
         this->yvel = 0;
+        this->animationState = STILL;
     }
-    this->animationState = STILL;
 }

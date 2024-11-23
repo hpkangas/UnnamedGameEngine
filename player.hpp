@@ -1,6 +1,7 @@
+#include "constants.hpp"
+#include "gameobject.hpp"
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
-#include "constants.hpp"
 
 class Player : public GameObject
 {
@@ -10,6 +11,8 @@ public:
     ~Player();
     int playerSpeed;
     int updatedX;
+
+    bool canJump;
 
     AnimationState animationState;
     int animationFrame;

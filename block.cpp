@@ -1,5 +1,4 @@
 #include "block.hpp"
-#include "gameobject.hpp"
 #include "texturemanager.hpp"
 
 Block::Block(const char *texturesheet, int x, int y, int dx, int dy){

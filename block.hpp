@@ -1,6 +1,6 @@
+#include "gameobject.hpp"
 #ifndef BLOCK.HPP
 #define BLOCK .HPP
-#include "gameobject.hpp"
 
 class Block : public GameObject
 {
