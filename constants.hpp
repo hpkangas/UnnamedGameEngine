@@ -10,7 +10,7 @@ enum AnimationState{STILL=0, WALKING=1, PUSHING=2};
 
 //should be editable
 const int FRAMERATE = 60;
-const int GRAVITY =2;
+const int GRAVITY = 10;
 
 const int PLAYER_HEIGHT = 128;
 const int PLAYER_WIDTH = 128;

@@ -20,9 +20,26 @@ Block *block3 = nullptr;
 Block *block4 = nullptr;
 Block *block5 = nullptr;
 Block *block6 = nullptr;
+Block *block7 = nullptr;
+Block *block8 = nullptr;
+Block *block9 = nullptr;
+
+// bool keyPressed = false;
+// bool keyLetGo = false;
+// bool inputU = false;
+// bool inputD = false;
+bool inputR = false;
+bool inputL = false;
+// std::vector<bool> keys;
 
 void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bool fullscreen)
 {
+
+    // keys.emplace_back(inputU);
+    // keys.emplace_back(inputD);
+    // keys.emplace_back(inputR);
+    // keys.emplace_back(inputL);
+
     int flags = 0;
     if (fullscreen)
     {
@@ -60,6 +77,9 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     block3 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128, 488);
     block4 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128, 428);
     block5 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128, 428);
+    block7 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 428);
+    block8 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 428);
+    block9 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 428);
     block6 = new Block("assets/tiles.png", 0, 0, 80, 428 - 128);
     blocks.emplace_back(block1);
     blocks.emplace_back(block2);
@@ -67,24 +87,29 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     blocks.emplace_back(block4);
     blocks.emplace_back(block5);
     blocks.emplace_back(block6);
+    blocks.emplace_back(block7);
+    blocks.emplace_back(block8);
+    blocks.emplace_back(block9);
 
-    // objects.emplace_back(player);
+    objects.emplace_back(player);
     objects.emplace_back(block1);
     objects.emplace_back(block2);
     objects.emplace_back(block3);
     objects.emplace_back(block4);
     objects.emplace_back(block5);
     objects.emplace_back(block6);
+    objects.emplace_back(block7);
+    objects.emplace_back(block8);
+    objects.emplace_back(block9);
     objects.emplace_back(text);
-
-    // miten katsoa collision vain tietyille objekteille? Jos käytän listaa, miten nopeutan hakua?
 }
 
 void Game::handleEvents()
 {
     SDL_Event event;
 
-    while (SDL_PollEvent(&event))
+    // WaitForEvent pudottaa cpu% mutta tökkii
+    if (SDL_PollEvent(&event) != 0)
     {
         switch (event.type)
         {
@@ -94,20 +119,33 @@ void Game::handleEvents()
             // quit game
             case SDLK_q:
                 isRunning = false;
+                break;
             case SDLK_UP:
+
                 player->moveUp();
                 break;
             case SDLK_DOWN:
                 player->moveDown();
                 break;
             case SDLK_RIGHT:
-                player->moveRight();
+                //  keyPressed = true;
+                inputR = true;
+                // inputR = true;
                 break;
             case SDLK_LEFT:
-                player->moveLeft();
+                // keyPressed = true;
+                inputL = true;
+                // inputL = true;
                 break;
             case SDLK_d:
                 player->yvel = 80;
+                break;
+            // reset player pos
+            case SDLK_r:
+                player->xvel = 0;
+                player->yvel = 0;
+                player->xpos = 0;
+                player->ypos = 0;
                 break;
 
             default:
@@ -125,10 +163,12 @@ void Game::handleEvents()
                 player->stopYD();
                 break;
             case SDLK_RIGHT:
-                player->stopXR();
+                // keyPressed = true;
+                inputR = false;
                 break;
             case SDLK_LEFT:
-                player->stopXL();
+                // keyPressed = true;
+                inputL = false;
                 break;
             default:
                 break;
@@ -140,6 +180,26 @@ void Game::handleEvents()
 
 void Game::update()
 {
+
+    // inputs
+    // if (keyPressed)
+    {
+
+        if (inputR && !inputL)
+        {
+            player->moveRight();
+        }
+
+        if (inputL && !inputR)
+        {
+            player->moveLeft();
+        }
+
+        if (!inputL && !inputR || inputL && inputR)
+        {
+            player->stopX();
+        }
+    }
 
     for (auto &block : blocks)
     {
@@ -167,7 +227,6 @@ void Game::update()
 
         if (Physics::playerCollisionDown(*player, *block) == true)
         {
-
             player->ypos -= player->yvel;
             player->canJump = true;
         }
@@ -175,7 +234,6 @@ void Game::update()
         // player comes from below
         if (Physics::playerCollisionUp(*player, *block) == true)
         {
-
             player->ypos -= player->yvel;
         }
     }
@@ -184,7 +242,7 @@ void Game::update()
     {
         object->update();
     }
-    player->update();
+    // player->update();
 }
 
 void Game::render()
@@ -194,7 +252,7 @@ void Game::render()
     {
         object->render();
     }
-    player->render();
+    // player->render();
 
     SDL_RenderPresent(renderer);
 }

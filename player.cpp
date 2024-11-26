@@ -10,6 +10,8 @@ Player::Player(const char *texturesheet, int x, int y)
 
     xpos = x;
     ypos = y;
+    xvel = 0;
+    yvel = 0;
 
     updatedX;
 
@@ -34,7 +36,8 @@ Player::Player(const char *texturesheet, int x, int y)
     this->animationFrame = 1;
     WALKING_ANIMATION_FRAMES = 8;
 
-    playerSpeed = 4;
+    playerSpeed = 1;
+    playerSpeedMax = 4;
 }
 
 Player::Player() {}
@@ -42,7 +45,7 @@ Player::~Player() {}
 
 void Player::update()
 {
-    //yvel = GRAVITY;
+   // yvel = GRAVITY;
     
     // printf("updated %d\n", this->updatedX);
     if (!(this->xvel == 0))
@@ -115,6 +118,7 @@ void Player::render()
     playAnimation(sourceRect, flipType);
 }
 
+//pitäisi varmaan olla texturemanagerissa
 void Player::playAnimation(SDL_Rect sourceRect, SDL_RendererFlip flip)
 {
     SDL_RenderCopyEx(Game::renderer, objTexture, &sourceRect, &destinationRect, 0, NULL, flip);
@@ -135,16 +139,17 @@ void Player::moveToX(int position)
 
 void Player::moveRight()
 {
-    this->animationState = WALKING;
-    this->xvel = playerSpeed;
-    // updatedX = this->xvel;
+    if(!animationState==WALKING) this->animationState = WALKING;
+    this->xvel += playerSpeed;
+
+    if(xvel>playerSpeedMax) xvel = playerSpeedMax;
 }
 
 void Player::moveLeft()
 {
-    this->animationState = WALKING;
-    this->xvel = -playerSpeed;
-    // updatedX = this->xvel;
+    if(!animationState==WALKING) this->animationState = WALKING;
+    this->xvel -= playerSpeed;
+    if(xvel<-playerSpeedMax) xvel = -playerSpeedMax;
 }
 
 void Player::moveUp()
@@ -155,6 +160,15 @@ void Player::moveUp()
 void Player::moveDown()
 {
     this->yvel = playerSpeed;
+}
+
+void Player::stopX()
+{
+    if (this->xvel != 0)
+    {
+        this->xvel = 0;
+        this->animationState = STILL;
+    }
 }
 
 void Player::stopXR()

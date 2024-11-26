@@ -100,7 +100,7 @@ struct Physics
         if (player.collisionRect.x >= obj.collisionRect.x + obj.collisionRect.w)
         {
 
-            return (player.collisionRect.x + player.xvel < obj.collisionRect.x + obj.collisionRect.w - 1 &&
+            return (player.collisionRect.x + player.xvel - player.playerSpeedMax < obj.collisionRect.x + obj.collisionRect.w - 1 &&
                     player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
                     player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y);
         }
@@ -111,7 +111,7 @@ struct Physics
         if (player.collisionRect.x + player.collisionRect.w <= obj.collisionRect.x)
         {
 
-            return (player.collisionRect.x + player.collisionRect.w + player.xvel > obj.collisionRect.x &&
+            return (player.collisionRect.x + player.collisionRect.w + player.xvel + player.playerSpeedMax > obj.collisionRect.x &&
                     player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
                     player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y);
         }

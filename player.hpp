@@ -10,9 +10,15 @@ public:
     Player();
     ~Player();
     int playerSpeed;
+    int playerSpeedMax;
     int updatedX;
 
     bool canJump;
+
+    int xpos;
+    int ypos;
+    int xvel;
+    int yvel;
 
     AnimationState animationState;
     int animationFrame;

@@ -5,24 +5,28 @@ Game *game = nullptr;
 
 int main(int argc, char const *argv[])
 {
+    Uint64 ticks = 0;
     game = new Game();
-     int ticks = SDL_GetTicks64();
 
     game->init("Totally not Lost Vikings", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREENWIDTH, SCREENHEIGHT, false);
-
+    // SDL_Delay mukaan?
+    //  auttaa tehojen syömiseen mutta vähän tahmea ehkä. ei responsiivinen jos odottaa ennen kuin liikkuu
+    // vaatii työstöä
     while (game->running())
     {
-        if (SDL_GetTicks64() - ticks < 1000/FRAMERATE)
+        if (SDL_GetTicks64() - ticks < 1000.0f / FRAMERATE)
         {
-           continue;
+            // printf("Delay %d\n", SDL_GetTicks64() - ticks);
+            continue;
         }
-        ticks = SDL_GetTicks64();
         game->handleEvents();
         game->update();
         game->render();
+        ticks = SDL_GetTicks64();
+        SDL_Delay(SDL_GetTicks64() - ticks);
     }
 
-    game->clean();               
+    game->clean();
 
     return 0;
 }
