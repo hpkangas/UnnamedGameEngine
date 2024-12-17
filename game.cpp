@@ -246,7 +246,8 @@ void Game::update()
         player->yvel = 0.0f;
         player->canJump = true;
         player->gravityState = GROUNDED;
-        if(player->animationState == anims_INAIR) player->animationState = STILL;
+        if (player->animationState == anims_INAIR)
+            player->animationState = STILL;
     }
     else
     {
@@ -257,14 +258,15 @@ void Game::update()
     if (playerCollisionLeft)
     {
         player->xpos -= player->xvel;
-        player->animationState = PUSHING;
+        if (player->gravityState == GROUNDED)
+            player->animationState = PUSHING;
     }
 
     if (playerCollisionRight)
     {
-        playerCollisionRight = true;
         player->xpos -= player->xvel;
-        player->animationState = PUSHING;
+        if (player->gravityState == GROUNDED)
+            player->animationState = PUSHING;
     }
 
     if (playerCollisionUp)
