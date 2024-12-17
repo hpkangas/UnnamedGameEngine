@@ -61,6 +61,7 @@ void Player::update()
         this->ypos += (int)this->yvel;
     }
 
+    //pelaaja flippaa oikealle kun pysähtyy kun menee vasemmalle
     if (xvel < 0)
     {
         flipType = SDL_FLIP_HORIZONTAL;
@@ -74,9 +75,6 @@ void Player::update()
     {
     case STILL:
         animationFrame = 0;
-        // playerFrame args should be enums probably, or separate func playStill
-        // need to think of a way to get sprite/frame information
-
         playFrame(0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, 0);
         break;
 

@@ -66,15 +66,14 @@ struct Physics
         return true;
     }
 
+    // jostain syystä ekan kollision jälkeen neljää "inair", sitten yksi grounded, ja sitten kaksi inair
     static bool playerCollisionDown(const Player player, const Block obj)
     {
 
         // Tämä if omaan funktioon?
         if (player.collisionRect.y + player.collisionRect.h <= obj.collisionRect.y)
         {
-
             {
-
                 return (player.collisionRect.y + player.collisionRect.h + 1 + (int)player.yvel >= obj.collisionRect.y &&
                         player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w - 1 &&
                         player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x);
@@ -103,6 +102,7 @@ struct Physics
         }
     }
 
+    //jotain hassua tässä, pelaaja työntyy eteenpäin ja palaa takaisin
     static bool playerCollisionRight(const Player player, const Block obj)
     {
         if (player.collisionRect.x + player.collisionRect.w <= obj.collisionRect.x)
