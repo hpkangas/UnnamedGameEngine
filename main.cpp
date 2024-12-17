@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
         game->update();
         game->render();
         ticks = SDL_GetTicks64();
-        SDL_Delay(SDL_GetTicks64() - ticks);
+        //SDL_Delay(SDL_GetTicks64() - ticks);
     }
 
     game->clean();

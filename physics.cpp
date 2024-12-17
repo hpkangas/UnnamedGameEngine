@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <iostream>
 #include "player.hpp"
 #include "gameobject.hpp"
 #include "block.hpp"
@@ -67,10 +68,6 @@ struct Physics
 
     static bool playerCollisionDown(const Player player, const Block obj)
     {
-        // pass by reference vai value?
-        // derefence tuossa alhaalla
-        // Player player = *p_player;
-        // Block obj = *p_obj;
 
         // Tämä if omaan funktioon?
         if (player.collisionRect.y + player.collisionRect.h <= obj.collisionRect.y)
@@ -78,7 +75,7 @@ struct Physics
 
             {
 
-                return (player.collisionRect.y + player.collisionRect.h + player.yvel > obj.collisionRect.y &&
+                return (player.collisionRect.y + player.collisionRect.h + 1 + (int)player.yvel >= obj.collisionRect.y &&
                         player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w - 1 &&
                         player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x);
             }
@@ -90,7 +87,7 @@ struct Physics
         if (player.collisionRect.y >= obj.collisionRect.y + obj.collisionRect.h)
         {
 
-            return (player.collisionRect.y + player.yvel < obj.collisionRect.y + obj.collisionRect.h &&
+            return (player.collisionRect.y + player.yvel <= obj.collisionRect.y + obj.collisionRect.h &&
                     player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w &&
                     player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x);
         }
@@ -100,7 +97,7 @@ struct Physics
         if (player.collisionRect.x >= obj.collisionRect.x + obj.collisionRect.w)
         {
 
-            return (player.collisionRect.x + player.xvel - player.playerSpeedMax < obj.collisionRect.x + obj.collisionRect.w - 1 &&
+            return (player.collisionRect.x + (int)player.xvel <= obj.collisionRect.x + obj.collisionRect.w - 1 &&
                     player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
                     player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y);
         }
@@ -111,7 +108,7 @@ struct Physics
         if (player.collisionRect.x + player.collisionRect.w <= obj.collisionRect.x)
         {
 
-            return (player.collisionRect.x + player.collisionRect.w + player.xvel + player.playerSpeedMax > obj.collisionRect.x &&
+            return (player.collisionRect.x + player.collisionRect.w + (int)player.xvel >= obj.collisionRect.x &&
                     player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
                     player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y);
         }

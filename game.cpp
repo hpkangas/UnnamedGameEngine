@@ -23,6 +23,7 @@ Block *block6 = nullptr;
 Block *block7 = nullptr;
 Block *block8 = nullptr;
 Block *block9 = nullptr;
+Block *block10 = nullptr;
 
 // bool keyPressed = false;
 // bool keyLetGo = false;
@@ -73,14 +74,15 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     GameText *text = new GameText("TEST TEXT", 200, 200);
 
     block1 = new Block("assets/tiles.png", 0, 0, 80, 428);
-    block2 = new Block("assets/tiles.png", 0, 0, 80 + 128, 428);
+    block2 = new Block("assets/tiles.png", 128, 0, 80 + 128, 428);
     block3 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128, 488);
-    block4 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128, 428);
+    block4 = new Block("assets/tiles.png", 128, 0, 80 + 128 + 128 + 128, 428);
     block5 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128, 428);
-    block7 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 428);
-    block8 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 428);
-    block9 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 428);
+    block7 = new Block("assets/tiles.png", 128, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 428);
+    block8 = new Block("assets/tiles.png", 256, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 428);
+    block9 = new Block("assets/tiles.png", 256, 0, 128, 64, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 628);
     block6 = new Block("assets/tiles.png", 0, 0, 80, 428 - 128);
+    block10 = new Block("assets/tiles.png", 128, 0, 128 * 4, 428 - 64);
     blocks.emplace_back(block1);
     blocks.emplace_back(block2);
     blocks.emplace_back(block3);
@@ -90,6 +92,7 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     blocks.emplace_back(block7);
     blocks.emplace_back(block8);
     blocks.emplace_back(block9);
+    blocks.emplace_back(block10);
 
     objects.emplace_back(player);
     objects.emplace_back(block1);
@@ -101,6 +104,7 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     objects.emplace_back(block7);
     objects.emplace_back(block8);
     objects.emplace_back(block9);
+    objects.emplace_back(block10);
     objects.emplace_back(text);
 }
 
@@ -173,6 +177,7 @@ void Game::handleEvents()
             default:
                 break;
             }
+        default:
             break;
         }
     }
@@ -181,8 +186,11 @@ void Game::handleEvents()
 void Game::update()
 {
 
-    // inputs
-    // if (keyPressed)
+    playerCollisionDown = false;
+    playerCollisionUp = false;
+    playerCollisionLeft = false;
+    playerCollisionRight = false;
+
     {
 
         if (inputR && !inputL)
@@ -207,42 +215,68 @@ void Game::update()
         // player comes from right
         if (Physics::playerCollisionLeft(*player, *block) == true)
         {
-            // tää pitäisi pystyä tekemään siistimmin ja modulaarisemmin
-            // älä säädä pelaajan xposia tässä vaan playerin metodissa
-            // tai anna uusi arvo playerille, mitä käytetään player->updatessa
-            // player->xvel = 0;
-            // player->moveToX(block->collisionRect.x + block->collisionRect.w);
-            player->xpos -= player->xvel;
-            player->animationState = PUSHING;
+            playerCollisionLeft = true;
+            continue;
         }
 
         // player comes from left
         if (Physics::playerCollisionRight(*player, *block) == true)
         {
-            player->xpos -= player->xvel;
-            player->animationState = PUSHING;
+            playerCollisionRight = true;
+            continue;
         }
 
         // player comes from above
-
         if (Physics::playerCollisionDown(*player, *block) == true)
         {
-            player->ypos -= player->yvel;
-            player->canJump = true;
+            playerCollisionDown = true;
+            continue;
         }
 
         // player comes from below
         if (Physics::playerCollisionUp(*player, *block) == true)
         {
-            player->ypos -= player->yvel;
+            playerCollisionUp = true;
+            continue;
         }
+    }
+
+    if (playerCollisionDown)
+    {
+        player->yvel = 0.0f;
+        player->canJump = true;
+        player->gravityState = GROUNDED;
+        if(player->animationState == anims_INAIR) player->animationState = STILL;
+    }
+    else
+    {
+        player->gravityState = INAIR;
+        player->animationState = anims_INAIR;
+    }
+
+    if (playerCollisionLeft)
+    {
+        player->xpos -= player->xvel;
+        player->animationState = PUSHING;
+    }
+
+    if (playerCollisionRight)
+    {
+        playerCollisionRight = true;
+        player->xpos -= player->xvel;
+        player->animationState = PUSHING;
+    }
+
+    if (playerCollisionUp)
+    {
+        playerCollisionUp = true;
+        player->ypos -= player->yvel;
     }
 
     for (auto &object : objects)
     {
         object->update();
     }
-    // player->update();
 }
 
 void Game::render()
@@ -252,7 +286,6 @@ void Game::render()
     {
         object->render();
     }
-    // player->render();
 
     SDL_RenderPresent(renderer);
 }

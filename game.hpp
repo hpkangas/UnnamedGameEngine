@@ -24,6 +24,11 @@ public:
     static SDL_Renderer *renderer;
     static TTF_Font *gFont;
 
+    bool playerCollisionUp = false;
+    bool playerCollisionDown = false;
+    bool playerCollisionLeft = false;
+    bool playerCollisionRight = false;
+
 private:
     int count = 0;
     bool isRunning;

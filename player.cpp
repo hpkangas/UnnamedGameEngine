@@ -36,8 +36,9 @@ Player::Player(const char *texturesheet, int x, int y)
     this->animationFrame = 1;
     WALKING_ANIMATION_FRAMES = 8;
 
-    playerSpeed = 1;
-    playerSpeedMax = 4;
+    playerSpeed = 0.4f;
+    playerSpeedMax = 8.0f;
+    //  this->gravityState = GROUNDED;
 }
 
 Player::Player() {}
@@ -45,17 +46,28 @@ Player::~Player() {}
 
 void Player::update()
 {
-   // yvel = GRAVITY;
-    
-    // printf("updated %d\n", this->updatedX);
+
+    gravity();
+
+    printf("gs %d\n", this->gravityState);
+    printf("yvel %f\n", this->yvel);
     if (!(this->xvel == 0))
     {
-        this->xpos += this->xvel;
+        this->xpos += (int)this->xvel;
     }
 
     if (!(this->yvel == 0))
     {
-        this->ypos += this->yvel;
+        this->ypos += (int)this->yvel;
+    }
+
+    if (xvel < 0)
+    {
+        flipType = SDL_FLIP_HORIZONTAL;
+    }
+    else
+    {
+        flipType = SDL_FLIP_NONE;
     }
 
     switch (animationState)
@@ -67,40 +79,34 @@ void Player::update()
 
         playFrame(0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, 0);
         break;
-    case WALKING:
-        if (xvel < 0)
-        {
-            flipType = SDL_FLIP_HORIZONTAL;
-        }
-        else
-        {
-            flipType = SDL_FLIP_NONE;
-        }
 
+    case WALKING:
         playFrame(0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / WALKING_ANIMATION_FRAMES);
         animationFrame++;
         if (animationFrame / WALKING_ANIMATION_FRAMES >= WALKING_ANIMATION_FRAMES)
         {
             animationFrame = 0;
         }
-
         break;
+
     case PUSHING:
-        if (xvel < 0)
-        {
-            flipType = SDL_FLIP_HORIZONTAL;
-        }
-        else
-        {
-            flipType = SDL_FLIP_NONE;
-        }
         // baelog animaatiossa destination rectille pitäisi olla ehkä joku offset
         playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 8);
         animationFrame++;
-        if (animationFrame /8 >= 8)
+        if (animationFrame / 8 >= 8)
         {
             animationFrame = 0;
         }
+        break;
+
+    case anims_INAIR:
+        playFrame(0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 1);
+        animationFrame++;
+        if (animationFrame / 1 >= 1)
+        {
+            animationFrame = 0;
+        }
+        break;
     default:
         break;
     }
@@ -115,13 +121,7 @@ void Player::update()
 
 void Player::render()
 {
-    playAnimation(sourceRect, flipType);
-}
-
-//pitäisi varmaan olla texturemanagerissa
-void Player::playAnimation(SDL_Rect sourceRect, SDL_RendererFlip flip)
-{
-    SDL_RenderCopyEx(Game::renderer, objTexture, &sourceRect, &destinationRect, 0, NULL, flip);
+    TextureManager::drawAnimation(objTexture, sourceRect, destinationRect, flipType);
 }
 
 void Player::playFrame(int x, int y, int w, int h, int frame)
@@ -139,17 +139,24 @@ void Player::moveToX(int position)
 
 void Player::moveRight()
 {
-    if(!animationState==WALKING) this->animationState = WALKING;
+    if (!animationState == WALKING)
+        this->animationState = WALKING;
+
     this->xvel += playerSpeed;
 
-    if(xvel>playerSpeedMax) xvel = playerSpeedMax;
+    if (xvel > playerSpeedMax)
+        xvel = playerSpeedMax;
 }
 
 void Player::moveLeft()
 {
-    if(!animationState==WALKING) this->animationState = WALKING;
+    if (!animationState == WALKING)
+        this->animationState = WALKING;
+
     this->xvel -= playerSpeed;
-    if(xvel<-playerSpeedMax) xvel = -playerSpeedMax;
+
+    if (xvel < -playerSpeedMax)
+        xvel = -playerSpeedMax;
 }
 
 void Player::moveUp()
@@ -203,5 +210,17 @@ void Player::stopYD()
     {
         this->yvel = 0;
         this->animationState = STILL;
+    }
+}
+
+void Player::gravity()
+{
+    if (this->gravityState != GROUNDED)
+    {
+
+        if (this->yvel <= MAX_GRAVITY)
+        {
+            this->yvel += 0.50f;
+        }
     }
 }

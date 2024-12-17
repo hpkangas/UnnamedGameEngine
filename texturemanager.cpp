@@ -13,3 +13,8 @@ void TextureManager::draw(SDL_Texture *tex, SDL_Rect source, SDL_Rect destinatio
 {
     SDL_RenderCopy(Game::renderer, tex, &source, &destination);
 }
+
+void TextureManager::drawAnimation(SDL_Texture* objTexture, SDL_Rect sourceRect, SDL_Rect destinationRect, SDL_RendererFlip flip)
+{
+    SDL_RenderCopyEx(Game::renderer, objTexture, &sourceRect, &destinationRect, 0, NULL, flip);
+}
