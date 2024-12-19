@@ -61,12 +61,11 @@ void Player::update()
         this->ypos += (int)this->yvel;
     }
 
-    //pelaaja flippaa oikealle kun pysähtyy kun menee vasemmalle
     if (xvel < 0)
     {
         flipType = SDL_FLIP_HORIZONTAL;
     }
-    else
+     if (xvel > 0)
     {
         flipType = SDL_FLIP_NONE;
     }
@@ -81,7 +80,7 @@ void Player::update()
     case WALKING:
         playFrame(0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / WALKING_ANIMATION_FRAMES);
         animationFrame++;
-        if (animationFrame / WALKING_ANIMATION_FRAMES >= WALKING_ANIMATION_FRAMES)
+        if (animationFrame / WALKING_ANIMATION_FRAMES > 7)
         {
             animationFrame = 0;
         }
@@ -91,16 +90,16 @@ void Player::update()
         // baelog animaatiossa destination rectille pitäisi olla ehkä joku offset
         playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 8);
         animationFrame++;
-        if (animationFrame / 8 >= 8)
+        if (animationFrame / 8 > 7)
         {
             animationFrame = 0;
         }
         break;
 
     case anims_INAIR:
-        playFrame(0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 1);
+        playFrame(0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 8);
         animationFrame++;
-        if (animationFrame / 1 >= 1)
+        if (animationFrame / 8 > 1)
         {
             animationFrame = 0;
         }

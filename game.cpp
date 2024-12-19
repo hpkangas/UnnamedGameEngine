@@ -73,16 +73,19 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     player = new Player("assets/baleog.png", 80, 80);
     GameText *text = new GameText("TEST TEXT", 200, 200);
 
-    block1 = new Block("assets/tiles.png", 0, 0, 80, 428);
-    block2 = new Block("assets/tiles.png", 128, 0, 80 + 128, 428);
-    block3 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128, 488);
-    block4 = new Block("assets/tiles.png", 128, 0, 80 + 128 + 128 + 128, 428);
-    block5 = new Block("assets/tiles.png", 0, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128, 428);
-    block7 = new Block("assets/tiles.png", 128, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 428);
-    block8 = new Block("assets/tiles.png", 256, 0, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 428);
-    block9 = new Block("assets/tiles.png", 256, 0, 128, 64, 80 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128 + 128, 628);
-    block6 = new Block("assets/tiles.png", 0, 0, 80, 428 - 128);
-    block10 = new Block("assets/tiles.png", 128, 0, 128 * 4, 428 - 64);
+    block1 = new Block("assets/tiles.png", 0, 0, 128, 428);
+    block2 = new Block("assets/tiles.png", 128, 0, 128*2, 428);
+    block3 = new Block("assets/tiles.png", 256, 0, 128*3, 428);
+
+    block4 = new Block("assets/tiles.png", 0, 0, 128*4, 428+128);
+    block5 = new Block("assets/tiles.png", 128, 0, 128*5, 428+128);
+    block7 = new Block("assets/tiles.png", 256, 0, 128*6, 428+128);
+
+    block8 = new Block("assets/tiles.png", 0, 0, 128*7, 428+128*2);
+    block9 = new Block("assets/tiles.png", 128, 0, 128*8,  428+128*2);
+    block6 = new Block("assets/tiles.png", 256, 0, 128*9,  428+128*2);
+
+    block10 = new Block("assets/tiles.png", 128, 0, 128 * 12, 428+128*4);
     blocks.emplace_back(block1);
     blocks.emplace_back(block2);
     blocks.emplace_back(block3);
@@ -105,6 +108,7 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     objects.emplace_back(block8);
     objects.emplace_back(block9);
     objects.emplace_back(block10);
+
     objects.emplace_back(text);
 }
 
