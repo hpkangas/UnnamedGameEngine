@@ -13,8 +13,6 @@ Player::Player(const char *texturesheet, int x, int y)
     xvel = 0;
     yvel = 0;
 
-    updatedX;
-
     flipType = SDL_FLIP_NONE;
 
     sourceRect.h = PLAYER_HEIGHT;
@@ -38,7 +36,6 @@ Player::Player(const char *texturesheet, int x, int y)
 
     playerSpeed = 0.4f;
     playerSpeedMax = 8.0f;
-    //  this->gravityState = GROUNDED;
 }
 
 Player::Player() {}
@@ -46,67 +43,11 @@ Player::~Player() {}
 
 void Player::update()
 {
-
-    gravity();
-
-    printf("gs %d\n", this->gravityState);
-    printf("yvel %f\n", this->yvel);
-    if (!(this->xvel == 0))
-    {
-        this->xpos += (int)this->xvel;
-    }
-
-    if (!(this->yvel == 0))
-    {
-        this->ypos += (int)this->yvel;
-    }
-
-    if (xvel < 0)
-    {
-        flipType = SDL_FLIP_HORIZONTAL;
-    }
-     if (xvel > 0)
-    {
-        flipType = SDL_FLIP_NONE;
-    }
-
-    switch (animationState)
-    {
-    case STILL:
-        animationFrame = 0;
-        playFrame(0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, 0);
-        break;
-
-    case WALKING:
-        playFrame(0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / WALKING_ANIMATION_FRAMES);
-        animationFrame++;
-        if (animationFrame / WALKING_ANIMATION_FRAMES > 7)
-        {
-            animationFrame = 0;
-        }
-        break;
-
-    case PUSHING:
-        // baelog animaatiossa destination rectille pitäisi olla ehkä joku offset
-        playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 8);
-        animationFrame++;
-        if (animationFrame / 8 > 7)
-        {
-            animationFrame = 0;
-        }
-        break;
-
-    case anims_INAIR:
-        playFrame(0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationFrame / 8);
-        animationFrame++;
-        if (animationFrame / 8 > 1)
-        {
-            animationFrame = 0;
-        }
-        break;
-    default:
-        break;
-    }
+    handleDownCollision();
+    handleHorizontalCollision();
+    handleGravityState();
+    handleMovement();
+    handleAnimationState();
 
     destinationRect.x = xpos;
     destinationRect.y = ypos;
@@ -129,69 +70,50 @@ void Player::playFrame(int x, int y, int w, int h, int frame)
     sourceRect.y = y;
 }
 
-void Player::moveToX(int position)
-{
-    updatedX = position;
-}
-
 void Player::moveRight()
 {
-    if (!animationState == WALKING)
-        this->animationState = WALKING;
+    if (getAnimationState() != WALKING)
+        setAnimationState(WALKING);
 
-    this->xvel += playerSpeed;
+    setXvel(getXvel() + playerSpeed);
 
-    if (xvel > playerSpeedMax)
-        xvel = playerSpeedMax;
+    if (getXvel() > playerSpeedMax)
+        setXvel(playerSpeedMax);
 }
 
 void Player::moveLeft()
 {
-    if (!animationState == WALKING)
-        this->animationState = WALKING;
+    if (getAnimationState() != WALKING)
+        setAnimationState(WALKING);
 
-    this->xvel -= playerSpeed;
+    setXvel(getXvel() - playerSpeed);
 
-    if (xvel < -playerSpeedMax)
-        xvel = -playerSpeedMax;
+    if (getXvel() < -playerSpeedMax)
+        setXvel(-playerSpeedMax);
 }
 
 void Player::moveUp()
 {
-    this->yvel = -playerSpeed;
+    setYvel(-playerSpeed);
 }
 
+// debugging only mostly
 void Player::moveDown()
 {
-    this->yvel = playerSpeed;
+    setYvel(playerSpeed);
 }
 
+// debugging only mostly
 void Player::stopX()
 {
-    if (this->xvel != 0)
+    if (getXvel() != 0)
     {
-        this->xvel = 0;
-        this->animationState = STILL;
+        setXvel(0);
+        setAnimationState(STILL);
     }
 }
 
-void Player::stopXR()
-{
-    if (this->xvel > 0)
-    {
-        this->xvel = 0;
-        this->animationState = STILL;
-    }
-}
-void Player::stopXL()
-{
-    if (this->xvel < 0)
-    {
-        this->xvel = 0;
-        this->animationState = STILL;
-    }
-}
-
+// debugging only mostly
 void Player::stopYU()
 {
     if (this->yvel < 0)
@@ -201,6 +123,7 @@ void Player::stopYU()
     }
 }
 
+// debugging only mostly
 void Player::stopYD()
 {
     if (this->yvel > 0)
@@ -212,12 +135,265 @@ void Player::stopYD()
 
 void Player::gravity()
 {
-    if (this->gravityState != GROUNDED)
+    if (getYvel() < MAX_GRAVITY)
     {
-
-        if (this->yvel <= MAX_GRAVITY)
-        {
-            this->yvel += 0.50f;
-        }
+        setYvel(getYvel() + GRAVITYUNIT);
     }
+}
+
+void Player::handleMovement()
+{
+    float xvel = getXvel();
+    float yvel = getYvel();
+    int xpos = getXpos();
+    int ypos = getYpos();
+
+    if (!(xvel == 0))
+    {
+        setXpos(xpos + xvel);
+    }
+
+    if (!(yvel == 0))
+    {
+        setYpos(ypos + yvel);
+    }
+
+    if (xvel < 0)
+    {
+        flipType = SDL_FLIP_HORIZONTAL;
+    }
+
+    if (xvel > 0)
+    {
+        flipType = SDL_FLIP_NONE;
+    }
+}
+
+void Player::handleDownCollision()
+{
+    if (getCollisionDown())
+    {
+        setGravityState(GROUNDED);
+    }
+    else
+    {
+        setGravityState(INAIR);
+    }
+}
+
+void Player::handleHorizontalCollision()
+{
+    int xposDif = getXposDifferenceWithCollisionObject();
+
+    if (this->getCollisionLeft())
+    {
+        if (xposDif != 0)
+            setXpos(getXpos() - xposDif);
+        setXvel(0);
+
+        if (getGravityState() == GROUNDED)
+            setAnimationState(PUSHING);
+    }
+
+    if (this->getCollisionRight())
+    {
+        if (xposDif != 0)
+            setXpos(getXpos() - xposDif);
+        setXvel(0);
+
+        if (getGravityState() == GROUNDED)
+            setAnimationState(PUSHING);
+    }
+
+    if (!this->getCollisionLeft() && !this->getCollisionRight())
+    {
+        if (getAnimationState() == PUSHING)
+            setAnimationState(STILL);
+    }
+}
+void Player::handleUpCollision(bool collision, int dif)
+{
+    // TODO
+}
+
+void Player::handleGravityState()
+{
+    switch (getGravityState())
+    {
+    case GROUNDED:
+        if (getYposDifferenceWithCollisionObject() != 0)
+            setYpos(getYpos() - getYposDifferenceWithCollisionObject());
+        setYvel(0);
+        if (getAnimationState() == anims_INAIR)
+            setAnimationState(STILL);
+        break;
+
+    case INAIR:
+        gravity();
+        setAnimationState(anims_INAIR);
+        break;
+
+    default:
+        break;
+    }
+}
+
+void Player::handleAnimationState()
+{
+    switch (getAnimationState())
+    {
+    case STILL:
+        this->animationFrame = 0;
+        playFrame(0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, 0);
+        break;
+
+    case WALKING:
+        playFrame(0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, this->animationFrame / WALKING_ANIMATION_FRAMES);
+        this->animationFrame++;
+        if (this->animationFrame / WALKING_ANIMATION_FRAMES > 7)
+        {
+            this->animationFrame = 0;
+        }
+        break;
+
+    case PUSHING:
+        // baelog animaatiossa destination rectille pitäisi olla ehkä joku offset
+        playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, this->animationFrame / 8);
+        this->animationFrame++;
+        if (this->animationFrame / 8 > 7)
+        {
+            this->animationFrame = 0;
+        }
+        break;
+
+    case anims_INAIR:
+        playFrame(0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, this->animationFrame / 8);
+        this->animationFrame++;
+        if (this->animationFrame / 8 > 1)
+        {
+            this->animationFrame = 0;
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+// Getters and setters
+
+int Player::getXpos()
+{
+    return this->xpos;
+}
+
+int Player::getYpos()
+{
+    return this->ypos;
+}
+
+float Player::getXvel()
+{
+    return this->xvel;
+}
+
+float Player::getYvel()
+{
+    return this->yvel;
+}
+
+int Player::getXposDifferenceWithCollisionObject()
+{
+    return xposDif;
+}
+
+int Player::getYposDifferenceWithCollisionObject()
+{
+    return yposDif;
+}
+
+void Player::setXpos(int xpos)
+{
+    this->xpos = xpos;
+}
+
+void Player::setYpos(int ypos)
+{
+    this->ypos = ypos;
+}
+
+void Player::setXvel(float xvel)
+{
+    this->xvel = xvel;
+}
+
+void Player::setYvel(float yvel)
+{
+    this->yvel = yvel;
+}
+
+bool Player::getCollisionDown()
+{
+    return this->collisionDown;
+}
+
+bool Player::getCollisionUp()
+{
+    return this->collisionUp;
+}
+
+bool Player::getCollisionRight()
+{
+    return this->collisionRight;
+}
+
+bool Player::getCollisionLeft()
+{
+    return this->collisionLeft;
+}
+
+void Player::setCollisionDown(bool collision)
+{
+    this->collisionDown = collision;
+}
+void Player::setCollisionUp(bool collision)
+{
+    this->collisionUp = collision;
+}
+void Player::setCollisionRight(bool collision)
+{
+    this->collisionRight = collision;
+}
+void Player::setCollisionLeft(bool collision)
+{
+    this->collisionLeft = collision;
+}
+
+void Player::setXposDifferenceWithCollisionObject(int xposDif)
+{
+    this->xposDif = xposDif;
+}
+
+void Player::setYposDifferenceWithCollisionObject(int yposDif)
+{
+    this->yposDif = yposDif;
+}
+
+GravityState Player::getGravityState()
+{
+    return this->gravityState;
+}
+
+void Player::setGravityState(GravityState gs)
+{
+    this->gravityState = gs;
+}
+
+AnimationState Player::getAnimationState()
+{
+    return this->animationState;
+}
+
+void Player::setAnimationState(AnimationState as)
+{
+    this->animationState = as;
 }

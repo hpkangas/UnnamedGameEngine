@@ -66,49 +66,48 @@ struct Physics
         return true;
     }
 
-    // jostain syystä ekan kollision jälkeen neljää "inair", sitten yksi grounded, ja sitten kaksi inair
-    static bool playerCollisionDown(const Player player, const Block obj)
+    static bool playerCollisionDown(Player player, const Block obj)
     {
 
         // Tämä if omaan funktioon?
         if (player.collisionRect.y + player.collisionRect.h <= obj.collisionRect.y)
         {
             {
-                return (player.collisionRect.y + player.collisionRect.h + 1 + (int)player.yvel >= obj.collisionRect.y &&
+                return (player.collisionRect.y + player.collisionRect.h + player.getYvel() >= obj.collisionRect.y &&
                         player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w - 1 &&
                         player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x);
             }
         }
     }
 
-    static bool playerCollisionUp(const Player player, const Block obj)
+    static bool playerCollisionUp(Player player, const Block obj)
     {
         if (player.collisionRect.y >= obj.collisionRect.y + obj.collisionRect.h)
         {
 
-            return (player.collisionRect.y + player.yvel <= obj.collisionRect.y + obj.collisionRect.h &&
+            return (player.collisionRect.y + player.getYvel() <= obj.collisionRect.y + obj.collisionRect.h &&
                     player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w &&
                     player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x);
         }
     }
-    static bool playerCollisionLeft(const Player player, const Block obj)
+    static bool playerCollisionLeft(Player player, const Block obj)
     {
         if (player.collisionRect.x >= obj.collisionRect.x + obj.collisionRect.w)
         {
 
-            return (player.collisionRect.x + (int)player.xvel <= obj.collisionRect.x + obj.collisionRect.w - 1 &&
+            return (player.collisionRect.x + player.getXvel() < obj.collisionRect.x + obj.collisionRect.w &&
                     player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
                     player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y);
         }
     }
 
     //jotain hassua tässä, pelaaja työntyy eteenpäin ja palaa takaisin
-    static bool playerCollisionRight(const Player player, const Block obj)
+    static bool playerCollisionRight(Player player, const Block obj)
     {
         if (player.collisionRect.x + player.collisionRect.w <= obj.collisionRect.x)
         {
 
-            return (player.collisionRect.x + player.collisionRect.w + (int)player.xvel >= obj.collisionRect.x &&
+            return (player.collisionRect.x + player.collisionRect.w + player.getXvel() > obj.collisionRect.x &&
                     player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
                     player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y);
         }
