@@ -1,11 +1,12 @@
+#ifndef GAME_HPP
+#define GAME_HPP
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <string>
 
-#ifndef GAME_HPP
-#define GAME_HPP
 class Game
 {
 public:

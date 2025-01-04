@@ -1,7 +1,7 @@
-#include "constants.hpp"
-#include "gameobject.hpp"
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
+#include "constants.hpp"
+#include "gameobject.hpp"
 
 class Player : public GameObject
 {

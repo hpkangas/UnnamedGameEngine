@@ -1,10 +1,10 @@
+#ifndef PHYSICS_CPP
+#define PHYSICS_CPP
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "player.hpp"
 #include "gameobject.hpp"
 #include "block.hpp"
-#ifndef PHYSICS_CPP
-#define PHYSICS_CPP
 
 struct Physics
 {
