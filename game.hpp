@@ -17,6 +17,7 @@ public:
     void render();
     void clean();
 
+
     int getCurrentTime();
 
     Uint32 currentTime;
@@ -30,6 +31,7 @@ private:
     bool isRunning;
     SDL_Window *window;
 
+    void changePlayerCharacter();
     void checkPlayerMovementCollisions();
     void handleInput();
 };

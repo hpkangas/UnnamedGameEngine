@@ -1,6 +1,6 @@
 #include "game.hpp"
 #include "gameobject.hpp"
-#include "iostream"
+#include <iostream>
 #include <vector>
 #include <list>
 #include <stdlib.h>
@@ -13,7 +13,12 @@ TTF_Font *Game::gFont = nullptr;
 
 std::vector<GameObject *> objects;
 std::vector<Block *> blocks;
-Player *player = nullptr;
+Player *player1 = nullptr;
+Player *player2 = nullptr;
+Player *player3 = nullptr;
+std::vector<Player *> characters;
+Player *selectedPlayer = nullptr;
+
 Block *block1 = nullptr;
 Block *block2 = nullptr;
 Block *block3 = nullptr;
@@ -34,17 +39,9 @@ bool inputL = false;
 // std::vector<bool> keys;
 
 bool playerCollisionUp = false;
-bool playerCollisionDown = false;
-bool playerCollisionLeft = false;
-bool playerCollisionRight = false;
 
 void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bool fullscreen)
 {
-
-    // keys.emplace_back(inputU);
-    // keys.emplace_back(inputD);
-    // keys.emplace_back(inputR);
-    // keys.emplace_back(inputL);
 
     int flags = 0;
     if (fullscreen)
@@ -75,7 +72,11 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
         isRunning = false;
     }
 
-    player = new Player("assets/baleog.png", 80, 80);
+    player1 = new Erik("assets/baleog.png", 80, 80, "Erik");
+    player2 = new Olaf("assets/baleog.png", 180, 80, "Olaf");
+    player3 = new Baelog("assets/baleog.png", 280, 80, "Baelog");
+    selectedPlayer = player1;
+
     GameText *text = new GameText("TEST TEXT", 200, 200);
 
     block1 = new Block("assets/tiles.png", 0, 0, 128, 428);
@@ -102,7 +103,9 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     blocks.emplace_back(block9);
     blocks.emplace_back(block10);
 
-    objects.emplace_back(player);
+    objects.emplace_back(player1);
+    objects.emplace_back(player2);
+    objects.emplace_back(player3);
     objects.emplace_back(block1);
     objects.emplace_back(block2);
     objects.emplace_back(block3);
@@ -113,6 +116,10 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     objects.emplace_back(block8);
     objects.emplace_back(block9);
     objects.emplace_back(block10);
+
+    characters.emplace_back(player1);
+    characters.emplace_back(player2);
+    characters.emplace_back(player3);
 
     objects.emplace_back(text);
 }
@@ -135,31 +142,30 @@ void Game::handleEvents()
                 break;
             case SDLK_UP:
 
-                player->moveUp();
+                selectedPlayer->moveUp();
                 break;
             case SDLK_DOWN:
-                player->moveDown();
+                selectedPlayer->moveDown();
                 break;
             case SDLK_RIGHT:
-                //  keyPressed = true;
                 inputR = true;
-                // inputR = true;
                 break;
             case SDLK_LEFT:
-                // keyPressed = true;
                 inputL = true;
-                // inputL = true;
                 break;
             case SDLK_d:
-                player->setYvel(80);
+                selectedPlayer->setYvel(80);
                 break;
-            // reset player pos
+            //reset selectedPlayer pos for debugging
             case SDLK_r:
-                player->setXvel(0);
-                player->setYvel(0);
-                player->setXpos(0);
-                player->setYpos(0);
-                player->setGravityState(INAIR);
+                selectedPlayer->setXvel(0);
+                selectedPlayer->setYvel(0);
+                selectedPlayer->setXpos(0);
+                selectedPlayer->setYpos(0);
+                selectedPlayer->setGravityState(INAIR);
+                break;
+            case SDLK_c:
+                changePlayerCharacter();
                 break;
 
             default:
@@ -171,17 +177,15 @@ void Game::handleEvents()
             switch (event.key.keysym.sym)
             {
             case SDLK_UP:
-                player->stopYU();
+                selectedPlayer->stopYU();
                 break;
             case SDLK_DOWN:
-                player->stopYD();
+                selectedPlayer->stopYD();
                 break;
             case SDLK_RIGHT:
-                // keyPressed = true;
                 inputR = false;
                 break;
             case SDLK_LEFT:
-                // keyPressed = true;
                 inputL = false;
                 break;
             default:
@@ -204,7 +208,6 @@ void Game::update()
     {
         object->update();
     }
-
 }
 
 void Game::render()
@@ -228,6 +231,28 @@ void Game::clean()
     std::cout << "Game cleaned\n";
 }
 
+void Game::changePlayerCharacter()
+{
+    if(selectedPlayer->name == "Erik"){
+        selectedPlayer->stopX();
+        selectedPlayer = player2;
+        return;
+    }
+
+    if(selectedPlayer->name == "Olaf"){
+        selectedPlayer->stopX();
+        selectedPlayer = player3;
+        return;
+    }
+
+    if(selectedPlayer->name == "Baelog"){
+        selectedPlayer->stopX();
+        selectedPlayer = player1;
+        return;
+    }
+
+}
+
 int Game::getCurrentTime()
 {
     // get time elapsed since game was launched, required for timing
@@ -237,57 +262,61 @@ int Game::getCurrentTime()
 
 void Game::checkPlayerMovementCollisions()
 {
-    player->setCollisionDown(false);
-    player->setCollisionUp(false);
-    player->setCollisionRight(false);
-    player->setCollisionLeft(false);
-
-    int yposDif = 0;
-    int xposDif = 0;
-
-    for (auto &block : blocks)
+    for (auto &&player : characters)
     {
 
-        // player comes from right
-        if (Physics::playerCollisionLeft(*player, *block) == true)
+        player->setCollisionDown(false);
+        player->setCollisionUp(false);
+        player->setCollisionRight(false);
+        player->setCollisionLeft(false);
+
+        int yposDif = 0;
+        int xposDif = 0;
+
+        for (auto &block : blocks)
         {
-            xposDif = player->collisionRect.x - (block->collisionRect.x + block->collisionRect.w);
-            player->setXposDifferenceWithCollisionObject(xposDif);
-            player->setCollisionLeft(true);
-            continue;
+
+            // player comes from right
+            if (Physics::playerCollisionLeft(*player, *block) == true)
+            {
+                xposDif = player->collisionRect.x - (block->collisionRect.x + block->collisionRect.w);
+                player->setXposDifferenceWithCollisionObject(xposDif);
+                player->setCollisionLeft(true);
+                continue;
+            }
+
+            // player comes from left
+            if (Physics::playerCollisionRight(*player, *block) == true)
+            {
+                xposDif = (player->collisionRect.x + player->collisionRect.w) - block->collisionRect.x;
+                player->setXposDifferenceWithCollisionObject(xposDif);
+                player->setCollisionRight(true);
+                continue;
+            }
+
+            // player comes from above
+            if (Physics::playerCollisionDown(*player, *block) == true)
+            {
+                yposDif = (player->collisionRect.y + player->collisionRect.h) - block->collisionRect.y;
+                player->setYposDifferenceWithCollisionObject(yposDif);
+                player->setCollisionDown(true);
+
+                continue;
+            }
+
+            // player comes from below
+            if (Physics::playerCollisionUp(*player, *block) == true)
+            {
+                playerCollisionUp = true;
+                continue;
+            }
         }
 
-        // player comes from left
-        if (Physics::playerCollisionRight(*player, *block) == true)
+        if (playerCollisionUp)
         {
-            xposDif = (player->collisionRect.x + player->collisionRect.w) - block->collisionRect.x;
-            player->setXposDifferenceWithCollisionObject(xposDif);
-            player->setCollisionRight(true);
-            continue;
+            // TODO Fix when relevant
+            player->setYpos(player->getYpos() - player->getYvel());
         }
-
-        // player comes from above
-        if (Physics::playerCollisionDown(*player, *block) == true)
-        {
-            yposDif = (player->collisionRect.y + player->collisionRect.h) - block->collisionRect.y;
-            player->setYposDifferenceWithCollisionObject(yposDif);
-            player->setCollisionDown(true);
-
-            continue;
-        }
-
-        // player comes from below
-        if (Physics::playerCollisionUp(*player, *block) == true)
-        {
-            playerCollisionUp = true;
-            continue;
-        }
-    }
-
-    if (playerCollisionUp)
-    {
-        // TODO Fix when relevant
-        player->setYpos(player->getYpos() - player->getYvel());
     }
 }
 
@@ -295,16 +324,16 @@ void Game::handleInput()
 {
     if (inputR && !inputL)
     {
-        player->moveRight();
+        selectedPlayer->moveRight();
     }
 
     if (inputL && !inputR)
     {
-        player->moveLeft();
+        selectedPlayer->moveLeft();
     }
 
     if (!inputL && !inputR || inputL && inputR)
     {
-        player->stopX();
+        selectedPlayer->stopX();
     }
 }

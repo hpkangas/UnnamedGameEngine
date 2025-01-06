@@ -2,6 +2,7 @@
 #define PLAYER_HPP
 #include "constants.hpp"
 #include "gameobject.hpp"
+#include <string>
 
 class Player : public GameObject
 {
@@ -26,7 +27,7 @@ private:
     AnimationState animationState;
     int animationFrame;
     int WALKING_ANIMATION_FRAMES;
-    
+
     SDL_RendererFlip flipType;
     SDL_Texture *objTexture;
 
@@ -39,43 +40,12 @@ private:
     void handleAnimationState();
 
 public:
-    Player(const char *texturesheet, int x, int y);
+    Player(const char *texturesheet, int x, int y, std::string name);
     Player();
     ~Player();
-    
+    std::string name;
+
     SDL_Rect sourceRect, destinationRect, collisionRect;
-
-    int getXpos();
-    int getYpos();
-    float getXvel();
-    float getYvel();
-    int getXposDifferenceWithCollisionObject();
-    int getYposDifferenceWithCollisionObject();
-
-    bool getCollisionDown();
-    bool getCollisionUp();
-    bool getCollisionRight();
-    bool getCollisionLeft();
-
-    void setXpos(int xpos);
-    void setYpos(int ypos);
-    void setXvel(float xvel);
-    void setYvel(float yvel);
-
-    void setCollisionDown(bool collision);
-    void setCollisionUp(bool collision);
-    void setCollisionRight(bool collision);
-    void setCollisionLeft(bool collision);
-
-    void setXposDifferenceWithCollisionObject(int xposDif);
-    void setYposDifferenceWithCollisionObject(int yposDif); 
-
-    GravityState getGravityState();
-    AnimationState getAnimationState();
-
-    void setGravityState(GravityState gs);
-    void setAnimationState(AnimationState as);
-
 
     void playFrame(int x, int y, int w, int h, int frame);
 
@@ -89,6 +59,147 @@ public:
 
     void update();
     void render();
+
+    int getXpos()
+    {
+        return this->xpos;
+    }
+
+    int getYpos()
+    {
+        return this->ypos;
+    }
+
+    float getXvel()
+    {
+        return this->xvel;
+    }
+
+    float getYvel()
+    {
+        return this->yvel;
+    }
+
+    int getXposDifferenceWithCollisionObject()
+    {
+        return xposDif;
+    }
+
+    int getYposDifferenceWithCollisionObject()
+    {
+        return yposDif;
+    }
+
+    void setXpos(int xpos)
+    {
+        this->xpos = xpos;
+    }
+
+    void setYpos(int ypos)
+    {
+        this->ypos = ypos;
+    }
+
+    void setXvel(float xvel)
+    {
+        this->xvel = xvel;
+    }
+
+    void setYvel(float yvel)
+    {
+        this->yvel = yvel;
+    }
+
+    bool getCollisionDown()
+    {
+        return this->collisionDown;
+    }
+
+    bool getCollisionUp()
+    {
+        return this->collisionUp;
+    }
+
+    bool getCollisionRight()
+    {
+        return this->collisionRight;
+    }
+
+    bool getCollisionLeft()
+    {
+        return this->collisionLeft;
+    }
+
+    void setCollisionDown(bool collision)
+    {
+        this->collisionDown = collision;
+    }
+
+    void setCollisionUp(bool collision)
+    {
+        this->collisionUp = collision;
+    }
+
+    void setCollisionRight(bool collision)
+    {
+        this->collisionRight = collision;
+    }
+
+    void setCollisionLeft(bool collision)
+    {
+        this->collisionLeft = collision;
+    }
+
+    void setXposDifferenceWithCollisionObject(int xposDif)
+    {
+        this->xposDif = xposDif;
+    }
+
+    void setYposDifferenceWithCollisionObject(int yposDif)
+    {
+        this->yposDif = yposDif;
+    }
+
+    GravityState getGravityState()
+    {
+        return this->gravityState;
+    }
+
+    void setGravityState(GravityState gs)
+    {
+        this->gravityState = gs;
+    }
+
+    AnimationState getAnimationState()
+    {
+        return this->animationState;
+    }
+
+    void setAnimationState(AnimationState as)
+    {
+        this->animationState = as;
+    }
+};
+
+class Baelog : public Player
+{
+public:
+    using Player::Player;
+    std::string name = "Baelog";
+};
+
+class Erik : public Player
+{
+public:
+    using Player::Player;
+    std::string name = "Erik";
+};
+
+class Olaf : public Player
+{
+public:
+    using Player::Player;
+    std::string name = "Olaf";
 };
 
 #endif

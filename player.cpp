@@ -4,8 +4,9 @@
 #include "physics.cpp"
 #include <iostream>
 
-Player::Player(const char *texturesheet, int x, int y)
+Player::Player(const char *texturesheet, int x, int y, std::string name)
 {
+    this->name = name;
     objTexture = TextureManager::LoadTexture(texturesheet);
 
     xpos = x;
@@ -279,121 +280,3 @@ void Player::handleAnimationState()
     }
 }
 
-// Getters and setters
-
-int Player::getXpos()
-{
-    return this->xpos;
-}
-
-int Player::getYpos()
-{
-    return this->ypos;
-}
-
-float Player::getXvel()
-{
-    return this->xvel;
-}
-
-float Player::getYvel()
-{
-    return this->yvel;
-}
-
-int Player::getXposDifferenceWithCollisionObject()
-{
-    return xposDif;
-}
-
-int Player::getYposDifferenceWithCollisionObject()
-{
-    return yposDif;
-}
-
-void Player::setXpos(int xpos)
-{
-    this->xpos = xpos;
-}
-
-void Player::setYpos(int ypos)
-{
-    this->ypos = ypos;
-}
-
-void Player::setXvel(float xvel)
-{
-    this->xvel = xvel;
-}
-
-void Player::setYvel(float yvel)
-{
-    this->yvel = yvel;
-}
-
-bool Player::getCollisionDown()
-{
-    return this->collisionDown;
-}
-
-bool Player::getCollisionUp()
-{
-    return this->collisionUp;
-}
-
-bool Player::getCollisionRight()
-{
-    return this->collisionRight;
-}
-
-bool Player::getCollisionLeft()
-{
-    return this->collisionLeft;
-}
-
-void Player::setCollisionDown(bool collision)
-{
-    this->collisionDown = collision;
-}
-void Player::setCollisionUp(bool collision)
-{
-    this->collisionUp = collision;
-}
-void Player::setCollisionRight(bool collision)
-{
-    this->collisionRight = collision;
-}
-void Player::setCollisionLeft(bool collision)
-{
-    this->collisionLeft = collision;
-}
-
-void Player::setXposDifferenceWithCollisionObject(int xposDif)
-{
-    this->xposDif = xposDif;
-}
-
-void Player::setYposDifferenceWithCollisionObject(int yposDif)
-{
-    this->yposDif = yposDif;
-}
-
-GravityState Player::getGravityState()
-{
-    return this->gravityState;
-}
-
-void Player::setGravityState(GravityState gs)
-{
-    this->gravityState = gs;
-}
-
-AnimationState Player::getAnimationState()
-{
-    return this->animationState;
-}
-
-void Player::setAnimationState(AnimationState as)
-{
-    this->animationState = as;
-}
