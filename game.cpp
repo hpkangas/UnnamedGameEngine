@@ -7,6 +7,7 @@
 #include "player.hpp"
 #include "block.hpp"
 #include "physics.cpp"
+#include "camera.hpp"
 
 SDL_Renderer *Game::renderer = nullptr;
 TTF_Font *Game::gFont = nullptr;
@@ -19,6 +20,8 @@ Player *player3 = nullptr;
 std::vector<Player *> characters;
 Player *selectedPlayer = nullptr;
 
+Block *block01 = nullptr;
+Block *block0 = nullptr;
 Block *block1 = nullptr;
 Block *block2 = nullptr;
 Block *block3 = nullptr;
@@ -30,13 +33,8 @@ Block *block8 = nullptr;
 Block *block9 = nullptr;
 Block *block10 = nullptr;
 
-// bool keyPressed = false;
-// bool keyLetGo = false;
-// bool inputU = false;
-// bool inputD = false;
 bool inputR = false;
 bool inputL = false;
-// std::vector<bool> keys;
 
 bool playerCollisionUp = false;
 
@@ -79,19 +77,23 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
 
     GameText *text = new GameText("TEST TEXT", 200, 200);
 
+    block01 = new Block("assets/tiles.png", 0, 0, -128, 428);
+    block0 = new Block("assets/tiles.png", 0, 0, 0, 428);
     block1 = new Block("assets/tiles.png", 0, 0, 128, 428);
-    block2 = new Block("assets/tiles.png", 128, 0, 128 * 2, 440);
+    block2 = new Block("assets/tiles.png", 128, 0, 128 * 2, 428);
     block3 = new Block("assets/tiles.png", 256, 0, 128 * 3, 428);
 
     block4 = new Block("assets/tiles.png", 0, 0, 128 * 4, 428 + 128);
     block5 = new Block("assets/tiles.png", 128, 0, 128 * 5, 428 + 128);
-    block7 = new Block("assets/tiles.png", 256, 0, 128 * 6, 428 + 128);
+    block7 = new Block("assets/tiles.png", 256, 0, 128 * 6, 400);
 
     block8 = new Block("assets/tiles.png", 0, 0, 128 * 7, 428 + 128 * 2);
     block9 = new Block("assets/tiles.png", 128, 0, 128 * 8, 428 + 128 * 2);
     block6 = new Block("assets/tiles.png", 256, 0, 128 * 9, 428 + 128 * 2);
 
     block10 = new Block("assets/tiles.png", 128, 0, 128 * 12, 428 + 128 * 4);
+    blocks.emplace_back(block01);
+    blocks.emplace_back(block0);
     blocks.emplace_back(block1);
     blocks.emplace_back(block2);
     blocks.emplace_back(block3);
@@ -106,6 +108,9 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     objects.emplace_back(player1);
     objects.emplace_back(player2);
     objects.emplace_back(player3);
+
+    objects.emplace_back(block01);
+    objects.emplace_back(block0);
     objects.emplace_back(block1);
     objects.emplace_back(block2);
     objects.emplace_back(block3);
@@ -156,13 +161,16 @@ void Game::handleEvents()
             case SDLK_d:
                 selectedPlayer->setYvel(80);
                 break;
-            //reset selectedPlayer pos for debugging
+            // reset selectedPlayer pos for debugging
             case SDLK_r:
                 selectedPlayer->setXvel(0);
                 selectedPlayer->setYvel(0);
                 selectedPlayer->setXpos(0);
                 selectedPlayer->setYpos(0);
                 selectedPlayer->setGravityState(INAIR);
+                Camera::position.x = SCREENWIDTH * 1 / 4;
+                Camera::position.w = SCREENWIDTH * 3 / 4;
+                Camera::offset = {0, 0, 0, 0};
                 break;
             case SDLK_c:
                 changePlayerCharacter();
@@ -202,6 +210,8 @@ void Game::update()
 
     handleInput();
 
+    moveScreen();
+
     checkPlayerMovementCollisions();
 
     for (auto &object : objects)
@@ -231,26 +241,46 @@ void Game::clean()
     std::cout << "Game cleaned\n";
 }
 
+void Game::moveScreen()
+{
+    // pitäisi olla suhteessa ruutuun, ei absoluuttinen piste
+    if (selectedPlayer->getXpos() < Camera::position.x && selectedPlayer->getXvel() < 0 ||
+        (selectedPlayer->getXpos() + PLAYER_WIDTH > Camera::position.w && selectedPlayer->getXvel() > 0))
+    {
+        Camera::offset.x += (selectedPlayer->getXvel());
+        Camera::position.x = SCREENWIDTH * 1 / 4 + Camera::offset.x;
+        Camera::position.w = SCREENWIDTH * 3 / 4 + Camera::offset.x;
+    }
+    
+    std::cout << "pos x " << Camera::position.x << "\n";
+    std::cout << "pos w " << Camera::position.w << "\n";
+    std::cout << "offset " << Camera::offset.x << "\n";
+    std::cout << "player xpos " << selectedPlayer->getXpos() << "\n";
+    std::cout << "player col x " << selectedPlayer->collisionRect.x << "\n";
+}
+
 void Game::changePlayerCharacter()
 {
-    if(selectedPlayer->name == "Erik"){
+    if (selectedPlayer->name == "Erik")
+    {
         selectedPlayer->stopX();
         selectedPlayer = player2;
         return;
     }
 
-    if(selectedPlayer->name == "Olaf"){
+    if (selectedPlayer->name == "Olaf")
+    {
         selectedPlayer->stopX();
         selectedPlayer = player3;
         return;
     }
 
-    if(selectedPlayer->name == "Baelog"){
+    if (selectedPlayer->name == "Baelog")
+    {
         selectedPlayer->stopX();
         selectedPlayer = player1;
         return;
     }
-
 }
 
 int Game::getCurrentTime()

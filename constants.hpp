@@ -3,7 +3,6 @@
 
 const int SCREENWIDTH = 1920;
 const int SCREENHEIGHT = 1080;
-//const int STATUSBARHEIGHT = 40;
 
 //TODO Think of better names
 enum AnimationState{STILL=0, WALKING=1, PUSHING=2, anims_INAIR=3};

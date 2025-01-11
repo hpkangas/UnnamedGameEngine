@@ -13,14 +13,33 @@ public:
     virtual void update();
     virtual void render();
 
-    int xpos=0;
-    int ypos=0;
+    int xpos = 0;
+    int ypos = 0;
 
-    int xvel=0;
-    int yvel=0;
+    int xvel = 0;
+    int yvel = 0;
 
     void printCoordinates(SDL_Rect sourceRect, SDL_Rect destinationRect, SDL_Rect collisionRect);
 
+    virtual int getXpos()
+    {
+        return this->xpos;
+    }
+
+    virtual int getYpos()
+    {
+        return this->ypos;
+    }
+
+    virtual void setXpos(int xpos)
+    {
+        this->xpos = xpos;
+    }
+
+    virtual void setYpos(int ypos)
+    {
+        this->ypos = ypos;
+    }
 
     SDL_Texture *objTexture;
     SDL_Rect sourceRect, destinationRect, collisionRect;
@@ -35,10 +54,9 @@ public:
     void update();
 };
 
-
 class GameText : public GameObject
 {
-    public: 
+public:
     GameText(std::string textureText, int x, int y);
     GameText(int x, int y);
     GameText(std::string textureText, int x, int y, int width, int height);
@@ -46,7 +64,6 @@ class GameText : public GameObject
     void update();
     void render();
 
-    
     std::string text;
 };
 

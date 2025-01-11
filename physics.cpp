@@ -69,13 +69,13 @@ struct Physics
     static bool playerCollisionDown(Player player, const Block obj)
     {
 
-        // Tämä if omaan funktioon?
         if (player.collisionRect.y + player.collisionRect.h <= obj.collisionRect.y)
         {
             {
                 return (player.collisionRect.y + player.collisionRect.h + player.getYvel() >= obj.collisionRect.y &&
                         player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w - 1 &&
-                        player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x);
+                        player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x
+                        || player.collisionRect.y > 300);
             }
         }
     }
@@ -97,11 +97,11 @@ struct Physics
 
             return (player.collisionRect.x + player.getXvel() < obj.collisionRect.x + obj.collisionRect.w &&
                     player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
-                    player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y);
+                    player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y ||
+                    player.collisionRect.y < 100);
         }
     }
 
-    //jotain hassua tässä, pelaaja työntyy eteenpäin ja palaa takaisin
     static bool playerCollisionRight(Player player, const Block obj)
     {
         if (player.collisionRect.x + player.collisionRect.w <= obj.collisionRect.x)

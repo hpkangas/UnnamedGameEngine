@@ -279,4 +279,3 @@ void Player::handleAnimationState()
         break;
     }
 }
-

@@ -17,7 +17,6 @@ public:
     void render();
     void clean();
 
-
     int getCurrentTime();
 
     Uint32 currentTime;
@@ -27,6 +26,8 @@ public:
     static TTF_Font *gFont;
 
 private:
+    void moveScreen();
+
     int count = 0;
     bool isRunning;
     SDL_Window *window;
