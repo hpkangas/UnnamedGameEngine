@@ -2,27 +2,19 @@
 #define CAMERA_HPP
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-struct Camera
+class
+    Camera
 {
-    // Camera();
-    static SDL_Rect position;
-    static SDL_Rect offset;
-    static int xpos;
-    static float xvel;
-    static int ypos;
-    static int yvel;
+public:
+    SDL_Rect position;
+    SDL_Rect offset;
 
-    static SDL_Rect getPos();
+    Camera();
+    SDL_Rect getPos();
+    SDL_Rect getOffset();
+    void setPos(SDL_Rect rect);
+    void setOffset(SDL_Rect rect);
 
-    static int getXpos();
-
-    static int getYpos();
-
-    static void setXpos(int xpos);
-
-    static void setYpos(int ypos);
-
-    static void update();
 };
 
 #endif

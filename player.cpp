@@ -3,6 +3,7 @@
 #include "texturemanager.hpp"
 #include "physics.cpp"
 #include <iostream>
+#include "camera.hpp"
 
 Player::Player(const char *texturesheet, int x, int y, std::string name)
 {
@@ -58,9 +59,9 @@ void Player::update()
     collisionRect.y = ypos;
 }
 
-void Player::render()
+void Player::render(Camera camera)
 {
-    TextureManager::drawAnimation(objTexture, sourceRect, destinationRect, flipType);
+    TextureManager::draw(objTexture, sourceRect, destinationRect, flipType, camera);
 }
 
 void Player::playFrame(int x, int y, int w, int h, int frame)

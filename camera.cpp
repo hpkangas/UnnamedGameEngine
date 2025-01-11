@@ -1,46 +1,27 @@
 #include "camera.hpp"
 #include "constants.hpp"
 
-// Camera::Camera(){
-//     this->xpos = 0;
-//     this->ypos = 0;
-// }
-SDL_Rect Camera::offset = {0, 0, 0, 0};
-SDL_Rect Camera::position = {SCREENWIDTH * 1/4, SCREENHEIGHT + 100, SCREENWIDTH * 3/4, SCREENHEIGHT - 100};
-int Camera::xpos = 0;
-int Camera::ypos = 0;
-float Camera::xvel = 0.0f;
-int Camera::yvel = 0;
-
-// SDL_Rect Camera::getPos()
-// {
-//     return Camera::pos;
-// }
-
-int Camera::getXpos()
-{
-    return Camera::xpos;
+Camera::Camera(){
+    this->offset = {0, 0, 0, 0};
+    this->position = {SCREENWIDTH * 1/4, SCREENHEIGHT + 100, SCREENWIDTH * 3/4, SCREENHEIGHT - 100};
 }
 
-int Camera::getYpos()
+SDL_Rect Camera::getPos()
 {
-    return Camera::ypos;
+    return this->position;
 }
 
-void Camera::setXpos(int xpos)
+SDL_Rect Camera::getOffset()
 {
-    Camera::xpos = xpos;
+    return this->offset;
 }
 
-void Camera::setYpos(int ypos)
+void Camera::setPos(SDL_Rect rect)
 {
-    Camera::ypos = ypos;
+    this->position = rect;
 }
 
-void Camera::update()
+void Camera::setOffset(SDL_Rect rect)
 {
-    if (!(xvel == 0))
-    {
-        Camera::setXpos(xpos + xvel);
-    }
+    this->offset = rect;
 }

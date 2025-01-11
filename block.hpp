@@ -12,7 +12,7 @@ public:
     int ypos;
 
     void update();
-    void render();
+    void render(Camera camera);
     SDL_Texture *objTexture;
     SDL_Rect sourceRect, destinationRect, collisionRect;
 

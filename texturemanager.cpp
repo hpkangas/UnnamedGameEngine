@@ -10,18 +10,14 @@ SDL_Texture *TextureManager::LoadTexture(const char *texture)
     SDL_FreeSurface(tempSurface);
     return tex;
 }
-void TextureManager::draw(SDL_Texture *tex, SDL_Rect source, SDL_Rect destination)
+void TextureManager::draw(SDL_Texture *tex, SDL_Rect source, SDL_Rect destination, Camera camera)
 {
-    SDL_Rect newDestination = destination;
-    newDestination.x -= Camera::offset.x;
-    newDestination.y -= Camera::offset.y;
-    SDL_RenderCopy(Game::renderer, tex, &source, &newDestination);
+    draw(tex, source, destination, SDL_FLIP_NONE, camera);
 }
 
-void TextureManager::drawAnimation(SDL_Texture *objTexture, SDL_Rect sourceRect, SDL_Rect destinationRect, SDL_RendererFlip flip)
+void TextureManager::draw(SDL_Texture *objTexture, SDL_Rect sourceRect, SDL_Rect destinationRect, SDL_RendererFlip flip, Camera camera)
 {
     SDL_Rect newDestination = destinationRect;
-    newDestination.x -= Camera::offset.x;
-    newDestination.y -= Camera::offset.y;
+    newDestination.x -= camera.offset.x;
     SDL_RenderCopyEx(Game::renderer, objTexture, &sourceRect, &newDestination, 0, NULL, flip);
 }

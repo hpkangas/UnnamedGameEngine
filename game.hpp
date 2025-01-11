@@ -6,6 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <string>
+#include "camera.hpp"
 
 class Game
 {
@@ -24,6 +25,8 @@ public:
 
     static SDL_Renderer *renderer;
     static TTF_Font *gFont;
+
+    Camera camera;
 
 private:
     void moveScreen();

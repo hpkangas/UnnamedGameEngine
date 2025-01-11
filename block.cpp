@@ -57,7 +57,7 @@ void Block::update()
     collisionRect.y = ypos;
 }
 
-void Block::render()
+void Block::render(Camera camera)
 {
-    TextureManager::draw(this->objTexture, this->sourceRect, this->destinationRect);
+    TextureManager::draw(this->objTexture, this->sourceRect, this->destinationRect, camera);
 }

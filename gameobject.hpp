@@ -1,6 +1,7 @@
 #ifndef GAMEOBJECT_HPP
 #define GAMEOBJECT_HPP
 #include "game.hpp"
+#include "camera.hpp"
 
 class GameObject
 {
@@ -11,7 +12,7 @@ public:
     ~GameObject();
 
     virtual void update();
-    virtual void render();
+    virtual void render(Camera camera);
 
     int xpos = 0;
     int ypos = 0;

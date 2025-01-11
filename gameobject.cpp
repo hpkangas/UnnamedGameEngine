@@ -35,16 +35,16 @@ void GameObject::update()
     destinationRect.h = sourceRect.h;
 }
 
-void GameObject::render()
+void GameObject::render(Camera camera)
 {
-    SDL_RenderCopy(Game::renderer, objTexture, &sourceRect, &destinationRect);
+    TextureManager::draw(this->objTexture, this->sourceRect, this->destinationRect, camera);
 }
 
 void GameObject::printCoordinates(SDL_Rect sourceRect, SDL_Rect destinationRect, SDL_Rect collisionRect)
 {
-    printf("Sprite drawn from x %d, y %d, h %d, w %d \n", sourceRect.x, sourceRect.y, sourceRect.h, sourceRect.w );
-    printf("Sprite drawn to x %d, y %d, h %d, w %d \n", destinationRect.x, destinationRect.y, destinationRect.h, destinationRect.w );
-    printf("Collision rect in x %d, y %d, h %d, w %d \n", collisionRect.x, collisionRect.y, collisionRect.h, collisionRect.w );
+    printf("Sprite drawn from x %d, y %d, h %d, w %d \n", sourceRect.x, sourceRect.y, sourceRect.h, sourceRect.w);
+    printf("Sprite drawn to x %d, y %d, h %d, w %d \n", destinationRect.x, destinationRect.y, destinationRect.h, destinationRect.w);
+    printf("Collision rect in x %d, y %d, h %d, w %d \n", collisionRect.x, collisionRect.y, collisionRect.h, collisionRect.w);
 }
 
 Background::Background(const char *texturesheet, int x, int y, int sizew, int sizeh, int xvelocity)

@@ -58,7 +58,7 @@ public:
     void stopYD();
 
     void update();
-    void render();
+    void render(Camera camera);
 
     int getXpos()
     {

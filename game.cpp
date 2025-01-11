@@ -40,7 +40,6 @@ bool playerCollisionUp = false;
 
 void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bool fullscreen)
 {
-
     int flags = 0;
     if (fullscreen)
     {
@@ -69,6 +68,8 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     {
         isRunning = false;
     }
+
+    Camera camera;
 
     player1 = new Erik("assets/baleog.png", 80, 80, "Erik");
     player2 = new Olaf("assets/baleog.png", 180, 80, "Olaf");
@@ -168,9 +169,8 @@ void Game::handleEvents()
                 selectedPlayer->setXpos(0);
                 selectedPlayer->setYpos(0);
                 selectedPlayer->setGravityState(INAIR);
-                Camera::position.x = SCREENWIDTH * 1 / 4;
-                Camera::position.w = SCREENWIDTH * 3 / 4;
-                Camera::offset = {0, 0, 0, 0};
+                camera.setPos({SCREENWIDTH * 1 / 4, 0, SCREENWIDTH * 3 / 4, 0});
+                camera.setOffset({0, 0, 0, 0});
                 break;
             case SDLK_c:
                 changePlayerCharacter();
@@ -225,7 +225,7 @@ void Game::render()
     SDL_RenderClear(renderer);
     for (auto &object : objects)
     {
-        object->render();
+        object->render(camera);
     }
 
     SDL_RenderPresent(renderer);
@@ -243,18 +243,17 @@ void Game::clean()
 
 void Game::moveScreen()
 {
-    // pitäisi olla suhteessa ruutuun, ei absoluuttinen piste
-    if (selectedPlayer->getXpos() < Camera::position.x && selectedPlayer->getXvel() < 0 ||
-        (selectedPlayer->getXpos() + PLAYER_WIDTH > Camera::position.w && selectedPlayer->getXvel() > 0))
+    if (selectedPlayer->getXpos() < camera.position.x && selectedPlayer->getXvel() < 0 ||
+        (selectedPlayer->getXpos() + PLAYER_WIDTH > camera.position.w && selectedPlayer->getXvel() > 0))
     {
-        Camera::offset.x += (selectedPlayer->getXvel());
-        Camera::position.x = SCREENWIDTH * 1 / 4 + Camera::offset.x;
-        Camera::position.w = SCREENWIDTH * 3 / 4 + Camera::offset.x;
+        camera.offset.x += selectedPlayer->getXvel();
+        camera.position.x = SCREENWIDTH * 1 / 4 + camera.offset.x;
+        camera.position.w = SCREENWIDTH * 3 / 4 + camera.offset.x;
     }
-    
-    std::cout << "pos x " << Camera::position.x << "\n";
-    std::cout << "pos w " << Camera::position.w << "\n";
-    std::cout << "offset " << Camera::offset.x << "\n";
+
+    std::cout << "pos x " << camera.position.x << "\n";
+    std::cout << "pos w " << camera.position.w << "\n";
+    std::cout << "offset " << camera.offset.x << "\n";
     std::cout << "player xpos " << selectedPlayer->getXpos() << "\n";
     std::cout << "player col x " << selectedPlayer->collisionRect.x << "\n";
 }
