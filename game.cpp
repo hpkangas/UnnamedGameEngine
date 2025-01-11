@@ -251,11 +251,13 @@ void Game::moveScreen()
         camera.position.w = SCREENWIDTH * 3 / 4 + camera.offset.x;
     }
 
-    std::cout << "pos x " << camera.position.x << "\n";
-    std::cout << "pos w " << camera.position.w << "\n";
-    std::cout << "offset " << camera.offset.x << "\n";
-    std::cout << "player xpos " << selectedPlayer->getXpos() << "\n";
-    std::cout << "player col x " << selectedPlayer->collisionRect.x << "\n";
+    if (selectedPlayer->getYpos() < camera.position.y && selectedPlayer->getYvel() < 0 ||
+        (selectedPlayer->getYpos() + PLAYER_HEIGHT > camera.position.h && selectedPlayer->getYvel() > 0))
+    {
+        camera.offset.y += selectedPlayer->getYvel();
+        camera.position.y = SCREENHEIGHT * 1 / 3 + camera.offset.y;
+        camera.position.h = SCREENHEIGHT * 2 / 3 + camera.offset.y;
+    }
 }
 
 void Game::changePlayerCharacter()

@@ -74,8 +74,7 @@ struct Physics
             {
                 return (player.collisionRect.y + player.collisionRect.h + player.getYvel() >= obj.collisionRect.y &&
                         player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w - 1 &&
-                        player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x
-                        || player.collisionRect.y > 300);
+                        player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x);
             }
         }
     }

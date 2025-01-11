@@ -19,5 +19,6 @@ void TextureManager::draw(SDL_Texture *objTexture, SDL_Rect sourceRect, SDL_Rect
 {
     SDL_Rect newDestination = destinationRect;
     newDestination.x -= camera.offset.x;
+    newDestination.y -= camera.offset.y;
     SDL_RenderCopyEx(Game::renderer, objTexture, &sourceRect, &newDestination, 0, NULL, flip);
 }

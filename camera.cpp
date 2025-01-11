@@ -3,7 +3,7 @@
 
 Camera::Camera(){
     this->offset = {0, 0, 0, 0};
-    this->position = {SCREENWIDTH * 1/4, SCREENHEIGHT + 100, SCREENWIDTH * 3/4, SCREENHEIGHT - 100};
+    this->position = {SCREENWIDTH * 1/4, SCREENHEIGHT * 1/3, SCREENWIDTH * 3/4, SCREENHEIGHT * 2/3};
 }
 
 SDL_Rect Camera::getPos()
