@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GAMEOBJECT_HPP
 #define GAMEOBJECT_HPP
 #include "game.hpp"

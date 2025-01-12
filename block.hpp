@@ -1,3 +1,4 @@
+#pragma once
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
 #include "gameobject.hpp"

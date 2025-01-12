@@ -210,7 +210,7 @@ void Game::update()
 
     handleInput();
 
-    moveScreen();
+    camera.updateCamera(selectedPlayer);
 
     checkPlayerMovementCollisions();
 
@@ -241,31 +241,13 @@ void Game::clean()
     std::cout << "Game cleaned\n";
 }
 
-void Game::moveScreen()
-{
-    if (selectedPlayer->getXpos() < camera.position.x && selectedPlayer->getXvel() < 0 ||
-        (selectedPlayer->getXpos() + PLAYER_WIDTH > camera.position.w && selectedPlayer->getXvel() > 0))
-    {
-        camera.offset.x += selectedPlayer->getXvel();
-        camera.position.x = SCREENWIDTH * 1 / 4 + camera.offset.x;
-        camera.position.w = SCREENWIDTH * 3 / 4 + camera.offset.x;
-    }
-
-    if (selectedPlayer->getYpos() < camera.position.y && selectedPlayer->getYvel() < 0 ||
-        (selectedPlayer->getYpos() + PLAYER_HEIGHT > camera.position.h && selectedPlayer->getYvel() > 0))
-    {
-        camera.offset.y += selectedPlayer->getYvel();
-        camera.position.y = SCREENHEIGHT * 1 / 3 + camera.offset.y;
-        camera.position.h = SCREENHEIGHT * 2 / 3 + camera.offset.y;
-    }
-}
-
 void Game::changePlayerCharacter()
 {
     if (selectedPlayer->name == "Erik")
     {
         selectedPlayer->stopX();
         selectedPlayer = player2;
+        camera.centerCameraToCharacter(selectedPlayer);
         return;
     }
 
@@ -273,6 +255,7 @@ void Game::changePlayerCharacter()
     {
         selectedPlayer->stopX();
         selectedPlayer = player3;
+        camera.centerCameraToCharacter(selectedPlayer);
         return;
     }
 
@@ -280,6 +263,7 @@ void Game::changePlayerCharacter()
     {
         selectedPlayer->stopX();
         selectedPlayer = player1;
+        camera.centerCameraToCharacter(selectedPlayer);
         return;
     }
 }

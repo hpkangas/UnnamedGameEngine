@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GAME_HPP
 #define GAME_HPP
 
@@ -29,15 +30,13 @@ public:
     Camera camera;
 
 private:
-    void moveScreen();
-
     int count = 0;
     bool isRunning;
     SDL_Window *window;
 
-    void changePlayerCharacter();
     void checkPlayerMovementCollisions();
     void handleInput();
+    void changePlayerCharacter();
 };
 
 #endif /* GAME_HPP */

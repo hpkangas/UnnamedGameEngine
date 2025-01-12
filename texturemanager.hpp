@@ -1,3 +1,4 @@
+#pragma once
 #ifndef TEXTUREMANAGER_HPP
 #define TEXTUREMANAGER_HPP
 #include "game.hpp"
