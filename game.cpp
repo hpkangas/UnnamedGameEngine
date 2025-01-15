@@ -210,7 +210,6 @@ void Game::update()
 
     handleInput();
 
-    camera.updateCamera(selectedPlayer);
 
     checkPlayerMovementCollisions();
 
@@ -218,6 +217,8 @@ void Game::update()
     {
         object->update();
     }
+    
+    updateCamera(selectedPlayer);
 }
 
 void Game::render()
@@ -247,7 +248,7 @@ void Game::changePlayerCharacter()
     {
         selectedPlayer->stopX();
         selectedPlayer = player2;
-        camera.centerCameraToCharacter(selectedPlayer);
+        centerCameraToCharacter(selectedPlayer);
         return;
     }
 
@@ -255,7 +256,7 @@ void Game::changePlayerCharacter()
     {
         selectedPlayer->stopX();
         selectedPlayer = player3;
-        camera.centerCameraToCharacter(selectedPlayer);
+        centerCameraToCharacter(selectedPlayer);
         return;
     }
 
@@ -263,7 +264,7 @@ void Game::changePlayerCharacter()
     {
         selectedPlayer->stopX();
         selectedPlayer = player1;
-        camera.centerCameraToCharacter(selectedPlayer);
+        centerCameraToCharacter(selectedPlayer);
         return;
     }
 }
@@ -351,4 +352,29 @@ void Game::handleInput()
     {
         selectedPlayer->stopX();
     }
+}
+
+void Game::centerCameraToCharacter(Player *player)
+{
+   
+    camera.offset.x = player->getXpos() - SCREENWIDTH * 1 / 2;
+    camera.offset.y = player->getYpos() - SCREENHEIGHT * 1 / 2;
+
+    camera.updateCameraPosition();
+}
+
+void Game::updateCamera(Player *player)
+{
+    if (player->getXpos() < camera.position.x && player->getXvel() < 0 ||
+        player->getXpos() + PLAYER_WIDTH > camera.position.w && player->getXvel() > 0)
+    {
+        camera.offset.x += player->getXvel();
+    }
+
+    if (player->getYpos() < camera.position.y && player->getYvel() < 0 ||
+        player->getYpos() + PLAYER_HEIGHT > camera.position.h && player->getYvel() > 0)
+    {
+        camera.offset.y += player->getYvel();
+    }
+    camera.updateCameraPosition();
 }

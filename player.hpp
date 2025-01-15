@@ -4,8 +4,6 @@
 #include "gameobject.hpp"
 #include <string>
 
-class Camera;
-
 class Player : public GameObject
 {
 private:

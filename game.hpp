@@ -36,6 +36,8 @@ private:
 
     void checkPlayerMovementCollisions();
     void handleInput();
+    void centerCameraToCharacter(Player *player);
+    void updateCamera(Player *player);
     void changePlayerCharacter();
 };
 
