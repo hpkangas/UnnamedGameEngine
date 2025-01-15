@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "player.hpp"
 #include "block.hpp"
-#include "physics.cpp"
+#include "physics.hpp"
 #include "camera.hpp"
 
 SDL_Renderer *Game::renderer = nullptr;
@@ -244,7 +244,7 @@ void Game::clean()
 
 void Game::changePlayerCharacter()
 {
-    if (selectedPlayer->name == "Erik")
+    if (selectedPlayer->getName() == "Erik")
     {
         selectedPlayer->stopX();
         selectedPlayer = player2;
@@ -252,7 +252,7 @@ void Game::changePlayerCharacter()
         return;
     }
 
-    if (selectedPlayer->name == "Olaf")
+    if (selectedPlayer->getName() == "Olaf")
     {
         selectedPlayer->stopX();
         selectedPlayer = player3;
@@ -260,7 +260,7 @@ void Game::changePlayerCharacter()
         return;
     }
 
-    if (selectedPlayer->name == "Baelog")
+    if (selectedPlayer->getName() == "Baelog")
     {
         selectedPlayer->stopX();
         selectedPlayer = player1;
@@ -295,7 +295,7 @@ void Game::checkPlayerMovementCollisions()
             // player comes from right
             if (Physics::playerCollisionLeft(*player, *block) == true)
             {
-                xposDif = player->collisionRect.x - (block->collisionRect.x + block->collisionRect.w);
+                xposDif = player->m_collisionRect.x - (block->m_collisionRect.x + block->m_collisionRect.w);
                 player->setXposDifferenceWithCollisionObject(xposDif);
                 player->setCollisionLeft(true);
                 continue;
@@ -304,7 +304,7 @@ void Game::checkPlayerMovementCollisions()
             // player comes from left
             if (Physics::playerCollisionRight(*player, *block) == true)
             {
-                xposDif = (player->collisionRect.x + player->collisionRect.w) - block->collisionRect.x;
+                xposDif = (player->m_collisionRect.x + player->m_collisionRect.w) - block->m_collisionRect.x;
                 player->setXposDifferenceWithCollisionObject(xposDif);
                 player->setCollisionRight(true);
                 continue;
@@ -313,7 +313,7 @@ void Game::checkPlayerMovementCollisions()
             // player comes from above
             if (Physics::playerCollisionDown(*player, *block) == true)
             {
-                yposDif = (player->collisionRect.y + player->collisionRect.h) - block->collisionRect.y;
+                yposDif = (player->m_collisionRect.y + player->m_collisionRect.h) - block->m_collisionRect.y;
                 player->setYposDifferenceWithCollisionObject(yposDif);
                 player->setCollisionDown(true);
 
@@ -357,24 +357,24 @@ void Game::handleInput()
 void Game::centerCameraToCharacter(Player *player)
 {
    
-    camera.offset.x = player->getXpos() - SCREENWIDTH * 1 / 2;
-    camera.offset.y = player->getYpos() - SCREENHEIGHT * 1 / 2;
+    camera.m_offset.x = player->getXpos() - SCREENWIDTH * 1 / 2;
+    camera.m_offset.y = player->getYpos() - SCREENHEIGHT * 1 / 2;
 
     camera.updateCameraPosition();
 }
 
 void Game::updateCamera(Player *player)
 {
-    if (player->getXpos() < camera.position.x && player->getXvel() < 0 ||
-        player->getXpos() + PLAYER_WIDTH > camera.position.w && player->getXvel() > 0)
+    if (player->getXpos() < camera.m_position.x && player->getXvel() < 0 ||
+        player->getXpos() + PLAYER_WIDTH > camera.m_position.w && player->getXvel() > 0)
     {
-        camera.offset.x += player->getXvel();
+        camera.m_offset.x += player->getXvel();
     }
 
-    if (player->getYpos() < camera.position.y && player->getYvel() < 0 ||
-        player->getYpos() + PLAYER_HEIGHT > camera.position.h && player->getYvel() > 0)
+    if (player->getYpos() < camera.m_position.y && player->getYvel() < 0 ||
+        player->getYpos() + PLAYER_HEIGHT > camera.m_position.h && player->getYvel() > 0)
     {
-        camera.offset.y += player->getYvel();
+        camera.m_offset.y += player->getYvel();
     }
     camera.updateCameraPosition();
 }

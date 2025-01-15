@@ -4,24 +4,35 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-class Player;
-
 class
     Camera
 {
 public:
-    SDL_Rect position;
-    SDL_Rect offset;
-
     Camera();
-    SDL_Rect getPos();
-    SDL_Rect getOffset();
-    void setPos(SDL_Rect rect);
-    void setOffset(SDL_Rect rect);
+    SDL_Rect m_position;
+    SDL_Rect m_offset;
 
-    void centerCameraToCharacter(Player *player);
     void updateCameraPosition();
-    void updateCamera(Player *player);
+
+    SDL_Rect getPos()
+    {
+        return m_position;
+    }
+
+    SDL_Rect getOffset()
+    {
+        return m_offset;
+    }
+
+    void setPos(SDL_Rect rect)
+    {
+        m_position = rect;
+    }
+
+    void setOffset(SDL_Rect rect)
+    {
+        m_offset = rect;
+    }
 };
 
 #endif

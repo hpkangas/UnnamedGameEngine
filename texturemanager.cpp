@@ -1,5 +1,5 @@
 #include "texturemanager.hpp"
-#include "camera.hpp"
+#include "game.hpp"
 
 SDL_Texture *TextureManager::LoadTexture(const char *texture)
 {
@@ -18,7 +18,7 @@ void TextureManager::draw(SDL_Texture *tex, SDL_Rect source, SDL_Rect destinatio
 void TextureManager::draw(SDL_Texture *objTexture, SDL_Rect sourceRect, SDL_Rect destinationRect, SDL_RendererFlip flip, Camera camera)
 {
     SDL_Rect newDestination = destinationRect;
-    newDestination.x -= camera.offset.x;
-    newDestination.y -= camera.offset.y;
+    newDestination.x -= camera.m_offset.x;
+    newDestination.y -= camera.m_offset.y;
     SDL_RenderCopyEx(Game::renderer, objTexture, &sourceRect, &newDestination, 0, NULL, flip);
 }

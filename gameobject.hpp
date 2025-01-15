@@ -1,13 +1,14 @@
 #pragma once
 #ifndef GAMEOBJECT_HPP
 #define GAMEOBJECT_HPP
-#include "game.hpp"
+#include <SDL2/SDL_image.h>
 #include "camera.hpp"
+#include <string>
 
 class GameObject
 {
 public:
-    GameObject(const char *texturesheet, int x, int y, int xvel, int yvel, int sizew, int sizeh);
+    GameObject(const char *texturesheet, int x, int y, int m_xvel, int m_yvel, int sizew, int sizeh);
     GameObject(const char *texturesheet, int x, int y, int sizew, int sizeh);
     GameObject();
     ~GameObject();
@@ -15,36 +16,36 @@ public:
     virtual void update();
     virtual void render(Camera camera);
 
-    int xpos = 0;
-    int ypos = 0;
+    int m_xpos;
+    int m_ypos;
 
-    int xvel = 0;
-    int yvel = 0;
+    int m_xvel;
+    int m_yvel;
 
     void printCoordinates(SDL_Rect sourceRect, SDL_Rect destinationRect, SDL_Rect collisionRect);
 
-    virtual int getXpos()
+    const virtual int getXpos()
     {
-        return this->xpos;
+        return m_xpos;
     }
 
-    virtual int getYpos()
+    const virtual int getYpos()
     {
-        return this->ypos;
+        return m_ypos;
     }
 
     virtual void setXpos(int xpos)
     {
-        this->xpos = xpos;
+        m_xpos = xpos;
     }
 
     virtual void setYpos(int ypos)
     {
-        this->ypos = ypos;
+        m_ypos = ypos;
     }
 
-    SDL_Texture *objTexture;
-    SDL_Rect sourceRect, destinationRect, collisionRect;
+    SDL_Texture *m_objTexture;
+    SDL_Rect m_sourceRect, m_destinationRect, m_collisionRect;
 
 private:
 };

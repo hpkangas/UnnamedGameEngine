@@ -1,9 +1,8 @@
-#ifndef PHYSICS_CPP
-#define PHYSICS_CPP
+#ifndef PHYSICS_HPP
+#define PHYSICS_HPP
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "player.hpp"
-#include "gameobject.hpp"
 #include "block.hpp"
 
 struct Physics
@@ -69,46 +68,46 @@ struct Physics
     static bool playerCollisionDown(Player player, const Block obj)
     {
 
-        if (player.collisionRect.y + player.collisionRect.h <= obj.collisionRect.y)
+        if (player.m_collisionRect.y + player.m_collisionRect.h <= obj.m_collisionRect.y)
         {
             {
-                return (player.collisionRect.y + player.collisionRect.h + player.getYvel() >= obj.collisionRect.y &&
-                        player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w - 1 &&
-                        player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x);
+                return (player.m_collisionRect.y + player.m_collisionRect.h + player.getYvel() >= obj.m_collisionRect.y &&
+                        player.m_collisionRect.x < obj.m_collisionRect.x + obj.m_collisionRect.w - 1 &&
+                        player.m_collisionRect.x + player.m_collisionRect.w - 1 > obj.m_collisionRect.x);
             }
         }
     }
 
     static bool playerCollisionUp(Player player, const Block obj)
     {
-        if (player.collisionRect.y >= obj.collisionRect.y + obj.collisionRect.h)
+        if (player.m_collisionRect.y >= obj.m_collisionRect.y + obj.m_collisionRect.h)
         {
 
-            return (player.collisionRect.y + player.getYvel() <= obj.collisionRect.y + obj.collisionRect.h &&
-                    player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w &&
-                    player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x);
+            return (player.m_collisionRect.y + player.getYvel() <= obj.m_collisionRect.y + obj.m_collisionRect.h &&
+                    player.m_collisionRect.x < obj.m_collisionRect.x + obj.m_collisionRect.w &&
+                    player.m_collisionRect.x + player.m_collisionRect.w - 1 > obj.m_collisionRect.x);
         }
     }
     static bool playerCollisionLeft(Player player, const Block obj)
     {
-        if (player.collisionRect.x >= obj.collisionRect.x + obj.collisionRect.w)
+        if (player.m_collisionRect.x >= obj.m_collisionRect.x + obj.m_collisionRect.w)
         {
 
-            return (player.collisionRect.x + player.getXvel() < obj.collisionRect.x + obj.collisionRect.w &&
-                    player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
-                    player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y ||
-                    player.collisionRect.y < 100);
+            return (player.m_collisionRect.x + player.getXvel() < obj.m_collisionRect.x + obj.m_collisionRect.w &&
+                    player.m_collisionRect.y < obj.m_collisionRect.y + obj.m_collisionRect.h - 1 &&
+                    player.m_collisionRect.y + player.m_collisionRect.h - 1 > obj.m_collisionRect.y ||
+                    player.m_collisionRect.y < 100);
         }
     }
 
     static bool playerCollisionRight(Player player, const Block obj)
     {
-        if (player.collisionRect.x + player.collisionRect.w <= obj.collisionRect.x)
+        if (player.m_collisionRect.x + player.m_collisionRect.w <= obj.m_collisionRect.x)
         {
 
-            return (player.collisionRect.x + player.collisionRect.w + player.getXvel() > obj.collisionRect.x &&
-                    player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
-                    player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y);
+            return (player.m_collisionRect.x + player.m_collisionRect.w + player.getXvel() > obj.m_collisionRect.x &&
+                    player.m_collisionRect.y < obj.m_collisionRect.y + obj.m_collisionRect.h - 1 &&
+                    player.m_collisionRect.y + player.m_collisionRect.h - 1 > obj.m_collisionRect.y);
         }
     }
 };

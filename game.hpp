@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string>
 #include "camera.hpp"
+#include "player.hpp"
 
 class Game
 {

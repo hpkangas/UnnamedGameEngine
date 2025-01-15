@@ -4,12 +4,22 @@
 const int SCREENWIDTH = 1920;
 const int SCREENHEIGHT = 1080;
 
-//TODO Think of better names
-enum AnimationState{STILL=0, WALKING=1, PUSHING=2, anims_INAIR=3};
-enum GravityState{GROUNDED=0, INAIR=1, FALLING=2};
+// TODO Think of better names
+enum AnimationState
+{
+    STILL = 0,
+    WALKING = 1,
+    PUSHING = 2,
+    anims_INAIR = 3
+};
+enum GravityState
+{
+    GROUNDED = 0,
+    INAIR = 1,
+    FALLING = 2
+};
 
-
-//TODO should be editable
+// TODO should be editable
 const int FRAMERATE = 60;
 
 const float GRAVITYUNIT = 0.50f;
@@ -20,7 +30,5 @@ const int STILL_FRAME = 256;
 const int WALK_FRAME = 0;
 const int PUSH_FRAME = 640;
 const int INAIR_FRAME = 384;
-
-
 
 #endif

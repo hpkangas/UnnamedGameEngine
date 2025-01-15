@@ -1,43 +1,33 @@
 #include "gameobject.hpp"
 #include "player.hpp"
 #include "texturemanager.hpp"
-#include "physics.cpp"
+#include "physics.hpp"
 #include <iostream>
-#include "camera.hpp"
 
 Player::Player(const char *texturesheet, int x, int y, std::string name)
 {
-    this->name = name;
-    objTexture = TextureManager::LoadTexture(texturesheet);
+    m_name = name;
+    m_objTexture = TextureManager::LoadTexture(texturesheet);
 
-    xpos = x;
-    ypos = y;
-    xvel = 0;
-    yvel = 0;
+    m_xpos = x;
+    m_ypos = y;
+    m_xvel = 0;
+    m_yvel = 0;
 
-    flipType = SDL_FLIP_NONE;
+    m_flipType = SDL_FLIP_NONE;
 
-    sourceRect.h = PLAYER_HEIGHT;
-    sourceRect.w = PLAYER_WIDTH;
-    sourceRect.x = 0;
-    sourceRect.y = STILL_FRAME;
+    m_sourceRect = {0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT};
 
-    destinationRect.x = x;
-    destinationRect.y = y;
-    destinationRect.w = sourceRect.w;
-    destinationRect.h = sourceRect.h;
+    m_destinationRect = {x, y, m_sourceRect.w, m_sourceRect.h};
 
-    collisionRect.h = PLAYER_HEIGHT;
-    // baelog sprite offsets
-    collisionRect.w = PLAYER_WIDTH - 56;
-    collisionRect.x = xpos + 28;
-    collisionRect.y = ypos;
+    // sprite offsets
+    m_collisionRect = {m_xpos + 28, m_ypos, PLAYER_WIDTH - 56, PLAYER_HEIGHT};
 
-    this->animationFrame = 1;
-    WALKING_ANIMATION_FRAMES = 8;
+    m_animationFrame = 1;
+    m_WALKING_ANIMATION_FRAMES = 8;
 
-    playerSpeed = 0.4f;
-    playerSpeedMax = 8.0f;
+    m_playerSpeed = 0.4f;
+    m_playerSpeedMax = 8.0f;
 }
 
 Player::Player() {}
@@ -51,25 +41,22 @@ void Player::update()
     handleMovement();
     handleAnimationState();
 
-    destinationRect.x = xpos;
-    destinationRect.y = ypos;
+    m_destinationRect.x = m_xpos;
+    m_destinationRect.y = m_ypos;
 
     // baelog sprite offsets
-    collisionRect.x = xpos + 28;
-    collisionRect.y = ypos;
+    m_collisionRect.x = m_xpos + 28;
+    m_collisionRect.y = m_ypos;
 }
 
 void Player::render(Camera camera)
 {
-    TextureManager::draw(objTexture, sourceRect, destinationRect, flipType, camera);
+    TextureManager::draw(m_objTexture, m_sourceRect, m_destinationRect, m_flipType, camera);
 }
 
 void Player::playFrame(int x, int y, int w, int h, int frame)
 {
-    sourceRect.h = h;
-    sourceRect.w = w;
-    sourceRect.x = x + w * frame;
-    sourceRect.y = y;
+    m_sourceRect = {x + w * frame, y, w, h};
 }
 
 void Player::moveRight()
@@ -77,10 +64,10 @@ void Player::moveRight()
     if (getAnimationState() != WALKING)
         setAnimationState(WALKING);
 
-    setXvel(getXvel() + playerSpeed);
+    setXvel(getXvel() + m_playerSpeed);
 
-    if (getXvel() > playerSpeedMax)
-        setXvel(playerSpeedMax);
+    if (getXvel() > m_playerSpeedMax)
+        setXvel(m_playerSpeedMax);
 }
 
 void Player::moveLeft()
@@ -88,21 +75,21 @@ void Player::moveLeft()
     if (getAnimationState() != WALKING)
         setAnimationState(WALKING);
 
-    setXvel(getXvel() - playerSpeed);
+    setXvel(getXvel() - m_playerSpeed);
 
-    if (getXvel() < -playerSpeedMax)
-        setXvel(-playerSpeedMax);
+    if (getXvel() < -m_playerSpeedMax)
+        setXvel(-m_playerSpeedMax);
 }
 
 void Player::moveUp()
 {
-    setYvel(-playerSpeed);
+    setYvel(-m_playerSpeed);
 }
 
 // debugging only mostly
 void Player::moveDown()
 {
-    setYvel(playerSpeed);
+    setYvel(m_playerSpeed);
 }
 
 // debugging only mostly
@@ -118,20 +105,20 @@ void Player::stopX()
 // debugging only mostly
 void Player::stopYU()
 {
-    if (this->yvel < 0)
+    if (m_yvel < 0)
     {
-        this->yvel = 0;
-        this->animationState = STILL;
+        m_yvel = 0;
+        m_animationState = STILL;
     }
 }
 
 // debugging only mostly
 void Player::stopYD()
 {
-    if (this->yvel > 0)
+    if (m_yvel > 0)
     {
-        this->yvel = 0;
-        this->animationState = STILL;
+        m_yvel = 0;
+        m_animationState = STILL;
     }
 }
 
@@ -162,12 +149,12 @@ void Player::handleMovement()
 
     if (xvel < 0)
     {
-        flipType = SDL_FLIP_HORIZONTAL;
+        m_flipType = SDL_FLIP_HORIZONTAL;
     }
 
     if (xvel > 0)
     {
-        flipType = SDL_FLIP_NONE;
+        m_flipType = SDL_FLIP_NONE;
     }
 }
 
@@ -187,7 +174,7 @@ void Player::handleHorizontalCollision()
 {
     int xposDif = getXposDifferenceWithCollisionObject();
 
-    if (this->getCollisionLeft())
+    if (getCollisionLeft())
     {
         if (xposDif != 0)
             setXpos(getXpos() - xposDif);
@@ -197,7 +184,7 @@ void Player::handleHorizontalCollision()
             setAnimationState(PUSHING);
     }
 
-    if (this->getCollisionRight())
+    if (getCollisionRight())
     {
         if (xposDif != 0)
             setXpos(getXpos() - xposDif);
@@ -207,7 +194,7 @@ void Player::handleHorizontalCollision()
             setAnimationState(PUSHING);
     }
 
-    if (!this->getCollisionLeft() && !this->getCollisionRight())
+    if (!getCollisionLeft() && !getCollisionRight())
     {
         if (getAnimationState() == PUSHING)
             setAnimationState(STILL);
@@ -245,37 +232,38 @@ void Player::handleAnimationState()
     switch (getAnimationState())
     {
     case STILL:
-        this->animationFrame = 0;
+        m_animationFrame = 0;
         playFrame(0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, 0);
         break;
 
     case WALKING:
-        playFrame(0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, this->animationFrame / WALKING_ANIMATION_FRAMES);
-        this->animationFrame++;
-        if (this->animationFrame / WALKING_ANIMATION_FRAMES > 7)
+        playFrame(0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, m_animationFrame / m_WALKING_ANIMATION_FRAMES);
+        m_animationFrame++;
+        if (m_animationFrame / m_WALKING_ANIMATION_FRAMES > 7)
         {
-            this->animationFrame = 0;
+            m_animationFrame = 0;
         }
         break;
 
     case PUSHING:
         // baelog animaatiossa destination rectille pitäisi olla ehkä joku offset
-        playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, this->animationFrame / 8);
-        this->animationFrame++;
-        if (this->animationFrame / 8 > 7)
+        playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, m_animationFrame / 8);
+        m_animationFrame++;
+        if (m_animationFrame / 8 > 7)
         {
-            this->animationFrame = 0;
+            m_animationFrame = 0;
         }
         break;
 
     case anims_INAIR:
-        playFrame(0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, this->animationFrame / 8);
-        this->animationFrame++;
-        if (this->animationFrame / 8 > 1)
+        playFrame(0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, m_animationFrame / 8);
+        m_animationFrame++;
+        if (m_animationFrame / 8 > 1)
         {
-            this->animationFrame = 0;
+            m_animationFrame = 0;
         }
         break;
+
     default:
         break;
     }

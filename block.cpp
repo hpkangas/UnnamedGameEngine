@@ -1,63 +1,61 @@
 #include "block.hpp"
 #include "texturemanager.hpp"
-#include "camera.hpp"
 
 Block::Block(const char *texturesheet, int x, int y, int dx, int dy)
 {
-    objTexture = TextureManager::LoadTexture(texturesheet);
-    xpos = dx;
-    ypos = dy;
+    m_objTexture = TextureManager::LoadTexture(texturesheet);
+    m_xpos = dx;
+    m_ypos = dy;
 
-    sourceRect.h = 64;
-    sourceRect.w = 128;
-    sourceRect.x = x;
-    sourceRect.y = y;
+    m_sourceRect.h = 64;
+    m_sourceRect.w = 128;
+    m_sourceRect.x = x;
+    m_sourceRect.y = y;
 
-    destinationRect.h = sourceRect.h;
-    destinationRect.w = sourceRect.w;
-    destinationRect.x = xpos;
-    destinationRect.y = ypos;
+    m_destinationRect.h = m_sourceRect.h;
+    m_destinationRect.w = m_sourceRect.w;
+    m_destinationRect.x = m_xpos;
+    m_destinationRect.y = m_ypos;
 
-    collisionRect.h = destinationRect.h;
-    collisionRect.w = destinationRect.w;
-    collisionRect.x = xpos;
-    collisionRect.y = ypos + 4;
+    m_collisionRect.h = m_destinationRect.h;
+    m_collisionRect.w = m_destinationRect.w;
+    m_collisionRect.x = m_xpos;
+    m_collisionRect.y = m_ypos + 4;
 
-    // printCoordinates(sourceRect, destinationRect, collisionRect);
+    // printCoordinates(m_sourceRect, m_destinationRect, m_collisionRect);
 }
 
 // Block::Block(const char *texturesheet, int x, int y, int h, int w, int dx, int dy)
 // {
-//     objTexture = TextureManager::LoadTexture(texturesheet);
-//     sourceRect.h = h;
-//     sourceRect.w = w;
-//     sourceRect.x = x;
-//     sourceRect.y = y;
+//     m_objTexture = TextureManager::LoadTexture(texturesheet);
+//     m_sourceRect.h = h;
+//     m_sourceRect.w = w;
+//     m_sourceRect.x = x;
+//     m_sourceRect.y = y;
 
-//     destinationRect.h = sourceRect.h;
-//     destinationRect.w = sourceRect.w;
-//     destinationRect.x = dx;
-//     destinationRect.y = dy;
+//     m_destinationRect.h = m_sourceRect.h;
+//     m_destinationRect.w = m_sourceRect.w;
+//     m_destinationRect.x = dx;
+//     m_destinationRect.y = dy;
 
-//     collisionRect.h = destinationRect.h;
-//     collisionRect.w = destinationRect.w;
-//     collisionRect.x = destinationRect.x;
-//     collisionRect.y = destinationRect.y;
+//     m_collisionRect.h = m_destinationRect.h;
+//     m_collisionRect.w = m_destinationRect.w;
+//     m_collisionRect.x = m_destinationRect.x;
+//     m_collisionRect.y = m_destinationRect.y;
 
-//     // printCoordinates(sourceRect, destinationRect, collisionRect);
+//     // printCoordinates(m_sourceRect, m_destinationRect, m_collisionRect);
 // }
 
 void Block::update()
 {
-    destinationRect.x = xpos;
-    destinationRect.y = ypos;
+    m_destinationRect.x = m_xpos;
+    m_destinationRect.y = m_ypos;
 
-    // baelog sprite offsets
-    collisionRect.x = xpos;
-    collisionRect.y = ypos;
+    m_collisionRect.x = m_xpos;
+    m_collisionRect.y = m_ypos;
 }
 
 void Block::render(Camera camera)
 {
-    TextureManager::draw(this->objTexture, this->sourceRect, this->destinationRect, camera);
+    TextureManager::draw(this->m_objTexture, this->m_sourceRect, this->m_destinationRect, camera);
 }

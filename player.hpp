@@ -7,29 +7,31 @@
 class Player : public GameObject
 {
 private:
-    int xpos;
-    int ypos;
-    float xvel;
-    float yvel;
+    std::string m_name;
 
-    float playerSpeed;
-    float playerSpeedMax;
+    int m_xpos;
+    int m_ypos;
+    float m_xvel;
+    float m_yvel;
 
-    int yposDif;
-    int xposDif;
+    float m_playerSpeed;
+    float m_playerSpeedMax;
 
-    bool collisionUp = false;
-    bool collisionDown = false;
-    bool collisionLeft = false;
-    bool collisionRight = false;
+    int m_yposDif;
+    int m_xposDif;
 
-    GravityState gravityState;
-    AnimationState animationState;
-    int animationFrame;
-    int WALKING_ANIMATION_FRAMES;
+    bool m_collisionUp = false;
+    bool m_collisionDown = false;
+    bool m_collisionLeft = false;
+    bool m_collisionRight = false;
 
-    SDL_RendererFlip flipType;
-    SDL_Texture *objTexture;
+    GravityState m_gravityState;
+    AnimationState m_animationState;
+    int m_animationFrame;
+    int m_WALKING_ANIMATION_FRAMES;
+
+    SDL_RendererFlip m_flipType;
+    SDL_Texture *m_objTexture;
 
     void gravity();
     void handleMovement();
@@ -43,9 +45,9 @@ public:
     Player(const char *texturesheet, int x, int y, std::string name);
     Player();
     ~Player();
-    std::string name;
 
-    SDL_Rect sourceRect, destinationRect, collisionRect;
+
+    SDL_Rect m_sourceRect, m_destinationRect, m_collisionRect;
 
     void playFrame(int x, int y, int w, int h, int frame);
 
@@ -60,124 +62,128 @@ public:
     void update();
     void render(Camera camera);
 
-    int getXpos()
+    const int getXpos()
     {
-        return this->xpos;
+        return m_xpos;
     }
 
-    int getYpos()
+    const int getYpos()
     {
-        return this->ypos;
+        return m_ypos;
     }
 
-    float getXvel()
+    const float getXvel()
     {
-        return this->xvel;
+        return m_xvel;
     }
 
-    float getYvel()
+    const float getYvel()
     {
-        return this->yvel;
+        return m_yvel;
     }
 
-    int getXposDifferenceWithCollisionObject()
+    const int getXposDifferenceWithCollisionObject()
     {
-        return xposDif;
+        return m_xposDif;
     }
 
-    int getYposDifferenceWithCollisionObject()
+    const int getYposDifferenceWithCollisionObject()
     {
-        return yposDif;
+        return m_yposDif;
     }
 
     void setXpos(int xpos)
     {
-        this->xpos = xpos;
+        m_xpos = xpos;
     }
 
     void setYpos(int ypos)
     {
-        this->ypos = ypos;
+        m_ypos = ypos;
     }
 
     void setXvel(float xvel)
     {
-        this->xvel = xvel;
+        m_xvel = xvel;
     }
 
     void setYvel(float yvel)
     {
-        this->yvel = yvel;
+        m_yvel = yvel;
     }
 
-    bool getCollisionDown()
+    const bool getCollisionDown()
     {
-        return this->collisionDown;
+        return m_collisionDown;
     }
 
-    bool getCollisionUp()
+    const bool getCollisionUp()
     {
-        return this->collisionUp;
+        return m_collisionUp;
     }
 
-    bool getCollisionRight()
+    const bool getCollisionRight()
     {
-        return this->collisionRight;
+        return m_collisionRight;
     }
 
-    bool getCollisionLeft()
+    const bool getCollisionLeft()
     {
-        return this->collisionLeft;
+        return m_collisionLeft;
     }
 
     void setCollisionDown(bool collision)
     {
-        this->collisionDown = collision;
+        m_collisionDown = collision;
     }
 
     void setCollisionUp(bool collision)
     {
-        this->collisionUp = collision;
+        m_collisionUp = collision;
     }
 
     void setCollisionRight(bool collision)
     {
-        this->collisionRight = collision;
+        m_collisionRight = collision;
     }
 
     void setCollisionLeft(bool collision)
     {
-        this->collisionLeft = collision;
+        m_collisionLeft = collision;
     }
 
     void setXposDifferenceWithCollisionObject(int xposDif)
     {
-        this->xposDif = xposDif;
+        m_xposDif = xposDif;
     }
 
     void setYposDifferenceWithCollisionObject(int yposDif)
     {
-        this->yposDif = yposDif;
+        m_yposDif = yposDif;
     }
 
-    GravityState getGravityState()
+    const GravityState getGravityState()
     {
-        return this->gravityState;
+        return m_gravityState;
     }
 
     void setGravityState(GravityState gs)
     {
-        this->gravityState = gs;
+        m_gravityState = gs;
     }
 
-    AnimationState getAnimationState()
+    const AnimationState getAnimationState()
     {
-        return this->animationState;
+        return m_animationState;
     }
 
     void setAnimationState(AnimationState as)
     {
-        this->animationState = as;
+        m_animationState = as;
+    }
+
+    const std::string getName(){
+        return m_name;
     }
 };
 

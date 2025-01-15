@@ -9,32 +9,32 @@ public:
     Block(const char *texturesheet, int x, int y, int dx, int dy);
     Block(const char *texturesheet, int x, int y, int h, int w, int dx, int dy);
 
-    int xpos;
-    int ypos;
+    int m_xpos;
+    int m_ypos;
 
     void update();
     void render(Camera camera);
-    SDL_Texture *objTexture;
-    SDL_Rect sourceRect, destinationRect, collisionRect;
+    SDL_Texture *m_objTexture;
+    SDL_Rect sourceRect, m_destinationRect, m_collisionRect;
 
-    int getXpos()
+    const int getXpos()
     {
-        return this->xpos;
+        return m_xpos;
     }
 
-    int getYpos()
+    const int getYpos()
     {
-        return this->ypos;
+        return m_ypos;
     }
 
     void setXpos(int xpos)
     {
-        this->xpos = xpos;
+        m_xpos = xpos;
     }
 
     void setYpos(int ypos)
     {
-        this->ypos = ypos;
+        m_ypos = ypos;
     }
 };
 
