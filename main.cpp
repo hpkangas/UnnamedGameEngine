@@ -1,12 +1,12 @@
 #include "game.hpp"
 #include "constants.hpp"
 
-Game *game = nullptr;
-
 int main(int argc, char const *argv[])
 {
-    Uint64 ticks = 0;
+    Game *game = nullptr;
     game = new Game();
+    
+    Uint64 ticks = 0;
 
     game->init("Totally not Lost Vikings", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREENWIDTH, SCREENHEIGHT, false);
     // SDL_Delay mukaan?

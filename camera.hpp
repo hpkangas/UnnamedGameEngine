@@ -10,29 +10,11 @@ class
 public:
     Camera();
     SDL_Rect m_position;
+    //offset doesn't need to be sdl_rect. vector from texturemanager? --> utils?
     SDL_Rect m_offset;
 
-    void updateCameraPosition();
-
-    SDL_Rect getPos()
-    {
-        return m_position;
-    }
-
-    SDL_Rect getOffset()
-    {
-        return m_offset;
-    }
-
-    void setPos(SDL_Rect rect)
-    {
-        m_position = rect;
-    }
-
-    void setOffset(SDL_Rect rect)
-    {
-        m_offset = rect;
-    }
+    void updatePositionRelativeToScreenAndOffset();
+    void updateOffsetRelativeToScreen(int offsetx, int offsety);
 };
 
 #endif

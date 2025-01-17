@@ -1,6 +1,7 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+//TODO should be editable 
 const int SCREENWIDTH = 1920;
 const int SCREENHEIGHT = 1080;
 
@@ -24,6 +25,8 @@ const int FRAMERATE = 60;
 
 const float GRAVITYUNIT = 0.50f;
 const float MAX_GRAVITY = 11.0;
+
+//TODO player character specific, not global constants
 const int PLAYER_HEIGHT = 128;
 const int PLAYER_WIDTH = 128;
 const int STILL_FRAME = 256;

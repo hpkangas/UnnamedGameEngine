@@ -20,26 +20,26 @@ public:
     void render();
     void clean();
 
-    int getCurrentTime();
-
-    Uint32 currentTime;
     bool running() { return isRunning; }
 
     static SDL_Renderer *renderer;
     static TTF_Font *gFont;
 
+private:
+    bool isRunning;
+    static SDL_Window *window;
     Camera camera;
 
-private:
-    int count = 0;
-    bool isRunning;
-    SDL_Window *window;
+    bool inputR = false;
+    bool inputL = false;
 
-    void checkPlayerMovementCollisions();
+    bool playerCollisionUp = false;
+
     void handleInput();
+    void checkPlayerMovementCollisions();
+    void changePlayerCharacter();
     void centerCameraToCharacter(Player *player);
     void updateCamera(Player *player);
-    void changePlayerCharacter();
 };
 
 #endif /* GAME_HPP */

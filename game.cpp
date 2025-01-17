@@ -9,9 +9,12 @@
 #include "physics.hpp"
 #include "camera.hpp"
 
+//TODO I think these should be defined else where because they are called as Game::something (don't like it)
 SDL_Renderer *Game::renderer = nullptr;
 TTF_Font *Game::gFont = nullptr;
+SDL_Window *Game::window = nullptr;
 
+//TODO these should be in somekind of level information class
 std::vector<GameObject *> objects;
 std::vector<Block *> blocks;
 Player *player1 = nullptr;
@@ -33,11 +36,6 @@ Block *block8 = nullptr;
 Block *block9 = nullptr;
 Block *block10 = nullptr;
 
-bool inputR = false;
-bool inputL = false;
-
-bool playerCollisionUp = false;
-
 void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bool fullscreen)
 {
     int flags = 0;
@@ -50,12 +48,12 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
         TTF_Init();
         gFont = TTF_OpenFont("font.ttf", 32);
         std::cout << "Subsystems initialised \n";
-        window = SDL_CreateWindow(title, xpos, ypos, width, HEIGHT, flags);
-        if (window)
+        Game::window = SDL_CreateWindow(title, xpos, ypos, width, HEIGHT, flags);
+        if (Game::window)
         {
             std::cout << "Window created\n";
         }
-        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        renderer = SDL_CreateRenderer(Game::window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         if (renderer)
         {
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -147,7 +145,6 @@ void Game::handleEvents()
                 isRunning = false;
                 break;
             case SDLK_UP:
-
                 selectedPlayer->moveUp();
                 break;
             case SDLK_DOWN:
@@ -169,13 +166,12 @@ void Game::handleEvents()
                 selectedPlayer->setXpos(0);
                 selectedPlayer->setYpos(0);
                 selectedPlayer->setGravityState(INAIR);
-                camera.setPos({SCREENWIDTH * 1 / 4, 0, SCREENWIDTH * 3 / 4, 0});
-                camera.setOffset({0, 0, 0, 0});
+                camera.m_position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
+                camera.m_offset = {0, 0, 0, 0};
                 break;
             case SDLK_c:
                 changePlayerCharacter();
                 break;
-
             default:
                 break;
             }
@@ -210,7 +206,6 @@ void Game::update()
 
     handleInput();
 
-
     checkPlayerMovementCollisions();
 
     for (auto &object : objects)
@@ -234,7 +229,7 @@ void Game::render()
 
 void Game::clean()
 {
-    SDL_DestroyWindow(window);
+    SDL_DestroyWindow(Game::window);
     SDL_DestroyRenderer(renderer);
     TTF_CloseFont(gFont);
     TTF_Quit();
@@ -242,6 +237,7 @@ void Game::clean()
     std::cout << "Game cleaned\n";
 }
 
+//TODO
 void Game::changePlayerCharacter()
 {
     if (selectedPlayer->getName() == "Erik")
@@ -269,11 +265,22 @@ void Game::changePlayerCharacter()
     }
 }
 
-int Game::getCurrentTime()
+void Game::handleInput()
 {
-    // get time elapsed since game was launched, required for timing
-    currentTime = SDL_GetTicks();
-    return currentTime;
+    if (inputR && !inputL)
+    {
+        selectedPlayer->moveRight();
+    }
+
+    if (inputL && !inputR)
+    {
+        selectedPlayer->moveLeft();
+    }
+
+    if (!inputL && !inputR || inputL && inputR)
+    {
+        selectedPlayer->stopX();
+    }
 }
 
 void Game::checkPlayerMovementCollisions()
@@ -336,31 +343,11 @@ void Game::checkPlayerMovementCollisions()
     }
 }
 
-void Game::handleInput()
-{
-    if (inputR && !inputL)
-    {
-        selectedPlayer->moveRight();
-    }
-
-    if (inputL && !inputR)
-    {
-        selectedPlayer->moveLeft();
-    }
-
-    if (!inputL && !inputR || inputL && inputR)
-    {
-        selectedPlayer->stopX();
-    }
-}
-
 void Game::centerCameraToCharacter(Player *player)
 {
    
-    camera.m_offset.x = player->getXpos() - SCREENWIDTH * 1 / 2;
-    camera.m_offset.y = player->getYpos() - SCREENHEIGHT * 1 / 2;
-
-    camera.updateCameraPosition();
+    camera.updateOffsetRelativeToScreen(player->getXpos(), player->getYpos());
+    camera.updatePositionRelativeToScreenAndOffset();
 }
 
 void Game::updateCamera(Player *player)
@@ -376,5 +363,5 @@ void Game::updateCamera(Player *player)
     {
         camera.m_offset.y += player->getYvel();
     }
-    camera.updateCameraPosition();
+    camera.updatePositionRelativeToScreenAndOffset();
 }

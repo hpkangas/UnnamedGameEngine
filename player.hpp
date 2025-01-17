@@ -22,10 +22,11 @@ private:
     bool m_collisionLeft = false;
     bool m_collisionRight = false;
 
-    GravityState m_gravityState;
-    AnimationState m_animationState;
     int m_animationFrame;
     int m_WALKING_ANIMATION_FRAMES;
+    
+    GravityState m_gravityState;
+    AnimationState m_animationState;
 
     SDL_RendererFlip m_flipType;
     SDL_Texture *m_objTexture;

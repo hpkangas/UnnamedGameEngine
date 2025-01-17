@@ -1,6 +1,7 @@
 #include "block.hpp"
 #include "texturemanager.hpp"
 
+//each type of terrain should probably be its own class with only position as its parameters
 Block::Block(const char *texturesheet, int x, int y, int dx, int dy)
 {
     m_objTexture = TextureManager::LoadTexture(texturesheet);

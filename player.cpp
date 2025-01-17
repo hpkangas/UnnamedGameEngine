@@ -8,7 +8,7 @@ Player::Player(const char *texturesheet, int x, int y, std::string name)
 {
     m_name = name;
     m_objTexture = TextureManager::LoadTexture(texturesheet);
-    m_position = {x,y};
+    m_position = {x, y};
 
     m_flipType = SDL_FLIP_NONE;
 
@@ -16,7 +16,7 @@ Player::Player(const char *texturesheet, int x, int y, std::string name)
 
     m_destinationRect = {x, y, m_sourceRect.w, m_sourceRect.h};
 
-    // sprite offsets
+    // TODO sprite offsets. should be defined inside the specific character classes (once decided on)
     m_collisionRect = {m_position.x + 28, m_position.y, PLAYER_WIDTH - 56, PLAYER_HEIGHT};
 
     m_animationFrame = 1;
@@ -40,7 +40,7 @@ void Player::update()
     m_destinationRect.x = m_position.x;
     m_destinationRect.y = m_position.y;
 
-    // baelog sprite offsets
+    // TODO sprite offsets. should be defined inside the specific character classes (once decided on)
     m_collisionRect.x = m_position.x + 28;
     m_collisionRect.y = m_position.y;
 }
