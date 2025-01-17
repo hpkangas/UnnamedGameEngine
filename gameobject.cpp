@@ -12,7 +12,8 @@ void GameObject::update() {}
 
 void GameObject::render(Camera camera)
 {
-    TextureManager::draw(m_objTexture, m_sourceRect, m_destinationRect, camera);
+    RenderInfo info = {m_objTexture, m_sourceRect, m_destinationRect, SDL_FLIP_NONE, camera};
+    TextureManager::draw(info);
 }
 
 Background::Background(const char *texturesheet, int x, int y, int sizew, int sizeh)

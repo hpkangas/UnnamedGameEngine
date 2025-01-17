@@ -51,5 +51,6 @@ void Block::update()
 
 void Block::render(Camera camera)
 {
-    TextureManager::draw(m_objTexture, m_sourceRect, m_destinationRect, camera);
+    RenderInfo info = {m_objTexture, m_sourceRect, m_destinationRect, SDL_FLIP_NONE, camera};
+    TextureManager::draw(info);
 }

@@ -47,7 +47,8 @@ void Player::update()
 
 void Player::render(Camera camera)
 {
-    TextureManager::draw(m_objTexture, m_sourceRect, m_destinationRect, m_flipType, camera);
+    RenderInfo info = {m_objTexture, m_sourceRect, m_destinationRect, m_flipType, camera};
+    TextureManager::draw(info);
 }
 
 void Player::playFrame(int x, int y, int w, int h, int frame)
