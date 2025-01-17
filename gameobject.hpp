@@ -5,43 +5,46 @@
 #include "camera.hpp"
 #include <string>
 
+struct Position
+{
+    int x, y;
+};
+
+struct Velocity
+{
+    float x, y;
+};
+
 class GameObject
 {
 public:
-    GameObject(const char *texturesheet, int x, int y, int m_xvel, int m_yvel, int sizew, int sizeh);
-    GameObject(const char *texturesheet, int x, int y, int sizew, int sizeh);
     GameObject();
     ~GameObject();
 
     virtual void update();
     virtual void render(Camera camera);
 
-    int m_xpos;
-    int m_ypos;
-
-    int m_xvel;
-    int m_yvel;
-
-    void printCoordinates(SDL_Rect sourceRect, SDL_Rect destinationRect, SDL_Rect collisionRect);
+    Position m_position = {0, 0};
+    Velocity m_velocity = {0, 0};
 
     const virtual int getXpos()
     {
-        return m_xpos;
+        return m_position.x;
     }
 
     const virtual int getYpos()
     {
-        return m_ypos;
+        return m_position.y;
     }
 
     virtual void setXpos(int xpos)
     {
-        m_xpos = xpos;
+        m_position.x = xpos;
     }
 
     virtual void setYpos(int ypos)
     {
-        m_ypos = ypos;
+        m_position.y = ypos;
     }
 
     SDL_Texture *m_objTexture;
@@ -53,7 +56,7 @@ private:
 class Background : public GameObject
 {
 public:
-    Background(const char *texturesheet, int x, int y, int sizew, int sizeh, int xvelocity);
+    Background(const char *texturesheet, int x, int y, int sizew, int sizeh);
     void update();
 };
 

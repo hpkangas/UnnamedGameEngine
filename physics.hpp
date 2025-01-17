@@ -84,7 +84,7 @@ struct Physics
         {
 
             return (player.m_collisionRect.y + player.getYvel() <= obj.m_collisionRect.y + obj.m_collisionRect.h &&
-                    player.m_collisionRect.x < obj.m_collisionRect.x + obj.m_collisionRect.w &&
+                    player.m_collisionRect.x < obj.m_collisionRect.x + obj.m_collisionRect.w -1 &&
                     player.m_collisionRect.x + player.m_collisionRect.w - 1 > obj.m_collisionRect.x);
         }
     }

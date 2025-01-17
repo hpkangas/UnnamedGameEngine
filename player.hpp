@@ -8,11 +8,8 @@ class Player : public GameObject
 {
 private:
     std::string m_name;
-
-    int m_xpos;
-    int m_ypos;
-    float m_xvel;
-    float m_yvel;
+    Position m_position;
+    Velocity m_velocity;
 
     float m_playerSpeed;
     float m_playerSpeedMax;
@@ -46,7 +43,6 @@ public:
     Player();
     ~Player();
 
-
     SDL_Rect m_sourceRect, m_destinationRect, m_collisionRect;
 
     void playFrame(int x, int y, int w, int h, int frame);
@@ -64,22 +60,42 @@ public:
 
     const int getXpos()
     {
-        return m_xpos;
+        return m_position.x;
     }
 
     const int getYpos()
     {
-        return m_ypos;
+        return m_position.y;
     }
 
     const float getXvel()
     {
-        return m_xvel;
+        return m_velocity.x;
     }
 
     const float getYvel()
     {
-        return m_yvel;
+        return m_velocity.y;
+    }
+
+    void setXpos(int xpos)
+    {
+        m_position.x = xpos;
+    }
+
+    void setYpos(int ypos)
+    {
+        m_position.y = ypos;
+    }
+
+    void setXvel(float xvel)
+    {
+        m_velocity.x = xvel;
+    }
+
+    void setYvel(float yvel)
+    {
+        m_velocity.y = yvel;
     }
 
     const int getXposDifferenceWithCollisionObject()
@@ -90,26 +106,6 @@ public:
     const int getYposDifferenceWithCollisionObject()
     {
         return m_yposDif;
-    }
-
-    void setXpos(int xpos)
-    {
-        m_xpos = xpos;
-    }
-
-    void setYpos(int ypos)
-    {
-        m_ypos = ypos;
-    }
-
-    void setXvel(float xvel)
-    {
-        m_xvel = xvel;
-    }
-
-    void setYvel(float yvel)
-    {
-        m_yvel = yvel;
     }
 
     const bool getCollisionDown()
@@ -167,9 +163,9 @@ public:
         return m_gravityState;
     }
 
-    void setGravityState(GravityState gs)
+    void setGravityState(GravityState gravityState)
     {
-        m_gravityState = gs;
+        m_gravityState = gravityState;
     }
 
     const AnimationState getAnimationState()
@@ -177,16 +173,19 @@ public:
         return m_animationState;
     }
 
-    void setAnimationState(AnimationState as)
+    void setAnimationState(AnimationState animationState)
     {
-        m_animationState = as;
+        m_animationState = animationState;
     }
 
-    const std::string getName(){
+    const std::string getName()
+    {
         return m_name;
     }
 };
 
+
+//totally not final names
 class Baelog : public Player
 {
 public:

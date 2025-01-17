@@ -9,8 +9,8 @@ public:
     Block(const char *texturesheet, int x, int y, int dx, int dy);
     Block(const char *texturesheet, int x, int y, int h, int w, int dx, int dy);
 
-    int m_xpos;
-    int m_ypos;
+    Position m_position = {0,0};
+    Velocity m_velocity = {0,0};
 
     void update();
     void render(Camera camera);
@@ -19,22 +19,22 @@ public:
 
     const int getXpos()
     {
-        return m_xpos;
+        return m_position.x;
     }
 
     const int getYpos()
     {
-        return m_ypos;
+        return m_position.y;
     }
 
     void setXpos(int xpos)
     {
-        m_xpos = xpos;
+        m_position.x = xpos;
     }
 
     void setYpos(int ypos)
     {
-        m_ypos = ypos;
+        m_position.y = ypos;
     }
 };
 

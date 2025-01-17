@@ -4,8 +4,7 @@
 Block::Block(const char *texturesheet, int x, int y, int dx, int dy)
 {
     m_objTexture = TextureManager::LoadTexture(texturesheet);
-    m_xpos = dx;
-    m_ypos = dy;
+    m_position = {dx, dy};
 
     m_sourceRect.h = 64;
     m_sourceRect.w = 128;
@@ -14,15 +13,13 @@ Block::Block(const char *texturesheet, int x, int y, int dx, int dy)
 
     m_destinationRect.h = m_sourceRect.h;
     m_destinationRect.w = m_sourceRect.w;
-    m_destinationRect.x = m_xpos;
-    m_destinationRect.y = m_ypos;
+    m_destinationRect.x = m_position.x;
+    m_destinationRect.y = m_position.y;
 
     m_collisionRect.h = m_destinationRect.h;
     m_collisionRect.w = m_destinationRect.w;
-    m_collisionRect.x = m_xpos;
-    m_collisionRect.y = m_ypos + 4;
-
-    // printCoordinates(m_sourceRect, m_destinationRect, m_collisionRect);
+    m_collisionRect.x = m_position.x;
+    m_collisionRect.y = m_position.y + 4;
 }
 
 // Block::Block(const char *texturesheet, int x, int y, int h, int w, int dx, int dy)
@@ -48,14 +45,11 @@ Block::Block(const char *texturesheet, int x, int y, int dx, int dy)
 
 void Block::update()
 {
-    m_destinationRect.x = m_xpos;
-    m_destinationRect.y = m_ypos;
-
-    m_collisionRect.x = m_xpos;
-    m_collisionRect.y = m_ypos;
+    m_destinationRect.x = m_collisionRect.x = m_position.x;
+    m_destinationRect.y = m_collisionRect.y = m_position.y;
 }
 
 void Block::render(Camera camera)
 {
-    TextureManager::draw(this->m_objTexture, this->m_sourceRect, this->m_destinationRect, camera);
+    TextureManager::draw(m_objTexture, m_sourceRect, m_destinationRect, camera);
 }

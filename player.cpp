@@ -8,11 +8,7 @@ Player::Player(const char *texturesheet, int x, int y, std::string name)
 {
     m_name = name;
     m_objTexture = TextureManager::LoadTexture(texturesheet);
-
-    m_xpos = x;
-    m_ypos = y;
-    m_xvel = 0;
-    m_yvel = 0;
+    m_position = {x,y};
 
     m_flipType = SDL_FLIP_NONE;
 
@@ -21,7 +17,7 @@ Player::Player(const char *texturesheet, int x, int y, std::string name)
     m_destinationRect = {x, y, m_sourceRect.w, m_sourceRect.h};
 
     // sprite offsets
-    m_collisionRect = {m_xpos + 28, m_ypos, PLAYER_WIDTH - 56, PLAYER_HEIGHT};
+    m_collisionRect = {m_position.x + 28, m_position.y, PLAYER_WIDTH - 56, PLAYER_HEIGHT};
 
     m_animationFrame = 1;
     m_WALKING_ANIMATION_FRAMES = 8;
@@ -41,12 +37,12 @@ void Player::update()
     handleMovement();
     handleAnimationState();
 
-    m_destinationRect.x = m_xpos;
-    m_destinationRect.y = m_ypos;
+    m_destinationRect.x = m_position.x;
+    m_destinationRect.y = m_position.y;
 
     // baelog sprite offsets
-    m_collisionRect.x = m_xpos + 28;
-    m_collisionRect.y = m_ypos;
+    m_collisionRect.x = m_position.x + 28;
+    m_collisionRect.y = m_position.y;
 }
 
 void Player::render(Camera camera)
@@ -105,9 +101,9 @@ void Player::stopX()
 // debugging only mostly
 void Player::stopYU()
 {
-    if (m_yvel < 0)
+    if (m_velocity.y < 0)
     {
-        m_yvel = 0;
+        m_velocity.y = 0;
         m_animationState = STILL;
     }
 }
@@ -115,9 +111,9 @@ void Player::stopYU()
 // debugging only mostly
 void Player::stopYD()
 {
-    if (m_yvel > 0)
+    if (m_velocity.y > 0)
     {
-        m_yvel = 0;
+        m_velocity.y = 0;
         m_animationState = STILL;
     }
 }
