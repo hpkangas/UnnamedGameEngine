@@ -1,2 +1,2 @@
 #!/bin/bash
-g++ -g *.cpp -w -lSDL2 -lSDL2_image -lSDL2_ttf -o ./bin/run
+g++ *.cpp -Wall -lSDL2 -lSDL2_image -lSDL2_ttf -o ./bin/run

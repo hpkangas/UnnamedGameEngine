@@ -1,23 +1,21 @@
 #pragma once
 #ifndef TEXTUREMANAGER_HPP
 #define TEXTUREMANAGER_HPP
-#include <SDL2/SDL_image.h>
 #include "camera.hpp"
-struct RenderInfo
-{
-    SDL_Texture *objTexture;
-    SDL_Rect sourceRect;
-    SDL_Rect destinationRect;
-    SDL_RendererFlip flip;
-    Camera camera;
+#include <SDL2/SDL_image.h>
+struct RenderInfo {
+  SDL_Texture *objTexture;
+  SDL_Rect sourceRect;
+  SDL_Rect destinationRect;
+  SDL_RendererFlip flip;
+  Camera camera;
 };
 
-class TextureManager
-{
+class TextureManager {
 
 public:
-    static SDL_Texture *LoadTexture(const char *fileName);
-    static void draw(RenderInfo RenderInfo);
+  static SDL_Texture *LoadTexture(const char *fileName);
+  static void draw(RenderInfo RenderInfo);
 };
 
 #endif
