@@ -4,6 +4,8 @@
 #include "gameobject.hpp"
 #include "physics.hpp"
 #include "player.hpp"
+#include "texturemanager.hpp"
+#include <SDL2/SDL_render.h>
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
@@ -63,28 +65,28 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
 
   Camera camera;
 
-  player1 = new Erik("assets/baleog.png", 80, 80, "Erik");
-  player2 = new Olaf("assets/baleog.png", 180, 80, "Olaf");
-  player3 = new Baelog("assets/baleog.png", 280, 80, "Baelog");
+  SDL_Texture *playerTexture = TextureManager::LoadTexture("assets/baleog.png");
+  player1 = new Erik(playerTexture, 80, 80, "Erik");
+  player2 = new Olaf(playerTexture, 180, 80, "Olaf");
+  player3 = new Baelog(playerTexture, 280, 80, "Baelog");
   selectedPlayer = player1;
 
   GameText *text = new GameText("TEST TEXT", 200, 200);
 
-  block01 = new Block("assets/tiles.png", 0, 0, -128, 428);
-  block0 = new Block("assets/tiles.png", 0, 0, 0, 428);
-  block1 = new Block("assets/tiles.png", 0, 0, 128, 428);
-  block2 = new Block("assets/tiles.png", 128, 0, 128 * 2, 428);
-  block3 = new Block("assets/tiles.png", 256, 0, 128 * 3, 428);
+  SDL_Texture *blockTexture = TextureManager::LoadTexture("assets/tiles.png");
 
-  block4 = new Block("assets/tiles.png", 0, 0, 128 * 4, 428 + 128);
-  block5 = new Block("assets/tiles.png", 128, 0, 128 * 5, 428 + 128);
-  block7 = new Block("assets/tiles.png", 256, 0, 128 * 6, 400);
-
-  block8 = new Block("assets/tiles.png", 0, 0, 128 * 7, 428 + 128 * 2);
-  block9 = new Block("assets/tiles.png", 128, 0, 128 * 8, 428 + 128 * 2);
-  block6 = new Block("assets/tiles.png", 256, 0, 128 * 9, 428 + 128 * 2);
-
-  block10 = new Block("assets/tiles.png", 128, 0, 128 * 12, 428 + 128 * 4);
+  block01= new Block(blockTexture, 0, 0, -128, 428);
+  block0 = new Block(blockTexture, 0, 0, 0, 428);
+  block1 = new Block(blockTexture, 0, 0, 128, 428);
+  block2 = new Block(blockTexture, 128, 0, 128 * 2, 428);
+  block3 = new Block(blockTexture, 256, 0, 128 * 3, 428);
+  block4 = new Block(blockTexture, 0, 0, 128 * 4, 428 + 128);
+  block5 = new Block(blockTexture, 128, 0, 128 * 5, 428 + 128);
+  block7 = new Block(blockTexture, 256, 0, 128 * 6, 400);
+  block8 = new Block(blockTexture, 0, 0, 128 * 7, 428 + 128 * 2);
+  block9 = new Block(blockTexture, 128, 0, 128 * 8, 428 + 128 * 2);
+  block6 = new Block(blockTexture, 256, 0, 128 * 9, 428 + 128 * 2);
+  block10= new Block(blockTexture, 128, 0, 128 * 12, 428 + 128 * 4);
   blocks.emplace_back(block01);
   blocks.emplace_back(block0);
   blocks.emplace_back(block1);
@@ -200,7 +202,7 @@ void Game::update() {
     object->update();
   }
 
-  updateCamera(selectedPlayer);
+  updateCamera(*selectedPlayer);
 }
 
 void Game::render() {
@@ -226,21 +228,21 @@ void Game::changePlayerCharacter() {
   if (selectedPlayer->getName() == "Erik") {
     selectedPlayer->stopX();
     selectedPlayer = player2;
-    centerCameraToCharacter(selectedPlayer);
+    centerCameraToCharacter(*selectedPlayer);
     return;
   }
 
   if (selectedPlayer->getName() == "Olaf") {
     selectedPlayer->stopX();
     selectedPlayer = player3;
-    centerCameraToCharacter(selectedPlayer);
+    centerCameraToCharacter(*selectedPlayer);
     return;
   }
 
   if (selectedPlayer->getName() == "Baelog") {
     selectedPlayer->stopX();
     selectedPlayer = player1;
-    centerCameraToCharacter(selectedPlayer);
+    centerCameraToCharacter(*selectedPlayer);
     return;
   }
 }
@@ -316,21 +318,21 @@ void Game::checkPlayerMovementCollisions() {
   }
 }
 
-void Game::centerCameraToCharacter(Player *player) {
+void Game::centerCameraToCharacter(Player &player) {
 
-  camera.updateOffsetRelativeToScreen(player->getXpos(), player->getYpos());
+  camera.updateOffsetRelativeToScreen(player.getXpos(), player.getYpos());
   camera.updatePositionRelativeToScreenAndOffset();
 }
 
-void Game::updateCamera(Player *player) {
-  if ((player->getXpos() < camera.m_position.x && player->getXvel() < 0) ||
-      (player->getXpos() + PLAYER_WIDTH > camera.m_position.w && player->getXvel() > 0)) {
-    camera.m_offset.x += player->getXvel();
+void Game::updateCamera(Player &player) {
+  if ((player.getXpos() < camera.m_position.x && player.getXvel() < 0) ||
+      (player.getXpos() + PLAYER_WIDTH > camera.m_position.w && player.getXvel() > 0)) {
+    camera.m_offset.x += player.getXvel();
   }
 
-  if ((player->getYpos() < camera.m_position.y && player->getYvel() < 0) ||
-      (player->getYpos() + PLAYER_HEIGHT > camera.m_position.h && player->getYvel() > 0)) {
-    camera.m_offset.y += player->getYvel();
+  if ((player.getYpos() < camera.m_position.y && player.getYvel() < 0) ||
+      (player.getYpos() + PLAYER_HEIGHT > camera.m_position.h && player.getYvel() > 0)) {
+    camera.m_offset.y += player.getYvel();
   }
   camera.updatePositionRelativeToScreenAndOffset();
 }

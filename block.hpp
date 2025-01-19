@@ -5,16 +5,17 @@
 
 class Block : public GameObject {
 public:
-  Block(const char *texturesheet, int x, int y, int dx, int dy);
+  Block(SDL_Texture *texture, int x, int y, int dx, int dy);
   Block(const char *texturesheet, int x, int y, int h, int w, int dx, int dy);
 
   Position m_position = {0, 0};
   Velocity m_velocity = {0, 0};
 
-  void update();
-  void render(Camera camera);
   SDL_Texture *m_objTexture;
   SDL_Rect sourceRect, m_destinationRect, m_collisionRect;
+  
+  void update();
+  void render(Camera camera);
 
   const int getXpos() { return m_position.x; }
 

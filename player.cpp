@@ -1,10 +1,12 @@
 #include "player.hpp"
+#include "constants.hpp"
 #include "gameobject.hpp"
 #include "texturemanager.hpp"
+#include <SDL2/SDL_render.h>
 
-Player::Player(const char *texturesheet, int x, int y, std::string name) {
+Player::Player(SDL_Texture *texture, int x, int y, std::string name) {
   m_name = name;
-  m_objTexture = TextureManager::LoadTexture(texturesheet);
+  m_objTexture = texture;
   m_position = {x, y};
 
   m_flipType = SDL_FLIP_NONE;
@@ -22,6 +24,12 @@ Player::Player(const char *texturesheet, int x, int y, std::string name) {
 
   m_playerSpeed = 0.4f;
   m_playerSpeedMax = 8.0f;
+  m_xposDif = 0;
+  m_yposDif = 0;
+
+  m_animationState = STILL;
+  m_gravityState = GROUNDED;
+  m_flipType = SDL_FLIP_NONE;
 }
 
 Player::Player() {}
@@ -108,10 +116,10 @@ void Player::gravity() {
 }
 
 void Player::handleMovement() {
-  float xvel = getXvel();
-  float yvel = getYvel();
-  int xpos = getXpos();
-  int ypos = getYpos();
+  const float xvel = getXvel();
+  const float yvel = getYvel();
+  const int xpos = getXpos();
+  const int ypos = getYpos();
 
   if (!(xvel == 0)) {
     setXpos(xpos + xvel);
@@ -132,6 +140,9 @@ void Player::handleMovement() {
 
 void Player::handleDownCollision() {
   if (getCollisionDown()) {
+    if (getYposDifferenceWithCollisionObject() != 0)
+      setYpos(getYpos() - getYposDifferenceWithCollisionObject());
+    setYvel(0);
     setGravityState(GROUNDED);
   } else {
     setGravityState(INAIR);
@@ -139,31 +150,24 @@ void Player::handleDownCollision() {
 }
 
 void Player::handleHorizontalCollision() {
-  int xposDif = getXposDifferenceWithCollisionObject();
-
-  if (getCollisionLeft()) {
-    if (xposDif != 0)
-      setXpos(getXpos() - xposDif);
-    setXvel(0);
-
-    if (getGravityState() == GROUNDED)
-      setAnimationState(PUSHING);
-  }
-
-  if (getCollisionRight()) {
-    if (xposDif != 0)
-      setXpos(getXpos() - xposDif);
-    setXvel(0);
-
-    if (getGravityState() == GROUNDED)
-      setAnimationState(PUSHING);
-  }
+  const int xposDif = getXposDifferenceWithCollisionObject();
 
   if (!getCollisionLeft() && !getCollisionRight()) {
-    if (getAnimationState() == PUSHING)
+    if (getAnimationState() == PUSHING) {
       setAnimationState(STILL);
+    }
+  } else {
+    if (xposDif != 0) {
+      setXpos(getXpos() - xposDif);
+    }
+    setXvel(0);
+
+    if (getGravityState() == GROUNDED) {
+      setAnimationState(PUSHING);
+    }
   }
 }
+
 void Player::handleUpCollision(bool collision, int dif) {
   // TODO
 }
@@ -171,9 +175,6 @@ void Player::handleUpCollision(bool collision, int dif) {
 void Player::handleGravityState() {
   switch (getGravityState()) {
   case GROUNDED:
-    if (getYposDifferenceWithCollisionObject() != 0)
-      setYpos(getYpos() - getYposDifferenceWithCollisionObject());
-    setYvel(0);
     if (getAnimationState() == anims_INAIR)
       setAnimationState(STILL);
     break;
@@ -192,7 +193,7 @@ void Player::handleAnimationState() {
   switch (getAnimationState()) {
   case STILL:
     m_animationFrame = 0;
-    playFrame(0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, 0);
+    playFrame(0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, m_animationFrame);
     break;
 
   case WALKING:

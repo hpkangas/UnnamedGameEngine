@@ -18,11 +18,14 @@ public:
   GameObject();
   ~GameObject();
 
-  virtual void update();
-  virtual void render(Camera camera);
-
   Position m_position = {0, 0};
   Velocity m_velocity = {0, 0};
+
+  SDL_Texture *m_objTexture;
+  SDL_Rect m_sourceRect, m_destinationRect, m_collisionRect;
+
+  virtual void update();
+  virtual void render(Camera camera);
 
   const virtual int getXpos() { return m_position.x; }
 
@@ -32,10 +35,6 @@ public:
 
   virtual void setYpos(int ypos) { m_position.y = ypos; }
 
-  SDL_Texture *m_objTexture;
-  SDL_Rect m_sourceRect, m_destinationRect, m_collisionRect;
-
-private:
 };
 
 class Background : public GameObject {
@@ -51,7 +50,7 @@ public:
   GameText(std::string textureText, int x, int y, int width, int height);
   GameText(int x, int y, int width, int height);
   void update();
-  void render();
+  void render(Camera camera);
 
   std::string text;
 };

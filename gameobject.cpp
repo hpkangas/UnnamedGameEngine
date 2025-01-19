@@ -13,12 +13,12 @@ void GameObject::render(Camera camera) {
   TextureManager::draw(info);
 }
 
-Background::Background(const char *texturesheet, int x, int y, int sizew, int sizeh) {
-  m_objTexture = TextureManager::LoadTexture(texturesheet);
-  m_position = {x, y};
-  m_sourceRect.h = sizeh;
-  m_sourceRect.w = sizew;
-}
+// Background::Background(const char *texturesheet, int x, int y, int sizew, int sizeh) {
+//   m_objTexture = TextureManager::LoadTexture(*texturesheet);
+//   m_position = {x, y};
+//   m_sourceRect.h = sizeh;
+//   m_sourceRect.w = sizew;
+// }
 
 void Background::update() {
 
@@ -53,7 +53,7 @@ void GameText::update() {
   m_destinationRect.h = m_sourceRect.h;
 }
 
-void GameText::render() {
+void GameText::render(Camera camera) {
   // text = std::to_string(Game::score);
   SDL_Color white = {255, 255, 255};
   SDL_Surface *textSurface = TTF_RenderText_Solid(Game::gFont, text.c_str(), white);

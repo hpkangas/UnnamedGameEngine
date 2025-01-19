@@ -6,23 +6,23 @@
 
 class Player : public GameObject {
 private:
-  std::string m_name;
-  Position m_position;
-  Velocity m_velocity;
+  std::string m_name = "";
+  Position m_position = {0, 0};
+  Velocity m_velocity = {0, 0};
 
-  float m_playerSpeed;
-  float m_playerSpeedMax;
+  float m_playerSpeed = 0;
+  float m_playerSpeedMax = 0;
 
-  int m_yposDif;
-  int m_xposDif;
+  int m_yposDif = 0;
+  int m_xposDif = 0;
 
   bool m_collisionUp = false;
   bool m_collisionDown = false;
   bool m_collisionLeft = false;
   bool m_collisionRight = false;
 
-  int m_animationFrame;
-  int m_WALKING_ANIMATION_FRAMES;
+  int m_animationFrame = 0;
+  int m_WALKING_ANIMATION_FRAMES = 0;
 
   GravityState m_gravityState;
   AnimationState m_animationState;
@@ -39,7 +39,7 @@ private:
   void handleAnimationState();
 
 public:
-  Player(const char *texturesheet, int x, int y, std::string name);
+  Player(SDL_Texture *texture, int x, int y, std::string name);
   Player();
   ~Player();
 

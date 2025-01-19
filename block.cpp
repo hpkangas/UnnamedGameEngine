@@ -3,8 +3,8 @@
 
 // each type of terrain should probably be its own class with only position as
 // its parameters
-Block::Block(const char *texturesheet, int x, int y, int dx, int dy) {
-  m_objTexture = TextureManager::LoadTexture(texturesheet);
+Block::Block(SDL_Texture *texture, int x, int y, int dx, int dy) {
+  m_objTexture = texture;
   m_position = {dx, dy};
 
   m_sourceRect.h = 64;

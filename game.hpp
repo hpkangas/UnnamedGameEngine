@@ -23,20 +23,22 @@ public:
   static TTF_Font *gFont;
 
 private:
-  bool isRunning;
-  static SDL_Window *window;
   Camera camera;
+  
+  bool isRunning = false;
 
   bool inputR = false;
   bool inputL = false;
 
   bool playerCollisionUp = false;
 
+  static SDL_Window *window;
+
   void handleInput();
   void checkPlayerMovementCollisions();
   void changePlayerCharacter();
-  void centerCameraToCharacter(Player *player);
-  void updateCamera(Player *player);
+  void centerCameraToCharacter(Player &player);
+  void updateCamera(Player &player);
 };
 
 #endif /* GAME_HPP */

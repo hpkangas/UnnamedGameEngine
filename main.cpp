@@ -2,8 +2,7 @@
 #include "game.hpp"
 
 int main(int argc, char const *argv[]) {
-  Game *game = nullptr;
-  game = new Game();
+  Game *game = new Game();
 
   Uint64 ticks = 0;
 
