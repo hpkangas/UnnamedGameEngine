@@ -7,9 +7,9 @@
 class Camera {
 public:
   Camera();
-  SDL_Rect m_position;
+  SDL_Rect m_position{};
   // offset doesn't need to be sdl_rect. vector from texturemanager? --> utils?
-  SDL_Rect m_offset;
+  SDL_Rect m_offset{};
 
   void updatePositionRelativeToScreenAndOffset();
   void updateOffsetRelativeToScreen(int offsetx, int offsety);

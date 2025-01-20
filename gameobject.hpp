@@ -16,31 +16,31 @@ struct Velocity {
 class GameObject {
 public:
   GameObject();
-  ~GameObject();
+  virtual ~GameObject();
 
   Position m_position = {0, 0};
   Velocity m_velocity = {0, 0};
 
-  SDL_Texture *m_objTexture;
-  SDL_Rect m_sourceRect, m_destinationRect, m_collisionRect;
+  SDL_Texture *m_objTexture{};
+  SDL_Rect m_sourceRect{}, m_destinationRect{}, m_collisionRect{};
 
   virtual void update();
   virtual void render(Camera camera);
 
-  const virtual int getXpos() { return m_position.x; }
+  virtual int getXpos() const  { return m_position.x; }
 
-  const virtual int getYpos() { return m_position.y; }
+  virtual int getYpos() const  { return m_position.y; }
 
-  virtual void setXpos(int xpos) { m_position.x = xpos; }
+  virtual void setXpos(const int xpos) { m_position.x = xpos; }
 
-  virtual void setYpos(int ypos) { m_position.y = ypos; }
+  virtual void setYpos(const int ypos) { m_position.y = ypos; }
 
 };
 
 class Background : public GameObject {
 public:
   Background(const char *texturesheet, int x, int y, int sizew, int sizeh);
-  void update();
+  void update() override;
 };
 
 class GameText : public GameObject {
@@ -49,8 +49,8 @@ public:
   GameText(int x, int y);
   GameText(std::string textureText, int x, int y, int width, int height);
   GameText(int x, int y, int width, int height);
-  void update();
-  void render(Camera camera);
+  void update() override;
+  void render(Camera camera) override;
 
   std::string text;
 };

@@ -14,7 +14,7 @@ void Camera::updatePositionRelativeToScreenAndOffset() {
   m_position.h = SCREENHEIGHT * 2 / 3 + m_offset.y;
 }
 
-void Camera::updateOffsetRelativeToScreen(int offsetx, int offsety) {
+void Camera::updateOffsetRelativeToScreen(const int offsetx, const int offsety) {
   m_offset.x = offsetx - SCREENWIDTH * 1 / 2;
   m_offset.y = offsety - SCREENHEIGHT * 1 / 2;
 }

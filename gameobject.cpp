@@ -3,13 +3,13 @@
 #include "texturemanager.hpp"
 #include <SDL2/SDL_ttf.h>
 
-GameObject::GameObject() {}
-GameObject::~GameObject() {}
+GameObject::GameObject() = default;
+GameObject::~GameObject() = default;
 
 void GameObject::update() {}
 
-void GameObject::render(Camera camera) {
-  RenderInfo info = {m_objTexture, m_sourceRect, m_destinationRect, SDL_FLIP_NONE, camera};
+void GameObject::render(const Camera camera) {
+  const RenderInfo info = {m_objTexture, m_sourceRect, m_destinationRect, SDL_FLIP_NONE, camera};
   TextureManager::draw(info);
 }
 
@@ -59,7 +59,7 @@ void GameText::render(Camera camera) {
   SDL_Surface *textSurface = TTF_RenderText_Solid(Game::gFont, text.c_str(), white);
   SDL_GetClipRect(textSurface, &m_destinationRect);
   m_objTexture = SDL_CreateTextureFromSurface(Game::renderer, textSurface);
-  SDL_RenderCopy(Game::renderer, m_objTexture, NULL, &m_destinationRect);
+  SDL_RenderCopy(Game::renderer, m_objTexture, nullptr, &m_destinationRect);
   SDL_FreeSurface(textSurface);
   SDL_DestroyTexture(m_objTexture);
 }

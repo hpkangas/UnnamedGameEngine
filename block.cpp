@@ -3,8 +3,8 @@
 
 // each type of terrain should probably be its own class with only position as
 // its parameters
-Block::Block(SDL_Texture *texture, int x, int y, int dx, int dy) {
-  m_objTexture = texture;
+Block::Block(SDL_Texture &texture, const int x, const int y, const int dx, const int dy) {
+  m_objTexture = &texture;
   m_position = {dx, dy};
 
   m_sourceRect.h = 64;
@@ -50,7 +50,7 @@ void Block::update() {
   m_destinationRect.y = m_collisionRect.y = m_position.y;
 }
 
-void Block::render(Camera camera) {
-  RenderInfo info = {m_objTexture, m_sourceRect, m_destinationRect, SDL_FLIP_NONE, camera};
+void Block::render(const Camera camera) {
+  const RenderInfo info = {m_objTexture, m_sourceRect, m_destinationRect, SDL_FLIP_NONE, camera};
   TextureManager::draw(info);
 }

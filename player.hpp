@@ -5,8 +5,7 @@
 #include <string>
 
 class Player : public GameObject {
-private:
-  std::string m_name = "";
+  std::string m_name;
   Position m_position = {0, 0};
   Velocity m_velocity = {0, 0};
 
@@ -28,7 +27,7 @@ private:
   AnimationState m_animationState;
 
   SDL_RendererFlip m_flipType;
-  SDL_Texture *m_objTexture;
+  SDL_Texture *m_objTexture{};
 
   void gravity();
   void handleMovement();
@@ -39,11 +38,11 @@ private:
   void handleAnimationState();
 
 public:
-  Player(SDL_Texture *texture, int x, int y, std::string name);
+  Player(SDL_Texture &texture, int x, int y, const std::string &name);
   Player();
-  ~Player();
+  ~Player() override;
 
-  SDL_Rect m_sourceRect, m_destinationRect, m_collisionRect;
+  SDL_Rect m_sourceRect{}, m_destinationRect{}, m_collisionRect{};
 
   void playFrame(int x, int y, int w, int h, int frame);
 
@@ -55,58 +54,58 @@ public:
   void stopYU();
   void stopYD();
 
-  void update();
-  void render(Camera camera);
+  void update() override;
+  void render(Camera camera) override;
 
-  const int getXpos() { return m_position.x; }
+  int getXpos() const override { return m_position.x; }
 
-  const int getYpos() { return m_position.y; }
+  int getYpos() const override { return m_position.y; }
 
-  const float getXvel() { return m_velocity.x; }
+  float getXvel() const { return m_velocity.x; }
 
-  const float getYvel() { return m_velocity.y; }
+  float getYvel() const { return m_velocity.y; }
 
-  void setXpos(int xpos) { m_position.x = xpos; }
+  void setXpos(const int xpos) override { m_position.x = xpos; }
 
-  void setYpos(int ypos) { m_position.y = ypos; }
+  void setYpos(const int ypos) override { m_position.y = ypos; }
 
-  void setXvel(float xvel) { m_velocity.x = xvel; }
+  void setXvel(const float xvel) { m_velocity.x = xvel; }
 
-  void setYvel(float yvel) { m_velocity.y = yvel; }
+  void setYvel(const float yvel) { m_velocity.y = yvel; }
 
-  const int getXposDifferenceWithCollisionObject() { return m_xposDif; }
+  int getXposDifferenceWithCollisionObject() const { return m_xposDif; }
 
-  const int getYposDifferenceWithCollisionObject() { return m_yposDif; }
+  int getYposDifferenceWithCollisionObject() const { return m_yposDif; }
 
-  const bool getCollisionDown() { return m_collisionDown; }
+  bool getCollisionDown() const { return m_collisionDown; }
 
-  const bool getCollisionUp() { return m_collisionUp; }
+  bool getCollisionUp() const { return m_collisionUp; }
 
-  const bool getCollisionRight() { return m_collisionRight; }
+  bool getCollisionRight() const { return m_collisionRight; }
 
-  const bool getCollisionLeft() { return m_collisionLeft; }
+  bool getCollisionLeft() const { return m_collisionLeft; }
 
-  void setCollisionDown(bool collision) { m_collisionDown = collision; }
+  void setCollisionDown(const bool collision) { m_collisionDown = collision; }
 
-  void setCollisionUp(bool collision) { m_collisionUp = collision; }
+  void setCollisionUp(const bool collision) { m_collisionUp = collision; }
 
-  void setCollisionRight(bool collision) { m_collisionRight = collision; }
+  void setCollisionRight(const bool collision) { m_collisionRight = collision; }
 
-  void setCollisionLeft(bool collision) { m_collisionLeft = collision; }
+  void setCollisionLeft(const bool collision) { m_collisionLeft = collision; }
 
-  void setXposDifferenceWithCollisionObject(int xposDif) { m_xposDif = xposDif; }
+  void setXposDifferenceWithCollisionObject(const int xposDif) { m_xposDif = xposDif; }
 
-  void setYposDifferenceWithCollisionObject(int yposDif) { m_yposDif = yposDif; }
+  void setYposDifferenceWithCollisionObject(const int yposDif) { m_yposDif = yposDif; }
 
-  const GravityState getGravityState() { return m_gravityState; }
+  GravityState getGravityState() const { return m_gravityState; }
 
-  void setGravityState(GravityState gravityState) { m_gravityState = gravityState; }
+  void setGravityState(const GravityState gravityState) { m_gravityState = gravityState; }
 
-  const AnimationState getAnimationState() { return m_animationState; }
+  AnimationState getAnimationState() const { return m_animationState; }
 
-  void setAnimationState(AnimationState animationState) { m_animationState = animationState; }
+  void setAnimationState(const AnimationState animationState) { m_animationState = animationState; }
 
-  const std::string getName() { return m_name; }
+  std::string getName() { return m_name; }
 };
 
 // totally not final names

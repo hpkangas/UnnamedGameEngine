@@ -2,7 +2,7 @@
 #include "game.hpp"
 
 int main(int argc, char const *argv[]) {
-  Game *game = new Game();
+  const auto game = new Game();
 
   Uint64 ticks = 0;
 
@@ -24,7 +24,7 @@ int main(int argc, char const *argv[]) {
     // SDL_Delay(SDL_GetTicks64() - ticks);
   }
 
-  game->clean();
+  Game::clean();
 
   return 0;
 }

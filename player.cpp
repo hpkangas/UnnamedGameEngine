@@ -4,9 +4,9 @@
 #include "texturemanager.hpp"
 #include <SDL2/SDL_render.h>
 
-Player::Player(SDL_Texture *texture, int x, int y, std::string name) {
+Player::Player(SDL_Texture &texture, const int x, const int y, const std::string &name) {
   m_name = name;
-  m_objTexture = texture;
+  m_objTexture = &texture;
   m_position = {x, y};
 
   m_flipType = SDL_FLIP_NONE;
@@ -32,8 +32,7 @@ Player::Player(SDL_Texture *texture, int x, int y, std::string name) {
   m_flipType = SDL_FLIP_NONE;
 }
 
-Player::Player() {}
-Player::~Player() {}
+Player::~Player() = default;
 
 void Player::update() {
   handleDownCollision();
@@ -51,12 +50,12 @@ void Player::update() {
   m_collisionRect.y = m_position.y;
 }
 
-void Player::render(Camera camera) {
-  RenderInfo info = {m_objTexture, m_sourceRect, m_destinationRect, m_flipType, camera};
+void Player::render(const Camera camera) {
+  const RenderInfo info = {m_objTexture, m_sourceRect, m_destinationRect, m_flipType, camera};
   TextureManager::draw(info);
 }
 
-void Player::playFrame(int x, int y, int w, int h, int frame) {
+void Player::playFrame(const int x, const int y, const int w, const int h, const int frame) {
   m_sourceRect = {x + w * frame, y, w, h};
 }
 

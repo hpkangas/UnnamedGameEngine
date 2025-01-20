@@ -7,7 +7,6 @@
 #include "texturemanager.hpp"
 #include <SDL2/SDL_render.h>
 #include <iostream>
-#include <stdlib.h>
 #include <vector>
 
 // TODO I think these should be defined else where because they are called as
@@ -38,7 +37,7 @@ Block *block8 = nullptr;
 Block *block9 = nullptr;
 Block *block10 = nullptr;
 
-void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bool fullscreen) {
+void Game::init(const char *title, const int xpos, const int ypos, const int width, const int height, const bool fullscreen) {
   int flags = 0;
   if (fullscreen) {
     flags = SDL_WINDOW_FULLSCREEN;
@@ -47,12 +46,12 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     TTF_Init();
     gFont = TTF_OpenFont("font.ttf", 32);
     std::cout << "Subsystems initialised \n";
-    Game::window = SDL_CreateWindow(title, xpos, ypos, width, HEIGHT, flags);
-    if (Game::window) {
+    window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
+    if (window) {
       std::cout << "Window created\n";
     }
     renderer =
-        SDL_CreateRenderer(Game::window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer) {
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
       // SDL_RenderSetScale(renderer, 2,2);
@@ -63,30 +62,28 @@ void Game::init(const char *title, int xpos, int ypos, int width, int HEIGHT, bo
     isRunning = false;
   }
 
-  Camera camera;
-
   SDL_Texture *playerTexture = TextureManager::LoadTexture("assets/baleog.png");
-  player1 = new Erik(playerTexture, 80, 80, "Erik");
-  player2 = new Olaf(playerTexture, 180, 80, "Olaf");
-  player3 = new Baelog(playerTexture, 280, 80, "Baelog");
+  player1 = new Erik(*playerTexture, 80, 80, "Erik");
+  player2 = new Olaf(*playerTexture, 180, 80, "Olaf");
+  player3 = new Baelog(*playerTexture, 280, 80, "Baelog");
   selectedPlayer = player1;
 
-  GameText *text = new GameText("TEST TEXT", 200, 200);
+  auto *text = new GameText("TEST TEXT", 200, 200);
 
   SDL_Texture *blockTexture = TextureManager::LoadTexture("assets/tiles.png");
 
-  block01= new Block(blockTexture, 0, 0, -128, 428);
-  block0 = new Block(blockTexture, 0, 0, 0, 428);
-  block1 = new Block(blockTexture, 0, 0, 128, 428);
-  block2 = new Block(blockTexture, 128, 0, 128 * 2, 428);
-  block3 = new Block(blockTexture, 256, 0, 128 * 3, 428);
-  block4 = new Block(blockTexture, 0, 0, 128 * 4, 428 + 128);
-  block5 = new Block(blockTexture, 128, 0, 128 * 5, 428 + 128);
-  block7 = new Block(blockTexture, 256, 0, 128 * 6, 400);
-  block8 = new Block(blockTexture, 0, 0, 128 * 7, 428 + 128 * 2);
-  block9 = new Block(blockTexture, 128, 0, 128 * 8, 428 + 128 * 2);
-  block6 = new Block(blockTexture, 256, 0, 128 * 9, 428 + 128 * 2);
-  block10= new Block(blockTexture, 128, 0, 128 * 12, 428 + 128 * 4);
+  block01= new Block(*blockTexture, 0, 0, -128, 428);
+  block0 = new Block(*blockTexture, 0, 0, 0, 428);
+  block1 = new Block(*blockTexture, 0, 0, 128, 428);
+  block2 = new Block(*blockTexture, 128, 0, 128 * 2, 428);
+  block3 = new Block(*blockTexture, 256, 0, 128 * 3, 428);
+  block4 = new Block(*blockTexture, 0, 0, 128 * 4, 428 + 128);
+  block5 = new Block(*blockTexture, 128, 0, 128 * 5, 428 + 128);
+  block7 = new Block(*blockTexture, 256, 0, 128 * 6, 400);
+  block8 = new Block(*blockTexture, 0, 0, 128 * 7, 428 + 128 * 2);
+  block9 = new Block(*blockTexture, 128, 0, 128 * 8, 428 + 128 * 2);
+  block6 = new Block(*blockTexture, 256, 0, 128 * 9, 428 + 128 * 2);
+  block10= new Block(*blockTexture, 128, 0, 128 * 12, 428 + 128 * 4);
   blocks.emplace_back(block01);
   blocks.emplace_back(block0);
   blocks.emplace_back(block1);
@@ -198,16 +195,16 @@ void Game::update() {
 
   checkPlayerMovementCollisions();
 
-  for (auto &object : objects) {
+  for (const auto &object : objects) {
     object->update();
   }
 
   updateCamera(*selectedPlayer);
 }
 
-void Game::render() {
+void Game::render() const {
   SDL_RenderClear(renderer);
-  for (auto &object : objects) {
+  for (const auto &object : objects) {
     object->render(camera);
   }
 
@@ -243,11 +240,10 @@ void Game::changePlayerCharacter() {
     selectedPlayer->stopX();
     selectedPlayer = player1;
     centerCameraToCharacter(*selectedPlayer);
-    return;
   }
 }
 
-void Game::handleInput() {
+void Game::handleInput() const {
   if (inputR && !inputL) {
     selectedPlayer->moveRight();
     return;
@@ -258,10 +254,7 @@ void Game::handleInput() {
     return;
   }
 
-  if ((!inputL && !inputR) || (inputL && inputR)) {
-    selectedPlayer->stopX();
-    return;
-  }
+  selectedPlayer->stopX();
 }
 
 void Game::checkPlayerMovementCollisions() {
@@ -275,7 +268,7 @@ void Game::checkPlayerMovementCollisions() {
     int yposDif = 0;
     int xposDif = 0;
 
-    for (auto &block : blocks) {
+    for (const auto &block : blocks) {
 
       // player comes from right
       if (Physics::playerCollisionLeft(*player, *block) == true) {
@@ -318,13 +311,13 @@ void Game::checkPlayerMovementCollisions() {
   }
 }
 
-void Game::centerCameraToCharacter(Player &player) {
+void Game::centerCameraToCharacter(const Player &player) {
 
   camera.updateOffsetRelativeToScreen(player.getXpos(), player.getYpos());
   camera.updatePositionRelativeToScreenAndOffset();
 }
 
-void Game::updateCamera(Player &player) {
+void Game::updateCamera(const Player &player) {
   if ((player.getXpos() < camera.m_position.x && player.getXvel() < 0) ||
       (player.getXpos() + PLAYER_WIDTH > camera.m_position.w && player.getXvel() > 0)) {
     camera.m_offset.x += player.getXvel();

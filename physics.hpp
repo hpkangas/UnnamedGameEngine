@@ -56,7 +56,7 @@ struct Physics {
     return true;
   }
 
-  static bool playerCollisionDown(Player player, const Block obj) {
+  static bool playerCollisionDown(const Player& player, const Block& obj) {
 
     if (player.m_collisionRect.y + player.m_collisionRect.h <= obj.m_collisionRect.y) {
       {
@@ -69,7 +69,7 @@ struct Physics {
     return false;
   }
 
-  static bool playerCollisionUp(Player player, const Block obj) {
+  static bool playerCollisionUp(const Player& player, const Block &obj) {
     if (player.m_collisionRect.y >= obj.m_collisionRect.y + obj.m_collisionRect.h) {
 
       return (player.m_collisionRect.y + player.getYvel() <=
@@ -80,7 +80,7 @@ struct Physics {
     return false;
   }
 
-  static bool playerCollisionLeft(Player player, const Block obj) {
+  static bool playerCollisionLeft(const Player& player, const Block& obj) {
     if (player.m_collisionRect.x >= obj.m_collisionRect.x + obj.m_collisionRect.w) {
 
       return (player.m_collisionRect.x + player.getXvel() <
@@ -91,7 +91,7 @@ struct Physics {
     return false;
   }
 
-  static bool playerCollisionRight(Player player, const Block obj) {
+  static bool playerCollisionRight(const Player& player, const Block& obj) {
     if (player.m_collisionRect.x + player.m_collisionRect.w <= obj.m_collisionRect.x) {
 
       return (player.m_collisionRect.x + player.m_collisionRect.w + player.getXvel() >
