@@ -11,6 +11,7 @@ struct RenderInfo {
   Camera camera;
 };
 
+//namespace?
 class TextureManager {
 
 public:

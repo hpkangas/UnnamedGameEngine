@@ -3,7 +3,7 @@
 #include "block.hpp"
 #include "player.hpp"
 #include <SDL2/SDL.h>
-
+//namespace?
 struct Physics {
 
   static bool checkCollision(SDL_Rect &a, SDL_Rect b) {

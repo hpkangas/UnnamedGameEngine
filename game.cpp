@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "block.hpp"
 #include "camera.hpp"
+#include "file.hpp"
 #include "gameobject.hpp"
 #include "physics.hpp"
 #include "player.hpp"
@@ -37,7 +38,8 @@ Block *block8 = nullptr;
 Block *block9 = nullptr;
 Block *block10 = nullptr;
 
-void Game::init(const char *title, const int xpos, const int ypos, const int width, const int height, const bool fullscreen) {
+void Game::init(const char *title, const int xpos, const int ypos, const int width,
+                const int height, const bool fullscreen) {
   int flags = 0;
   if (fullscreen) {
     flags = SDL_WINDOW_FULLSCREEN;
@@ -50,8 +52,7 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
     if (window) {
       std::cout << "Window created\n";
     }
-    renderer =
-        SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer) {
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
       // SDL_RenderSetScale(renderer, 2,2);
@@ -63,16 +64,22 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   }
 
   SDL_Texture *playerTexture = TextureManager::LoadTexture("assets/baleog.png");
-  player1 = new Erik(*playerTexture, 80, 80, "Erik");
+  //player1 = new Erik(*playerTexture, 80, 80, "Erik");
   player2 = new Olaf(*playerTexture, 180, 80, "Olaf");
   player3 = new Baelog(*playerTexture, 280, 80, "Baelog");
+
+  SDL_RWops *Handle{SDL_RWFromFile("text", "rb")};
+
+  player1= new Erik(*playerTexture, File::ReadInt(Handle), File::ReadInt(Handle), "Erik");
+  SDL_RWclose(Handle);
+
   selectedPlayer = player1;
 
   auto *text = new GameText("TEST TEXT", 200, 200);
 
   SDL_Texture *blockTexture = TextureManager::LoadTexture("assets/tiles.png");
 
-  block01= new Block(*blockTexture, 0, 0, -128, 428);
+  block01 = new Block(*blockTexture, 0, 0, -128, 428);
   block0 = new Block(*blockTexture, 0, 0, 0, 428);
   block1 = new Block(*blockTexture, 0, 0, 128, 428);
   block2 = new Block(*blockTexture, 128, 0, 128 * 2, 428);
@@ -83,7 +90,7 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   block8 = new Block(*blockTexture, 0, 0, 128 * 7, 428 + 128 * 2);
   block9 = new Block(*blockTexture, 128, 0, 128 * 8, 428 + 128 * 2);
   block6 = new Block(*blockTexture, 256, 0, 128 * 9, 428 + 128 * 2);
-  block10= new Block(*blockTexture, 128, 0, 128 * 12, 428 + 128 * 4);
+  block10 = new Block(*blockTexture, 128, 0, 128 * 12, 428 + 128 * 4);
   blocks.emplace_back(block01);
   blocks.emplace_back(block0);
   blocks.emplace_back(block1);

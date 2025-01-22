@@ -6,8 +6,6 @@
 
 class Player : public GameObject {
   std::string m_name;
-  Position m_position = {0, 0};
-  Velocity m_velocity = {0, 0};
 
   float m_playerSpeed = 0;
   float m_playerSpeedMax = 0;
@@ -27,7 +25,6 @@ class Player : public GameObject {
   AnimationState m_animationState;
 
   SDL_RendererFlip m_flipType;
-  SDL_Texture *m_objTexture{};
 
   void gravity();
   void handleMovement();
@@ -41,8 +38,6 @@ public:
   Player(SDL_Texture &texture, int x, int y, const std::string &name);
   Player();
   ~Player() override;
-
-  SDL_Rect m_sourceRect{}, m_destinationRect{}, m_collisionRect{};
 
   void playFrame(int x, int y, int w, int h, int frame);
 
