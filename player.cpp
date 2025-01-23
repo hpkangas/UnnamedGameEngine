@@ -4,9 +4,9 @@
 #include "texturemanager.hpp"
 #include <SDL2/SDL_render.h>
 
-Player::Player(SDL_Texture &texture, const int x, const int y, const std::string &name) {
+Player::Player(const int x, const int y, const std::string &name) {
   m_name = name;
-  m_objTexture = &texture;
+  m_objTexture = TextureManager::LoadTexture("assets/baleog.png");
   m_position = {x, y};
 
   m_flipType = SDL_FLIP_NONE;

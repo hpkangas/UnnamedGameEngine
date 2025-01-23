@@ -2,6 +2,7 @@
 #define PLAYER_HPP
 #include "constants.hpp"
 #include "gameobject.hpp"
+#include <memory>
 #include <string>
 
 class Player : public GameObject {
@@ -35,7 +36,7 @@ class Player : public GameObject {
   void handleAnimationState();
 
 public:
-  Player(SDL_Texture &texture, int x, int y, const std::string &name);
+  Player(int x, int y, const std::string &name);
   Player();
   ~Player() override;
 
@@ -48,6 +49,8 @@ public:
   void stopX();
   void stopYU();
   void stopYD();
+
+  std::unique_ptr<Player*> createPlayer();
 
   void update() override;
   void render(Camera camera) override;
@@ -104,22 +107,19 @@ public:
 };
 
 // totally not final names
-class Baelog : public Player {
+class Baleog : public Player {
 public:
   using Player::Player;
-  std::string name = "Baelog";
 };
 
 class Erik : public Player {
 public:
   using Player::Player;
-  std::string name = "Erik";
 };
 
 class Olaf : public Player {
 public:
   using Player::Player;
-  std::string name = "Olaf";
 };
 
 #endif

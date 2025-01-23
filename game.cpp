@@ -63,17 +63,34 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
     isRunning = false;
   }
 
-  SDL_Texture *playerTexture = TextureManager::LoadTexture("assets/baleog.png");
-  //player1 = new Erik(*playerTexture, 80, 80, "Erik");
-  player2 = new Olaf(*playerTexture, 180, 80, "Olaf");
-  player3 = new Baelog(*playerTexture, 280, 80, "Baelog");
+  //SDL_Texture *playerTexture = TextureManager::LoadTexture("assets/baleog.png");
+  // player1 = new Erik(*playerTexture, 80, 80, "Erik");
+
+  // characters = {
+
+  //     new Player(*playerTexture, 0,0, "Erik")};
 
   SDL_RWops *Handle{SDL_RWFromFile("text", "rb")};
-
-  player1= new Erik(*playerTexture, File::ReadInt(Handle), File::ReadInt(Handle), "Erik");
+  File::createLevel(Handle);
+  // player1 = new Erik(*playerTexture, 0, 0, "Erik");
+  // player2 = new Olaf(*playerTexture, 0, 0, "Olaf");
+  // player3 = new Baleog(*playerTexture, 0, 0, "Baleog");
   SDL_RWclose(Handle);
+  // for (auto &&p : characters) {
+  //   std::cout << p->getName();
+  // }
+  selectedPlayer = File::players[0];
 
-  selectedPlayer = player1;
+  // std::vector<Player*> players;
+  // Player *player = new Player(*playerTexture, 0, 0, "Asd");
+  // players.emplace_back(*player);
+  // &player = new Player(*playerTexture, 0, 0, "QWerty");
+
+  // //players = {new Player(*playerTexture, 0, 0, "Asd")};
+  // for (auto &p : players) {
+  //   std::cout<<p->getName();
+  
+  // }
 
   auto *text = new GameText("TEST TEXT", 200, 200);
 
@@ -202,7 +219,7 @@ void Game::update() {
 
   checkPlayerMovementCollisions();
 
-  for (const auto &object : objects) {
+  for (const auto &object : File::players) {
     object->update();
   }
 
@@ -211,7 +228,7 @@ void Game::update() {
 
 void Game::render() const {
   SDL_RenderClear(renderer);
-  for (const auto &object : objects) {
+  for (const auto &object : File::players) {
     object->render(camera);
   }
 
@@ -229,25 +246,25 @@ void Game::clean() {
 
 // TODO
 void Game::changePlayerCharacter() {
-  if (selectedPlayer->getName() == "Erik") {
-    selectedPlayer->stopX();
-    selectedPlayer = player2;
-    centerCameraToCharacter(*selectedPlayer);
-    return;
-  }
+  // if (selectedPlayer->getName() == "Erik") {
+  //   selectedPlayer->stopX();
+  //   selectedPlayer = player2;
+  //   centerCameraToCharacter(*selectedPlayer);
+  //   return;
+  // }
 
-  if (selectedPlayer->getName() == "Olaf") {
-    selectedPlayer->stopX();
-    selectedPlayer = player3;
-    centerCameraToCharacter(*selectedPlayer);
-    return;
-  }
+  // if (selectedPlayer->getName() == "Olaf") {
+  //   selectedPlayer->stopX();
+  //   selectedPlayer = player3;
+  //   centerCameraToCharacter(*selectedPlayer);
+  //   return;
+  // }
 
-  if (selectedPlayer->getName() == "Baelog") {
-    selectedPlayer->stopX();
-    selectedPlayer = player1;
-    centerCameraToCharacter(*selectedPlayer);
-  }
+  // if (selectedPlayer->getName() == "Baleog") {
+  //   selectedPlayer->stopX();
+  //   selectedPlayer = player1;
+  //   centerCameraToCharacter(*selectedPlayer);
+  // }
 }
 
 void Game::handleInput() const {
@@ -265,7 +282,7 @@ void Game::handleInput() const {
 }
 
 void Game::checkPlayerMovementCollisions() {
-  for (auto &&player : characters) {
+  for (auto &&player : File::players) {
 
     player->setCollisionDown(false);
     player->setCollisionUp(false);
