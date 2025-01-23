@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <iostream>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -27,68 +28,43 @@ inline void Read(const std::string &Path) {
   SDL_free(Content);
 }
 
-std::string ReadString(SDL_RWops *Handle) {
-  std::string CurrentValue;
-  char c;
-
-  while (SDL_RWread(Handle, &c, 1, 1) == 1) {
-    std::cout << "c " << c << std::endl;
-
-    if (c == ',') {
-      std::cout << "current value " << CurrentValue << std::endl;
-      return CurrentValue;
-    }
-    CurrentValue += c;
-  }
-  return CurrentValue;
-}
-
-int ReadInt(SDL_RWops *Handle) { return std::stoi(ReadString(Handle)); }
-
-float ReadFloat(SDL_RWops *Handle) { return std::stof(ReadString(Handle)); }
-
 std::vector<Player *> players;
 
 void createLevel(SDL_RWops *Handle) {
-  std::string CurrentValue;
-  std::string Target;
+  std::string currentValue;
+  std::string gameobject;
   int x;
   int y;
   char c;
 
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
-    Player *asd = nullptr;
+    Player *player = nullptr;
 
     if (c == ',') {
-      std::cout << "comma" << std::endl;
-      std::cout << "current value " << CurrentValue << "\n";
 
-      if (CurrentValue == "Erik" || CurrentValue == "Baleog" || CurrentValue == "Olaf") {
-        Target = CurrentValue;
+      if (currentValue == "Erik" || currentValue == "Baleog" || currentValue == "Olaf") {
+        gameobject = currentValue;
       }
 
-      std::string apu = &CurrentValue.at(0);
-      if (apu == "x") {
-        x = std::stoi(CurrentValue);
-        std::cout<<x;
+      if (currentValue[0] == 'x') {
+        x = std::stoi(currentValue.substr(2));
       }
-      if (apu == "y") {
-        y = std::stoi(CurrentValue);
-        std::cout<<y;
+      if (currentValue[0] == 'y') {
+        y = std::stoi(currentValue.substr(2));
       }
 
-      CurrentValue = "";
+      if (currentValue == "|") {
+
+        player = new Player(x, y, gameobject);
+        players.emplace_back(player);
+        continue;
+      }
+
+      currentValue = "";
       continue;
     }
 
-    if (c == '|') {
-
-      asd = new Player(x, y, CurrentValue);
-      players.emplace_back(asd);
-      continue;
-    }
-
-    CurrentValue += c;
+    currentValue += c;
   }
 }
 
