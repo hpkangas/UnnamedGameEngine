@@ -8,6 +8,8 @@ constexpr int SCREENHEIGHT = 1080;
 // TODO Think of better names
 enum AnimationState { STILL = 0, WALKING = 1, PUSHING = 2, anims_INAIR = 3 };
 enum GravityState { GROUNDED = 0, INAIR = 1, FALLING = 2 };
+enum GAMEOBJECT_IDENTIFIERS { PC1 = 0, PC2 = 1, PC3 = 2 };
+
 
 // TODO should be editable
 constexpr int FRAMERATE = 60;

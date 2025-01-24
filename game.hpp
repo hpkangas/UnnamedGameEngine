@@ -4,6 +4,7 @@
 
 #include "camera.hpp"
 #include "player.hpp"
+#include "level.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -22,6 +23,7 @@ public:
   static TTF_Font *gFont;
 
 private:
+  Level::LevelInfo *currentLevel;
   Camera camera;
   
   bool isRunning = false;

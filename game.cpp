@@ -1,7 +1,6 @@
 #include "game.hpp"
 #include "block.hpp"
 #include "camera.hpp"
-#include "file.hpp"
 #include "gameobject.hpp"
 #include "physics.hpp"
 #include "player.hpp"
@@ -63,24 +62,24 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
     isRunning = false;
   }
 
-  //SDL_Texture *playerTexture = TextureManager::LoadTexture("assets/baleog.png");
-  // player1 = new Erik(*playerTexture, 80, 80, "Erik");
+  // SDL_Texture *playerTexture = TextureManager::LoadTexture("assets/baleog.png");
+  //  player1 = new Erik(*playerTexture, 80, 80, "Erik");
 
   // characters = {
 
   //     new Player(*playerTexture, 0,0, "Erik")};
-
+  std::cout<<"asd asd";
   SDL_RWops *Handle{SDL_RWFromFile("text", "rb")};
-  File::createLevel(Handle);
-  // player1 = new Erik(*playerTexture, 0, 0, "Erik");
+
+  currentLevel = Level::createLevel(Handle);
   // player2 = new Olaf(*playerTexture, 0, 0, "Olaf");
   // player3 = new Baleog(*playerTexture, 0, 0, "Baleog");
   SDL_RWclose(Handle);
   // for (auto &&p : characters) {
   //   std::cout << p->getName();
   // }
-  selectedPlayer = File::players[0];
-
+   player1 = new Player(0, 0, "Erik");
+  selectedPlayer = player1;
   // std::vector<Player*> players;
   // Player *player = new Player(*playerTexture, 0, 0, "Asd");
   // players.emplace_back(*player);
@@ -89,7 +88,7 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   // //players = {new Player(*playerTexture, 0, 0, "Asd")};
   // for (auto &p : players) {
   //   std::cout<<p->getName();
-  
+
   // }
 
   auto *text = new GameText("TEST TEXT", 200, 200);
@@ -219,7 +218,7 @@ void Game::update() {
 
   checkPlayerMovementCollisions();
 
-  for (const auto &object : File::players) {
+  for (const auto &object : objects) {
     object->update();
   }
 
@@ -228,7 +227,7 @@ void Game::update() {
 
 void Game::render() const {
   SDL_RenderClear(renderer);
-  for (const auto &object : File::players) {
+  for (const auto &object : objects) {
     object->render(camera);
   }
 
@@ -282,7 +281,7 @@ void Game::handleInput() const {
 }
 
 void Game::checkPlayerMovementCollisions() {
-  for (auto &&player : File::players) {
+  for (auto &&player : characters) {
 
     player->setCollisionDown(false);
     player->setCollisionUp(false);

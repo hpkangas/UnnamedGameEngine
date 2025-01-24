@@ -1,5 +1,6 @@
 #include "constants.hpp"
 #include "game.hpp"
+#include <iostream>
 
 int main(int argc, char const *argv[]) {
   const auto game = new Game();
@@ -17,9 +18,13 @@ int main(int argc, char const *argv[]) {
       // printf("Delay %d\n", SDL_GetTicks64() - ticks);
       continue;
     }
+    std::cout<<"asd asd";
     game->handleEvents();
+    std::cout<<"asd asd";
     game->update();
+    std::cout<<"asd asd";
     game->render();
+    std::cout<<"asd asd";
     ticks = SDL_GetTicks64();
     // SDL_Delay(SDL_GetTicks64() - ticks);
   }
