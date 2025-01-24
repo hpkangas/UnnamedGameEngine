@@ -16,13 +16,6 @@ TTF_Font *Game::gFont = nullptr;
 SDL_Window *Game::window = nullptr;
 
 // TODO these should be in somekind of level information class
-std::vector<GameObject *> objects;
-std::vector<Block *> blocks;
-Player *player1 = nullptr;
-Player *player2 = nullptr;
-Player *player3 = nullptr;
-std::vector<Player *> characters;
-Player *selectedPlayer = nullptr;
 
 Block *block01 = nullptr;
 Block *block0 = nullptr;
@@ -62,19 +55,9 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
     isRunning = false;
   }
 
-
   SDL_RWops *Handle{SDL_RWFromFile("text", "rb")};
   currentLevel = Level::createLevel(Handle);
   SDL_RWclose(Handle);
-
-
-   player1 = new Player(0, 0, "Erik");
-   player2 = new Player(0, 0, "Baleog");
-   player3 = new Player(0, 0, "Olaf");
-  selectedPlayer = player1;
-
-
-  auto *text = new GameText("TEST TEXT", 200, 200);
 
   SDL_Texture *blockTexture = TextureManager::LoadTexture("assets/tiles.png");
 
@@ -90,41 +73,21 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   block9 = new Block(*blockTexture, 128, 0, 128 * 8, 428 + 128 * 2);
   block6 = new Block(*blockTexture, 256, 0, 128 * 9, 428 + 128 * 2);
   block10 = new Block(*blockTexture, 128, 0, 128 * 12, 428 + 128 * 4);
-  blocks.emplace_back(block01);
-  blocks.emplace_back(block0);
-  blocks.emplace_back(block1);
-  blocks.emplace_back(block2);
-  blocks.emplace_back(block3);
-  blocks.emplace_back(block4);
-  blocks.emplace_back(block5);
-  blocks.emplace_back(block6);
-  blocks.emplace_back(block7);
-  blocks.emplace_back(block8);
-  blocks.emplace_back(block9);
-  blocks.emplace_back(block10);
 
-  objects.emplace_back(player1);
-  objects.emplace_back(player2);
-  objects.emplace_back(player3);
+  currentLevel->blocks.emplace_back(block01);
+  currentLevel->blocks.emplace_back(block0);
+  currentLevel->blocks.emplace_back(block1);
+  currentLevel->blocks.emplace_back(block2);
+  currentLevel->blocks.emplace_back(block3);
+  currentLevel->blocks.emplace_back(block4);
+  currentLevel->blocks.emplace_back(block5);
+  currentLevel->blocks.emplace_back(block6);
+  currentLevel->blocks.emplace_back(block7);
+  currentLevel->blocks.emplace_back(block8);
+  currentLevel->blocks.emplace_back(block9);
+  currentLevel->blocks.emplace_back(block10);
 
-  objects.emplace_back(block01);
-  objects.emplace_back(block0);
-  objects.emplace_back(block1);
-  objects.emplace_back(block2);
-  objects.emplace_back(block3);
-  objects.emplace_back(block4);
-  objects.emplace_back(block5);
-  objects.emplace_back(block6);
-  objects.emplace_back(block7);
-  objects.emplace_back(block8);
-  objects.emplace_back(block9);
-  objects.emplace_back(block10);
-
-  characters.emplace_back(player1);
-  characters.emplace_back(player2);
-  characters.emplace_back(player3);
-
-  objects.emplace_back(text);
+  selectedPlayer = currentLevel->playercharacters.at(0);
 }
 
 void Game::handleEvents() {
@@ -201,8 +164,16 @@ void Game::update() {
 
   checkPlayerMovementCollisions();
 
-  for (const auto &object : objects) {
+  for (const auto &object : currentLevel->playercharacters) {
     object->update();
+  }
+
+  for (const auto &object : currentLevel->blocks) {
+    object->render(camera);
+  }
+
+  for (const auto &object : currentLevel->gameobjects) {
+    object->render(camera);
   }
 
   updateCamera(*selectedPlayer);
@@ -210,7 +181,15 @@ void Game::update() {
 
 void Game::render() const {
   SDL_RenderClear(renderer);
-  for (const auto &object : objects) {
+  for (const auto &object : currentLevel->playercharacters) {
+    object->render(camera);
+  }
+
+  for (const auto &object : currentLevel->blocks) {
+    object->render(camera);
+  }
+
+  for (const auto &object : currentLevel->gameobjects) {
     object->render(camera);
   }
 
@@ -228,25 +207,25 @@ void Game::clean() {
 
 // TODO
 void Game::changePlayerCharacter() {
-  // if (selectedPlayer->getName() == "Erik") {
-  //   selectedPlayer->stopX();
-  //   selectedPlayer = player2;
-  //   centerCameraToCharacter(*selectedPlayer);
-  //   return;
-  // }
+  if (selectedPlayer->getName() == "Erik") {
+    selectedPlayer->stopX();
+    selectedPlayer = currentLevel->playercharacters[1];
+    centerCameraToCharacter(*selectedPlayer);
+    return;
+  }
 
-  // if (selectedPlayer->getName() == "Olaf") {
-  //   selectedPlayer->stopX();
-  //   selectedPlayer = player3;
-  //   centerCameraToCharacter(*selectedPlayer);
-  //   return;
-  // }
+  if (selectedPlayer->getName() == "Olaf") {
+    selectedPlayer->stopX();
+    selectedPlayer = currentLevel->playercharacters[2];
+    centerCameraToCharacter(*selectedPlayer);
+    return;
+  }
 
-  // if (selectedPlayer->getName() == "Baleog") {
-  //   selectedPlayer->stopX();
-  //   selectedPlayer = player1;
-  //   centerCameraToCharacter(*selectedPlayer);
-  // }
+  if (selectedPlayer->getName() == "Baleog") {
+    selectedPlayer->stopX();
+    selectedPlayer = currentLevel->playercharacters[0];
+    centerCameraToCharacter(*selectedPlayer);
+  }
 }
 
 void Game::handleInput() const {
@@ -264,7 +243,7 @@ void Game::handleInput() const {
 }
 
 void Game::checkPlayerMovementCollisions() {
-  for (auto &&player : characters) {
+  for (auto &&player : currentLevel->playercharacters) {
 
     player->setCollisionDown(false);
     player->setCollisionUp(false);
@@ -274,7 +253,7 @@ void Game::checkPlayerMovementCollisions() {
     int yposDif = 0;
     int xposDif = 0;
 
-    for (const auto &block : blocks) {
+    for (const auto &block : currentLevel->blocks) {
 
       // player comes from right
       if (Physics::playerCollisionLeft(*player, *block) == true) {

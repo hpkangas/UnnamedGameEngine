@@ -3,8 +3,8 @@
 #define GAME_HPP
 
 #include "camera.hpp"
-#include "player.hpp"
 #include "level.hpp"
+#include "player.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -23,9 +23,10 @@ public:
   static TTF_Font *gFont;
 
 private:
+  Player *selectedPlayer = nullptr;
   Level::LevelInfo *currentLevel;
   Camera camera;
-  
+
   bool isRunning = false;
 
   bool inputR = false;

@@ -1,7 +1,8 @@
 #include "level.hpp"
+#include "block.hpp"
+#include "player.hpp"
 #include <SDL2/SDL_rwops.h>
 #include <cstdio>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -16,26 +17,26 @@ LevelInfo *createLevel(SDL_RWops *Handle) {
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
 
     if (c == ',') {
-      // tällä saa esim etuliitteen
-        std::cout<<currentValue.substr(0,2)<<std::endl;
+
       if (currentValue != "|") {
 
         values.emplace_back(currentValue);
 
       } else {
-        std::string gameobject = values.at(0);
+        std::string gameObjectType = values.at(0);
         int x = std::stoi(values.at(1));
         int y = std::stoi(values.at(2));
 
-        // pitänee olla iffittely eri oliotyypeille ja omat funktiot niille
+        if (gameObjectType.substr(0, 2) == "PC") {
+          level->playercharacters.emplace_back(createPlayerCharacter(gameObjectType, x, y));
+        }
 
-        // some other fucn
-//        GameObject *go = createGameObject(gameobject, x, y);
-        // level->gameobjects->emplace_back(createGameObject(gameobject, x, y));
-        
+        if (gameObjectType.substr(0, 1) == "B") {
+          level->playercharacters.emplace_back(createPlayerCharacter(gameObjectType, x, y));
+        }
+
         values.clear();
       }
-
       currentValue = "";
       continue;
     }
@@ -43,25 +44,29 @@ LevelInfo *createLevel(SDL_RWops *Handle) {
     currentValue += c;
   }
   return level;
-};
+}
 
-GameObject *createGameObject(std::string object, int x, int y) {
-  // GameObject *gameobject = nullptr;
+Player *createPlayerCharacter(std::string gameObjectType, int x, int y) {
+  Player *player = nullptr;
+  if (gameObjectType == "PC1") {
+    player = new Player(x, y, "Erik");
+    return player;
+  }
+  if (gameObjectType == "PC2") {
+    player = new Player(x, y, "Olaf");
+    return player;
+  }
+  if (gameObjectType == "PC3") {
+    player = new Player(x, y, "Baleog");
+    return player;
+  }
+  player = new Player(0, 0, "NOT REAL");
+  return player;
+}
 
-  // if (object == "PC1") {
-  //   gameobject = new Player(x, y, "Erik");
-  //   return gameobject;
-  // }
-  // if (object == "PC2") {
-  //   gameobject = new Player(x, y, "Baelog");
-  //   return gameobject;
-  // }
-  // if (object == "PC2") {
-  //   gameobject = new Player(x, y, "Olaf");
-  //   return gameobject;
-  // }
-
-   return nullptr;
-};
+Block *createBlock(std::string gameObjectType, int x, int y){
+  // pitää olla omat constructorit eri blockeille joille nyt on vaan parametrit
+  return nullptr;
+}
 
 } // namespace Level

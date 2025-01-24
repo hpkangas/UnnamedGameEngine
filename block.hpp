@@ -11,7 +11,7 @@ public:
   void update() override;
   void render(Camera camera) override;
 
-  int getXpos() const override { return m_position.x; }
+  int getXpos() const override { return  m_position.x; }
 
   int getYpos() const override { return m_position.y; }
 
