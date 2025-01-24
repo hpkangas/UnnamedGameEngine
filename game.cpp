@@ -62,34 +62,17 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
     isRunning = false;
   }
 
-  // SDL_Texture *playerTexture = TextureManager::LoadTexture("assets/baleog.png");
-  //  player1 = new Erik(*playerTexture, 80, 80, "Erik");
 
-  // characters = {
-
-  //     new Player(*playerTexture, 0,0, "Erik")};
-  std::cout<<"asd asd";
   SDL_RWops *Handle{SDL_RWFromFile("text", "rb")};
-
   currentLevel = Level::createLevel(Handle);
-  // player2 = new Olaf(*playerTexture, 0, 0, "Olaf");
-  // player3 = new Baleog(*playerTexture, 0, 0, "Baleog");
   SDL_RWclose(Handle);
-  // for (auto &&p : characters) {
-  //   std::cout << p->getName();
-  // }
+
+
    player1 = new Player(0, 0, "Erik");
+   player2 = new Player(0, 0, "Baleog");
+   player3 = new Player(0, 0, "Olaf");
   selectedPlayer = player1;
-  // std::vector<Player*> players;
-  // Player *player = new Player(*playerTexture, 0, 0, "Asd");
-  // players.emplace_back(*player);
-  // &player = new Player(*playerTexture, 0, 0, "QWerty");
 
-  // //players = {new Player(*playerTexture, 0, 0, "Asd")};
-  // for (auto &p : players) {
-  //   std::cout<<p->getName();
-
-  // }
 
   auto *text = new GameText("TEST TEXT", 200, 200);
 

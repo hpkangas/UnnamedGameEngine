@@ -16,7 +16,8 @@ LevelInfo *createLevel(SDL_RWops *Handle) {
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
 
     if (c == ',') {
-
+      // tällä saa esim etuliitteen
+        std::cout<<currentValue.substr(0,2)<<std::endl;
       if (currentValue != "|") {
 
         values.emplace_back(currentValue);
@@ -25,11 +26,11 @@ LevelInfo *createLevel(SDL_RWops *Handle) {
         std::string gameobject = values.at(0);
         int x = std::stoi(values.at(1));
         int y = std::stoi(values.at(2));
+
+        // pitänee olla iffittely eri oliotyypeille ja omat funktiot niille
+
         // some other fucn
 //        GameObject *go = createGameObject(gameobject, x, y);
-        if (gameobject.substr(1) == "PC") {
-            std::cout<<"asd";
-        }
         // level->gameobjects->emplace_back(createGameObject(gameobject, x, y));
         
         values.clear();
@@ -41,7 +42,6 @@ LevelInfo *createLevel(SDL_RWops *Handle) {
 
     currentValue += c;
   }
-  //level->playercharacters = level->gameobjects->at(0)
   return level;
 };
 
