@@ -2,16 +2,23 @@
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
 #include "gameobject.hpp"
+#include "texturemanager.hpp"
+#include <SDL2/SDL_render.h>
 
 class Block : public GameObject {
 public:
-  Block(SDL_Texture &texture, int x, int y, int dx, int dy);
-  //Block(const char *texturesheet, int x, int y, int h, int w, int dx, int dy);
+  Block(int x, int y, int sourceX);
+
+  Block createBlock1(int x, int y);
+  Block createBlock2(int x, int y);
+  Block createBlock3(int x, int y);
+
+  SDL_Texture *m_objTexture = TextureManager::LoadTexture("assets/tiles.png");
 
   void update() override;
   void render(Camera camera) override;
 
-  int getXpos() const override { return  m_position.x; }
+  int getXpos() const override { return m_position.x; }
 
   int getYpos() const override { return m_position.y; }
 

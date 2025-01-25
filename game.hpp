@@ -24,7 +24,8 @@ public:
 
 private:
   Player *selectedPlayer = nullptr;
-  Level::LevelInfo *currentLevel;
+  Level level;
+  LevelInfo *currentLevel;
   Camera camera;
 
   bool isRunning = false;

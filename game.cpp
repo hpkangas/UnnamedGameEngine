@@ -4,7 +4,6 @@
 #include "gameobject.hpp"
 #include "physics.hpp"
 #include "player.hpp"
-#include "texturemanager.hpp"
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <vector>
@@ -17,18 +16,9 @@ SDL_Window *Game::window = nullptr;
 
 // TODO these should be in somekind of level information class
 
-Block *block01 = nullptr;
-Block *block0 = nullptr;
 Block *block1 = nullptr;
 Block *block2 = nullptr;
 Block *block3 = nullptr;
-Block *block4 = nullptr;
-Block *block5 = nullptr;
-Block *block6 = nullptr;
-Block *block7 = nullptr;
-Block *block8 = nullptr;
-Block *block9 = nullptr;
-Block *block10 = nullptr;
 
 void Game::init(const char *title, const int xpos, const int ypos, const int width,
                 const int height, const bool fullscreen) {
@@ -56,36 +46,16 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   }
 
   SDL_RWops *Handle{SDL_RWFromFile("text", "rb")};
-  currentLevel = Level::createLevel(Handle);
+  currentLevel = level.createLevel(Handle);
   SDL_RWclose(Handle);
 
-  SDL_Texture *blockTexture = TextureManager::LoadTexture("assets/tiles.png");
+  block1 = level.createBlock1(128, 428);
+  block2 = level.createBlock2(128*2, 428);
+  block3 = level.createBlock3(128*3, 428);
 
-  block01 = new Block(*blockTexture, 0, 0, -128, 428);
-  block0 = new Block(*blockTexture, 0, 0, 0, 428);
-  block1 = new Block(*blockTexture, 0, 0, 128, 428);
-  block2 = new Block(*blockTexture, 128, 0, 128 * 2, 428);
-  block3 = new Block(*blockTexture, 256, 0, 128 * 3, 428);
-  block4 = new Block(*blockTexture, 0, 0, 128 * 4, 428 + 128);
-  block5 = new Block(*blockTexture, 128, 0, 128 * 5, 428 + 128);
-  block7 = new Block(*blockTexture, 256, 0, 128 * 6, 400);
-  block8 = new Block(*blockTexture, 0, 0, 128 * 7, 428 + 128 * 2);
-  block9 = new Block(*blockTexture, 128, 0, 128 * 8, 428 + 128 * 2);
-  block6 = new Block(*blockTexture, 256, 0, 128 * 9, 428 + 128 * 2);
-  block10 = new Block(*blockTexture, 128, 0, 128 * 12, 428 + 128 * 4);
-
-  currentLevel->blocks.emplace_back(block01);
-  currentLevel->blocks.emplace_back(block0);
   currentLevel->blocks.emplace_back(block1);
   currentLevel->blocks.emplace_back(block2);
   currentLevel->blocks.emplace_back(block3);
-  currentLevel->blocks.emplace_back(block4);
-  currentLevel->blocks.emplace_back(block5);
-  currentLevel->blocks.emplace_back(block6);
-  currentLevel->blocks.emplace_back(block7);
-  currentLevel->blocks.emplace_back(block8);
-  currentLevel->blocks.emplace_back(block9);
-  currentLevel->blocks.emplace_back(block10);
 
   selectedPlayer = currentLevel->playercharacters.at(0);
 }

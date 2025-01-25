@@ -6,9 +6,9 @@
 #include <string>
 #include <vector>
 
-namespace Level {
+Level::Level() {};
 
-LevelInfo *createLevel(SDL_RWops *Handle) {
+LevelInfo *Level::createLevel(SDL_RWops *Handle) {
   LevelInfo *level = new LevelInfo;
   std::string currentValue;
   char c;
@@ -46,7 +46,7 @@ LevelInfo *createLevel(SDL_RWops *Handle) {
   return level;
 }
 
-Player *createPlayerCharacter(std::string gameObjectType, int x, int y) {
+Player *Level::createPlayerCharacter(std::string gameObjectType, int x, int y) {
   Player *player = nullptr;
   if (gameObjectType == "PC1") {
     player = new Player(x, y, "Erik");
@@ -64,9 +64,6 @@ Player *createPlayerCharacter(std::string gameObjectType, int x, int y) {
   return player;
 }
 
-Block *createBlock(std::string gameObjectType, int x, int y){
-  // pitää olla omat constructorit eri blockeille joille nyt on vaan parametrit
-  return nullptr;
-}
-
-} // namespace Level
+Block *Level::createBlock1(const int x, const int y) { return new Block(x, y, 0); }
+Block *Level::createBlock2(const int x, const int y) { return new Block(x, y, 128); }
+Block *Level::createBlock3(const int x, const int y) { return new Block(x, y, 256); }

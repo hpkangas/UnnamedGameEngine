@@ -6,17 +6,24 @@
 #include "player.hpp"
 #include <vector>
 
-namespace Level {
-
 struct LevelInfo {
   std::vector<GameObject *> gameobjects;
   std::vector<Player *> playercharacters;
   std::vector<Block *> blocks;
 };
 
-Player *createPlayerCharacter(std::string const object, int const x, int const y);
-Block *createBlock(std::string const object, int const x, int const y);
-LevelInfo *createLevel(SDL_RWops *Handle);
-} // namespace Level
+class Level {
+  public:
+  Level();
+  ~Level();
+  Player *createPlayerCharacter(std::string const object, int const x, int const y);
+  Block *createBlock(std::string const object, int const x, int const y);
+  LevelInfo *createLevel(SDL_RWops *Handle);
+
+  Block *createBlock1(int x, int y);
+  Block *createBlock2(int x, int y);
+  Block *createBlock3(int x, int y);
+
+}; // namespace Level
 
 #endif
