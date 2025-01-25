@@ -14,11 +14,6 @@ SDL_Renderer *Game::renderer = nullptr;
 TTF_Font *Game::gFont = nullptr;
 SDL_Window *Game::window = nullptr;
 
-// TODO these should be in somekind of level information class
-
-Block *block1 = nullptr;
-Block *block2 = nullptr;
-Block *block3 = nullptr;
 
 void Game::init(const char *title, const int xpos, const int ypos, const int width,
                 const int height, const bool fullscreen) {
@@ -46,16 +41,8 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   }
 
   SDL_RWops *Handle{SDL_RWFromFile("text", "rb")};
-  currentLevel = level.createLevel(Handle);
+  currentLevel = level->createLevel(Handle);
   SDL_RWclose(Handle);
-
-  block1 = level.createBlock1(128, 428);
-  block2 = level.createBlock2(128*2, 428);
-  block3 = level.createBlock3(128*3, 428);
-
-  currentLevel->blocks.emplace_back(block1);
-  currentLevel->blocks.emplace_back(block2);
-  currentLevel->blocks.emplace_back(block3);
 
   selectedPlayer = currentLevel->playercharacters.at(0);
 }

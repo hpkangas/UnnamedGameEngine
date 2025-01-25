@@ -32,8 +32,6 @@ Player::Player(const int x, const int y, const std::string &name) {
   m_flipType = SDL_FLIP_NONE;
 }
 
-Player::~Player() = default;
-
 void Player::update() {
   handleDownCollision();
   handleHorizontalCollision();

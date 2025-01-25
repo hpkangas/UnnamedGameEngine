@@ -14,8 +14,8 @@ struct LevelInfo {
 
 class Level {
   public:
-  Level();
-  ~Level();
+  Level(){};
+  ~Level(){};
   Player *createPlayerCharacter(std::string const object, int const x, int const y);
   Block *createBlock(std::string const object, int const x, int const y);
   LevelInfo *createLevel(SDL_RWops *Handle);

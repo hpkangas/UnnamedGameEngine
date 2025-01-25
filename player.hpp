@@ -2,7 +2,6 @@
 #define PLAYER_HPP
 #include "constants.hpp"
 #include "gameobject.hpp"
-#include <memory>
 #include <string>
 
 class Player : public GameObject {
@@ -37,8 +36,8 @@ class Player : public GameObject {
 
 public:
   Player(int x, int y, const std::string &name);
-  Player();
-  ~Player() override;
+  Player(){};
+  ~Player(){};
 
   void playFrame(int x, int y, int w, int h, int frame);
 
@@ -49,8 +48,6 @@ public:
   void stopX();
   void stopYU();
   void stopYD();
-
-  std::unique_ptr<Player*> createPlayer();
 
   void update() override;
   void render(Camera camera) override;

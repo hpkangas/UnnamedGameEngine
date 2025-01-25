@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-Level::Level() {};
-
 LevelInfo *Level::createLevel(SDL_RWops *Handle) {
   LevelInfo *level = new LevelInfo;
   std::string currentValue;
@@ -32,7 +30,7 @@ LevelInfo *Level::createLevel(SDL_RWops *Handle) {
         }
 
         if (gameObjectType.substr(0, 1) == "B") {
-          level->playercharacters.emplace_back(createPlayerCharacter(gameObjectType, x, y));
+          level->blocks.emplace_back(createBlock(gameObjectType, x, y));
         }
 
         values.clear();
@@ -47,7 +45,9 @@ LevelInfo *Level::createLevel(SDL_RWops *Handle) {
 }
 
 Player *Level::createPlayerCharacter(std::string gameObjectType, int x, int y) {
+  // some general creator function here too rather than calling constructor straight away?
   Player *player = nullptr;
+  
   if (gameObjectType == "PC1") {
     player = new Player(x, y, "Erik");
     return player;
@@ -62,6 +62,19 @@ Player *Level::createPlayerCharacter(std::string gameObjectType, int x, int y) {
   }
   player = new Player(0, 0, "NOT REAL");
   return player;
+}
+
+Block *Level::createBlock(std::string gameObjectType, const int x, const int y) {
+  if (gameObjectType == "B1") {
+    return createBlock1(x, y);
+  }
+  if (gameObjectType == "B2") {
+    return createBlock2(x, y);
+  }
+  if (gameObjectType == "B3") {
+    return createBlock3(x, y);
+  }
+  return nullptr;
 }
 
 Block *Level::createBlock1(const int x, const int y) { return new Block(x, y, 0); }

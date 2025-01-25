@@ -24,7 +24,7 @@ public:
 
 private:
   Player *selectedPlayer = nullptr;
-  Level level;
+  Level *level;
   LevelInfo *currentLevel;
   Camera camera;
 
