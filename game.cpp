@@ -4,6 +4,7 @@
 #include "gameobject.hpp"
 #include "physics.hpp"
 #include "player.hpp"
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <vector>
@@ -14,6 +15,7 @@ SDL_Renderer *Game::renderer = nullptr;
 TTF_Font *Game::gFont = nullptr;
 SDL_Window *Game::window = nullptr;
 
+// TODO System class?
 void Game::init(const char *title, const int xpos, const int ypos, const int width,
                 const int height, const bool fullscreen) {
   int flags = 0;
@@ -39,7 +41,9 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
     isRunning = false;
   }
 
-  SDL_RWops *Handle{SDL_RWFromFile("text", "rb")};
+  // TODO level data should be generated at the start of the game (main?), game obj should have
+  // access to levels list
+  SDL_RWops *Handle{SDL_RWFromFile("level", "rb")};
   currentLevel = level.createLevel(Handle);
   SDL_RWclose(Handle);
 

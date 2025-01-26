@@ -36,8 +36,8 @@ class Player : public GameObject {
 
 public:
   Player(int x, int y, const std::string &name);
-  Player(){};
-  ~Player(){};
+  Player() {};
+  ~Player() {};
 
   void playFrame(int x, int y, int w, int h, int frame);
 

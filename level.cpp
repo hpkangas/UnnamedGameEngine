@@ -13,6 +13,9 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
   std::vector<std::string> values;
 
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
+    if (c == '\n') {
+      continue;
+    }
 
     if (c == ',') {
 
