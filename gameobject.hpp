@@ -15,8 +15,8 @@ struct Velocity {
 
 class GameObject {
 public:
-  GameObject();
-  virtual ~GameObject();
+  GameObject() {};
+  virtual ~GameObject() {};
 
   Position m_position = {0, 0};
   Velocity m_velocity = {0, 0};
@@ -27,14 +27,13 @@ public:
   virtual void update();
   virtual void render(Camera camera);
 
-  virtual int getXpos() const  { return m_position.x; }
+  virtual int getXpos() const { return m_position.x; }
 
-  virtual int getYpos() const  { return m_position.y; }
+  virtual int getYpos() const { return m_position.y; }
 
   virtual void setXpos(const int xpos) { m_position.x = xpos; }
 
   virtual void setYpos(const int ypos) { m_position.y = ypos; }
-
 };
 
 class Background : public GameObject {

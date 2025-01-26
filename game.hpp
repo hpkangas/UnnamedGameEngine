@@ -14,7 +14,7 @@ public:
 
   void handleEvents();
   void update();
-  void render() const;
+  void render();
   static void clean();
 
   bool running() const { return isRunning; }
@@ -24,8 +24,8 @@ public:
 
 private:
   Player *selectedPlayer = nullptr;
-  Level *level;
-  LevelInfo *currentLevel;
+  Level level;
+  LevelInfo currentLevel;
   Camera camera;
 
   bool isRunning = false;

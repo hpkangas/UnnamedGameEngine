@@ -14,7 +14,6 @@ SDL_Renderer *Game::renderer = nullptr;
 TTF_Font *Game::gFont = nullptr;
 SDL_Window *Game::window = nullptr;
 
-
 void Game::init(const char *title, const int xpos, const int ypos, const int width,
                 const int height, const bool fullscreen) {
   int flags = 0;
@@ -41,10 +40,10 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   }
 
   SDL_RWops *Handle{SDL_RWFromFile("text", "rb")};
-  currentLevel = level->createLevel(Handle);
+  currentLevel = level.createLevel(Handle);
   SDL_RWclose(Handle);
 
-  selectedPlayer = currentLevel->playercharacters.at(0);
+  selectedPlayer = &currentLevel.playercharacters.at(0);
 }
 
 void Game::handleEvents() {
@@ -121,33 +120,33 @@ void Game::update() {
 
   checkPlayerMovementCollisions();
 
-  for (const auto &object : currentLevel->playercharacters) {
-    object->update();
+  for (auto &object : currentLevel.playercharacters) {
+    object.update();
   }
 
-  for (const auto &object : currentLevel->blocks) {
-    object->render(camera);
+  for (auto &object : currentLevel.blocks) {
+    object.render(camera);
   }
 
-  for (const auto &object : currentLevel->gameobjects) {
-    object->render(camera);
+  for (auto &object : currentLevel.gameobjects) {
+    object.render(camera);
   }
 
   updateCamera(*selectedPlayer);
 }
 
-void Game::render() const {
+void Game::render() {
   SDL_RenderClear(renderer);
-  for (const auto &object : currentLevel->playercharacters) {
-    object->render(camera);
+  for (auto &object : currentLevel.playercharacters) {
+    object.render(camera);
   }
 
-  for (const auto &object : currentLevel->blocks) {
-    object->render(camera);
+  for (auto &object : currentLevel.blocks) {
+    object.render(camera);
   }
 
-  for (const auto &object : currentLevel->gameobjects) {
-    object->render(camera);
+  for (auto &object : currentLevel.gameobjects) {
+    object.render(camera);
   }
 
   SDL_RenderPresent(renderer);
@@ -166,21 +165,21 @@ void Game::clean() {
 void Game::changePlayerCharacter() {
   if (selectedPlayer->getName() == "Erik") {
     selectedPlayer->stopX();
-    selectedPlayer = currentLevel->playercharacters[1];
+    selectedPlayer = &currentLevel.playercharacters.at(1);
     centerCameraToCharacter(*selectedPlayer);
     return;
   }
 
   if (selectedPlayer->getName() == "Olaf") {
     selectedPlayer->stopX();
-    selectedPlayer = currentLevel->playercharacters[2];
+    selectedPlayer = &currentLevel.playercharacters.at(2);
     centerCameraToCharacter(*selectedPlayer);
     return;
   }
 
   if (selectedPlayer->getName() == "Baleog") {
     selectedPlayer->stopX();
-    selectedPlayer = currentLevel->playercharacters[0];
+    selectedPlayer = &currentLevel.playercharacters.at(0);
     centerCameraToCharacter(*selectedPlayer);
   }
 }
@@ -200,47 +199,45 @@ void Game::handleInput() const {
 }
 
 void Game::checkPlayerMovementCollisions() {
-  for (auto &&player : currentLevel->playercharacters) {
+  for (auto &&player : currentLevel.playercharacters) {
 
-    player->setCollisionDown(false);
-    player->setCollisionUp(false);
-    player->setCollisionRight(false);
-    player->setCollisionLeft(false);
+    player.setCollisionDown(false);
+    player.setCollisionUp(false);
+    player.setCollisionRight(false);
+    player.setCollisionLeft(false);
 
     int yposDif = 0;
     int xposDif = 0;
 
-    for (const auto &block : currentLevel->blocks) {
+    for (const auto &block : currentLevel.blocks) {
 
       // player comes from right
-      if (Physics::playerCollisionLeft(*player, *block) == true) {
-        xposDif = player->m_collisionRect.x - (block->m_collisionRect.x + block->m_collisionRect.w);
-        player->setXposDifferenceWithCollisionObject(xposDif);
-        player->setCollisionLeft(true);
+      if (Physics::playerCollisionLeft(player, block) == true) {
+        xposDif = player.m_collisionRect.x - (block.m_collisionRect.x + block.m_collisionRect.w);
+        player.setXposDifferenceWithCollisionObject(xposDif);
+        player.setCollisionLeft(true);
         continue;
       }
 
       // player comes from left
-      if (Physics::playerCollisionRight(*player, *block) == true) {
-        xposDif =
-            (player->m_collisionRect.x + player->m_collisionRect.w) - block->m_collisionRect.x;
-        player->setXposDifferenceWithCollisionObject(xposDif);
-        player->setCollisionRight(true);
+      if (Physics::playerCollisionRight(player, block) == true) {
+        xposDif = (player.m_collisionRect.x + player.m_collisionRect.w) - block.m_collisionRect.x;
+        player.setXposDifferenceWithCollisionObject(xposDif);
+        player.setCollisionRight(true);
         continue;
       }
 
       // player comes from above
-      if (Physics::playerCollisionDown(*player, *block) == true) {
-        yposDif =
-            (player->m_collisionRect.y + player->m_collisionRect.h) - block->m_collisionRect.y;
-        player->setYposDifferenceWithCollisionObject(yposDif);
-        player->setCollisionDown(true);
+      if (Physics::playerCollisionDown(player, block) == true) {
+        yposDif = (player.m_collisionRect.y + player.m_collisionRect.h) - block.m_collisionRect.y;
+        player.setYposDifferenceWithCollisionObject(yposDif);
+        player.setCollisionDown(true);
 
         continue;
       }
 
       // player comes from below
-      if (Physics::playerCollisionUp(*player, *block) == true) {
+      if (Physics::playerCollisionUp(player, block) == true) {
         playerCollisionUp = true;
         continue;
       }
@@ -248,7 +245,7 @@ void Game::checkPlayerMovementCollisions() {
 
     if (playerCollisionUp) {
       // TODO Fix when relevant
-      player->setYpos(player->getYpos() - player->getYvel());
+      player.setYpos(player.getYpos() - player.getYvel());
     }
   }
 }

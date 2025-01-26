@@ -3,9 +3,6 @@
 #include "texturemanager.hpp"
 #include <SDL2/SDL_ttf.h>
 
-GameObject::GameObject() = default;
-GameObject::~GameObject() = default;
-
 void GameObject::update() {}
 
 void GameObject::render(const Camera camera) {
