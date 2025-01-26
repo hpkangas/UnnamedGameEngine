@@ -7,6 +7,7 @@
 class Camera {
 public:
   Camera();
+  ~Camera() {};
   SDL_Rect m_position{};
   // offset doesn't need to be sdl_rect. vector from texturemanager? --> utils?
   SDL_Rect m_offset{};

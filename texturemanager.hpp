@@ -11,12 +11,10 @@ struct RenderInfo {
   Camera camera;
 };
 
-//namespace?
-class TextureManager {
+namespace TextureManager {
 
-public:
-  static SDL_Texture *LoadTexture(const char *fileName);
-  static void draw(const RenderInfo &RenderInfo);
-};
+SDL_Texture *LoadTexture(const char *fileName);
+void draw(const RenderInfo &RenderInfo);
+}; // namespace TextureManager
 
 #endif
