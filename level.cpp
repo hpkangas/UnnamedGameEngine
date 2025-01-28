@@ -2,7 +2,11 @@
 #include "entities/block.hpp"
 #include "entities/player.hpp"
 #include <SDL2/SDL_rwops.h>
+#include <algorithm>
 #include <cstdio>
+#include <iostream>
+#include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -29,15 +33,13 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
         int y = std::stoi(values.at(2));
 
         if (gameObjectType.substr(0, 2) == "PC") {
-          Player player = createPlayerCharacter(gameObjectType, x, y);
+          Player *player = createPlayerCharacter(gameObjectType, x, y);
           level.playercharacters.emplace_back(player);
-          level.renderables.emplace_back(player.renderComponent);
         }
 
         if (gameObjectType.substr(0, 1) == "B") {
-          Block block = createBlock(gameObjectType, x, y);
+          Block *block = createBlock(gameObjectType, x, y);
           level.blocks.emplace_back(block);
-          level.renderables.emplace_back(block.rc);
         }
 
         values.clear();
@@ -51,27 +53,26 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
   return level;
 }
 
-Player Level::createPlayerCharacter(std::string gameObjectType, int x, int y) {
+Player *Level::createPlayerCharacter(std::string gameObjectType, int x, int y) {
   // some general creator function here too rather than calling constructor straight away?
-  Player player;
+  // Player player;
 
   if (gameObjectType == "PC1") {
-    player = Player(x, y, "Erik");
-    return player;
+    return new Player(x, y, "Erik");
   }
   if (gameObjectType == "PC2") {
-    player = Player(x, y, "Olaf");
-    return player;
+    return new Player(x, y, "Olaf");
   }
   if (gameObjectType == "PC3") {
-    player = Player(x, y, "Baleog");
-    return player;
+    return new Player(x, y, "Baleog");
   }
-  player = Player(0, 0, "NOT REAL");
-  return player;
+  return new Player(0, 0, "NOT REAL");
 }
+Block *Level::createBlock1(int x, int y) { return new Block(x, y, 0); }
+Block *Level::createBlock2(int x, int y) { return new Block(x, y, 128); }
+Block *Level::createBlock3(int x, int y) { return new Block(x, y, 256); }
 
-Block Level::createBlock(std::string gameObjectType, const int x, const int y) {
+Block *Level::createBlock(std::string gameObjectType, int x, int y) {
   if (gameObjectType == "B1") {
     return createBlock1(x, y);
   }
@@ -83,7 +84,3 @@ Block Level::createBlock(std::string gameObjectType, const int x, const int y) {
   }
   return createBlock1(0, 0);
 }
-
-Block Level::createBlock1(const int x, const int y) { return Block(x, y, 0); }
-Block Level::createBlock2(const int x, const int y) { return Block(x, y, 128); }
-Block Level::createBlock3(const int x, const int y) { return Block(x, y, 256); }
