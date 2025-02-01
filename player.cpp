@@ -1,23 +1,24 @@
 #include "player.hpp"
 #include "constants.hpp"
-#include "gameobject.hpp"
 #include "texturemanager.hpp"
 #include <SDL2/SDL_render.h>
 
 Player::Player(const int x, const int y, const std::string &name) {
   m_name = name;
-  m_objTexture = TextureManager::LoadTexture("assets/baleog.png");
-  m_position = {x, y};
+  renderComponent.m_objTexture = TextureManager::LoadTexture("assets/baleog.png");
+  transformComponent.m_position = {x, y};
 
   m_flipType = SDL_FLIP_NONE;
 
-  m_sourceRect = {0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT};
+  renderComponent.m_sourceRect = {0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT};
 
-  m_destinationRect = {x, y, m_sourceRect.w, m_sourceRect.h};
+  renderComponent.m_destinationRect = {x, y, renderComponent.m_sourceRect.w,
+                                       renderComponent.m_sourceRect.h};
 
   // TODO sprite offsets. should be defined inside the specific character
   // classes (once decided on)
-  m_collisionRect = {m_position.x + 28, m_position.y, PLAYER_WIDTH - 56, PLAYER_HEIGHT};
+  m_collisionRect = {transformComponent.m_position.x + 28, transformComponent.m_position.y,
+                     PLAYER_WIDTH - 56, PLAYER_HEIGHT};
 
   m_animationFrame = 1;
   m_WALKING_ANIMATION_FRAMES = 8;
@@ -39,91 +40,91 @@ void Player::update() {
   handleMovement();
   handleAnimationState();
 
-  m_destinationRect.x = m_position.x;
-  m_destinationRect.y = m_position.y;
+  renderComponent.m_destinationRect.x = transformComponent.m_position.x;
+  renderComponent.m_destinationRect.y = transformComponent.m_position.y;
 
   // TODO sprite offsets. should be defined inside the specific character
   // classes (once decided on)
-  m_collisionRect.x = m_position.x + 28;
-  m_collisionRect.y = m_position.y;
+  m_collisionRect.x = transformComponent.m_position.x + 28;
+  m_collisionRect.y = transformComponent.m_position.y;
 }
 
-void Player::render(const Camera camera) {
-  const RenderInfo info = {m_objTexture, m_sourceRect, m_destinationRect, m_flipType, camera};
-  TextureManager::draw(info);
-}
+// void Player::render(const Camera camera) {
+//   const RenderInfo info = {m_objTexture, rc.m_sourceRect, rc.m_destinationRect, m_flipType,
+//   camera}; TextureManager::draw(info);
+// }
 
 void Player::playFrame(const int x, const int y, const int w, const int h, const int frame) {
-  m_sourceRect = {x + w * frame, y, w, h};
+  renderComponent.m_sourceRect = {x + w * frame, y, w, h};
 }
 
 void Player::moveRight() {
   if (getAnimationState() != WALKING)
     setAnimationState(WALKING);
 
-  setXvel(getXvel() + m_playerSpeed);
+  transformComponent.setXvel(transformComponent.getXvel() + m_playerSpeed);
 
-  if (getXvel() > m_playerSpeedMax)
-    setXvel(m_playerSpeedMax);
+  if (transformComponent.getXvel() > m_playerSpeedMax)
+    transformComponent.setXvel(m_playerSpeedMax);
 }
 
 void Player::moveLeft() {
   if (getAnimationState() != WALKING)
     setAnimationState(WALKING);
 
-  setXvel(getXvel() - m_playerSpeed);
+  transformComponent.setXvel(transformComponent.getXvel() - m_playerSpeed);
 
-  if (getXvel() < -m_playerSpeedMax)
-    setXvel(-m_playerSpeedMax);
+  if (transformComponent.getXvel() < -m_playerSpeedMax)
+    transformComponent.setXvel(-m_playerSpeedMax);
 }
 
-void Player::moveUp() { setYvel(-m_playerSpeed); }
+void Player::moveUp() { transformComponent.setYvel(-m_playerSpeed); }
 
 // debugging only mostly
-void Player::moveDown() { setYvel(m_playerSpeed); }
+void Player::moveDown() { transformComponent.setYvel(m_playerSpeed); }
 
 // debugging only mostly
 void Player::stopX() {
-  if (getXvel() != 0) {
-    setXvel(0);
+  if (transformComponent.getXvel() != 0) {
+    transformComponent.setXvel(0);
     setAnimationState(STILL);
   }
 }
 
 // debugging only mostly
 void Player::stopYU() {
-  if (m_velocity.y < 0) {
-    m_velocity.y = 0;
+  if (transformComponent.m_velocity.y < 0) {
+    transformComponent.m_velocity.y = 0;
     m_animationState = STILL;
   }
 }
 
 // debugging only mostly
 void Player::stopYD() {
-  if (m_velocity.y > 0) {
-    m_velocity.y = 0;
+  if (transformComponent.m_velocity.y > 0) {
+    transformComponent.m_velocity.y = 0;
     m_animationState = STILL;
   }
 }
 
 void Player::gravity() {
-  if (getYvel() < MAX_GRAVITY) {
-    setYvel(getYvel() + GRAVITYUNIT);
+  if (transformComponent.getYvel() < MAX_GRAVITY) {
+    transformComponent.setYvel(transformComponent.getYvel() + GRAVITYUNIT);
   }
 }
 
 void Player::handleMovement() {
-  const float xvel = getXvel();
-  const float yvel = getYvel();
-  const int xpos = getXpos();
-  const int ypos = getYpos();
+  const float xvel = transformComponent.getXvel();
+  const float yvel = transformComponent.getYvel();
+  const int xpos = transformComponent.getXpos();
+  const int ypos = transformComponent.getYpos();
 
   if (!(xvel == 0)) {
-    setXpos(xpos + xvel);
+    transformComponent.setXpos(xpos + xvel);
   }
 
   if (!(yvel == 0)) {
-    setYpos(ypos + yvel);
+    transformComponent.setYpos(ypos + yvel);
   }
 
   if (xvel < 0) {
@@ -138,8 +139,9 @@ void Player::handleMovement() {
 void Player::handleDownCollision() {
   if (getCollisionDown()) {
     if (getYposDifferenceWithCollisionObject() != 0)
-      setYpos(getYpos() - getYposDifferenceWithCollisionObject());
-    setYvel(0);
+      transformComponent.setYpos(transformComponent.getYpos() -
+                                 getYposDifferenceWithCollisionObject());
+    transformComponent.setYvel(0);
     setGravityState(GROUNDED);
   } else {
     setGravityState(INAIR);
@@ -155,9 +157,9 @@ void Player::handleHorizontalCollision() {
     }
   } else {
     if (xposDif != 0) {
-      setXpos(getXpos() - xposDif);
+      transformComponent.setXpos(transformComponent.getXpos() - xposDif);
     }
-    setXvel(0);
+    transformComponent.setXvel(0);
 
     if (getGravityState() == GROUNDED) {
       setAnimationState(PUSHING);

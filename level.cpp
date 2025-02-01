@@ -29,11 +29,15 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
         int y = std::stoi(values.at(2));
 
         if (gameObjectType.substr(0, 2) == "PC") {
-          level.playercharacters.emplace_back(createPlayerCharacter(gameObjectType, x, y));
+          Player player = createPlayerCharacter(gameObjectType, x, y);
+          level.playercharacters.emplace_back(player);
+          level.renderables.emplace_back(player.renderComponent);
         }
 
         if (gameObjectType.substr(0, 1) == "B") {
-          level.blocks.emplace_back(createBlock(gameObjectType, x, y));
+          Block block = createBlock(gameObjectType, x, y);
+          level.blocks.emplace_back(block);
+          level.renderables.emplace_back(block.rc);
         }
 
         values.clear();

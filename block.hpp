@@ -1,11 +1,11 @@
 #pragma once
+#include "rendercomponent.hpp"
+#include "transformcomponent.hpp"
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
-#include "gameobject.hpp"
-#include "texturemanager.hpp"
 #include <SDL2/SDL_render.h>
 
-class Block : public GameObject {
+class Block {
 public:
   Block(int x, int y, int sourceX);
 
@@ -13,18 +13,12 @@ public:
   Block createBlock2(int x, int y);
   Block createBlock3(int x, int y);
 
-  SDL_Texture *m_objTexture = TextureManager::LoadTexture("assets/tiles.png");
+  TransformComponent tc{};
+  RenderComponent rc{};
+  SDL_Rect m_collisionRect{};
 
-  void update() override;
-  void render(Camera camera) override;
-
-  int getXpos() const override { return m_position.x; }
-
-  int getYpos() const override { return m_position.y; }
-
-  void setXpos(const int xpos) override { m_position.x = xpos; }
-
-  void setYpos(const int ypos) override { m_position.y = ypos; }
+  void update();
+  // void render(Camera camera) override;
 };
 
 #endif

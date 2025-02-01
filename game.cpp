@@ -4,6 +4,8 @@
 #include "gameobject.hpp"
 #include "physics.hpp"
 #include "player.hpp"
+#include "rendercomponent.hpp"
+#include "texturemanager.hpp"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
 #include <iostream>
@@ -14,7 +16,7 @@
 SDL_Renderer *Game::renderer = nullptr;
 TTF_Font *Game::gFont = nullptr;
 SDL_Window *Game::window = nullptr;
-
+std::vector<RenderComponent> renderables;
 // TODO System class?
 void Game::init(const char *title, const int xpos, const int ypos, const int width,
                 const int height, const bool fullscreen) {
@@ -75,14 +77,14 @@ void Game::handleEvents() {
         inputL = true;
         break;
       case SDLK_d:
-        selectedPlayer->setYvel(80);
+        selectedPlayer->transformComponent.setYvel(80);
         break;
       // reset selectedPlayer pos for debugging
       case SDLK_r:
-        selectedPlayer->setXvel(0);
-        selectedPlayer->setYvel(0);
-        selectedPlayer->setXpos(0);
-        selectedPlayer->setYpos(0);
+        selectedPlayer->transformComponent.setXvel(0);
+        selectedPlayer->transformComponent.setYvel(0);
+        selectedPlayer->transformComponent.setXpos(0);
+        selectedPlayer->transformComponent.setYpos(0);
         selectedPlayer->setGravityState(INAIR);
         camera.m_position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
         camera.m_offset = {0, 0, 0, 0};
@@ -124,16 +126,17 @@ void Game::update() {
 
   checkPlayerMovementCollisions();
 
+  // polymorphism is lost like this
   for (auto &object : currentLevel.playercharacters) {
     object.update();
   }
 
   for (auto &object : currentLevel.blocks) {
-    object.render(camera);
+    object.update();
   }
 
   for (auto &object : currentLevel.gameobjects) {
-    object.render(camera);
+    object.update();
   }
 
   updateCamera(*selectedPlayer);
@@ -141,17 +144,20 @@ void Game::update() {
 
 void Game::render() {
   SDL_RenderClear(renderer);
-  for (auto &object : currentLevel.playercharacters) {
-    object.render(camera);
+  for (auto &object : currentLevel.renderables) {
+    TextureManager::draw(object.render(), camera);
   }
+  // for (auto &object : currentLevel.playercharacters) {
+  //   object.render(camera);
+  // }
 
-  for (auto &object : currentLevel.blocks) {
-    object.render(camera);
-  }
+  // for (auto &object : currentLevel.blocks) {
+  //   object.render(camera);
+  // }
 
-  for (auto &object : currentLevel.gameobjects) {
-    object.render(camera);
-  }
+  // for (auto &object : currentLevel.gameobjects) {
+  //   object.render(camera);
+  // }
 
   SDL_RenderPresent(renderer);
 }
@@ -249,26 +255,32 @@ void Game::checkPlayerMovementCollisions() {
 
     if (playerCollisionUp) {
       // TODO Fix when relevant
-      player.setYpos(player.getYpos() - player.getYvel());
+      player.transformComponent.setYpos(player.transformComponent.getYpos() -
+                                        player.transformComponent.getYvel());
     }
   }
 }
 
 void Game::centerCameraToCharacter(const Player &player) {
 
-  camera.updateOffsetRelativeToScreen(player.getXpos(), player.getYpos());
+  camera.updateOffsetRelativeToScreen(player.transformComponent.getXpos(),
+                                      player.transformComponent.getYpos());
   camera.updatePositionRelativeToScreenAndOffset();
 }
 
 void Game::updateCamera(const Player &player) {
-  if ((player.getXpos() < camera.m_position.x && player.getXvel() < 0) ||
-      (player.getXpos() + PLAYER_WIDTH > camera.m_position.w && player.getXvel() > 0)) {
-    camera.m_offset.x += player.getXvel();
+  if ((player.transformComponent.getXpos() < camera.m_position.x &&
+       player.transformComponent.getXvel() < 0) ||
+      (player.transformComponent.getXpos() + PLAYER_WIDTH > camera.m_position.w &&
+       player.transformComponent.getXvel() > 0)) {
+    camera.m_offset.x += player.transformComponent.getXvel();
   }
 
-  if ((player.getYpos() < camera.m_position.y && player.getYvel() < 0) ||
-      (player.getYpos() + PLAYER_HEIGHT > camera.m_position.h && player.getYvel() > 0)) {
-    camera.m_offset.y += player.getYvel();
+  if ((player.transformComponent.getYpos() < camera.m_position.y &&
+       player.transformComponent.getYvel() < 0) ||
+      (player.transformComponent.getYpos() + PLAYER_HEIGHT > camera.m_position.h &&
+       player.transformComponent.getYvel() > 0)) {
+    camera.m_offset.y += player.transformComponent.getYvel();
   }
   camera.updatePositionRelativeToScreenAndOffset();
 }

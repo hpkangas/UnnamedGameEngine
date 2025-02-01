@@ -1,10 +1,13 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
+#include "SDL_render.h"
 #include "constants.hpp"
-#include "gameobject.hpp"
+#include "rendercomponent.hpp"
+#include "transformcomponent.hpp"
 #include <string>
 
-class Player : public GameObject {
+class Player {
+
   std::string m_name;
 
   float m_playerSpeed = 0;
@@ -38,7 +41,8 @@ public:
   Player(int x, int y, const std::string &name);
   Player() {};
   ~Player() {};
-
+  TransformComponent transformComponent{};
+  RenderComponent renderComponent{};
   void playFrame(int x, int y, int w, int h, int frame);
 
   void moveRight();
@@ -49,24 +53,26 @@ public:
   void stopYU();
   void stopYD();
 
-  void update() override;
-  void render(Camera camera) override;
+  void update();
 
-  int getXpos() const override { return m_position.x; }
+  SDL_Rect m_collisionRect;
+  // void render(Camera camera) override;
 
-  int getYpos() const override { return m_position.y; }
+  // int getXpos() const override { return m_position.x; }
 
-  float getXvel() const { return m_velocity.x; }
+  // int getYpos() const override { return m_position.y; }
 
-  float getYvel() const { return m_velocity.y; }
+  // float getXvel() const { return m_velocity.x; }
 
-  void setXpos(const int xpos) override { m_position.x = xpos; }
+  // float getYvel() const { return m_velocity.y; }
 
-  void setYpos(const int ypos) override { m_position.y = ypos; }
+  // void setXpos(const int xpos) override { m_position.x = xpos; }
 
-  void setXvel(const float xvel) { m_velocity.x = xvel; }
+  // void setYpos(const int ypos) override { m_position.y = ypos; }
 
-  void setYvel(const float yvel) { m_velocity.y = yvel; }
+  // void setXvel(const float xvel) { m_velocity.x = xvel; }
+
+  // void setYvel(const float yvel) { m_velocity.y = yvel; }
 
   int getXposDifferenceWithCollisionObject() const { return m_xposDif; }
 

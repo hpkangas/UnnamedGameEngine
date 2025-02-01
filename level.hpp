@@ -1,4 +1,5 @@
 #pragma once
+#include "rendercomponent.hpp"
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 #include "block.hpp"
@@ -10,6 +11,7 @@ struct LevelInfo {
   std::vector<GameObject> gameobjects;
   std::vector<Player> playercharacters;
   std::vector<Block> blocks;
+  std::vector<RenderComponent> renderables;
 };
 
 class Level {

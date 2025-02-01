@@ -56,7 +56,8 @@ bool playerCollisionDown(const Player &player, const Block &obj) {
 
   if (player.m_collisionRect.y + player.m_collisionRect.h <= obj.m_collisionRect.y) {
     {
-      return (player.m_collisionRect.y + player.m_collisionRect.h + player.getYvel() >=
+      return (player.m_collisionRect.y + player.m_collisionRect.h +
+                      player.transformComponent.getYvel() >=
                   obj.m_collisionRect.y &&
               player.m_collisionRect.x < obj.m_collisionRect.x + obj.m_collisionRect.w - 1 &&
               player.m_collisionRect.x + player.m_collisionRect.w - 1 > obj.m_collisionRect.x);
@@ -68,7 +69,7 @@ bool playerCollisionDown(const Player &player, const Block &obj) {
 bool playerCollisionUp(const Player &player, const Block &obj) {
   if (player.m_collisionRect.y >= obj.m_collisionRect.y + obj.m_collisionRect.h) {
 
-    return (player.m_collisionRect.y + player.getYvel() <=
+    return (player.m_collisionRect.y + player.transformComponent.getYvel() <=
                 obj.m_collisionRect.y + obj.m_collisionRect.h &&
             player.m_collisionRect.x < obj.m_collisionRect.x + obj.m_collisionRect.w - 1 &&
             player.m_collisionRect.x + player.m_collisionRect.w - 1 > obj.m_collisionRect.x);
@@ -79,7 +80,7 @@ bool playerCollisionUp(const Player &player, const Block &obj) {
 bool playerCollisionLeft(const Player &player, const Block &obj) {
   if (player.m_collisionRect.x >= obj.m_collisionRect.x + obj.m_collisionRect.w) {
 
-    return (player.m_collisionRect.x + player.getXvel() <
+    return (player.m_collisionRect.x + player.transformComponent.getXvel() <
                 obj.m_collisionRect.x + obj.m_collisionRect.w &&
             player.m_collisionRect.y < obj.m_collisionRect.y + obj.m_collisionRect.h - 1 &&
             player.m_collisionRect.y + player.m_collisionRect.h - 1 > obj.m_collisionRect.y);
@@ -90,7 +91,8 @@ bool playerCollisionLeft(const Player &player, const Block &obj) {
 bool playerCollisionRight(const Player &player, const Block &obj) {
   if (player.m_collisionRect.x + player.m_collisionRect.w <= obj.m_collisionRect.x) {
 
-    return (player.m_collisionRect.x + player.m_collisionRect.w + player.getXvel() >
+    return (player.m_collisionRect.x + player.m_collisionRect.w +
+                    player.transformComponent.getXvel() >
                 obj.m_collisionRect.x &&
             player.m_collisionRect.y < obj.m_collisionRect.y + obj.m_collisionRect.h - 1 &&
             player.m_collisionRect.y + player.m_collisionRect.h - 1 > obj.m_collisionRect.y);

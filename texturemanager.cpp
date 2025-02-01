@@ -16,10 +16,10 @@ SDL_Texture *LoadTexture(const char *fileName) {
   return nullptr;
 }
 
-void draw(const RenderInfo &RenderInfo) {
+void draw(const RenderInfo &RenderInfo, const Camera &camera) {
   SDL_Rect newDestination = RenderInfo.destinationRect;
-  newDestination.x -= RenderInfo.camera.m_offset.x;
-  newDestination.y -= RenderInfo.camera.m_offset.y;
+  newDestination.x -= camera.m_offset.x;
+  newDestination.y -= camera.m_offset.y;
   SDL_RenderCopyEx(Game::renderer, RenderInfo.objTexture, &RenderInfo.sourceRect, &newDestination,
                    0, nullptr, RenderInfo.flip);
 }
