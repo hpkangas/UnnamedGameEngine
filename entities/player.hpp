@@ -1,9 +1,10 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
+#include "../components/animationcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
+#include "../components/gravitycomponent.hpp"
 #include "../components/rendercomponent.hpp"
 #include "../components/transformcomponent.hpp"
-#include "../constants.hpp"
 #include <string>
 
 class Player {
@@ -13,11 +14,7 @@ class Player {
   float m_playerSpeed = 0;
   float m_playerSpeedMax = 0;
 
-  int m_animationFrame = 0;
   int m_WALKING_ANIMATION_FRAMES = 0;
-
-  GravityState m_gravityState;
-  AnimationState m_animationState;
 
   void gravity();
   void handleMovement();
@@ -31,9 +28,13 @@ public:
   Player(int x, int y, const std::string &name);
   Player() {};
   ~Player() {};
+
   TransformComponent transformComponent{};
   RenderComponent renderComponent{};
   CollisionComponent collisionComponent{};
+  AnimationComponent animationComponent{};
+  GravityComponent gravityComponent{};
+
   void playFrame(int x, int y, int w, int h, int frame);
 
   void moveRight();
@@ -45,34 +46,6 @@ public:
   void stopYD();
 
   void update();
-
-  // void render(Camera camera) override;
-
-  // int getXpos() const override { return m_position.x; }
-
-  // int getYpos() const override { return m_position.y; }
-
-  // float getXvel() const { return m_velocity.x; }
-
-  // float getYvel() const { return m_velocity.y; }
-
-  // void setXpos(const int xpos) override { m_position.x = xpos; }
-
-  // void setYpos(const int ypos) override { m_position.y = ypos; }
-
-  // void setXvel(const float xvel) { m_velocity.x = xvel; }
-
-  // void setYvel(const float yvel) { m_velocity.y = yvel; }
-
-
-
-  GravityState getGravityState() const { return m_gravityState; }
-
-  void setGravityState(const GravityState gravityState) { m_gravityState = gravityState; }
-
-  AnimationState getAnimationState() const { return m_animationState; }
-
-  void setAnimationState(const AnimationState animationState) { m_animationState = animationState; }
 
   std::string getName() { return m_name; }
 };

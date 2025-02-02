@@ -1,4 +1,5 @@
 #include "SDL_rect.h"
+
 struct CollisionComponent {
   SDL_Rect collisionRect{0, 0, 0, 0};
 

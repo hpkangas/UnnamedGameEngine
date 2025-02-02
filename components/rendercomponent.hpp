@@ -1,6 +1,7 @@
 #pragma once
 #ifndef RENDERCOMPONENT_HPP
 #define RENDERCOMPONENT_HPP
+
 #include "SDL_render.h"
 
 struct RenderInfo {

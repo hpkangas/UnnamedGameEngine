@@ -1,6 +1,7 @@
 #pragma once
 #ifndef TRANSFORMCOMPONENT_HPP
 #define TRANSFORMCOMPONENT_HPP
+
 struct TransformComponent {
   struct Position {
     int x, y;

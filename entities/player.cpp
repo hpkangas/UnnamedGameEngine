@@ -21,14 +21,12 @@ Player::Player(const int x, const int y, const std::string &name) {
                                       transformComponent.position.y, PLAYER_WIDTH - 56,
                                       PLAYER_HEIGHT};
 
-  m_animationFrame = 1;
   m_WALKING_ANIMATION_FRAMES = 8;
 
   m_playerSpeed = 0.4f;
   m_playerSpeedMax = 8.0f;
 
-  m_animationState = STILL;
-  m_gravityState = GROUNDED;
+  gravityComponent.gravityState = GROUNDED;
 }
 
 void Player::update() {
@@ -47,18 +45,13 @@ void Player::update() {
   collisionComponent.collisionRect.y = transformComponent.position.y;
 }
 
-// void Player::render(const Camera camera) {
-//   const RenderInfo info = {m_objTexture, rc.m_sourceRect, rc.m_destinationRect, m_flipType,
-//   camera}; TextureManager::draw(info);
-// }
-
 void Player::playFrame(const int x, const int y, const int w, const int h, const int frame) {
   renderComponent.sourceRect = {x + w * frame, y, w, h};
 }
 
 void Player::moveRight() {
-  if (getAnimationState() != WALKING)
-    setAnimationState(WALKING);
+  if (animationComponent.getAnimationState() != WALKING)
+    animationComponent.setAnimationState(WALKING);
 
   transformComponent.setXvel(transformComponent.getXvel() + m_playerSpeed);
 
@@ -67,8 +60,8 @@ void Player::moveRight() {
 }
 
 void Player::moveLeft() {
-  if (getAnimationState() != WALKING)
-    setAnimationState(WALKING);
+  if (animationComponent.getAnimationState() != WALKING)
+    animationComponent.setAnimationState(WALKING);
 
   transformComponent.setXvel(transformComponent.getXvel() - m_playerSpeed);
 
@@ -85,7 +78,7 @@ void Player::moveDown() { transformComponent.setYvel(m_playerSpeed); }
 void Player::stopX() {
   if (transformComponent.getXvel() != 0) {
     transformComponent.setXvel(0);
-    setAnimationState(STILL);
+    animationComponent.setAnimationState(STILL);
   }
 }
 
@@ -93,7 +86,7 @@ void Player::stopX() {
 void Player::stopYU() {
   if (transformComponent.velocity.y < 0) {
     transformComponent.velocity.y = 0;
-    m_animationState = STILL;
+    animationComponent.animationFrame = STILL;
   }
 }
 
@@ -101,7 +94,7 @@ void Player::stopYU() {
 void Player::stopYD() {
   if (transformComponent.velocity.y > 0) {
     transformComponent.velocity.y = 0;
-    m_animationState = STILL;
+    animationComponent.animationFrame = STILL;
   }
 }
 
@@ -140,9 +133,9 @@ void Player::handleDownCollision() {
       transformComponent.setYpos(transformComponent.getYpos() -
                                  collisionComponent.getYposDifferenceWithCollisionObject());
     transformComponent.setYvel(0);
-    setGravityState(GROUNDED);
+    gravityComponent.setGravityState(GROUNDED);
   } else {
-    setGravityState(INAIR);
+    gravityComponent.setGravityState(INAIR);
   }
 }
 
@@ -150,8 +143,8 @@ void Player::handleHorizontalCollision() {
   const int xposDif = collisionComponent.getXposDifferenceWithCollisionObject();
 
   if (!collisionComponent.getCollisionLeft() && !collisionComponent.getCollisionRight()) {
-    if (getAnimationState() == PUSHING) {
-      setAnimationState(STILL);
+    if (animationComponent.getAnimationState() == PUSHING) {
+      animationComponent.setAnimationState(STILL);
     }
   } else {
     if (xposDif != 0) {
@@ -159,8 +152,8 @@ void Player::handleHorizontalCollision() {
     }
     transformComponent.setXvel(0);
 
-    if (getGravityState() == GROUNDED) {
-      setAnimationState(PUSHING);
+    if (gravityComponent.getGravityState() == GROUNDED) {
+      animationComponent.setAnimationState(PUSHING);
     }
   }
 }
@@ -170,15 +163,15 @@ void Player::handleUpCollision(bool collision, int dif) {
 }
 
 void Player::handleGravityState() {
-  switch (getGravityState()) {
+  switch (gravityComponent.getGravityState()) {
   case GROUNDED:
-    if (getAnimationState() == anims_INAIR)
-      setAnimationState(STILL);
+    if (animationComponent.getAnimationState() == anims_INAIR)
+      animationComponent.setAnimationState(STILL);
     break;
 
   case INAIR:
     gravity();
-    setAnimationState(anims_INAIR);
+    animationComponent.setAnimationState(anims_INAIR);
     break;
 
   default:
@@ -187,35 +180,35 @@ void Player::handleGravityState() {
 }
 
 void Player::handleAnimationState() {
-  switch (getAnimationState()) {
+  switch (animationComponent.getAnimationState()) {
   case STILL:
-    m_animationFrame = 0;
-    playFrame(0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, m_animationFrame);
+    animationComponent.animationFrame = 0;
+    playFrame(0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationComponent.animationFrame);
     break;
 
   case WALKING:
     playFrame(0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
-              m_animationFrame / m_WALKING_ANIMATION_FRAMES);
-    m_animationFrame++;
-    if (m_animationFrame / m_WALKING_ANIMATION_FRAMES > 7) {
-      m_animationFrame = 0;
+              animationComponent.animationFrame / m_WALKING_ANIMATION_FRAMES);
+    animationComponent.animationFrame++;
+    if (animationComponent.animationFrame / m_WALKING_ANIMATION_FRAMES > 7) {
+      animationComponent.animationFrame = 0;
     }
     break;
 
   case PUSHING:
     // baelog animaatiossa destination rectille pitäisi olla ehkä joku offset
-    playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, m_animationFrame / 8);
-    m_animationFrame++;
-    if (m_animationFrame / 8 > 7) {
-      m_animationFrame = 0;
+    playFrame(0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationComponent.animationFrame / 8);
+    animationComponent.animationFrame++;
+    if (animationComponent.animationFrame / 8 > 7) {
+      animationComponent.animationFrame = 0;
     }
     break;
 
   case anims_INAIR:
-    playFrame(0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, m_animationFrame / 8);
-    m_animationFrame++;
-    if (m_animationFrame / 8 > 1) {
-      m_animationFrame = 0;
+    playFrame(0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT, animationComponent.animationFrame / 8);
+    animationComponent.animationFrame++;
+    if (animationComponent.animationFrame / 8 > 1) {
+      animationComponent.animationFrame = 0;
     }
     break;
 

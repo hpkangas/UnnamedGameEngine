@@ -15,7 +15,7 @@ public:
   void handleEvents();
   void update();
   void render();
-  static void clean();
+  void clean();
 
   bool running() const { return isRunning; }
 

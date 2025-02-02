@@ -78,7 +78,7 @@ void Game::handleEvents() {
         selectedPlayer->transformComponent.setYvel(0);
         selectedPlayer->transformComponent.setXpos(0);
         selectedPlayer->transformComponent.setYpos(0);
-        selectedPlayer->setGravityState(INAIR);
+        selectedPlayer->gravityComponent.setGravityState(INAIR);
         camera.m_position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
         camera.m_offset = {0, 0, 0, 0};
         break;
