@@ -2,11 +2,7 @@
 #include "entities/block.hpp"
 #include "entities/player.hpp"
 #include <SDL2/SDL_rwops.h>
-#include <algorithm>
 #include <cstdio>
-#include <iostream>
-#include <memory>
-#include <ostream>
 #include <string>
 #include <vector>
 
@@ -35,11 +31,13 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
         if (gameObjectType.substr(0, 2) == "PC") {
           Player *player = createPlayerCharacter(gameObjectType, x, y);
           level.playercharacters.emplace_back(player);
+          level.renderables.emplace_back(&player->renderComponent);
         }
 
         if (gameObjectType.substr(0, 1) == "B") {
           Block *block = createBlock(gameObjectType, x, y);
           level.blocks.emplace_back(block);
+          level.renderables.emplace_back(&block->renderComponent);
         }
 
         values.clear();

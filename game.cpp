@@ -2,7 +2,6 @@
 #include "camera.hpp"
 #include "components/rendercomponent.hpp"
 #include "entities/block.hpp"
-#include "entities/gameobject.hpp"
 #include "entities/player.hpp"
 #include "physics.hpp"
 #include "texturemanager.hpp"
@@ -51,7 +50,8 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   SDL_RWclose(Handle);
 
   selectedPlayer = currentLevel.playercharacters.at(0);
-  std::cout << std::addressof(currentLevel.playercharacters.at(0)) << std::endl;
+  std::cout << std::addressof(currentLevel.playercharacters.at(0)->renderComponent) << std::endl;
+  std::cout << std::addressof(currentLevel.renderables.at(0)) << std::endl;
 }
 
 void Game::handleEvents() {
@@ -66,20 +66,11 @@ void Game::handleEvents() {
       case SDLK_q:
         isRunning = false;
         break;
-      case SDLK_UP:
-        selectedPlayer->moveUp();
-        break;
-      case SDLK_DOWN:
-        selectedPlayer->moveDown();
-        break;
       case SDLK_RIGHT:
         inputR = true;
         break;
       case SDLK_LEFT:
         inputL = true;
-        break;
-      case SDLK_d:
-        selectedPlayer->transformComponent.setYvel(80);
         break;
       // reset selectedPlayer pos for debugging
       case SDLK_r:
@@ -101,12 +92,6 @@ void Game::handleEvents() {
 
     case SDL_KEYUP:
       switch (event.key.keysym.sym) {
-      case SDLK_UP:
-        selectedPlayer->stopYU();
-        break;
-      case SDLK_DOWN:
-        selectedPlayer->stopYD();
-        break;
       case SDLK_RIGHT:
         inputR = false;
         break;
@@ -133,13 +118,13 @@ void Game::update() {
     object->update();
   }
 
-  for (auto &object : currentLevel.blocks) {
-    object->update();
-  }
+  // for (auto &object : currentLevel.blocks) {
+  //   object->update();
+  // }
 
-  for (auto &object : currentLevel.gameobjects) {
-    object->update();
-  }
+  // for (auto &object : currentLevel.gameobjects) {
+  //   object->update();
+  // }
 
   updateCamera(*selectedPlayer);
 }
@@ -147,7 +132,7 @@ void Game::update() {
 void Game::render() {
   SDL_RenderClear(renderer);
   for (auto &object : currentLevel.renderables) {
-    TextureManager::draw(object.render(), camera);
+    TextureManager::draw(object->render(), camera);
   }
   // for (auto &object : currentLevel.playercharacters) {
   //   object->render(camera);
@@ -169,8 +154,8 @@ void Game::render() {
 
 void Game::clean() {
   SDL_DestroyWindow(Game::window);
-  SDL_DestroyRenderer(renderer);
-  TTF_CloseFont(gFont);
+  SDL_DestroyRenderer(Game::renderer);
+  TTF_CloseFont(Game::gFont);
   TTF_Quit();
   SDL_Quit();
   std::cout << "Game cleaned\n";
@@ -216,10 +201,10 @@ void Game::handleInput() const {
 void Game::checkPlayerMovementCollisions() {
   for (auto &&player : currentLevel.playercharacters) {
 
-    player->setCollisionDown(false);
-    player->setCollisionUp(false);
-    player->setCollisionRight(false);
-    player->setCollisionLeft(false);
+    player->collisionComponent.setCollisionDown(false);
+    player->collisionComponent.setCollisionUp(false);
+    player->collisionComponent.setCollisionRight(false);
+    player->collisionComponent.setCollisionLeft(false);
 
     int yposDif = 0;
     int xposDif = 0;
@@ -228,27 +213,31 @@ void Game::checkPlayerMovementCollisions() {
 
       // player comes from right
       if (Physics::playerCollisionLeft(*player, *block) == true) {
-        xposDif = player->m_collisionRect.x - (block->m_collisionRect.x + block->m_collisionRect.w);
-        player->setXposDifferenceWithCollisionObject(xposDif);
-        player->setCollisionLeft(true);
+        xposDif =
+            player->collisionComponent.collisionRect.x -
+            (block->collisionComponent.collisionRect.x + block->collisionComponent.collisionRect.w);
+        player->collisionComponent.setXposDifferenceWithCollisionObject(xposDif);
+        player->collisionComponent.setCollisionLeft(true);
         continue;
       }
 
       // player comes from left
       if (Physics::playerCollisionRight(*player, *block) == true) {
-        xposDif =
-            (player->m_collisionRect.x + player->m_collisionRect.w) - block->m_collisionRect.x;
-        player->setXposDifferenceWithCollisionObject(xposDif);
-        player->setCollisionRight(true);
+        xposDif = (player->collisionComponent.collisionRect.x +
+                   player->collisionComponent.collisionRect.w) -
+                  block->collisionComponent.collisionRect.x;
+        player->collisionComponent.setXposDifferenceWithCollisionObject(xposDif);
+        player->collisionComponent.setCollisionRight(true);
         continue;
       }
 
       // player comes from above
       if (Physics::playerCollisionDown(*player, *block) == true) {
-        yposDif =
-            (player->m_collisionRect.y + player->m_collisionRect.h) - block->m_collisionRect.y;
-        player->setYposDifferenceWithCollisionObject(yposDif);
-        player->setCollisionDown(true);
+        yposDif = (player->collisionComponent.collisionRect.y +
+                   player->collisionComponent.collisionRect.h) -
+                  block->collisionComponent.collisionRect.y;
+        player->collisionComponent.setYposDifferenceWithCollisionObject(yposDif);
+        player->collisionComponent.setCollisionDown(true);
 
         continue;
       }

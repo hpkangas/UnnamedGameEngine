@@ -1,6 +1,7 @@
 #pragma once
 #include "../components/rendercomponent.hpp"
 #include "../components/transformcomponent.hpp"
+#include "player.hpp"
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
 #include <SDL2/SDL_render.h>
@@ -13,9 +14,9 @@ public:
   Block createBlock2(int x, int y);
   Block createBlock3(int x, int y);
 
-  TransformComponent tc{};
-  RenderComponent rc{};
-  SDL_Rect m_collisionRect{};
+  TransformComponent transformComponent{};
+  RenderComponent renderComponent{};
+  CollisionComponent collisionComponent{};
 
   void update();
   // void render(Camera camera) override;

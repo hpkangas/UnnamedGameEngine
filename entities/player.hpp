@@ -1,9 +1,9 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
+#include "../components/collisioncomponent.hpp"
 #include "../components/rendercomponent.hpp"
 #include "../components/transformcomponent.hpp"
 #include "../constants.hpp"
-#include "SDL_render.h"
 #include <string>
 
 class Player {
@@ -13,21 +13,11 @@ class Player {
   float m_playerSpeed = 0;
   float m_playerSpeedMax = 0;
 
-  int m_yposDif = 0;
-  int m_xposDif = 0;
-
-  bool m_collisionUp = false;
-  bool m_collisionDown = false;
-  bool m_collisionLeft = false;
-  bool m_collisionRight = false;
-
   int m_animationFrame = 0;
   int m_WALKING_ANIMATION_FRAMES = 0;
 
   GravityState m_gravityState;
   AnimationState m_animationState;
-
-  SDL_RendererFlip m_flipType;
 
   void gravity();
   void handleMovement();
@@ -43,6 +33,7 @@ public:
   ~Player() {};
   TransformComponent transformComponent{};
   RenderComponent renderComponent{};
+  CollisionComponent collisionComponent{};
   void playFrame(int x, int y, int w, int h, int frame);
 
   void moveRight();
@@ -55,7 +46,6 @@ public:
 
   void update();
 
-  SDL_Rect m_collisionRect;
   // void render(Camera camera) override;
 
   // int getXpos() const override { return m_position.x; }
@@ -74,29 +64,7 @@ public:
 
   // void setYvel(const float yvel) { m_velocity.y = yvel; }
 
-  int getXposDifferenceWithCollisionObject() const { return m_xposDif; }
 
-  int getYposDifferenceWithCollisionObject() const { return m_yposDif; }
-
-  bool getCollisionDown() const { return m_collisionDown; }
-
-  bool getCollisionUp() const { return m_collisionUp; }
-
-  bool getCollisionRight() const { return m_collisionRight; }
-
-  bool getCollisionLeft() const { return m_collisionLeft; }
-
-  void setCollisionDown(const bool collision) { m_collisionDown = collision; }
-
-  void setCollisionUp(const bool collision) { m_collisionUp = collision; }
-
-  void setCollisionRight(const bool collision) { m_collisionRight = collision; }
-
-  void setCollisionLeft(const bool collision) { m_collisionLeft = collision; }
-
-  void setXposDifferenceWithCollisionObject(const int xposDif) { m_xposDif = xposDif; }
-
-  void setYposDifferenceWithCollisionObject(const int yposDif) { m_yposDif = yposDif; }
 
   GravityState getGravityState() const { return m_gravityState; }
 

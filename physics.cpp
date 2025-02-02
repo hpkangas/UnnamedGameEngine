@@ -54,48 +54,65 @@ bool checkLeft(SDL_Rect a, SDL_Rect b) {
 
 bool playerCollisionDown(const Player &player, const Block &obj) {
 
-  if (player.m_collisionRect.y + player.m_collisionRect.h <= obj.m_collisionRect.y) {
+  if (player.collisionComponent.collisionRect.y + player.collisionComponent.collisionRect.h <=
+      obj.collisionComponent.collisionRect.y) {
     {
-      return (player.m_collisionRect.y + player.m_collisionRect.h +
-                      player.transformComponent.getYvel() >=
-                  obj.m_collisionRect.y &&
-              player.m_collisionRect.x < obj.m_collisionRect.x + obj.m_collisionRect.w - 1 &&
-              player.m_collisionRect.x + player.m_collisionRect.w - 1 > obj.m_collisionRect.x);
+      return (
+          player.collisionComponent.collisionRect.y + player.collisionComponent.collisionRect.h +
+                  player.transformComponent.getYvel() >=
+              obj.collisionComponent.collisionRect.y &&
+          player.collisionComponent.collisionRect.x <
+              obj.collisionComponent.collisionRect.x + obj.collisionComponent.collisionRect.w - 1 &&
+          player.collisionComponent.collisionRect.x + player.collisionComponent.collisionRect.w -
+                  1 >
+              obj.collisionComponent.collisionRect.x);
     }
   }
   return false;
 }
 
 bool playerCollisionUp(const Player &player, const Block &obj) {
-  if (player.m_collisionRect.y >= obj.m_collisionRect.y + obj.m_collisionRect.h) {
+  if (player.collisionComponent.collisionRect.y >=
+      obj.collisionComponent.collisionRect.y + obj.collisionComponent.collisionRect.h) {
 
-    return (player.m_collisionRect.y + player.transformComponent.getYvel() <=
-                obj.m_collisionRect.y + obj.m_collisionRect.h &&
-            player.m_collisionRect.x < obj.m_collisionRect.x + obj.m_collisionRect.w - 1 &&
-            player.m_collisionRect.x + player.m_collisionRect.w - 1 > obj.m_collisionRect.x);
+    return (
+        player.collisionComponent.collisionRect.y + player.transformComponent.getYvel() <=
+            obj.collisionComponent.collisionRect.y + obj.collisionComponent.collisionRect.h &&
+        player.collisionComponent.collisionRect.x <
+            obj.collisionComponent.collisionRect.x + obj.collisionComponent.collisionRect.w - 1 &&
+        player.collisionComponent.collisionRect.x + player.collisionComponent.collisionRect.w - 1 >
+            obj.collisionComponent.collisionRect.x);
   }
   return false;
 }
 
 bool playerCollisionLeft(const Player &player, const Block &obj) {
-  if (player.m_collisionRect.x >= obj.m_collisionRect.x + obj.m_collisionRect.w) {
+  if (player.collisionComponent.collisionRect.x >=
+      obj.collisionComponent.collisionRect.x + obj.collisionComponent.collisionRect.w) {
 
-    return (player.m_collisionRect.x + player.transformComponent.getXvel() <
-                obj.m_collisionRect.x + obj.m_collisionRect.w &&
-            player.m_collisionRect.y < obj.m_collisionRect.y + obj.m_collisionRect.h - 1 &&
-            player.m_collisionRect.y + player.m_collisionRect.h - 1 > obj.m_collisionRect.y);
+    return (
+        player.collisionComponent.collisionRect.x + player.transformComponent.getXvel() <
+            obj.collisionComponent.collisionRect.x + obj.collisionComponent.collisionRect.w &&
+        player.collisionComponent.collisionRect.y <
+            obj.collisionComponent.collisionRect.y + obj.collisionComponent.collisionRect.h - 1 &&
+        player.collisionComponent.collisionRect.y + player.collisionComponent.collisionRect.h - 1 >
+            obj.collisionComponent.collisionRect.y);
   }
   return false;
 }
 
 bool playerCollisionRight(const Player &player, const Block &obj) {
-  if (player.m_collisionRect.x + player.m_collisionRect.w <= obj.m_collisionRect.x) {
+  if (player.collisionComponent.collisionRect.x + player.collisionComponent.collisionRect.w <=
+      obj.collisionComponent.collisionRect.x) {
 
-    return (player.m_collisionRect.x + player.m_collisionRect.w +
-                    player.transformComponent.getXvel() >
-                obj.m_collisionRect.x &&
-            player.m_collisionRect.y < obj.m_collisionRect.y + obj.m_collisionRect.h - 1 &&
-            player.m_collisionRect.y + player.m_collisionRect.h - 1 > obj.m_collisionRect.y);
+    return (
+        player.collisionComponent.collisionRect.x + player.collisionComponent.collisionRect.w +
+                player.transformComponent.getXvel() >
+            obj.collisionComponent.collisionRect.x &&
+        player.collisionComponent.collisionRect.y <
+            obj.collisionComponent.collisionRect.y + obj.collisionComponent.collisionRect.h - 1 &&
+        player.collisionComponent.collisionRect.y + player.collisionComponent.collisionRect.h - 1 >
+            obj.collisionComponent.collisionRect.y);
   }
   return false;
 }

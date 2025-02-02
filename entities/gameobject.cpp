@@ -35,17 +35,17 @@ void Background::update() {
 
 GameText::GameText(std::string textureText, int x, int y) {
   text = textureText;
-  tc.m_position = {x, y};
+  tc.position = {x, y};
 }
 
 void GameText::update() {
-  rc.m_sourceRect.x = 0;
-  rc.m_sourceRect.y = 4;
+  rc.sourceRect.x = 0;
+  rc.sourceRect.y = 4;
 
-  rc.m_destinationRect.x = tc.m_position.x;
-  rc.m_destinationRect.y = tc.m_position.y;
-  rc.m_destinationRect.w = rc.m_sourceRect.w;
-  rc.m_destinationRect.h = rc.m_sourceRect.h;
+  rc.destinationRect.x = tc.position.x;
+  rc.destinationRect.y = tc.position.y;
+  rc.destinationRect.w = rc.sourceRect.w;
+  rc.destinationRect.h = rc.sourceRect.h;
 }
 
 // void GameText::render(Camera camera) {

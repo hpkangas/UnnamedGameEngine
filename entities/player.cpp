@@ -5,32 +5,30 @@
 
 Player::Player(const int x, const int y, const std::string &name) {
   m_name = name;
-  renderComponent.m_objTexture = TextureManager::LoadTexture("assets/baleog.png");
-  transformComponent.m_position = {x, y};
+  renderComponent.objTexture = TextureManager::LoadTexture("assets/baleog.png");
+  transformComponent.position = {x, y};
 
-  m_flipType = SDL_FLIP_NONE;
+  renderComponent.flip = SDL_FLIP_NONE;
 
-  renderComponent.m_sourceRect = {0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT};
+  renderComponent.sourceRect = {0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT};
 
-  renderComponent.m_destinationRect = {x, y, renderComponent.m_sourceRect.w,
-                                       renderComponent.m_sourceRect.h};
+  renderComponent.destinationRect = {x, y, renderComponent.sourceRect.w,
+                                     renderComponent.sourceRect.h};
 
   // TODO sprite offsets. should be defined inside the specific character
   // classes (once decided on)
-  m_collisionRect = {transformComponent.m_position.x + 28, transformComponent.m_position.y,
-                     PLAYER_WIDTH - 56, PLAYER_HEIGHT};
+  collisionComponent.collisionRect = {transformComponent.position.x + 28,
+                                      transformComponent.position.y, PLAYER_WIDTH - 56,
+                                      PLAYER_HEIGHT};
 
   m_animationFrame = 1;
   m_WALKING_ANIMATION_FRAMES = 8;
 
   m_playerSpeed = 0.4f;
   m_playerSpeedMax = 8.0f;
-  m_xposDif = 0;
-  m_yposDif = 0;
 
   m_animationState = STILL;
   m_gravityState = GROUNDED;
-  m_flipType = SDL_FLIP_NONE;
 }
 
 void Player::update() {
@@ -40,13 +38,13 @@ void Player::update() {
   handleMovement();
   handleAnimationState();
 
-  renderComponent.m_destinationRect.x = transformComponent.m_position.x;
-  renderComponent.m_destinationRect.y = transformComponent.m_position.y;
+  renderComponent.destinationRect.x = transformComponent.position.x;
+  renderComponent.destinationRect.y = transformComponent.position.y;
 
   // TODO sprite offsets. should be defined inside the specific character
   // classes (once decided on)
-  m_collisionRect.x = transformComponent.m_position.x + 28;
-  m_collisionRect.y = transformComponent.m_position.y;
+  collisionComponent.collisionRect.x = transformComponent.position.x + 28;
+  collisionComponent.collisionRect.y = transformComponent.position.y;
 }
 
 // void Player::render(const Camera camera) {
@@ -55,7 +53,7 @@ void Player::update() {
 // }
 
 void Player::playFrame(const int x, const int y, const int w, const int h, const int frame) {
-  renderComponent.m_sourceRect = {x + w * frame, y, w, h};
+  renderComponent.sourceRect = {x + w * frame, y, w, h};
 }
 
 void Player::moveRight() {
@@ -93,16 +91,16 @@ void Player::stopX() {
 
 // debugging only mostly
 void Player::stopYU() {
-  if (transformComponent.m_velocity.y < 0) {
-    transformComponent.m_velocity.y = 0;
+  if (transformComponent.velocity.y < 0) {
+    transformComponent.velocity.y = 0;
     m_animationState = STILL;
   }
 }
 
 // debugging only mostly
 void Player::stopYD() {
-  if (transformComponent.m_velocity.y > 0) {
-    transformComponent.m_velocity.y = 0;
+  if (transformComponent.velocity.y > 0) {
+    transformComponent.velocity.y = 0;
     m_animationState = STILL;
   }
 }
@@ -128,19 +126,19 @@ void Player::handleMovement() {
   }
 
   if (xvel < 0) {
-    m_flipType = SDL_FLIP_HORIZONTAL;
+    renderComponent.flip = SDL_FLIP_HORIZONTAL;
   }
 
   if (xvel > 0) {
-    m_flipType = SDL_FLIP_NONE;
+    renderComponent.flip = SDL_FLIP_NONE;
   }
 }
 
 void Player::handleDownCollision() {
-  if (getCollisionDown()) {
-    if (getYposDifferenceWithCollisionObject() != 0)
+  if (collisionComponent.getCollisionDown()) {
+    if (collisionComponent.getYposDifferenceWithCollisionObject() != 0)
       transformComponent.setYpos(transformComponent.getYpos() -
-                                 getYposDifferenceWithCollisionObject());
+                                 collisionComponent.getYposDifferenceWithCollisionObject());
     transformComponent.setYvel(0);
     setGravityState(GROUNDED);
   } else {
@@ -149,9 +147,9 @@ void Player::handleDownCollision() {
 }
 
 void Player::handleHorizontalCollision() {
-  const int xposDif = getXposDifferenceWithCollisionObject();
+  const int xposDif = collisionComponent.getXposDifferenceWithCollisionObject();
 
-  if (!getCollisionLeft() && !getCollisionRight()) {
+  if (!collisionComponent.getCollisionLeft() && !collisionComponent.getCollisionRight()) {
     if (getAnimationState() == PUSHING) {
       setAnimationState(STILL);
     }

@@ -12,10 +12,13 @@ struct RenderInfo {
 
 struct RenderComponent {
 
-  SDL_Texture *m_objTexture{};
-  SDL_Rect m_sourceRect{}, m_destinationRect{};
-  RenderInfo render();
   RenderComponent() {}
   ~RenderComponent() {}
+
+  SDL_Texture *objTexture{};
+  SDL_Rect sourceRect{}, destinationRect{};
+  SDL_RendererFlip flip = SDL_FLIP_NONE;
+
+  RenderInfo render();
 };
 #endif

@@ -9,25 +9,28 @@ struct TransformComponent {
   struct Velocity {
     float x, y;
   };
-  Position m_position{0, 0};
-  Velocity m_velocity{0, 0};
+
+  Position position{0, 0};
+  Velocity velocity{0, 0};
+
   TransformComponent() {};
   ~TransformComponent() {}
-  int getXpos() const { return m_position.x; }
 
-  int getYpos() const { return m_position.y; }
+  int getXpos() const { return position.x; }
 
-  void setXpos(const int xpos) { m_position.x = xpos; }
+  int getYpos() const { return position.y; }
 
-  void setYpos(const int ypos) { m_position.y = ypos; }
+  void setXpos(const int xpos) { position.x = xpos; }
 
-  float getXvel() const { return m_velocity.x; }
+  void setYpos(const int ypos) { position.y = ypos; }
 
-  float getYvel() const { return m_velocity.y; }
+  float getXvel() const { return velocity.x; }
 
-  void setXvel(const float xvel) { m_velocity.x = xvel; }
+  float getYvel() const { return velocity.y; }
 
-  void setYvel(const float yvel) { m_velocity.y = yvel; }
+  void setXvel(const float xvel) { velocity.x = xvel; }
+
+  void setYvel(const float yvel) { velocity.y = yvel; }
 };
 
 #endif
