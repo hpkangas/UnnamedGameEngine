@@ -3,8 +3,8 @@
 #define GAME_HPP
 
 #include "camera.hpp"
+#include "entities/player.hpp"
 #include "level.hpp"
-#include "player.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 

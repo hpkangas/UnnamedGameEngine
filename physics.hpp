@@ -1,7 +1,7 @@
 #ifndef PHYSICS_HPP
 #define PHYSICS_HPP
-#include "block.hpp"
-#include "player.hpp"
+#include "entities/block.hpp"
+#include "entities/player.hpp"
 #include <SDL2/SDL.h>
 // namespace?
 namespace Physics {

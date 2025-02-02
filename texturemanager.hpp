@@ -2,7 +2,7 @@
 #ifndef TEXTUREMANAGER_HPP
 #define TEXTUREMANAGER_HPP
 #include "camera.hpp"
-#include "rendercomponent.hpp"
+#include "components/rendercomponent.hpp"
 #include <SDL2/SDL_image.h>
 // struct RenderInfo {
 //   SDL_Texture *objTexture{};

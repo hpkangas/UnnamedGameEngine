@@ -1,6 +1,6 @@
 #pragma once
-#include "rendercomponent.hpp"
-#include "transformcomponent.hpp"
+#include "../components/rendercomponent.hpp"
+#include "../components/transformcomponent.hpp"
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
 #include <SDL2/SDL_render.h>

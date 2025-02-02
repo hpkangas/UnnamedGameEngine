@@ -1,8 +1,8 @@
 #pragma once
 #ifndef GAMEOBJECT_HPP
 #define GAMEOBJECT_HPP
-#include "rendercomponent.hpp"
-#include "transformcomponent.hpp"
+#include "../components/rendercomponent.hpp"
+#include "../components/transformcomponent.hpp"
 #include <SDL2/SDL_image.h>
 #include <string>
 

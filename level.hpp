@@ -1,10 +1,10 @@
 #pragma once
-#include "rendercomponent.hpp"
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
-#include "block.hpp"
-#include "gameobject.hpp"
-#include "player.hpp"
+#include "components/rendercomponent.hpp"
+#include "entities/block.hpp"
+#include "entities/gameobject.hpp"
+#include "entities/player.hpp"
 #include <vector>
 
 struct LevelInfo {

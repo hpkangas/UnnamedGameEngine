@@ -1,6 +1,6 @@
 #include "level.hpp"
-#include "block.hpp"
-#include "player.hpp"
+#include "entities/block.hpp"
+#include "entities/player.hpp"
 #include <SDL2/SDL_rwops.h>
 #include <cstdio>
 #include <string>

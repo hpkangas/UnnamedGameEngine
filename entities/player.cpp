@@ -1,6 +1,6 @@
 #include "player.hpp"
-#include "constants.hpp"
-#include "texturemanager.hpp"
+#include "../constants.hpp"
+#include "../texturemanager.hpp"
 #include <SDL2/SDL_render.h>
 
 Player::Player(const int x, const int y, const std::string &name) {

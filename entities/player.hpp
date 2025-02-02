@@ -1,9 +1,9 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
+#include "../components/rendercomponent.hpp"
+#include "../components/transformcomponent.hpp"
+#include "../constants.hpp"
 #include "SDL_render.h"
-#include "constants.hpp"
-#include "rendercomponent.hpp"
-#include "transformcomponent.hpp"
 #include <string>
 
 class Player {

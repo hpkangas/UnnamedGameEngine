@@ -1,10 +1,10 @@
 #include "game.hpp"
-#include "block.hpp"
 #include "camera.hpp"
-#include "gameobject.hpp"
+#include "components/rendercomponent.hpp"
+#include "entities/block.hpp"
+#include "entities/gameobject.hpp"
+#include "entities/player.hpp"
 #include "physics.hpp"
-#include "player.hpp"
-#include "rendercomponent.hpp"
 #include "texturemanager.hpp"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
@@ -16,7 +16,6 @@
 SDL_Renderer *Game::renderer = nullptr;
 TTF_Font *Game::gFont = nullptr;
 SDL_Window *Game::window = nullptr;
-std::vector<RenderComponent> renderables;
 // TODO System class?
 void Game::init(const char *title, const int xpos, const int ypos, const int width,
                 const int height, const bool fullscreen) {
@@ -48,8 +47,10 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   SDL_RWops *Handle{SDL_RWFromFile("level", "rb")};
   currentLevel = level.createLevel(Handle);
   SDL_RWclose(Handle);
-
+  std::cout << std::addressof(currentLevel.renderables.at(0)) << std::endl;
   selectedPlayer = &currentLevel.playercharacters.at(0);
+  std::cout << std::addressof(currentLevel.playercharacters.at(0)) << std::endl;
+  std::cout << std::addressof(*selectedPlayer) << std::endl;
 }
 
 void Game::handleEvents() {
