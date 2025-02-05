@@ -1,0 +1,41 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/game_cmake.dir/camera.cpp.o"
+  "CMakeFiles/game_cmake.dir/camera.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/components/animationcomponent.cpp.o"
+  "CMakeFiles/game_cmake.dir/components/animationcomponent.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/components/collisioncomponent.cpp.o"
+  "CMakeFiles/game_cmake.dir/components/collisioncomponent.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/components/rendercomponent.cpp.o"
+  "CMakeFiles/game_cmake.dir/components/rendercomponent.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/components/transformcomponent.cpp.o"
+  "CMakeFiles/game_cmake.dir/components/transformcomponent.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/entities/block.cpp.o"
+  "CMakeFiles/game_cmake.dir/entities/block.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/entities/gameobject.cpp.o"
+  "CMakeFiles/game_cmake.dir/entities/gameobject.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/entities/player.cpp.o"
+  "CMakeFiles/game_cmake.dir/entities/player.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/game.cpp.o"
+  "CMakeFiles/game_cmake.dir/game.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/gamesystem.cpp.o"
+  "CMakeFiles/game_cmake.dir/gamesystem.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/level.cpp.o"
+  "CMakeFiles/game_cmake.dir/level.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/main.cpp.o"
+  "CMakeFiles/game_cmake.dir/main.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/physics.cpp.o"
+  "CMakeFiles/game_cmake.dir/physics.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/systems/rendersystem.cpp.o"
+  "CMakeFiles/game_cmake.dir/systems/rendersystem.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/texturemanager.cpp.o"
+  "CMakeFiles/game_cmake.dir/texturemanager.cpp.o.d"
+  "CMakeFiles/game_cmake.dir/utils.cpp.o"
+  "CMakeFiles/game_cmake.dir/utils.cpp.o.d"
+  "game_cmake"
+  "game_cmake.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/game_cmake.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

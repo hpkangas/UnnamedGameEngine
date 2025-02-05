@@ -1,0 +1,3 @@
+/home/hannu-pekkakangas/Fun/TotallyNotLostVikingsGame/build/CMakeFiles/game_cmake.dir
+/home/hannu-pekkakangas/Fun/TotallyNotLostVikingsGame/build/CMakeFiles/edit_cache.dir
+/home/hannu-pekkakangas/Fun/TotallyNotLostVikingsGame/build/CMakeFiles/rebuild_cache.dir

@@ -1,16 +1,18 @@
 cmake_minimum_required(VERSION 3.7)
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 project(game_cmake)
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
 PKG_SEARCH_MODULE(SDL2TTF REQUIRED SDL2_ttf>=2.0.0)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 file(GLOB SOURCES *.cpp
 components/*.cpp
-entities/*.cpp)
+entities/*.cpp
+systems/*.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 

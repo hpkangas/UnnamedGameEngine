@@ -5,22 +5,14 @@
 #include "camera.hpp"
 #include "entities/player.hpp"
 #include "level.hpp"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include "systems/rendersystem.hpp"
 
 class Game {
 public:
-  void init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen);
-
+  void init();
   void handleEvents();
   void update();
-  void render();
-  void clean();
-
-  bool running() const { return isRunning; }
-
-  static SDL_Renderer *renderer;
-  static TTF_Font *gFont;
+  void render(SDL_Renderer &renderer);
 
 private:
   Player *selectedPlayer = nullptr;
@@ -28,14 +20,12 @@ private:
   LevelInfo currentLevel;
   Camera camera;
 
-  bool isRunning = false;
+  RenderSystem renderSystem;
 
   bool inputR = false;
   bool inputL = false;
 
   bool playerCollisionUp = false;
-
-  static SDL_Window *window;
 
   void handleInput() const;
   void checkPlayerMovementCollisions();

@@ -1,47 +1,18 @@
 #include "game.hpp"
+#include "gamesystem.hpp"
 #include "camera.hpp"
-#include "components/rendercomponent.hpp"
 #include "entities/block.hpp"
 #include "entities/player.hpp"
 #include "physics.hpp"
-#include "texturemanager.hpp"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
 #include <cstdio>
-#include <iostream>
-#include <memory>
 #include <vector>
 
 // TODO I think these should be defined else where because they are called as
 // Game::something (don't like it)
-SDL_Renderer *Game::renderer = nullptr;
-TTF_Font *Game::gFont = nullptr;
-SDL_Window *Game::window = nullptr;
 // TODO System class?
-void Game::init(const char *title, const int xpos, const int ypos, const int width,
-                const int height, const bool fullscreen) {
-  int flags = 0;
-  if (fullscreen) {
-    flags = SDL_WINDOW_FULLSCREEN;
-  }
-  if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
-    TTF_Init();
-    gFont = TTF_OpenFont("font.ttf", 32);
-    std::cout << "Subsystems initialised \n";
-    window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
-    if (window) {
-      std::cout << "Window created\n";
-    }
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (renderer) {
-      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-      // SDL_RenderSetScale(renderer, 2,2);
-      std::cout << "Renderer created\n";
-    }
-    isRunning = true;
-  } else {
-    isRunning = false;
-  }
+void Game::init() {
 
   // TODO level data should be generated at the start of the game (main?), game obj should have
   // access to levels list
@@ -50,8 +21,6 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   SDL_RWclose(Handle);
 
   selectedPlayer = currentLevel.playercharacters.at(0);
-  std::cout << std::addressof(currentLevel.playercharacters.at(0)->renderComponent) << std::endl;
-  std::cout << std::addressof(currentLevel.renderables.at(0)) << std::endl;
 }
 
 void Game::handleEvents() {
@@ -64,7 +33,7 @@ void Game::handleEvents() {
       switch (event.key.keysym.sym) {
       // quit game
       case SDLK_q:
-        isRunning = false;
+        GameSystem::isRunning = false;
         break;
       case SDLK_RIGHT:
         inputR = true;
@@ -113,7 +82,6 @@ void Game::update() {
 
   checkPlayerMovementCollisions();
 
-  // polymorphism is lost like this
   for (auto &object : currentLevel.playercharacters) {
     object->update();
   }
@@ -129,36 +97,8 @@ void Game::update() {
   updateCamera(*selectedPlayer);
 }
 
-void Game::render() {
-  SDL_RenderClear(renderer);
-  for (auto &object : currentLevel.renderables) {
-    TextureManager::draw(object->render(), camera);
-  }
-  // for (auto &object : currentLevel.playercharacters) {
-  //   object->render(camera);
-  // }
-  // for (auto &object : currentLevel.playercharacters) {
-  //   object.render(camera);
-  // }
-
-  // for (auto &object : currentLevel.blocks) {
-  //   object.render(camera);
-  // }
-
-  // for (auto &object : currentLevel.gameobjects) {
-  //   object.render(camera);
-  // }
-
-  SDL_RenderPresent(renderer);
-}
-
-void Game::clean() {
-  SDL_DestroyWindow(Game::window);
-  SDL_DestroyRenderer(Game::renderer);
-  TTF_CloseFont(Game::gFont);
-  TTF_Quit();
-  SDL_Quit();
-  std::cout << "Game cleaned\n";
+void Game::render(SDL_Renderer &renderer) {
+  renderSystem.render(renderer, camera, currentLevel.renderables);
 }
 
 // TODO
