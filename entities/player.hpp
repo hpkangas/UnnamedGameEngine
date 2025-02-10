@@ -14,9 +14,7 @@ class Player {
   float m_playerSpeed = 0;
   float m_playerSpeedMax = 0;
 
-  int m_WALKING_ANIMATION_FRAMES = 0;
 
-  void gravity();
   void handleMovement();
   void handleDownCollision();
   void handleHorizontalCollision();

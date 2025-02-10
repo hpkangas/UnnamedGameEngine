@@ -21,8 +21,6 @@ Player::Player(const int x, const int y, const std::string &name) {
                                       transformComponent.position.y, PLAYER_WIDTH - 56,
                                       PLAYER_HEIGHT};
 
-  m_WALKING_ANIMATION_FRAMES = 8;
-
   m_playerSpeed = 0.4f;
   m_playerSpeedMax = 8.0f;
 
@@ -98,12 +96,6 @@ void Player::stopYD() {
   }
 }
 
-void Player::gravity() {
-  if (transformComponent.getYvel() < MAX_GRAVITY) {
-    transformComponent.setYvel(transformComponent.getYvel() + GRAVITYUNIT);
-  }
-}
-
 void Player::handleMovement() {
   const float xvel = transformComponent.getXvel();
   const float yvel = transformComponent.getYvel();
@@ -170,7 +162,7 @@ void Player::handleGravityState() {
     break;
 
   case INAIR:
-    gravity();
+    gravityComponent.gravity(transformComponent);
     animationComponent.setAnimationState(anims_INAIR);
     break;
 
@@ -188,9 +180,9 @@ void Player::handleAnimationState() {
 
   case WALKING:
     playFrame(0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
-              animationComponent.animationFrame / m_WALKING_ANIMATION_FRAMES);
+              animationComponent.animationFrame / animationComponent.WALKING_ANIMATION_FRAMES);
     animationComponent.animationFrame++;
-    if (animationComponent.animationFrame / m_WALKING_ANIMATION_FRAMES > 7) {
+    if (animationComponent.animationFrame / animationComponent.WALKING_ANIMATION_FRAMES > 7) {
       animationComponent.animationFrame = 0;
     }
     break;
