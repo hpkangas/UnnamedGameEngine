@@ -1,3 +1,6 @@
+#ifndef ANIMATIONCOMPONENT_HPP
+#define ANIMATIONCOMPONENT_HPP
+
 enum AnimationState { STILL = 0, WALKING = 1, PUSHING = 2, anims_INAIR = 3 };
 
 struct AnimationComponent {
@@ -10,3 +13,5 @@ struct AnimationComponent {
 
   void setAnimationState(const AnimationState state) { animationState = state; }
 };
+
+#endif

@@ -5,6 +5,7 @@
 #include "camera.hpp"
 #include "entities/player.hpp"
 #include "level.hpp"
+#include "systems/controlsystem.hpp"
 #include "systems/rendersystem.hpp"
 
 class Game {
@@ -21,16 +22,11 @@ private:
   Camera camera;
 
   RenderSystem renderSystem;
-
-  bool inputR = false;
-  bool inputL = false;
+  ControlSystem controlSystem;
 
   bool playerCollisionUp = false;
 
-  void handleInput() const;
   void checkPlayerMovementCollisions();
-  void changePlayerCharacter();
-  void centerCameraToCharacter(const Player &player);
   void updateCamera(const Player &player);
 };
 

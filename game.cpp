@@ -24,63 +24,10 @@ void Game::init() {
   selectedPlayer = currentLevel.playercharacters.at(0);
 }
 
-void Game::handleEvents() {
-  SDL_Event event;
-
-  // WaitForEvent pudottaa cpu% mutta tökkii
-  if (SDL_PollEvent(&event) != 0) {
-    switch (event.type) {
-    case SDL_KEYDOWN:
-      switch (event.key.keysym.sym) {
-      // quit game
-      case SDLK_q:
-        GameSystem::isRunning = false;
-        break;
-      case SDLK_RIGHT:
-        inputR = true;
-        break;
-      case SDLK_LEFT:
-        inputL = true;
-        break;
-      // reset selectedPlayer pos for debugging
-      case SDLK_r:
-        selectedPlayer->transformComponent.setXvel(0);
-        selectedPlayer->transformComponent.setYvel(0);
-        selectedPlayer->transformComponent.setXpos(0);
-        selectedPlayer->transformComponent.setYpos(0);
-        selectedPlayer->gravityComponent.setGravityState(INAIR);
-        camera.m_position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
-        camera.m_offset = {0, 0, 0, 0};
-        break;
-      case SDLK_c:
-        changePlayerCharacter();
-        break;
-      default:
-        break;
-      }
-      break;
-
-    case SDL_KEYUP:
-      switch (event.key.keysym.sym) {
-      case SDLK_RIGHT:
-        inputR = false;
-        break;
-      case SDLK_LEFT:
-        inputL = false;
-        break;
-      default:
-        break;
-      }
-    default:
-      break;
-    }
-  }
-}
+void Game::handleEvents() {}
 
 void Game::update() {
-
-  handleInput();
-
+  controlSystem.update(*selectedPlayer, camera, currentLevel);
   checkPlayerMovementCollisions();
 
   for (auto &object : currentLevel.playercharacters) {
@@ -103,41 +50,6 @@ void Game::render(SDL_Renderer &renderer) {
 }
 
 // TODO
-void Game::changePlayerCharacter() {
-  if (selectedPlayer->getName() == "Erik") {
-    selectedPlayer->stopX();
-    selectedPlayer = currentLevel.playercharacters.at(1);
-    centerCameraToCharacter(*selectedPlayer);
-    return;
-  }
-
-  if (selectedPlayer->getName() == "Olaf") {
-    selectedPlayer->stopX();
-    selectedPlayer = currentLevel.playercharacters.at(2);
-    centerCameraToCharacter(*selectedPlayer);
-    return;
-  }
-
-  if (selectedPlayer->getName() == "Baleog") {
-    selectedPlayer->stopX();
-    selectedPlayer = currentLevel.playercharacters.at(0);
-    centerCameraToCharacter(*selectedPlayer);
-  }
-}
-
-void Game::handleInput() const {
-  if (inputR && !inputL) {
-    selectedPlayer->moveRight();
-    return;
-  }
-
-  if (inputL && !inputR) {
-    selectedPlayer->moveLeft();
-    return;
-  }
-
-  selectedPlayer->stopX();
-}
 
 void Game::checkPlayerMovementCollisions() {
   for (auto &&player : currentLevel.playercharacters) {
@@ -196,13 +108,6 @@ void Game::checkPlayerMovementCollisions() {
                                          player->transformComponent.getYvel());
     }
   }
-}
-
-void Game::centerCameraToCharacter(const Player &player) {
-
-  camera.updateOffsetRelativeToScreen(player.transformComponent.getXpos(),
-                                      player.transformComponent.getYpos());
-  camera.updatePositionRelativeToScreenAndOffset();
 }
 
 void Game::updateCamera(const Player &player) {

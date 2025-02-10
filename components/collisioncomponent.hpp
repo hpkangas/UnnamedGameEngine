@@ -1,5 +1,6 @@
 #include "SDL_rect.h"
-
+#ifndef COLLISIONCOMPONENT_HPP
+#define COLLISIONCOMPONENT_HPP
 struct CollisionComponent {
   SDL_Rect collisionRect{0, 0, 0, 0};
 
@@ -35,3 +36,5 @@ struct CollisionComponent {
 
   void setYposDifferenceWithCollisionObject(const int dif) { yposDif = dif; }
 };
+
+#endif
