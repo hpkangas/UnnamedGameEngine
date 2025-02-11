@@ -8,8 +8,12 @@ void RenderSystem::update(SDL_Renderer &renderer, Camera camera,
                             
   SDL_RenderClear(&renderer);
   for (auto &object : renderables) {
+  std::cout<<object->render().destinationRect.x<<", "<<object->render().destinationRect.y<<"\n";
+
     draw(renderer, object->render(), camera);
   }
+  std::cout<<"stop render"<<"\n";
+
   SDL_RenderPresent(&renderer);
 }
 

@@ -5,6 +5,7 @@
 #include "entities/block.hpp"
 #include "entities/gameobject.hpp"
 #include "entities/player.hpp"
+#include "entities/entity.hpp"
 #include <vector>
 
 struct LevelInfo {
@@ -12,6 +13,7 @@ struct LevelInfo {
   std::vector<Player *> playercharacters;
   std::vector<Block *> blocks;
   std::vector<RenderComponent *> renderables;
+  std::vector<Entity*> entities;
 };
 
 class Level {
@@ -25,6 +27,8 @@ public:
   Block *createBlock1(int x, int y);
   Block *createBlock2(int x, int y);
   Block *createBlock3(int x, int y);
+
+  Entity *createBlockEntity(int x, int y);
 
 }; // namespace Level
 

@@ -1,6 +1,9 @@
 #include "level.hpp"
+#include "components/rendercomponent.hpp"
+#include "components/transformcomponent.hpp"
 #include "entities/block.hpp"
 #include "entities/player.hpp"
+#include "texturemanager.hpp"
 #include <SDL2/SDL_rwops.h>
 #include <cstdio>
 #include <string>
@@ -38,6 +41,13 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
           Block *block = createBlock(gameObjectType, x, y);
           level.blocks.emplace_back(block);
           level.renderables.emplace_back(&block->renderComponent);
+        }
+
+        if (gameObjectType.substr(0, 1) == "E") {
+          Entity *entity = createBlockEntity(x, y);
+          level.entities.emplace_back(entity);
+          level.renderables.emplace_back(static_cast<RenderComponent*>(&entity->components[1]));
+
         }
 
         values.clear();
@@ -81,4 +91,33 @@ Block *Level::createBlock(std::string gameObjectType, int x, int y) {
     return createBlock3(x, y);
   }
   return createBlock1(0, 0);
+}
+
+Entity *Level::createBlockEntity(int x, int y){
+  Entity *entity = new Entity();
+  TransformComponent transformComponent;
+  transformComponent.position = {x,y};
+  transformComponent.velocity = {0,0};
+
+  RenderComponent renderComponent;
+  renderComponent.sourceRect = {0,0,128,64};
+  renderComponent.destinationRect.h = renderComponent.sourceRect.h;
+  renderComponent.destinationRect.w = renderComponent.sourceRect.w;
+  renderComponent.destinationRect.x = transformComponent.position.x;
+  renderComponent.destinationRect.y = transformComponent.position.y;
+
+  CollisionComponent collisionComponent;
+  collisionComponent.collisionRect.h = renderComponent.destinationRect.h;
+  collisionComponent.collisionRect.w = renderComponent.destinationRect.w;
+  collisionComponent.collisionRect.x = transformComponent.position.x;
+  collisionComponent.collisionRect.y = transformComponent.position.y + 4;
+
+  
+  renderComponent.objTexture = TextureManager::LoadTexture("assets/tiles.png");
+
+  entity->add(transformComponent);
+  entity->add(renderComponent);
+  entity->add(collisionComponent);
+
+  return entity;
 }

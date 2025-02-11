@@ -1,5 +1,6 @@
 assets/
 .vscode/
+.idea/
 main
 game
 player
@@ -16,3 +17,4 @@ Makefile
 compile_commands.json
 /.cache
 build/
+cmake-build-debug/

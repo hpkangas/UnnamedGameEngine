@@ -6,6 +6,7 @@
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
 #include <cstdio>
+#include <iostream>
 #include <vector>
 
 // TODO I think these should be defined else where because they are called as
@@ -27,7 +28,7 @@ void Game::handleEvents() {}
 void Game::update() {
   controlSystem.update(transformSystem, *selectedPlayer, camera, currentLevel);
   collisionSystem.update(*selectedPlayer, currentLevel);
-  
+
   for (auto &object : currentLevel.playercharacters) {
     transformSystem.update(*object);
     object->update();
