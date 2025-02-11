@@ -11,13 +11,6 @@ class Player {
 
   std::string m_name;
 
-  float m_playerSpeed = 0;
-  float m_playerSpeedMax = 0;
-
-
-  void handleMovement();
-  void handleDownCollision();
-  void handleHorizontalCollision();
   void handleUpCollision(bool collision, int dif);
   void handleGravityState();
   void handleAnimationState();
@@ -34,14 +27,6 @@ public:
   GravityComponent gravityComponent{};
 
   void playFrame(int x, int y, int w, int h, int frame);
-
-  void moveRight();
-  void moveLeft();
-  void moveUp();
-  void moveDown();
-  void stopX();
-  void stopYU();
-  void stopYD();
 
   void update();
 

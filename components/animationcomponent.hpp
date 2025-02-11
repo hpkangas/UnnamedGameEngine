@@ -1,9 +1,11 @@
 #ifndef ANIMATIONCOMPONENT_HPP
 #define ANIMATIONCOMPONENT_HPP
+#include "component.hpp"
+
 
 enum AnimationState { STILL = 0, WALKING = 1, PUSHING = 2, anims_INAIR = 3 };
 
-struct AnimationComponent {
+struct AnimationComponent : public IComponent {
 
   AnimationState animationState = STILL;
   int animationFrame = 0;

@@ -1,8 +1,9 @@
 #pragma once
 #ifndef TRANSFORMCOMPONENT_HPP
 #define TRANSFORMCOMPONENT_HPP
+#include "component.hpp"
 
-struct TransformComponent {
+struct TransformComponent : public IComponent {
   struct Position {
     int x, y;
   };

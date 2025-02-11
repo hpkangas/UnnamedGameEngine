@@ -3,6 +3,7 @@
 #define RENDERCOMPONENT_HPP
 
 #include "SDL_render.h"
+#include "component.hpp"
 
 struct RenderInfo {
   SDL_Texture *objTexture{};
@@ -11,7 +12,7 @@ struct RenderInfo {
   SDL_RendererFlip flip = SDL_FLIP_NONE;
 };
 
-struct RenderComponent {
+struct RenderComponent : public IComponent {
 
   RenderComponent() {}
   ~RenderComponent() {}

@@ -23,7 +23,7 @@ int main(int argc, char const *argv[]) {
       // printf("Delay %d\n", SDL_GetTicks64() - ticks);
       continue;
     }
-    game.handleEvents();
+    //game.handleEvents();
     game.update();
     game.render(*system.renderer);
     ticks = SDL_GetTicks64();

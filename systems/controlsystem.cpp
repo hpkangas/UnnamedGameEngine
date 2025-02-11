@@ -3,8 +3,10 @@
 #include "../constants.hpp"
 #include "../gamesystem.hpp"
 #include "SDL_events.h"
+#include "transformsystem.hpp"
 
-void ControlSystem::update(Player &selectedPlayer, Camera &camera, LevelInfo &currentLevel) {
+void ControlSystem::update(TransformSystem &transformSystem, Player &selectedPlayer, Camera &camera,
+                           LevelInfo &currentLevel) {
 
   SDL_Event event;
 
@@ -34,7 +36,7 @@ void ControlSystem::update(Player &selectedPlayer, Camera &camera, LevelInfo &cu
         camera.m_offset = {0, 0, 0, 0};
         break;
       case SDLK_c:
-        changePlayerCharacter(selectedPlayer, camera, currentLevel);
+        changePlayerCharacter(transformSystem, selectedPlayer, camera, currentLevel);
         break;
       default:
         break;
@@ -57,41 +59,41 @@ void ControlSystem::update(Player &selectedPlayer, Camera &camera, LevelInfo &cu
     }
   }
 
-  handleInput(selectedPlayer);
+  handleInput(transformSystem,selectedPlayer);
 }
 
-void ControlSystem::handleInput(Player &selectedPlayer) {
+void ControlSystem::handleInput(TransformSystem &transformSystem, Player &selectedPlayer) {
   if (inputR && !inputL) {
-    selectedPlayer.moveRight();
+    transformSystem.moveRight(selectedPlayer);
     return;
   }
 
   if (inputL && !inputR) {
-    selectedPlayer.moveLeft();
+    transformSystem.moveLeft(selectedPlayer);
     return;
   }
 
-  selectedPlayer.stopX();
+  transformSystem.stopX(selectedPlayer);
 }
 
-void ControlSystem::changePlayerCharacter(Player &selectedPlayer, Camera &camera,
+void ControlSystem::changePlayerCharacter(TransformSystem &transformSystem, Player &selectedPlayer, Camera &camera,
                                           LevelInfo &currentLevel) {
   if (selectedPlayer.getName() == "Erik") {
-    selectedPlayer.stopX();
+    transformSystem.stopX(selectedPlayer);
     //  selectedPlayer = *currentLevel.playercharacters.at(1);
     centerCameraToCharacter(selectedPlayer, camera);
     return;
   }
 
   if (selectedPlayer.getName() == "Olaf") {
-    selectedPlayer.stopX();
+    transformSystem.stopX(selectedPlayer);
     // selectedPlayer = currentLevel.playercharacters.at(2);
     centerCameraToCharacter(selectedPlayer, camera);
     return;
   }
 
   if (selectedPlayer.getName() == "Baleog") {
-    selectedPlayer.stopX();
+    transformSystem.stopX(selectedPlayer);
     //  selectedPlayer = currentLevel.playercharacters.at(0);
     centerCameraToCharacter(selectedPlayer, camera);
   }

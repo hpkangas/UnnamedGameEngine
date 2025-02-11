@@ -2,8 +2,10 @@
 #include <iostream>
 #include <ostream>
 
-void RenderSystem::render(SDL_Renderer &renderer, Camera camera,
+void RenderSystem::update(SDL_Renderer &renderer, Camera camera,
                           std::vector<RenderComponent *> renderables) {
+
+                            
   SDL_RenderClear(&renderer);
   for (auto &object : renderables) {
     draw(renderer, object->render(), camera);

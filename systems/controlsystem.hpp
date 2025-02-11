@@ -1,17 +1,18 @@
+#ifndef CONTROLSYSTEM_HPP
+#define CONTROLSYSTEM_HPP
 #include "../camera.hpp"
 #include "../entities/player.hpp"
 #include "../level.hpp"
-
-#ifndef CONTROLSYSTEM_HPP
-#define CONTROLSYSTEM_HPP
+#include "transformsystem.hpp"
 
 class ControlSystem {
 public:
   ControlSystem() {};
   ~ControlSystem() {};
-  void update(Player &selectedPlayer, Camera &camera, LevelInfo &currentLevel);
-  void handleInput(Player &selectedPlayer);
-  void changePlayerCharacter(Player &selectedPlayer, Camera &camera, LevelInfo &currentLevel);
+  void update(TransformSystem &transformSystem, Player &selectedPlayer, Camera &camera,
+              LevelInfo &currentLevel);
+  void handleInput(TransformSystem &transformSystem, Player &selectedPlayer);
+  void changePlayerCharacter(TransformSystem &transformSystem, Player &selectedPlayer, Camera &camera, LevelInfo &currentLevel);
   void centerCameraToCharacter(const Player &player, Camera &camera);
 
   bool inputR = false;

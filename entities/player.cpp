@@ -21,133 +21,28 @@ Player::Player(const int x, const int y, const std::string &name) {
                                       transformComponent.position.y, PLAYER_WIDTH - 56,
                                       PLAYER_HEIGHT};
 
-  m_playerSpeed = 0.4f;
-  m_playerSpeedMax = 8.0f;
-
   gravityComponent.gravityState = GROUNDED;
 }
 
 void Player::update() {
-  handleDownCollision();
-  handleHorizontalCollision();
+  // TODO handles to systems
   handleGravityState();
-  handleMovement();
   handleAnimationState();
 
+  //TODO to rendersystem
   renderComponent.destinationRect.x = transformComponent.position.x;
   renderComponent.destinationRect.y = transformComponent.position.y;
 
   // TODO sprite offsets. should be defined inside the specific character
   // classes (once decided on)
+
+  //TODO to collisionsystem
   collisionComponent.collisionRect.x = transformComponent.position.x + 28;
   collisionComponent.collisionRect.y = transformComponent.position.y;
 }
 
 void Player::playFrame(const int x, const int y, const int w, const int h, const int frame) {
   renderComponent.sourceRect = {x + w * frame, y, w, h};
-}
-
-void Player::moveRight() {
-  if (animationComponent.getAnimationState() != WALKING)
-    animationComponent.setAnimationState(WALKING);
-
-  transformComponent.setXvel(transformComponent.getXvel() + m_playerSpeed);
-
-  if (transformComponent.getXvel() > m_playerSpeedMax)
-    transformComponent.setXvel(m_playerSpeedMax);
-}
-
-void Player::moveLeft() {
-  if (animationComponent.getAnimationState() != WALKING)
-    animationComponent.setAnimationState(WALKING);
-
-  transformComponent.setXvel(transformComponent.getXvel() - m_playerSpeed);
-
-  if (transformComponent.getXvel() < -m_playerSpeedMax)
-    transformComponent.setXvel(-m_playerSpeedMax);
-}
-
-void Player::moveUp() { transformComponent.setYvel(-m_playerSpeed); }
-
-// debugging only mostly
-void Player::moveDown() { transformComponent.setYvel(m_playerSpeed); }
-
-// debugging only mostly
-void Player::stopX() {
-  if (transformComponent.getXvel() != 0) {
-    transformComponent.setXvel(0);
-    animationComponent.setAnimationState(STILL);
-  }
-}
-
-// debugging only mostly
-void Player::stopYU() {
-  if (transformComponent.velocity.y < 0) {
-    transformComponent.velocity.y = 0;
-    animationComponent.animationFrame = STILL;
-  }
-}
-
-// debugging only mostly
-void Player::stopYD() {
-  if (transformComponent.velocity.y > 0) {
-    transformComponent.velocity.y = 0;
-    animationComponent.animationFrame = STILL;
-  }
-}
-
-void Player::handleMovement() {
-  const float xvel = transformComponent.getXvel();
-  const float yvel = transformComponent.getYvel();
-  const int xpos = transformComponent.getXpos();
-  const int ypos = transformComponent.getYpos();
-
-  if (!(xvel == 0)) {
-    transformComponent.setXpos(xpos + xvel);
-  }
-
-  if (!(yvel == 0)) {
-    transformComponent.setYpos(ypos + yvel);
-  }
-
-  if (xvel < 0) {
-    renderComponent.flip = SDL_FLIP_HORIZONTAL;
-  }
-
-  if (xvel > 0) {
-    renderComponent.flip = SDL_FLIP_NONE;
-  }
-}
-
-void Player::handleDownCollision() {
-  if (collisionComponent.getCollisionDown()) {
-    if (collisionComponent.getYposDifferenceWithCollisionObject() != 0)
-      transformComponent.setYpos(transformComponent.getYpos() -
-                                 collisionComponent.getYposDifferenceWithCollisionObject());
-    transformComponent.setYvel(0);
-    gravityComponent.setGravityState(GROUNDED);
-  } else {
-    gravityComponent.setGravityState(INAIR);
-  }
-}
-
-void Player::handleHorizontalCollision() {
-  const int xposDif = collisionComponent.getXposDifferenceWithCollisionObject();
-
-  if (!collisionComponent.getCollisionLeft() && !collisionComponent.getCollisionRight()) {
-    if (animationComponent.getAnimationState() == PUSHING) {
-      animationComponent.setAnimationState(STILL);
-    }
-  } else {
-    if (xposDif != 0) {
-      transformComponent.setXpos(transformComponent.getXpos() - xposDif);
-    }
-    transformComponent.setXvel(0);
-
-    if (gravityComponent.getGravityState() == GROUNDED) {
-      animationComponent.setAnimationState(PUSHING);
-    }
-  }
 }
 
 void Player::handleUpCollision(bool collision, int dif) {

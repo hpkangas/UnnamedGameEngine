@@ -1,4 +1,5 @@
 #pragma once
+#include "systems/transformsystem.hpp"
 #ifndef GAME_HPP
 #define GAME_HPP
 
@@ -7,6 +8,7 @@
 #include "level.hpp"
 #include "systems/controlsystem.hpp"
 #include "systems/rendersystem.hpp"
+#include "systems/collisionsystem.hpp"
 
 class Game {
 public:
@@ -23,10 +25,9 @@ private:
 
   RenderSystem renderSystem;
   ControlSystem controlSystem;
+  CollisionSystem collisionSystem;
+  TransformSystem transformSystem;
 
-  bool playerCollisionUp = false;
-
-  void checkPlayerMovementCollisions();
   void updateCamera(const Player &player);
 };
 
