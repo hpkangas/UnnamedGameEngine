@@ -3,9 +3,9 @@
 #define LEVEL_HPP
 #include "components/rendercomponent.hpp"
 #include "entities/block.hpp"
+#include "entities/entity.hpp"
 #include "entities/gameobject.hpp"
 #include "entities/player.hpp"
-#include "entities/entity.hpp"
 #include <vector>
 
 struct LevelInfo {
@@ -13,7 +13,7 @@ struct LevelInfo {
   std::vector<Player *> playercharacters;
   std::vector<Block *> blocks;
   std::vector<RenderComponent *> renderables;
-  std::vector<Entity*> entities;
+  std::vector<Entity *> entities;
 };
 
 class Level {

@@ -46,8 +46,7 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
         if (gameObjectType.substr(0, 1) == "E") {
           Entity *entity = createBlockEntity(x, y);
           level.entities.emplace_back(entity);
-          level.renderables.emplace_back(static_cast<RenderComponent*>(&entity->components[1]));
-
+          level.renderables.emplace_back(&entity->renderComponent);
         }
 
         values.clear();
@@ -93,31 +92,22 @@ Block *Level::createBlock(std::string gameObjectType, int x, int y) {
   return createBlock1(0, 0);
 }
 
-Entity *Level::createBlockEntity(int x, int y){
+Entity *Level::createBlockEntity(int x, int y) {
   Entity *entity = new Entity();
-  TransformComponent transformComponent;
-  transformComponent.position = {x,y};
-  transformComponent.velocity = {0,0};
+  entity->transformComponent.velocity = {0, 0};
 
-  RenderComponent renderComponent;
-  renderComponent.sourceRect = {0,0,128,64};
-  renderComponent.destinationRect.h = renderComponent.sourceRect.h;
-  renderComponent.destinationRect.w = renderComponent.sourceRect.w;
-  renderComponent.destinationRect.x = transformComponent.position.x;
-  renderComponent.destinationRect.y = transformComponent.position.y;
+  entity->renderComponent.sourceRect = {0, 0, 128, 64};
+  entity->renderComponent.destinationRect.h = entity->renderComponent.sourceRect.h;
+  entity->renderComponent.destinationRect.w = entity->renderComponent.sourceRect.w;
+  entity->renderComponent.destinationRect.x = entity->transformComponent.position.x;
+  entity->renderComponent.destinationRect.y = entity->transformComponent.position.y;
 
-  CollisionComponent collisionComponent;
-  collisionComponent.collisionRect.h = renderComponent.destinationRect.h;
-  collisionComponent.collisionRect.w = renderComponent.destinationRect.w;
-  collisionComponent.collisionRect.x = transformComponent.position.x;
-  collisionComponent.collisionRect.y = transformComponent.position.y + 4;
+  entity->collisionComponent.collisionRect.h = entity->renderComponent.destinationRect.h;
+  entity->collisionComponent.collisionRect.w = entity->renderComponent.destinationRect.w;
+  entity->collisionComponent.collisionRect.x = entity->transformComponent.position.x;
+  entity->collisionComponent.collisionRect.y = entity->transformComponent.position.y + 4;
 
-  
-  renderComponent.objTexture = TextureManager::LoadTexture("assets/tiles.png");
-
-  entity->add(transformComponent);
-  entity->add(renderComponent);
-  entity->add(collisionComponent);
+  entity->renderComponent.objTexture = TextureManager::LoadTexture("assets/tiles.png");
 
   return entity;
 }

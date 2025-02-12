@@ -1,5 +1,7 @@
 #include "game.hpp"
 #include "camera.hpp"
+#include "components/component.hpp"
+#include "components/rendercomponent.hpp"
 #include "constants.hpp"
 #include "entities/player.hpp"
 #include "gamesystem.hpp"
@@ -31,6 +33,11 @@ void Game::update() {
 
   for (auto &object : currentLevel.playercharacters) {
     transformSystem.update(*object);
+    gravitySystem.update(object->gravityComponent, object->animationComponent,
+                         object->transformComponent);
+    animationSystem.update(object->renderComponent, object->animationComponent);
+
+    // original update func
     object->update();
   }
 

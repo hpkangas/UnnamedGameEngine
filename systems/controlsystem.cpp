@@ -59,7 +59,7 @@ void ControlSystem::update(TransformSystem &transformSystem, Player &selectedPla
     }
   }
 
-  handleInput(transformSystem,selectedPlayer);
+  handleInput(transformSystem, selectedPlayer);
 }
 
 void ControlSystem::handleInput(TransformSystem &transformSystem, Player &selectedPlayer) {
@@ -76,8 +76,8 @@ void ControlSystem::handleInput(TransformSystem &transformSystem, Player &select
   transformSystem.stopX(selectedPlayer);
 }
 
-void ControlSystem::changePlayerCharacter(TransformSystem &transformSystem, Player &selectedPlayer, Camera &camera,
-                                          LevelInfo &currentLevel) {
+void ControlSystem::changePlayerCharacter(TransformSystem &transformSystem, Player &selectedPlayer,
+                                          Camera &camera, LevelInfo &currentLevel) {
   if (selectedPlayer.getName() == "Erik") {
     transformSystem.stopX(selectedPlayer);
     //  selectedPlayer = *currentLevel.playercharacters.at(1);

@@ -12,8 +12,6 @@ class Player {
   std::string m_name;
 
   void handleUpCollision(bool collision, int dif);
-  void handleGravityState();
-  void handleAnimationState();
 
 public:
   Player(int x, int y, const std::string &name);
@@ -25,8 +23,6 @@ public:
   CollisionComponent collisionComponent{};
   AnimationComponent animationComponent{};
   GravityComponent gravityComponent{};
-
-  void playFrame(int x, int y, int w, int h, int frame);
 
   void update();
 

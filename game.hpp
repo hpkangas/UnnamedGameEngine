@@ -1,14 +1,15 @@
 #pragma once
-#include "systems/transformsystem.hpp"
 #ifndef GAME_HPP
 #define GAME_HPP
-
 #include "camera.hpp"
 #include "entities/player.hpp"
 #include "level.hpp"
-#include "systems/controlsystem.hpp"
-#include "systems/rendersystem.hpp"
+#include "systems/animationsystem.hpp"
 #include "systems/collisionsystem.hpp"
+#include "systems/controlsystem.hpp"
+#include "systems/gravitysystem.hpp"
+#include "systems/rendersystem.hpp"
+#include "systems/transformsystem.hpp"
 
 class Game {
 public:
@@ -27,6 +28,8 @@ private:
   ControlSystem controlSystem;
   CollisionSystem collisionSystem;
   TransformSystem transformSystem;
+  AnimationSystem animationSystem;
+  GravitySystem gravitySystem;
 
   void updateCamera(const Player &player);
 };
