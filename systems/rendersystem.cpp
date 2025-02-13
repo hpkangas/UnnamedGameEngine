@@ -1,7 +1,7 @@
 #include "rendersystem.hpp"
 #include <iostream>
 #include <ostream>
-void RenderSystem::update(Player &player){
+void RenderSystem::update(Entity &player){
   player.renderComponent.destinationRect.x = player.transformComponent.position.x;
   player.renderComponent.destinationRect.y = player.transformComponent.position.y;
 }

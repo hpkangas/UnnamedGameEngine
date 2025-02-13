@@ -2,7 +2,6 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 #include "camera.hpp"
-#include "entities/player.hpp"
 #include "level.hpp"
 #include "systems/animationsystem.hpp"
 #include "systems/collisionsystem.hpp"
@@ -19,7 +18,7 @@ public:
   void render(SDL_Renderer &renderer);
 
 private:
-  Player *selectedPlayer = nullptr;
+  Entity *selectedPlayer = nullptr;
   Level level;
   LevelInfo currentLevel;
   Camera camera;
@@ -31,7 +30,7 @@ private:
   AnimationSystem animationSystem;
   GravitySystem gravitySystem;
 
-  void updateCamera(const Player &player);
+  void updateCamera(const Entity &player);
 };
 
 #endif /* GAME_HPP */

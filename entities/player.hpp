@@ -24,8 +24,6 @@ public:
   AnimationComponent animationComponent{};
   GravityComponent gravityComponent{};
 
-  void update();
-
   std::string getName() { return m_name; }
 };
 

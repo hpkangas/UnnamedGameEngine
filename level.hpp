@@ -10,7 +10,7 @@
 
 struct LevelInfo {
   std::vector<GameObject *> gameobjects;
-  std::vector<Player *> playercharacters;
+  std::vector<Entity *> playercharacters;
   std::vector<Block *> blocks;
   std::vector<RenderComponent *> renderables;
   std::vector<Entity *> entities;
@@ -29,6 +29,7 @@ public:
   Block *createBlock3(int x, int y);
 
   Entity *createBlockEntity(int x, int y);
+  Entity *createPCEntity(int x, int y);
 
 }; // namespace Level
 

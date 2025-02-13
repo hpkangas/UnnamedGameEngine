@@ -8,7 +8,7 @@ void GravitySystem::gravity(TransformComponent &transformComponent) {
   }
 }
 
-void GravitySystem::update(Player &selectedPlayer, CollisionComponent &collisionComponent,
+void GravitySystem::update(Entity &selectedPlayer, CollisionComponent &collisionComponent,
                            GravityComponent &gravityComponent,
                            AnimationComponent &animationComponent,
                            TransformComponent &transformComponent) {

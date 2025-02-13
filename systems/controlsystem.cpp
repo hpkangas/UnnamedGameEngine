@@ -5,7 +5,7 @@
 #include "SDL_events.h"
 #include "transformsystem.hpp"
 
-void ControlSystem::update(TransformSystem &transformSystem, Player &selectedPlayer, Camera &camera,
+void ControlSystem::update(TransformSystem &transformSystem, Entity &selectedPlayer, Camera &camera,
                            LevelInfo &currentLevel) {
 
   SDL_Event event;
@@ -62,7 +62,7 @@ void ControlSystem::update(TransformSystem &transformSystem, Player &selectedPla
   handleInput(transformSystem, selectedPlayer);
 }
 
-void ControlSystem::handleInput(TransformSystem &transformSystem, Player &selectedPlayer) {
+void ControlSystem::handleInput(TransformSystem &transformSystem, Entity &selectedPlayer) {
   if (inputR && !inputL) {
     transformSystem.moveRight(selectedPlayer);
     return;
@@ -76,30 +76,30 @@ void ControlSystem::handleInput(TransformSystem &transformSystem, Player &select
   transformSystem.stopX(selectedPlayer);
 }
 
-void ControlSystem::changePlayerCharacter(TransformSystem &transformSystem, Player &selectedPlayer,
+void ControlSystem::changePlayerCharacter(TransformSystem &transformSystem, Entity &selectedPlayer,
                                           Camera &camera, LevelInfo &currentLevel) {
-  if (selectedPlayer.getName() == "Erik") {
-    transformSystem.stopX(selectedPlayer);
-    //  selectedPlayer = *currentLevel.playercharacters.at(1);
-    centerCameraToCharacter(selectedPlayer, camera);
-    return;
-  }
+  // if (selectedPlayer.getName() == "Erik") {
+  //   transformSystem.stopX(selectedPlayer);
+  //   //  selectedPlayer = *currentLevel.playercharacters.at(1);
+  //   centerCameraToCharacter(selectedPlayer, camera);
+  //   return;
+  // }
 
-  if (selectedPlayer.getName() == "Olaf") {
-    transformSystem.stopX(selectedPlayer);
-    // selectedPlayer = currentLevel.playercharacters.at(2);
-    centerCameraToCharacter(selectedPlayer, camera);
-    return;
-  }
+  // if (selectedPlayer.getName() == "Olaf") {
+  //   transformSystem.stopX(selectedPlayer);
+  //   // selectedPlayer = currentLevel.playercharacters.at(2);
+  //   centerCameraToCharacter(selectedPlayer, camera);
+  //   return;
+  // }
 
-  if (selectedPlayer.getName() == "Baleog") {
-    transformSystem.stopX(selectedPlayer);
-    //  selectedPlayer = currentLevel.playercharacters.at(0);
-    centerCameraToCharacter(selectedPlayer, camera);
-  }
+  // if (selectedPlayer.getName() == "Baleog") {
+  //   transformSystem.stopX(selectedPlayer);
+  //   //  selectedPlayer = currentLevel.playercharacters.at(0);
+  //   centerCameraToCharacter(selectedPlayer, camera);
+  // }
 }
 
-void ControlSystem::centerCameraToCharacter(const Player &player, Camera &camera) {
+void ControlSystem::centerCameraToCharacter(const Entity &player, Camera &camera) {
 
   camera.updateOffsetRelativeToScreen(player.transformComponent.getXpos(),
                                       player.transformComponent.getYpos());

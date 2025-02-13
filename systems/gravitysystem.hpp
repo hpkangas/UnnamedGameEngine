@@ -4,12 +4,13 @@
 #include "../components/collisioncomponent.hpp"
 #include "../components/gravitycomponent.hpp"
 #include "../components/transformcomponent.hpp"
-#include "../entities/player.hpp"
+#include "../entities/entity.hpp"
 
 class GravitySystem {
 public:
   void gravity(TransformComponent &transformComponent);
-  void update(Player &selectedPlayer,CollisionComponent &collisionComponent, GravityComponent &gravityComponent,
-              AnimationComponent &animationComponent, TransformComponent &transformComponent);
+  void update(Entity &selectedPlayer, CollisionComponent &collisionComponent,
+              GravityComponent &gravityComponent, AnimationComponent &animationComponent,
+              TransformComponent &transformComponent);
 };
 #endif

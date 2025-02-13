@@ -1,8 +1,8 @@
 #include "collisionsystem.hpp"
 #include "../physics.hpp"
 
-void CollisionSystem::update(Player &selectedPlayer, LevelInfo &currentLevel) {
-  for (auto &&player : currentLevel.playercharacters) {
+void CollisionSystem::update(Entity &selectedPlayer, LevelInfo &currentLevel) {
+  for (auto &&player : currentLevel.entities) {
 
     selectedPlayer.collisionComponent.collisionRect.x = selectedPlayer.transformComponent.position.x + 28;
     selectedPlayer.collisionComponent.collisionRect.y = selectedPlayer.transformComponent.position.y;
@@ -66,7 +66,7 @@ void CollisionSystem::update(Player &selectedPlayer, LevelInfo &currentLevel) {
   }
 }
 
-void CollisionSystem::handleDownCollision(Player &selectedPlayer) {
+void CollisionSystem::handleDownCollision(Entity &selectedPlayer) {
   if (selectedPlayer.collisionComponent.getCollisionDown()) {
     if (selectedPlayer.collisionComponent.getYposDifferenceWithCollisionObject() != 0)
       selectedPlayer.transformComponent.setYpos(
@@ -76,7 +76,7 @@ void CollisionSystem::handleDownCollision(Player &selectedPlayer) {
   }
 }
 
-void CollisionSystem::handleHorizontalCollision(Player &selectedPlayer) {
+void CollisionSystem::handleHorizontalCollision(Entity &selectedPlayer) {
   const int xposDif = selectedPlayer.collisionComponent.getXposDifferenceWithCollisionObject();
 
   if (selectedPlayer.collisionComponent.getCollisionLeft() ||

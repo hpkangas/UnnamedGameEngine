@@ -1,6 +1,7 @@
 #include "level.hpp"
 #include "components/rendercomponent.hpp"
 #include "components/transformcomponent.hpp"
+#include "constants.hpp"
 #include "entities/block.hpp"
 #include "entities/player.hpp"
 #include "texturemanager.hpp"
@@ -32,9 +33,12 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
         int y = std::stoi(values.at(2));
 
         if (gameObjectType.substr(0, 2) == "PC") {
-          Player *player = createPlayerCharacter(gameObjectType, x, y);
-          level.playercharacters.emplace_back(player);
-          level.renderables.emplace_back(&player->renderComponent);
+          Entity *entity = createPCEntity(x, y);
+          level.entities.emplace_back(entity);
+          level.renderables.emplace_back(&entity->renderComponent);
+          // Player *player = createPlayerCharacter(gameObjectType, x, y);
+          // level.playercharacters.emplace_back(player);
+          // level.renderables.emplace_back(&player->renderComponent);
         }
 
         if (gameObjectType.substr(0, 1) == "B") {
@@ -94,7 +98,8 @@ Block *Level::createBlock(std::string gameObjectType, int x, int y) {
 
 Entity *Level::createBlockEntity(int x, int y) {
   Entity *entity = new Entity();
-  entity->transformComponent.velocity = {0, 0};
+  entity->transformComponent.velocity = {2, 0};
+  entity->transformComponent.position = {x, y};
 
   entity->renderComponent.sourceRect = {0, 0, 128, 64};
   entity->renderComponent.destinationRect.h = entity->renderComponent.sourceRect.h;
@@ -108,6 +113,31 @@ Entity *Level::createBlockEntity(int x, int y) {
   entity->collisionComponent.collisionRect.y = entity->transformComponent.position.y + 4;
 
   entity->renderComponent.objTexture = TextureManager::LoadTexture("assets/tiles.png");
+
+  return entity;
+}
+
+Entity *Level::createPCEntity(int x, int y) {
+  Entity *entity = new Entity();
+  entity->transformComponent.velocity = {2, 0};
+  entity->transformComponent.position = {x, y};
+
+  entity->renderComponent.sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
+
+  entity->renderComponent.objTexture = TextureManager::LoadTexture("assets/baleog.png");
+
+  entity->renderComponent.flip = SDL_FLIP_NONE;
+
+  entity->renderComponent.destinationRect = {x, y, entity->renderComponent.sourceRect.w,
+                                             entity->renderComponent.sourceRect.h};
+
+  // TODO sprite offsets. should be defined inside the specific character
+  // classes (once decided on)
+  entity->collisionComponent.collisionRect = {entity->transformComponent.position.x + 28,
+                                              entity->transformComponent.position.y,
+                                              PLAYER_WIDTH - 56, PLAYER_HEIGHT};
+
+  entity->gravityComponent.gravityState = GROUNDED;
 
   return entity;
 }

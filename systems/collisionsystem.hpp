@@ -7,9 +7,9 @@ class CollisionSystem {
 public:
   CollisionSystem(){};
   ~CollisionSystem(){};
-  void update(Player &selectedPlayer, LevelInfo &currentLevel);
-  void handleDownCollision(Player &selectedPlayer);
-  void handleHorizontalCollision(Player &selectedPlayer);
+  void update(Entity &selectedPlayer, LevelInfo &currentLevel);
+  void handleDownCollision(Entity &selectedPlayer);
+  void handleHorizontalCollision(Entity &selectedPlayer);
 };
 
 #endif

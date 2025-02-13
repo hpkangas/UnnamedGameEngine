@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "camera.hpp"
 #include "constants.hpp"
+#include "entities/entity.hpp"
 #include "entities/player.hpp"
 #include "gamesystem.hpp"
 #include <SDL2/SDL_keycode.h>
@@ -19,23 +20,26 @@ void Game::init() {
   currentLevel = level.createLevel(Handle);
   SDL_RWclose(Handle);
 
-  selectedPlayer = currentLevel.playercharacters.at(0);
+  selectedPlayer = currentLevel.entities.at(0);
 }
 
 void Game::handleEvents() {}
 
 void Game::update() {
   controlSystem.update(transformSystem, *selectedPlayer, camera, currentLevel);
-  for (auto &object : currentLevel.playercharacters) {
-    collisionSystem.update(*object, currentLevel);
+  for (auto &object : currentLevel.entities) {
 
     transformSystem.update(*object);
+    collisionSystem.update(*object, currentLevel);
+
     gravitySystem.update(*object, object->collisionComponent, object->gravityComponent,
                          object->animationComponent, object->transformComponent);
     animationSystem.update(object->collisionComponent, object->gravityComponent.getGravityState(),
                            object->transformComponent, object->renderComponent,
                            object->animationComponent);
     renderSystem.update(*object);
+  }
+  for (auto &object : currentLevel.playercharacters) {
     // original update func
     //  object->update();
   }
@@ -57,7 +61,7 @@ void Game::render(SDL_Renderer &renderer) {
 
 // TODO
 
-void Game::updateCamera(const Player &player) {
+void Game::updateCamera(const Entity &player) {
   if ((player.transformComponent.getXpos() < camera.m_position.x &&
        player.transformComponent.getXvel() < 0) ||
       (player.transformComponent.getXpos() + PLAYER_WIDTH > camera.m_position.w &&

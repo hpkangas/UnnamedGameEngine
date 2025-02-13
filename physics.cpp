@@ -52,7 +52,7 @@ bool checkLeft(SDL_Rect a, SDL_Rect b) {
   return true;
 }
 
-bool playerCollisionDown(const Player &player, const Block &obj) {
+bool playerCollisionDown(const Entity &player, const Block &obj) {
 
   if (player.collisionComponent.collisionRect.y + player.collisionComponent.collisionRect.h <=
       obj.collisionComponent.collisionRect.y) {
@@ -71,7 +71,7 @@ bool playerCollisionDown(const Player &player, const Block &obj) {
   return false;
 }
 
-bool playerCollisionUp(const Player &player, const Block &obj) {
+bool playerCollisionUp(const Entity &player, const Block &obj) {
   if (player.collisionComponent.collisionRect.y >=
       obj.collisionComponent.collisionRect.y + obj.collisionComponent.collisionRect.h) {
 
@@ -86,7 +86,7 @@ bool playerCollisionUp(const Player &player, const Block &obj) {
   return false;
 }
 
-bool playerCollisionLeft(const Player &player, const Block &obj) {
+bool playerCollisionLeft(const Entity &player, const Block &obj) {
   if (player.collisionComponent.collisionRect.x >=
       obj.collisionComponent.collisionRect.x + obj.collisionComponent.collisionRect.w) {
 
@@ -101,7 +101,7 @@ bool playerCollisionLeft(const Player &player, const Block &obj) {
   return false;
 }
 
-bool playerCollisionRight(const Player &player, const Block &obj) {
+bool playerCollisionRight(const Entity &player, const Block &obj) {
   if (player.collisionComponent.collisionRect.x + player.collisionComponent.collisionRect.w <=
       obj.collisionComponent.collisionRect.x) {
 
