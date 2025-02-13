@@ -1,14 +1,11 @@
 #include "game.hpp"
 #include "camera.hpp"
-#include "components/component.hpp"
-#include "components/rendercomponent.hpp"
 #include "constants.hpp"
 #include "entities/player.hpp"
 #include "gamesystem.hpp"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
 #include <cstdio>
-#include <iostream>
 #include <vector>
 
 // TODO I think these should be defined else where because they are called as
@@ -29,16 +26,18 @@ void Game::handleEvents() {}
 
 void Game::update() {
   controlSystem.update(transformSystem, *selectedPlayer, camera, currentLevel);
-  collisionSystem.update(*selectedPlayer, currentLevel);
-
   for (auto &object : currentLevel.playercharacters) {
-    transformSystem.update(*object);
-    gravitySystem.update(object->gravityComponent, object->animationComponent,
-                         object->transformComponent);
-    animationSystem.update(object->renderComponent, object->animationComponent);
+    collisionSystem.update(*object, currentLevel);
 
+    transformSystem.update(*object);
+    gravitySystem.update(*object, object->collisionComponent, object->gravityComponent,
+                         object->animationComponent, object->transformComponent);
+    animationSystem.update(object->collisionComponent, object->gravityComponent.getGravityState(),
+                           object->transformComponent, object->renderComponent,
+                           object->animationComponent);
+    renderSystem.update(*object);
     // original update func
-    object->update();
+    //  object->update();
   }
 
   // for (auto &object : currentLevel.blocks) {
@@ -53,7 +52,7 @@ void Game::update() {
 }
 
 void Game::render(SDL_Renderer &renderer) {
-  renderSystem.update(renderer, camera, currentLevel.renderables);
+  renderSystem.render(renderer, camera, currentLevel.renderables);
 }
 
 // TODO

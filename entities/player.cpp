@@ -28,15 +28,15 @@ void Player::update() {
   // TODO handles to systems
 
   // TODO to rendersystem
-  renderComponent.destinationRect.x = transformComponent.position.x;
-  renderComponent.destinationRect.y = transformComponent.position.y;
+  //renderComponent.destinationRect.x = transformComponent.position.x;
+  //renderComponent.destinationRect.y = transformComponent.position.y;
 
   // TODO sprite offsets. should be defined inside the specific character
   // classes (once decided on)
 
   // TODO to collisionsystem
-  collisionComponent.collisionRect.x = transformComponent.position.x + 28;
-  collisionComponent.collisionRect.y = transformComponent.position.y;
+  // collisionComponent.collisionRect.x = transformComponent.position.x + 28;
+  // collisionComponent.collisionRect.y = transformComponent.position.y;
 }
 
 void Player::handleUpCollision(bool collision, int dif) {

@@ -1,8 +1,34 @@
 #include "animationsystem.hpp"
 #include "../constants.hpp"
 
-void AnimationSystem::update(RenderComponent &renderComponent,
+void AnimationSystem::update(CollisionComponent &collisionComponent,
+                             GravityState const &gravityState,
+                             TransformComponent &transformComponent,
+                             RenderComponent &renderComponent,
                              AnimationComponent &animationComponent) {
+
+  if (transformComponent.getXvel() != 0 && gravityState == GROUNDED) {
+    animationComponent.setAnimationState(WALKING);
+  }
+
+  if (gravityState == INAIR) {
+    animationComponent.setAnimationState(anims_INAIR);
+  }
+
+  if (transformComponent.getXvel() == 0 && gravityState == GROUNDED) {
+    animationComponent.setAnimationState(STILL);
+  }
+
+  if (!collisionComponent.getCollisionLeft() && !collisionComponent.getCollisionRight()) {
+    if (animationComponent.getAnimationState() == PUSHING) {
+      animationComponent.setAnimationState(STILL);
+    }
+  } else {
+    if (gravityState == GROUNDED) {
+      animationComponent.setAnimationState(PUSHING);
+    }
+  }
+
   switch (animationComponent.getAnimationState()) {
   case STILL:
     animationComponent.animationFrame = 0;
@@ -41,6 +67,7 @@ void AnimationSystem::update(RenderComponent &renderComponent,
   default:
     break;
   }
+
 }
 
 void AnimationSystem::playFrame(RenderComponent &renderComponent, const int x, const int y,

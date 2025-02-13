@@ -8,18 +8,22 @@ void GravitySystem::gravity(TransformComponent &transformComponent) {
   }
 }
 
-void GravitySystem::update(GravityComponent &gravityComponent,
+void GravitySystem::update(Player &selectedPlayer, CollisionComponent &collisionComponent,
+                           GravityComponent &gravityComponent,
                            AnimationComponent &animationComponent,
                            TransformComponent &transformComponent) {
+  if (collisionComponent.collisionDown) {
+    selectedPlayer.gravityComponent.setGravityState(GROUNDED);
+  } else {
+    selectedPlayer.gravityComponent.setGravityState(INAIR);
+  }
+
   switch (gravityComponent.getGravityState()) {
   case GROUNDED:
-    if (animationComponent.getAnimationState() == anims_INAIR)
-      animationComponent.setAnimationState(STILL);
     break;
 
   case INAIR:
     gravity(transformComponent);
-    animationComponent.setAnimationState(anims_INAIR);
     break;
 
   default:

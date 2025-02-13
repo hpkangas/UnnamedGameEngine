@@ -2,8 +2,8 @@
 #define TRANSFORMSYSTEM_HPP
 #include "../entities/player.hpp"
 class TransformSystem {
-  float m_playerSpeed = 0.4f;
-  float m_playerSpeedMax = 8.0f;
+  float playerSpeed = 0.4f;
+  float playerSpeedMax = 8.0f;
 
 public:
   void update(Player &selectedPlayer);

@@ -1,8 +1,11 @@
 #include "rendersystem.hpp"
 #include <iostream>
 #include <ostream>
-
-void RenderSystem::update(SDL_Renderer &renderer, Camera camera,
+void RenderSystem::update(Player &player){
+  player.renderComponent.destinationRect.x = player.transformComponent.position.x;
+  player.renderComponent.destinationRect.y = player.transformComponent.position.y;
+}
+void RenderSystem::render(SDL_Renderer &renderer, Camera camera,
                           std::vector<RenderComponent *> renderables) {
 
                             

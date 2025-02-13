@@ -7,10 +7,10 @@ void TransformSystem::moveRight(Player &selectedPlayer) {
    // if (animationComponent.getAnimationState() != WALKING)
    //   animationComponent.setAnimationState(WALKING);
   
-    selectedPlayer.transformComponent.setXvel(selectedPlayer.transformComponent.getXvel() + m_playerSpeed);
+    selectedPlayer.transformComponent.setXvel(selectedPlayer.transformComponent.getXvel() + playerSpeed);
   
-    if (selectedPlayer.transformComponent.getXvel() > m_playerSpeedMax)
-    selectedPlayer.transformComponent.setXvel(m_playerSpeedMax);
+    if (selectedPlayer.transformComponent.getXvel() > playerSpeedMax)
+    selectedPlayer.transformComponent.setXvel(playerSpeedMax);
   }
   
   void TransformSystem::moveLeft(Player &selectedPlayer) {
@@ -18,16 +18,16 @@ void TransformSystem::moveRight(Player &selectedPlayer) {
   //  if (animationComponent.getAnimationState() != WALKING)
   //    animationComponent.setAnimationState(WALKING);
   
-  selectedPlayer.transformComponent.setXvel(selectedPlayer.transformComponent.getXvel() - m_playerSpeed);
+  selectedPlayer.transformComponent.setXvel(selectedPlayer.transformComponent.getXvel() - playerSpeed);
   
-    if (selectedPlayer.transformComponent.getXvel() < -m_playerSpeedMax)
-    selectedPlayer.transformComponent.setXvel(-m_playerSpeedMax);
+    if (selectedPlayer.transformComponent.getXvel() < -playerSpeedMax)
+    selectedPlayer.transformComponent.setXvel(-playerSpeedMax);
   }
   
-  void TransformSystem::moveUp(Player &selectedPlayer) { selectedPlayer.transformComponent.setYvel(-m_playerSpeed); }
+  void TransformSystem::moveUp(Player &selectedPlayer) { selectedPlayer.transformComponent.setYvel(-playerSpeed); }
   
   // debugging only mostly
-  void TransformSystem::moveDown(Player &selectedPlayer) { selectedPlayer.transformComponent.setYvel(m_playerSpeed); }
+  void TransformSystem::moveDown(Player &selectedPlayer) { selectedPlayer.transformComponent.setYvel(playerSpeed); }
   
   // debugging only mostly
   void TransformSystem::stopX(Player &selectedPlayer) {
