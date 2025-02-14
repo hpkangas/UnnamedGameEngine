@@ -10,7 +10,6 @@ void GravitySystem::gravity(TransformComponent &transformComponent) {
 
 void GravitySystem::update(Entity &selectedPlayer, CollisionComponent &collisionComponent,
                            GravityComponent &gravityComponent,
-                           AnimationComponent &animationComponent,
                            TransformComponent &transformComponent) {
   if (collisionComponent.collisionDown) {
     selectedPlayer.gravityComponent.setGravityState(GROUNDED);

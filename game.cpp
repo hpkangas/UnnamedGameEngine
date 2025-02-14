@@ -1,17 +1,20 @@
 #include "game.hpp"
 #include "camera.hpp"
+#include "components/transformcomponent.hpp"
 #include "constants.hpp"
 #include "entities/entity.hpp"
-#include "entities/player.hpp"
 #include "gamesystem.hpp"
+#include "systems/transformsystem.hpp"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
 #include <cstdio>
+#include <iostream>
 #include <vector>
 
 // TODO I think these should be defined else where because they are called as
 // Game::something (don't like it)
 // TODO System class?
+
 void Game::init() {
 
   // TODO level data should be generated at the start of the game (main?), game obj should have
@@ -27,22 +30,29 @@ void Game::handleEvents() {}
 
 void Game::update() {
   controlSystem.update(transformSystem, *selectedPlayer, camera, currentLevel);
+  for (auto &object : currentLevel.entitieswip) {
+    std::cout << "id:" << object.first
+              << " xpos:" << static_cast<TransformComponent &>(*object.second[0]).position.x
+              << "\n";
+  }
   for (auto &object : currentLevel.entities) {
 
-    transformSystem.update(*object);
     collisionSystem.update(*object, currentLevel);
+    transformSystem.update(*object);
 
     gravitySystem.update(*object, object->collisionComponent, object->gravityComponent,
-                         object->animationComponent, object->transformComponent);
+                         object->transformComponent);
+
     animationSystem.update(object->collisionComponent, object->gravityComponent.getGravityState(),
                            object->transformComponent, object->renderComponent,
                            object->animationComponent);
+
     renderSystem.update(*object);
   }
-  for (auto &object : currentLevel.playercharacters) {
-    // original update func
-    //  object->update();
-  }
+  // for (auto &object : currentLevel.playercharacters) {
+  //   // original update func
+  //   //  object->update();
+  // }
 
   // for (auto &object : currentLevel.blocks) {
   //   object->update();

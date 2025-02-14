@@ -1,4 +1,6 @@
 #include "level.hpp"
+#include "components/component.hpp"
+#include "components/gravitycomponent.hpp"
 #include "components/rendercomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include "constants.hpp"
@@ -7,6 +9,8 @@
 #include "texturemanager.hpp"
 #include <SDL2/SDL_rwops.h>
 #include <cstdio>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -15,7 +19,7 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
   std::string currentValue;
   char c;
   std::vector<std::string> values;
-
+  std::cout << "creating level" << "\n";
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
     if (c == '\n') {
       continue;
@@ -48,9 +52,12 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
         }
 
         if (gameObjectType.substr(0, 1) == "E") {
-          Entity *entity = createBlockEntity(x, y);
-          level.entities.emplace_back(entity);
-          level.renderables.emplace_back(&entity->renderComponent);
+          //  Entity *entity = createBlockEntity(x, y);
+
+          //  level.entities.emplace_back(entity);
+          std::cout << "entity creation" << "\n";
+          level.entitieswip.emplace(getID(), createBlockEntity2(x, y));
+          // level.renderables.emplace_back(&entity->renderComponent);
         }
 
         values.clear();
@@ -94,6 +101,60 @@ Block *Level::createBlock(std::string gameObjectType, int x, int y) {
     return createBlock3(x, y);
   }
   return createBlock1(0, 0);
+}
+
+ComponentVector Level::createBlockEntity2(int x, int y) {
+  ComponentVector components;
+  auto tc = std::make_unique<TransformComponent>();
+  auto rc = std::make_unique<RenderComponent>();
+  auto cc = std::make_unique<CollisionComponent>();
+
+  tc->velocity = {2, 0};
+  tc->position = {x, y};
+  rc->sourceRect = {0, 0, 128, 64};
+  rc->destinationRect.h = rc->sourceRect.h;
+  rc->destinationRect.w = rc->sourceRect.w;
+  rc->destinationRect.x = tc->position.x;
+  rc->destinationRect.y = tc->position.y;
+  cc->collisionRect.h = rc->destinationRect.h;
+  cc->collisionRect.w = rc->destinationRect.w;
+  cc->collisionRect.x = tc->position.x;
+  cc->collisionRect.y = tc->position.y;
+  rc->objTexture = TextureManager::LoadTexture("assets/tiles.png");
+
+  components.emplace_back(std::move(tc));
+  components.emplace_back(std::move(rc));
+  components.emplace_back(std::move(cc));
+
+  return components;
+}
+
+std::vector<IComponent *> Level::createPCEntity2(int x, int y) {
+  Entity *entity = new Entity();
+  TransformComponent tc;
+  RenderComponent rc;
+  CollisionComponent cc;
+  GravityComponent gc;
+  std::vector<IComponent *> components;
+  tc.velocity = {2, 0};
+  tc.position = {x, y};
+  rc.sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
+  rc.objTexture = TextureManager::LoadTexture("assets/baleog.png");
+  rc.flip = SDL_FLIP_NONE;
+  rc.destinationRect = {x, y, rc.sourceRect.w, rc.sourceRect.h};
+
+  // TODO sprite offsets. should be defined inside the specific character
+  // classes (once decided on)
+  cc.collisionRect = {tc.position.x + 28, tc.position.y, PLAYER_WIDTH - 56, PLAYER_HEIGHT};
+
+  gc.gravityState = GROUNDED;
+
+  entity->add(std::make_unique<TransformComponent>(tc));
+  entity->add(std::make_unique<RenderComponent>(rc));
+  entity->add(std::make_unique<CollisionComponent>(cc));
+  entity->add(std::make_unique<GravityComponent>(gc));
+
+  return components;
 }
 
 Entity *Level::createBlockEntity(int x, int y) {
@@ -140,4 +201,10 @@ Entity *Level::createPCEntity(int x, int y) {
   entity->gravityComponent.gravityState = GROUNDED;
 
   return entity;
+}
+
+int Level::getID() {
+  static int id = 0;
+  id++;
+  return id;
 }

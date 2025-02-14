@@ -23,6 +23,12 @@ private:
   LevelInfo currentLevel;
   Camera camera;
 
+  std::vector<IComponent *> components;
+  void add(IComponent *component);
+  
+  int ID = -1;
+  int getID();
+
   RenderSystem renderSystem;
   ControlSystem controlSystem;
   CollisionSystem collisionSystem;
