@@ -10,7 +10,7 @@ using ComponentVector = std::vector<std::unique_ptr<IComponent>>;
 using EntityVector = std::vector<std::unique_ptr<Entity>>;
 
 struct LevelInfo {
-  EntityVector entities2;
+  EntityVector entities;
 };
 
 class Level {

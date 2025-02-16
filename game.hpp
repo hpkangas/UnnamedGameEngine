@@ -19,7 +19,6 @@ public:
   void render(SDL_Renderer &renderer);
 
 private:
-  Entity *selectedPlayer = nullptr;
   Level level;
   LevelInfo currentLevel;
   Camera camera;
@@ -27,9 +26,7 @@ private:
   std::vector<IComponent *> components;
   void add(IComponent *component);
 
-  int ID = -1;
-  int getID();
-
+  int selectedPlayerIndex = 0;
   RenderSystem renderSystem;
   ControlSystem controlSystem;
   CollisionSystem collisionSystem;

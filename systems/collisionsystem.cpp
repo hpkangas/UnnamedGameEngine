@@ -8,65 +8,64 @@ void CollisionSystem::update(Entity &selectedPlayer, LevelInfo &currentLevel) {
   selectedPlayer.GetComponent<CollisionComponent>()->collisionRect.y =
       selectedPlayer.GetComponent<TransformComponent>()->position.y;
 
-  for (auto &player : currentLevel.entities2) {
+  selectedPlayer.GetComponent<CollisionComponent>()->setCollisionDown(false);
+  selectedPlayer.GetComponent<CollisionComponent>()->setCollisionUp(false);
+  selectedPlayer.GetComponent<CollisionComponent>()->setCollisionRight(false);
+  selectedPlayer.GetComponent<CollisionComponent>()->setCollisionLeft(false);
 
-    player->GetComponent<CollisionComponent>()->setCollisionDown(false);
-    player->GetComponent<CollisionComponent>()->setCollisionUp(false);
-    player->GetComponent<CollisionComponent>()->setCollisionRight(false);
-    player->GetComponent<CollisionComponent>()->setCollisionLeft(false);
+  int yposDif = 0;
+  int xposDif = 0;
 
-    int yposDif = 0;
-    int xposDif = 0;
+  for (const auto &block : currentLevel.entities) {
 
-    for (const auto &block : currentLevel.entities2) {
+    // TODO How to not collide with other PCs?
 
-      // player comes from right
-      if (Physics::playerCollisionLeft(*player, *block) == true) {
-        auto playerc = player->GetComponent<CollisionComponent>();
-        auto blockc = block->GetComponent<CollisionComponent>();
-        xposDif = playerc->collisionRect.x - (blockc->collisionRect.x + blockc->collisionRect.w);
-        playerc->setXposDifferenceWithCollisionObject(xposDif);
-        playerc->setCollisionLeft(true);
-        continue;
-      }
-
-      // player comes from left
-      if (Physics::playerCollisionRight(*player, *block) == true) {
-        auto playerc = player->GetComponent<CollisionComponent>();
-        auto blockc = block->GetComponent<CollisionComponent>();
-        xposDif = (playerc->collisionRect.x + playerc->collisionRect.w) - blockc->collisionRect.x;
-        playerc->setXposDifferenceWithCollisionObject(xposDif);
-        playerc->setCollisionRight(true);
-        continue;
-      }
-
-      // player comes from above
-      if (Physics::playerCollisionDown(*player, *block) == true) {
-        auto playerc = player->GetComponent<CollisionComponent>();
-        auto blockc = block->GetComponent<CollisionComponent>();
-        yposDif = (playerc->collisionRect.y + playerc->collisionRect.h) - blockc->collisionRect.y;
-        playerc->setYposDifferenceWithCollisionObject(yposDif);
-        playerc->setCollisionDown(true);
-
-        continue;
-      }
-
-      // player comes from below
-      if (Physics::playerCollisionUp(*player, *block) == true) {
-        // playerCollisionUp = true;
-        continue;
-      }
+    // player comes from right
+    if (Physics::playerCollisionLeft(selectedPlayer, *block) == true) {
+      auto playerc = selectedPlayer.GetComponent<CollisionComponent>();
+      auto blockc = block->GetComponent<CollisionComponent>();
+      xposDif = playerc->collisionRect.x - (blockc->collisionRect.x + blockc->collisionRect.w);
+      playerc->setXposDifferenceWithCollisionObject(xposDif);
+      playerc->setCollisionLeft(true);
+      continue;
     }
 
-    //   if (playerCollisionUp) {
-    //     // TODO Fix when relevant
-    //     player->transformComponent.setYpos(player->transformComponent.getYpos() -
-    //                                        player->transformComponent.getYvel());
-    //   }
-    handleDownCollision(*player);
+    // player comes from left
+    if (Physics::playerCollisionRight(selectedPlayer, *block) == true) {
+      auto playerc = selectedPlayer.GetComponent<CollisionComponent>();
+      auto blockc = block->GetComponent<CollisionComponent>();
+      xposDif = (playerc->collisionRect.x + playerc->collisionRect.w) - blockc->collisionRect.x;
+      playerc->setXposDifferenceWithCollisionObject(xposDif);
+      playerc->setCollisionRight(true);
+      continue;
+    }
 
-    handleHorizontalCollision(*player);
+    // player comes from above
+    if (Physics::playerCollisionDown(selectedPlayer, *block) == true) {
+      auto playerc = selectedPlayer.GetComponent<CollisionComponent>();
+      auto blockc = block->GetComponent<CollisionComponent>();
+      yposDif = (playerc->collisionRect.y + playerc->collisionRect.h) - blockc->collisionRect.y;
+      playerc->setYposDifferenceWithCollisionObject(yposDif);
+      playerc->setCollisionDown(true);
+
+      continue;
+    }
+
+    // player comes from below
+    if (Physics::playerCollisionUp(selectedPlayer, *block) == true) {
+      // playerCollisionUp = true;
+      continue;
+    }
   }
+
+  //   if (playerCollisionUp) {
+  //     // TODO Fix when relevant
+  //     player->transformComponent.setYpos(player->transformComponent.getYpos() -
+  //                                        player->transformComponent.getYvel());
+  //   }
+  handleDownCollision(selectedPlayer);
+
+  handleHorizontalCollision(selectedPlayer);
 }
 
 void CollisionSystem::handleDownCollision(Entity &selectedPlayer) {

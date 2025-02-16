@@ -48,6 +48,8 @@ void GameText::update() {
   rc.destinationRect.h = rc.sourceRect.h;
 }
 
+// TODO Repurpose this text drawing code
+
 // void GameText::render(Camera camera) {
 //   // text = std::to_string(Game::score);
 //   SDL_Color white = {255, 255, 255};

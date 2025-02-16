@@ -35,27 +35,12 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
         int y = std::stoi(values.at(2));
 
         if (gameObjectType.substr(0, 2) == "PC") {
-          // Entity *entity = createPCEntity(x, y);
           std::cout << "create pc" << "\n";
-
-          level.entities2.emplace_back(createPCEntity(x, y));
-          // level.renderables.emplace_back(&entity->renderComponent);
-          // Player *player = createPlayerCharacter(gameObjectType, x, y);
-          // level.playercharacters.emplace_back(player);
-          // level.renderables.emplace_back(&player->renderComponent);
+          level.entities.emplace_back(createPCEntity(x, y));
         }
 
         if (gameObjectType.substr(0, 1) == "B") {
-          level.entities2.emplace_back(createBlock(gameObjectType, x, y));
-        }
-
-        if (gameObjectType.substr(0, 1) == "E") {
-          //  Entity *entity = createBlockEntity(x, y);
-
-          //  level.entities.emplace_back(entity);
-          std::cout << "create block" << "\n";
-          level.entities2.emplace_back(createBlockEntity(x, y, 0));
-          // level.renderables.emplace_back(&entity->renderComponent);
+          level.entities.emplace_back(createBlock(gameObjectType, x, y));
         }
 
         values.clear();
@@ -109,6 +94,7 @@ std::unique_ptr<Entity> Level::createBlockEntity(int x, int y, int sourceX) {
   collisionComponent->collisionRect.y = transformComponent->position.y + 4;
   collisionComponent->parentID = entity->ID;
 
+  // TODO Should probably be some constant value loaded at the start
   renderComponent->objTexture = TextureManager::LoadTexture("assets/tiles.png");
   entity->add(std::move(transformComponent));
   entity->add(std::move(renderComponent));
@@ -132,6 +118,7 @@ std::unique_ptr<Entity> Level::createPCEntity(int x, int y) {
 
   renderComponent->sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
 
+  // TODO Should probably be some constant value loaded at the start
   renderComponent->objTexture = TextureManager::LoadTexture("assets/baleog.png");
 
   renderComponent->flip = SDL_FLIP_NONE;

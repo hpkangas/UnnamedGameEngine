@@ -13,14 +13,8 @@
 #include <cstdio>
 #include <iostream>
 
-// TODO I think these should be defined else where because they are called as
-// Game::something (don't like it)
-// TODO System class?
-
 void Game::init() {
 
-  // TODO level data should be generated at the start of the game (main?), game obj should have
-  // access to levels list
   SDL_RWops *Handle{SDL_RWFromFile("level", "rb")};
   currentLevel = level.createLevel(Handle);
   SDL_RWclose(Handle);
@@ -30,11 +24,11 @@ void Game::handleEvents() {}
 
 void Game::update() {
 
-  Entity &selectedPlayer2 = *(currentLevel.entities2.at(0));
-  controlSystem.update(transformSystem, *selectedPlayer2.GetComponent<TransformComponent>(), camera,
+  Entity &selectedPlayer = *(currentLevel.entities.at(selectedPlayerIndex));
+  controlSystem.update(transformSystem, *selectedPlayer.GetComponent<TransformComponent>(), camera,
                        currentLevel);
 
-  for (auto &entity : currentLevel.entities2) {
+  for (auto &entity : currentLevel.entities) {
 
     std::cout << "update loop start id " << entity->ID << " \n";
     collisionSystem.update(*entity, currentLevel);
@@ -60,14 +54,14 @@ void Game::update() {
     renderSystem.update(*entity);
   }
 
-  updateCamera(*selectedPlayer2.GetComponent<TransformComponent>());
+  updateCamera(*selectedPlayer.GetComponent<TransformComponent>());
 }
 
 void Game::render(SDL_Renderer &renderer) {
   std::cout << "render \n";
   SDL_RenderClear(&renderer);
 
-  for (auto &object : currentLevel.entities2) {
+  for (auto &object : currentLevel.entities) {
     renderSystem.render2(renderer, camera, *object->GetComponent<RenderComponent>());
   }
   SDL_RenderPresent(&renderer);
