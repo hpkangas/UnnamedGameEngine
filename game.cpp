@@ -1,5 +1,8 @@
 #include "game.hpp"
 #include "camera.hpp"
+#include "components/animationcomponent.hpp"
+#include "components/gravitycomponent.hpp"
+#include "components/rendercomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include "constants.hpp"
 #include "entities/entity.hpp"
@@ -9,7 +12,6 @@
 #include <SDL2/SDL_render.h>
 #include <cstdio>
 #include <iostream>
-#include <vector>
 
 // TODO I think these should be defined else where because they are called as
 // Game::something (don't like it)
@@ -22,68 +24,68 @@ void Game::init() {
   SDL_RWops *Handle{SDL_RWFromFile("level", "rb")};
   currentLevel = level.createLevel(Handle);
   SDL_RWclose(Handle);
-
-  selectedPlayer = currentLevel.entities.at(0);
 }
 
 void Game::handleEvents() {}
 
 void Game::update() {
-  controlSystem.update(transformSystem, *selectedPlayer, camera, currentLevel);
-  for (auto &object : currentLevel.entitieswip) {
-    std::cout << "id:" << object.first
-              << " xpos:" << static_cast<TransformComponent &>(*object.second[0]).position.x
-              << "\n";
+
+  Entity &selectedPlayer2 = *(currentLevel.entities2.at(0));
+  controlSystem.update(transformSystem, *selectedPlayer2.GetComponent<TransformComponent>(), camera,
+                       currentLevel);
+
+  for (auto &entity : currentLevel.entities2) {
+
+    std::cout << "update loop start id " << entity->ID << " \n";
+    collisionSystem.update(*entity, currentLevel);
+    transformSystem.update(*entity->GetComponent<TransformComponent>());
+
+    if (entity->GetComponent<CollisionComponent>() != nullptr &&
+        entity->GetComponent<GravityComponent>() != nullptr) {
+
+      gravitySystem.update(*entity->GetComponent<CollisionComponent>(),
+                           *entity->GetComponent<GravityComponent>(),
+                           *entity->GetComponent<TransformComponent>());
+    }
+
+    if (entity->GetComponent<AnimationComponent>() != nullptr) {
+
+      animationSystem.update(*entity->GetComponent<CollisionComponent>(),
+                             entity->GetComponent<GravityComponent>()->getGravityState(),
+                             *entity->GetComponent<TransformComponent>(),
+                             *entity->GetComponent<RenderComponent>(),
+                             *entity->GetComponent<AnimationComponent>());
+    }
+
+    renderSystem.update(*entity);
   }
-  for (auto &object : currentLevel.entities) {
 
-    collisionSystem.update(*object, currentLevel);
-    transformSystem.update(*object);
-
-    gravitySystem.update(*object, object->collisionComponent, object->gravityComponent,
-                         object->transformComponent);
-
-    animationSystem.update(object->collisionComponent, object->gravityComponent.getGravityState(),
-                           object->transformComponent, object->renderComponent,
-                           object->animationComponent);
-
-    renderSystem.update(*object);
-  }
-  // for (auto &object : currentLevel.playercharacters) {
-  //   // original update func
-  //   //  object->update();
-  // }
-
-  // for (auto &object : currentLevel.blocks) {
-  //   object->update();
-  // }
-
-  // for (auto &object : currentLevel.gameobjects) {
-  //   object->update();
-  // }
-
-  updateCamera(*selectedPlayer);
+  updateCamera(*selectedPlayer2.GetComponent<TransformComponent>());
 }
 
 void Game::render(SDL_Renderer &renderer) {
-  renderSystem.render(renderer, camera, currentLevel.renderables);
+  std::cout << "render \n";
+  SDL_RenderClear(&renderer);
+
+  for (auto &object : currentLevel.entities2) {
+    renderSystem.render2(renderer, camera, *object->GetComponent<RenderComponent>());
+  }
+  SDL_RenderPresent(&renderer);
 }
 
 // TODO
 
-void Game::updateCamera(const Entity &player) {
-  if ((player.transformComponent.getXpos() < camera.m_position.x &&
-       player.transformComponent.getXvel() < 0) ||
-      (player.transformComponent.getXpos() + PLAYER_WIDTH > camera.m_position.w &&
-       player.transformComponent.getXvel() > 0)) {
-    camera.m_offset.x += player.transformComponent.getXvel();
+void Game::updateCamera(TransformComponent &transformComponent) {
+  if ((transformComponent.getXpos() < camera.m_position.x && transformComponent.getXvel() < 0) ||
+      (transformComponent.getXpos() + PLAYER_WIDTH > camera.m_position.w &&
+       transformComponent.getXvel() > 0)) {
+    camera.m_offset.x += transformComponent.getXvel();
   }
 
-  if ((player.transformComponent.getYpos() < camera.m_position.y &&
-       player.transformComponent.getYvel() < 0) ||
-      (player.transformComponent.getYpos() + PLAYER_HEIGHT > camera.m_position.h &&
-       player.transformComponent.getYvel() > 0)) {
-    camera.m_offset.y += player.transformComponent.getYvel();
+  if ((transformComponent.getYpos() < camera.m_position.y && transformComponent.getYvel() < 0) ||
+      (transformComponent.getYpos() + PLAYER_HEIGHT > camera.m_position.h &&
+       transformComponent.getYvel() > 0)) {
+    camera.m_offset.y += transformComponent.getYvel();
   }
   camera.updatePositionRelativeToScreenAndOffset();
 }

@@ -11,16 +11,27 @@
 
 class Entity {
 public:
+  Entity();
+  ~Entity() {};
   std::vector<std::unique_ptr<IComponent>> components;
   void add(std::unique_ptr<IComponent> component);
+
+  // don't touch
+  template <typename T> T *GetComponent() {
+    for (auto &c : components) {
+      if (T *tc = dynamic_cast<T *>(c.get()))
+        return tc;
+    }
+    return nullptr;
+  }
+
+  TransformComponent *getTransformComponent();
+  RenderComponent *getRenderComponent();
+  CollisionComponent *getCollisionComponent();
+  GravityComponent *getGravityComponent();
+  AnimationComponent *getAnimationComponent();
   int ID = -1;
   int getID();
-
-  TransformComponent transformComponent{};
-  RenderComponent renderComponent{};
-  CollisionComponent collisionComponent{};
-  GravityComponent gravityComponent{};
-  AnimationComponent animationComponent;
 };
 
 #endif

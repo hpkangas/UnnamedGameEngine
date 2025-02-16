@@ -8,11 +8,13 @@ class ControlSystem {
 public:
   ControlSystem() {};
   ~ControlSystem() {};
-  void update(TransformSystem &transformSystem, Entity &selectedPlayer, Camera &camera,
-              LevelInfo &currentLevel);
-  void handleInput(TransformSystem &transformSystem, Entity &selectedPlayer);
-  void changePlayerCharacter(TransformSystem &transformSystem, Entity &selectedPlayer, Camera &camera, LevelInfo &currentLevel);
-  void centerCameraToCharacter(const Entity &player, Camera &camera);
+  void update(TransformSystem &transformSystem, TransformComponent &transformComponent,
+              Camera &camera, LevelInfo &currentLevel);
+  void handleInput(TransformSystem &transformSystem, TransformComponent &transformComponent);
+  void changePlayerCharacter(TransformSystem &transformSystem,
+                             TransformComponent &transformComponent, Camera &camera,
+                             LevelInfo &currentLevel);
+  void centerCameraToCharacter(TransformComponent &transformComponent, Camera &camera);
 
   bool inputR = false;
   bool inputL = false;

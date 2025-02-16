@@ -1,18 +1,19 @@
 #ifndef TRANSFORMSYSTEM_HPP
 #define TRANSFORMSYSTEM_HPP
-#include "../entities/entity.hpp"
+#include "../components/transformcomponent.hpp"
+
 class TransformSystem {
   float playerSpeed = 0.4f;
   float playerSpeedMax = 8.0f;
 
 public:
-  void update(Entity &selectedPlayer);
-  void moveRight(Entity &selectedPlayer);
-  void moveLeft(Entity &selectedPlayer);
-  void moveUp(Entity &selectedPlayer);
-  void moveDown(Entity &selectedPlayer);
-  void stopX(Entity &selectedPlayer);
-  void stopYU(Entity &selectedPlayer);
-  void stopYD(Entity &selectedPlayer);
+  void update(TransformComponent &transformComponent);
+  void moveRight(TransformComponent &transformComponent);
+  void moveLeft(TransformComponent &transformComponent);
+  void moveUp(TransformComponent &transformComponent);
+  void moveDown(TransformComponent &transformComponent);
+  void stopX(TransformComponent &transformComponent);
+  void stopYU(TransformComponent &transformComponent);
+  void stopYD(TransformComponent &transformComponent);
 };
 #endif

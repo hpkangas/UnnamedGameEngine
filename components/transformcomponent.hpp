@@ -12,6 +12,8 @@ struct TransformComponent : public IComponent {
     float x, y;
   };
 
+  int ID = TCID;
+
   Position position{0, 0};
   Velocity velocity{0, 0};
 

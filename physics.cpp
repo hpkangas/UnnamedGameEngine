@@ -1,4 +1,6 @@
 #include "physics.hpp"
+#include "components/transformcomponent.hpp"
+#include "entities/entity.hpp"
 
 namespace Physics {
 
@@ -52,67 +54,61 @@ bool checkLeft(SDL_Rect a, SDL_Rect b) {
   return true;
 }
 
-bool playerCollisionDown(const Entity &player, const Block &obj) {
+bool playerCollisionDown(Entity &player, Entity &obj) {
+  auto playerc = *player.GetComponent<CollisionComponent>();
+  auto objc = *obj.GetComponent<CollisionComponent>();
 
-  if (player.collisionComponent.collisionRect.y + player.collisionComponent.collisionRect.h <=
-      obj.collisionComponent.collisionRect.y) {
+  if (playerc.collisionRect.y + playerc.collisionRect.h <= objc.collisionRect.y) {
     {
-      return (
-          player.collisionComponent.collisionRect.y + player.collisionComponent.collisionRect.h +
-                  player.transformComponent.getYvel() >=
-              obj.collisionComponent.collisionRect.y &&
-          player.collisionComponent.collisionRect.x <
-              obj.collisionComponent.collisionRect.x + obj.collisionComponent.collisionRect.w - 1 &&
-          player.collisionComponent.collisionRect.x + player.collisionComponent.collisionRect.w -
-                  1 >
-              obj.collisionComponent.collisionRect.x);
+      return (playerc.collisionRect.y + playerc.collisionRect.h +
+                      player.GetComponent<TransformComponent>()->getYvel() >=
+                  objc.collisionRect.y &&
+              playerc.collisionRect.x < objc.collisionRect.x + objc.collisionRect.w - 1 &&
+              playerc.collisionRect.x + playerc.collisionRect.w - 1 > objc.collisionRect.x);
     }
   }
   return false;
 }
 
-bool playerCollisionUp(const Entity &player, const Block &obj) {
-  if (player.collisionComponent.collisionRect.y >=
-      obj.collisionComponent.collisionRect.y + obj.collisionComponent.collisionRect.h) {
+bool playerCollisionUp(Entity &player, Entity &obj) {
+  auto playerc = player.GetComponent<CollisionComponent>();
+  auto objc = obj.GetComponent<CollisionComponent>();
 
-    return (
-        player.collisionComponent.collisionRect.y + player.transformComponent.getYvel() <=
-            obj.collisionComponent.collisionRect.y + obj.collisionComponent.collisionRect.h &&
-        player.collisionComponent.collisionRect.x <
-            obj.collisionComponent.collisionRect.x + obj.collisionComponent.collisionRect.w - 1 &&
-        player.collisionComponent.collisionRect.x + player.collisionComponent.collisionRect.w - 1 >
-            obj.collisionComponent.collisionRect.x);
+  if (playerc->collisionRect.y >= objc->collisionRect.y + objc->collisionRect.h) {
+
+    return (playerc->collisionRect.y + player.GetComponent<TransformComponent>()->getYvel() <=
+                objc->collisionRect.y + objc->collisionRect.h &&
+            playerc->collisionRect.x < objc->collisionRect.x + objc->collisionRect.w - 1 &&
+            playerc->collisionRect.x + playerc->collisionRect.w - 1 > objc->collisionRect.x);
   }
   return false;
 }
 
-bool playerCollisionLeft(const Entity &player, const Block &obj) {
-  if (player.collisionComponent.collisionRect.x >=
-      obj.collisionComponent.collisionRect.x + obj.collisionComponent.collisionRect.w) {
+bool playerCollisionLeft(Entity &player, Entity &obj) {
+  auto playerc = player.GetComponent<CollisionComponent>();
+  auto objc = obj.GetComponent<CollisionComponent>();
 
-    return (
-        player.collisionComponent.collisionRect.x + player.transformComponent.getXvel() <
-            obj.collisionComponent.collisionRect.x + obj.collisionComponent.collisionRect.w &&
-        player.collisionComponent.collisionRect.y <
-            obj.collisionComponent.collisionRect.y + obj.collisionComponent.collisionRect.h - 1 &&
-        player.collisionComponent.collisionRect.y + player.collisionComponent.collisionRect.h - 1 >
-            obj.collisionComponent.collisionRect.y);
+  if (playerc->collisionRect.x >= objc->collisionRect.x + objc->collisionRect.w) {
+
+    return (playerc->collisionRect.x + player.GetComponent<TransformComponent>()->getXvel() <
+                objc->collisionRect.x + objc->collisionRect.w &&
+            playerc->collisionRect.y < objc->collisionRect.y + objc->collisionRect.h - 1 &&
+            playerc->collisionRect.y + playerc->collisionRect.h - 1 > objc->collisionRect.y);
   }
   return false;
 }
 
-bool playerCollisionRight(const Entity &player, const Block &obj) {
-  if (player.collisionComponent.collisionRect.x + player.collisionComponent.collisionRect.w <=
-      obj.collisionComponent.collisionRect.x) {
+bool playerCollisionRight(Entity &player, Entity &obj) {
+  auto playerc = player.GetComponent<CollisionComponent>();
+  auto objc = obj.GetComponent<CollisionComponent>();
 
-    return (
-        player.collisionComponent.collisionRect.x + player.collisionComponent.collisionRect.w +
-                player.transformComponent.getXvel() >
-            obj.collisionComponent.collisionRect.x &&
-        player.collisionComponent.collisionRect.y <
-            obj.collisionComponent.collisionRect.y + obj.collisionComponent.collisionRect.h - 1 &&
-        player.collisionComponent.collisionRect.y + player.collisionComponent.collisionRect.h - 1 >
-            obj.collisionComponent.collisionRect.y);
+  if (playerc->collisionRect.x + playerc->collisionRect.w <= objc->collisionRect.x) {
+
+    return (playerc->collisionRect.x + playerc->collisionRect.w +
+                    player.GetComponent<TransformComponent>()->getXvel() >
+                objc->collisionRect.x &&
+            playerc->collisionRect.y < objc->collisionRect.y + objc->collisionRect.h - 1 &&
+            playerc->collisionRect.y + playerc->collisionRect.h - 1 > objc->collisionRect.y);
   }
   return false;
 }

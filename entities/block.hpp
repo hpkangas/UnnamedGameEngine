@@ -1,9 +1,9 @@
 #pragma once
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
+#include "../components/collisioncomponent.hpp"
 #include "../components/rendercomponent.hpp"
 #include "../components/transformcomponent.hpp"
-#include "player.hpp"
 #include <SDL2/SDL_render.h>
 
 class Block {

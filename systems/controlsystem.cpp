@@ -1,12 +1,11 @@
 #include "controlsystem.hpp"
-#include "../components/gravitycomponent.hpp"
 #include "../constants.hpp"
 #include "../gamesystem.hpp"
 #include "SDL_events.h"
 #include "transformsystem.hpp"
 
-void ControlSystem::update(TransformSystem &transformSystem, Entity &selectedPlayer, Camera &camera,
-                           LevelInfo &currentLevel) {
+void ControlSystem::update(TransformSystem &transformSystem, TransformComponent &transformComponent,
+                           Camera &camera, LevelInfo &currentLevel) {
 
   SDL_Event event;
 
@@ -27,16 +26,16 @@ void ControlSystem::update(TransformSystem &transformSystem, Entity &selectedPla
         break;
       // reset selectedPlayer pos for debugging
       case SDLK_r:
-        selectedPlayer.transformComponent.setXvel(0);
-        selectedPlayer.transformComponent.setYvel(0);
-        selectedPlayer.transformComponent.setXpos(0);
-        selectedPlayer.transformComponent.setYpos(0);
-        selectedPlayer.gravityComponent.setGravityState(INAIR);
+        transformComponent.setXvel(0);
+        transformComponent.setYvel(0);
+        transformComponent.setXpos(0);
+        transformComponent.setYpos(0);
+        // gravityComponent.setGravityState(INAIR);
         camera.m_position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
         camera.m_offset = {0, 0, 0, 0};
         break;
       case SDLK_c:
-        changePlayerCharacter(transformSystem, selectedPlayer, camera, currentLevel);
+        changePlayerCharacter(transformSystem, transformComponent, camera, currentLevel);
         break;
       default:
         break;
@@ -59,25 +58,27 @@ void ControlSystem::update(TransformSystem &transformSystem, Entity &selectedPla
     }
   }
 
-  handleInput(transformSystem, selectedPlayer);
+  handleInput(transformSystem, transformComponent);
 }
 
-void ControlSystem::handleInput(TransformSystem &transformSystem, Entity &selectedPlayer) {
+void ControlSystem::handleInput(TransformSystem &transformSystem,
+                                TransformComponent &transformComponent) {
   if (inputR && !inputL) {
-    transformSystem.moveRight(selectedPlayer);
+    transformSystem.moveRight(transformComponent);
     return;
   }
 
   if (inputL && !inputR) {
-    transformSystem.moveLeft(selectedPlayer);
+    transformSystem.moveLeft(transformComponent);
     return;
   }
 
-  transformSystem.stopX(selectedPlayer);
+  transformSystem.stopX(transformComponent);
 }
 
-void ControlSystem::changePlayerCharacter(TransformSystem &transformSystem, Entity &selectedPlayer,
-                                          Camera &camera, LevelInfo &currentLevel) {
+void ControlSystem::changePlayerCharacter(TransformSystem &transformSystem,
+                                          TransformComponent &transformComponent, Camera &camera,
+                                          LevelInfo &currentLevel) {
   // if (selectedPlayer.getName() == "Erik") {
   //   transformSystem.stopX(selectedPlayer);
   //   //  selectedPlayer = *currentLevel.playercharacters.at(1);
@@ -99,9 +100,9 @@ void ControlSystem::changePlayerCharacter(TransformSystem &transformSystem, Enti
   // }
 }
 
-void ControlSystem::centerCameraToCharacter(const Entity &player, Camera &camera) {
+void ControlSystem::centerCameraToCharacter(TransformComponent &transformComponent,
+                                            Camera &camera) {
 
-  camera.updateOffsetRelativeToScreen(player.transformComponent.getXpos(),
-                                      player.transformComponent.getYpos());
+  camera.updateOffsetRelativeToScreen(transformComponent.getXpos(), transformComponent.getYpos());
   camera.updatePositionRelativeToScreenAndOffset();
 }

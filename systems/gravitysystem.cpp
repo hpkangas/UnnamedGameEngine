@@ -8,13 +8,13 @@ void GravitySystem::gravity(TransformComponent &transformComponent) {
   }
 }
 
-void GravitySystem::update(Entity &selectedPlayer, CollisionComponent &collisionComponent,
+void GravitySystem::update(CollisionComponent &collisionComponent,
                            GravityComponent &gravityComponent,
                            TransformComponent &transformComponent) {
   if (collisionComponent.collisionDown) {
-    selectedPlayer.gravityComponent.setGravityState(GROUNDED);
+    gravityComponent.setGravityState(GROUNDED);
   } else {
-    selectedPlayer.gravityComponent.setGravityState(INAIR);
+    gravityComponent.setGravityState(INAIR);
   }
 
   switch (gravityComponent.getGravityState()) {

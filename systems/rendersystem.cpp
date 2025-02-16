@@ -1,20 +1,35 @@
 #include "rendersystem.hpp"
 #include <iostream>
 #include <ostream>
-void RenderSystem::update(Entity &player){
-  player.renderComponent.destinationRect.x = player.transformComponent.position.x;
-  player.renderComponent.destinationRect.y = player.transformComponent.position.y;
+void RenderSystem::update(Entity &player) {
+  player.GetComponent<RenderComponent>()->destinationRect.x =
+      player.GetComponent<TransformComponent>()->position.x;
+  player.GetComponent<RenderComponent>()->destinationRect.y =
+      player.GetComponent<TransformComponent>()->position.y;
+
+  if (player.GetComponent<TransformComponent>()->velocity.x < 0) {
+    player.GetComponent<RenderComponent>()->flip = SDL_FLIP_HORIZONTAL;
+  }
+
+  if (player.GetComponent<TransformComponent>()->velocity.x > 0) {
+    player.GetComponent<RenderComponent>()->flip = SDL_FLIP_NONE;
+  }
 }
 void RenderSystem::render(SDL_Renderer &renderer, Camera camera,
                           std::vector<RenderComponent *> renderables) {
 
-                            
   SDL_RenderClear(&renderer);
   for (auto &object : renderables) {
     draw(renderer, object->render(), camera);
   }
 
   SDL_RenderPresent(&renderer);
+}
+
+void RenderSystem::render2(SDL_Renderer &renderer, Camera camera,
+                           RenderComponent &renderComponent) {
+
+  draw(renderer, renderComponent.render(), camera);
 }
 
 SDL_Texture *RenderSystem::LoadTexture(SDL_Renderer &renderer, const char *fileName) {

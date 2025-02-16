@@ -6,7 +6,9 @@ enum GravityState { GROUNDED = 0, INAIR = 1, FALLING = 2 };
 
 struct GravityComponent : public IComponent {
 
-  GravityState gravityState=INAIR;
+  int ID = GCID;
+
+  GravityState gravityState = INAIR;
 
   GravityState getGravityState() const { return gravityState; }
 

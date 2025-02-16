@@ -2,6 +2,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 #include "camera.hpp"
+#include "components/transformcomponent.hpp"
 #include "level.hpp"
 #include "systems/animationsystem.hpp"
 #include "systems/collisionsystem.hpp"
@@ -25,7 +26,7 @@ private:
 
   std::vector<IComponent *> components;
   void add(IComponent *component);
-  
+
   int ID = -1;
   int getID();
 
@@ -36,7 +37,7 @@ private:
   AnimationSystem animationSystem;
   GravitySystem gravitySystem;
 
-  void updateCamera(const Entity &player);
+  void updateCamera(TransformComponent &transformComponent);
 };
 
 #endif /* GAME_HPP */

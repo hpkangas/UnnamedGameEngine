@@ -1,9 +1,12 @@
-#include "SDL_rect.h"
-#include "component.hpp"
 #ifndef COLLISIONCOMPONENT_HPP
 #define COLLISIONCOMPONENT_HPP
+#include "SDL_rect.h"
+#include "component.hpp"
+
 struct CollisionComponent : public IComponent {
   SDL_Rect collisionRect{0, 0, 0, 0};
+
+  int ID = CCID;
 
   int yposDif = 0;
   int xposDif = 0;

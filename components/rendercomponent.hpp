@@ -17,6 +17,8 @@ struct RenderComponent : public IComponent {
   RenderComponent() {}
   ~RenderComponent() {}
 
+  int ID = RCID;
+
   SDL_Texture *objTexture{};
   SDL_Rect sourceRect{}, destinationRect{};
   SDL_RendererFlip flip = SDL_FLIP_NONE;
