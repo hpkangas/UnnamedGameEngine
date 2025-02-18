@@ -30,9 +30,7 @@ void Game::update() {
 
   for (auto &entity : currentLevel.entities) {
 
-    std::cout << "update loop start id " << entity->ID << " \n";
     collisionSystem.update(*entity, currentLevel);
-    transformSystem.update(*entity->GetComponent<TransformComponent>());
 
     if (entity->GetComponent<CollisionComponent>() != nullptr &&
         entity->GetComponent<GravityComponent>() != nullptr) {
@@ -51,6 +49,7 @@ void Game::update() {
                              *entity->GetComponent<AnimationComponent>());
     }
 
+    transformSystem.update(*entity->GetComponent<TransformComponent>());
     renderSystem.update(*entity);
   }
 
@@ -58,7 +57,6 @@ void Game::update() {
 }
 
 void Game::render(SDL_Renderer &renderer) {
-  std::cout << "render \n";
   SDL_RenderClear(&renderer);
 
   for (auto &object : currentLevel.entities) {
