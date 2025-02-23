@@ -9,10 +9,10 @@ PKG_SEARCH_MODULE(SDL2TTF REQUIRED SDL2_ttf>=2.0.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-file(GLOB SOURCES *.cpp
-components/*.cpp
-entities/*.cpp
-systems/*.cpp)
+file(GLOB SOURCES src/*.cpp
+src/components/*.cpp
+src/entities/*.cpp
+src/systems/*.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
