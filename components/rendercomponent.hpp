@@ -13,9 +13,10 @@ struct RenderInfo {
 };
 
 struct RenderComponent : public IComponent {
-
   RenderComponent() {}
-  ~RenderComponent() {}
+  ~RenderComponent() {
+    SDL_DestroyTexture(objTexture);
+  }
 
   int ID = RCID;
 
@@ -23,6 +24,6 @@ struct RenderComponent : public IComponent {
   SDL_Rect sourceRect{}, destinationRect{};
   SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-  RenderInfo render();
+  RenderInfo const render();
 };
 #endif

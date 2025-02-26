@@ -1,4 +1,5 @@
 #include "texturemanager.hpp"
+#include "SDL_error.h"
 #include "gamesystem.hpp"
 #include <iostream>
 
@@ -12,15 +13,8 @@ SDL_Texture *LoadTexture(const char *fileName) {
     SDL_FreeSurface(tempSurface);
     return tex;
   }
-  std::cout << "ERROR LOADING TEXTURE " << fileName << std::endl;
+  std::cout << "ERROR: " << SDL_GetError() << std::endl;
   return nullptr;
 }
 
-// void draw(const RenderInfo &RenderInfo, const Camera &camera) {
-//   SDL_Rect newDestination = RenderInfo.destinationRect;
-//   newDestination.x -= camera.m_offset.x;
-//   newDestination.y -= camera.m_offset.y;
-//   SDL_RenderCopyEx(GameSystem::renderer, RenderInfo.objTexture, &RenderInfo.sourceRect, &newDestination,
-//                    0, nullptr, RenderInfo.flip);
-// }
 } // namespace TextureManager

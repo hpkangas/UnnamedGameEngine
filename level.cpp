@@ -1,4 +1,5 @@
 #include "level.hpp"
+#include "SDL_render.h"
 #include "components/gravitycomponent.hpp"
 #include "components/rendercomponent.hpp"
 #include "components/transformcomponent.hpp"
@@ -18,6 +19,7 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
   char c;
   std::vector<std::string> values;
   std::cout << "creating level" << "\n";
+  loadTextures();
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
     if (c == '\n') {
       continue;
@@ -35,7 +37,6 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
         int y = std::stoi(values.at(2));
 
         if (gameObjectType.substr(0, 2) == "PC") {
-          std::cout << "create pc" << "\n";
           level.entities.emplace_back(createPCEntity(x, y));
         }
 
@@ -51,6 +52,8 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
 
     currentValue += c;
   }
+  
+
   return level;
 }
 
@@ -95,11 +98,10 @@ std::unique_ptr<Entity> Level::createBlockEntity(int x, int y, int sourceX) {
   collisionComponent->parentID = entity->ID;
 
   // TODO Should probably be some constant value loaded at the start
-  renderComponent->objTexture = TextureManager::LoadTexture("assets/tiles.png");
+  renderComponent->objTexture = textures.at(1);
   entity->add(std::move(transformComponent));
   entity->add(std::move(renderComponent));
   entity->add(std::move(collisionComponent));
-  std::cout << entity->ID << "\n";
 
   return entity;
 }
@@ -119,7 +121,7 @@ std::unique_ptr<Entity> Level::createPCEntity(int x, int y) {
   renderComponent->sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
 
   // TODO Should probably be some constant value loaded at the start
-  renderComponent->objTexture = TextureManager::LoadTexture("assets/baleog.png");
+  renderComponent->objTexture = textures.at(0);
 
   renderComponent->flip = SDL_FLIP_NONE;
 
@@ -145,7 +147,18 @@ std::unique_ptr<Entity> Level::createPCEntity(int x, int y) {
   entity->add(std::move(collisionComponent));
   entity->add(std::move(gravityComponent));
   entity->add(std::move(animationComponent));
-  std::cout << entity->ID << "\n";
 
   return entity;
 }
+
+void Level::loadTextures() {
+  std::cout << "Loading textures...\n";
+  textures.emplace_back(TextureManager::LoadTexture("assets/baleog.png"));
+  textures.emplace_back(TextureManager::LoadTexture("assets/tiles.png"));
+}
+
+void Level::destroyTextures() {
+  for (auto &tex : textures) {
+    SDL_DestroyTexture(tex);
+  }
+};

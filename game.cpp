@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "camera.hpp"
 #include "components/animationcomponent.hpp"
+#include "components/collisioncomponent.hpp"
 #include "components/gravitycomponent.hpp"
 #include "components/rendercomponent.hpp"
 #include "components/transformcomponent.hpp"
@@ -18,6 +19,7 @@ void Game::init() {
   SDL_RWops *Handle{SDL_RWFromFile("level", "rb")};
   currentLevel = level.createLevel(Handle);
   SDL_RWclose(Handle);
+  std::cout<<"Game init \n";
 }
 
 void Game::handleEvents() {}
@@ -64,8 +66,6 @@ void Game::render(SDL_Renderer &renderer) {
   }
   SDL_RenderPresent(&renderer);
 }
-
-// TODO
 
 void Game::updateCamera(TransformComponent &transformComponent) {
   if ((transformComponent.getXpos() < camera.m_position.x && transformComponent.getXvel() < 0) ||

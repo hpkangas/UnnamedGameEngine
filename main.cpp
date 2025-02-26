@@ -1,3 +1,4 @@
+#include "SDL_timer.h"
 #include "constants.hpp"
 #include "game.hpp"
 #include "gamesystem.hpp"
@@ -10,24 +11,19 @@ int main(int argc, char const *argv[]) {
   system.init("Totally not Lost Vikings", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
               SCREENWIDTH, SCREENHEIGHT, false);
   game.init();
-  // SDL_Delay mukaan?
-  //  auttaa tehojen syömiseen mutta vähän tahmea ehkä. ei responsiivinen jos
-  //  odottaa ennen kuin liikkuu
-  // vaatii työstöä
+  std::cout << "Initialization complete at " << SDL_GetTicks64() / 1000.0 << " seconds" << std::endl;
 
-  std::cout << "init complete" << std::endl;
   while (system.running()) {
-    Uint64 tickstart = SDL_GetTicks64();
-    // game.handleEvents();
+    Uint64 ticksStart = SDL_GetTicks64();
     game.update();
     game.render(*system.renderer);
-    Uint64 ticks = SDL_GetTicks64() - tickstart;
-    if (FRAMEDELAY > ticks) {
-      SDL_Delay(FRAMEDELAY - ticks);
+    Uint64 ticksEnd = SDL_GetTicks64() - ticksStart;
+    if (FRAMEDELAY > ticksEnd) {
+      SDL_Delay(FRAMEDELAY - ticksEnd);
       continue;
     }
   }
-  std::cout << "end" << std::endl;
+  std::cout << "End after "<< SDL_GetTicks64() / 1000.0 << " seconds" << std::endl;
   system.clean();
 
   return 0;

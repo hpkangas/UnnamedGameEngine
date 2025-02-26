@@ -1,5 +1,4 @@
 #include "gamesystem.hpp"
-#include "SDL_image.h"
 #include <iostream>
 
 void GameSystem::init(const char *title, const int xpos, const int ypos, const int width,
@@ -24,37 +23,19 @@ void GameSystem::init(const char *title, const int xpos, const int ypos, const i
       std::cout << "Renderer created\n";
     }
     isRunning = true;
+    std::cout<<"System init \n";
   } else {
     isRunning = false;
   }
 }
 
 void GameSystem::clean() {
-  SDL_DestroyWindow(window);
-  SDL_DestroyRenderer(renderer);
   TTF_CloseFont(gFont);
   TTF_Quit();
+  SDL_DestroyWindow(window);
+  SDL_DestroyRenderer(renderer);
   SDL_Quit();
   std::cout << "Game cleaned\n";
 }
 
 bool GameSystem::running() { return isRunning; }
-
-SDL_Texture *LoadTexture(SDL_Renderer &renderer, const char *fileName) {
-  SDL_Surface *tempSurface = IMG_Load(fileName);
-  if (tempSurface != nullptr) {
-    SDL_SetColorKey(tempSurface, SDL_TRUE, SDL_MapRGB(tempSurface->format, 220, 0, 212));
-    SDL_Texture *tex = SDL_CreateTextureFromSurface(&renderer, tempSurface);
-    SDL_FreeSurface(tempSurface);
-    return tex;
-  }
-  std::cout << "ERROR LOADING TEXTURE " << fileName << std::endl;
-  return nullptr;
-}
-
-std::vector<SDL_Texture *> loadTextures(SDL_Renderer &renderer) {
-  std::vector<SDL_Texture *> textures;
-  textures.emplace_back(LoadTexture(renderer, "../assets/tiles.png"));
-  textures.emplace_back(LoadTexture(renderer, "../assets/baleog.png"));
-  return textures;
-};

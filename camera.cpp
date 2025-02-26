@@ -2,7 +2,7 @@
 #include "constants.hpp"
 
 Camera::Camera() {
-  m_offset = {0, 0, 0, 0};
+  m_offset = {0, 0};
   m_position = {SCREENWIDTH * 1 / 3, SCREENHEIGHT * 1 / 3, SCREENWIDTH * 2 / 3,
                 SCREENHEIGHT * 2 / 3};
 }

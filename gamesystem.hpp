@@ -1,7 +1,6 @@
 #include "SDL_render.h"
 #include "SDL_ttf.h"
 #include "SDL_video.h"
-#include <vector>
 
 class GameSystem {
 public:
@@ -14,9 +13,6 @@ public:
 
   void init(const char *title, const int xpos, const int ypos, const int width, const int height,
             const bool fullscreen);
-
-  SDL_Texture *LoadTexture(SDL_Renderer &renderer, const char *fileName);
-  std::vector<SDL_Texture *> loadTextures(SDL_Renderer &renderer);
 
   void clean();
   bool running();

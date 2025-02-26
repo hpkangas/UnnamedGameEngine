@@ -32,7 +32,7 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
         transformComponent.setYpos(0);
         // gravityComponent.setGravityState(INAIR);
         camera.m_position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
-        camera.m_offset = {0, 0, 0, 0};
+        camera.m_offset = {0, 0};
         break;
       case SDLK_c:
         changePlayerCharacter(transformSystem, transformComponent, camera, currentLevel);
@@ -53,6 +53,16 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
       default:
         break;
       }
+
+    case SDL_WINDOWEVENT:
+      switch (event.window.event) {
+      case SDL_WINDOWEVENT_CLOSE:
+        GameSystem::isRunning = false;
+        break;
+      default:
+        break;
+      }
+
     default:
       break;
     }
