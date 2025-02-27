@@ -16,7 +16,7 @@ public:
   void init();
   void handleEvents();
   void update();
-  void render(SDL_Renderer &renderer);
+  void render();
 
 private:
   Level level;
@@ -35,6 +35,7 @@ private:
   GravitySystem gravitySystem;
 
   void updateCamera(TransformComponent &transformComponent);
+  void centerCamera(TransformComponent &transformComponent);
 };
 
 #endif /* GAME_HPP */

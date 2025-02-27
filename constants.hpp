@@ -5,9 +5,6 @@
 constexpr int SCREENWIDTH = 1920;
 constexpr int SCREENHEIGHT = 1080;
 
-// TODO Think of better names
-enum GAMEOBJECT_IDENTIFIERS { PC1 = 0, PC2 = 1, PC3 = 2 };
-
 // TODO should be editable
 constexpr int FRAMERATE = 60;
 constexpr int FRAMEDELAY = 1000/FRAMERATE;

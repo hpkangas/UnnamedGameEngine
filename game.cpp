@@ -19,16 +19,20 @@ void Game::init() {
   SDL_RWops *Handle{SDL_RWFromFile("level", "rb")};
   currentLevel = level.createLevel(Handle);
   SDL_RWclose(Handle);
-  std::cout<<"Game init \n";
+  std::cout << "Game init \n";
 }
-
-void Game::handleEvents() {}
 
 void Game::update() {
 
   Entity &selectedPlayer = *(currentLevel.entities.at(selectedPlayerIndex));
+  int currentplayer = selectedPlayerIndex;
   controlSystem.update(transformSystem, *selectedPlayer.GetComponent<TransformComponent>(), camera,
-                       currentLevel);
+                       selectedPlayerIndex);
+
+  if (currentplayer != selectedPlayerIndex) {
+    Entity &selectedPlayer = *(currentLevel.entities.at(selectedPlayerIndex));
+    centerCamera(*selectedPlayer.GetComponent<TransformComponent>());
+  };
 
   for (auto &entity : currentLevel.entities) {
 
@@ -58,26 +62,30 @@ void Game::update() {
   updateCamera(*selectedPlayer.GetComponent<TransformComponent>());
 }
 
-void Game::render(SDL_Renderer &renderer) {
-  SDL_RenderClear(&renderer);
+void Game::render() {
+  SDL_RenderClear(GameSystem::renderer);
 
   for (auto &object : currentLevel.entities) {
-    renderSystem.render2(renderer, camera, *object->GetComponent<RenderComponent>());
+    renderSystem.render(*object->GetComponent<RenderComponent>());
   }
-  SDL_RenderPresent(&renderer);
+  SDL_RenderPresent(GameSystem::renderer);
 }
 
 void Game::updateCamera(TransformComponent &transformComponent) {
-  if ((transformComponent.getXpos() < camera.m_position.x && transformComponent.getXvel() < 0) ||
-      (transformComponent.getXpos() + PLAYER_WIDTH > camera.m_position.w &&
+  if ((transformComponent.getXpos() < Camera::m_position.x && transformComponent.getXvel() < 0) ||
+      (transformComponent.getXpos() + PLAYER_WIDTH > Camera::m_position.w &&
        transformComponent.getXvel() > 0)) {
-    camera.m_offset.x += transformComponent.getXvel();
+    Camera::m_offset.x += transformComponent.getXvel();
   }
 
-  if ((transformComponent.getYpos() < camera.m_position.y && transformComponent.getYvel() < 0) ||
-      (transformComponent.getYpos() + PLAYER_HEIGHT > camera.m_position.h &&
+  if ((transformComponent.getYpos() < Camera::m_position.y && transformComponent.getYvel() < 0) ||
+      (transformComponent.getYpos() + PLAYER_HEIGHT > Camera::m_position.h &&
        transformComponent.getYvel() > 0)) {
-    camera.m_offset.y += transformComponent.getYvel();
+    Camera::m_offset.y += transformComponent.getYvel();
   }
-  camera.updatePositionRelativeToScreenAndOffset();
+  Camera::updatePositionRelativeToScreenAndOffset();
+}
+
+void Game::centerCamera(TransformComponent &transformComponent) {
+  Camera::updateOffsetRelativeToScreen(transformComponent.getXpos(), transformComponent.getYpos());
 }

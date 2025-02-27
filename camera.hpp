@@ -9,11 +9,11 @@ class Camera {
 public:
   Camera();
   ~Camera() {}
-  SDL_Rect m_position{};
-  Utils::Position m_offset{};
+  inline static SDL_Rect m_position{};
+  inline static Utils::Position m_offset{};
 
-  void updatePositionRelativeToScreenAndOffset();
-  void updateOffsetRelativeToScreen(int offsetx, int offsety);
+  static void updatePositionRelativeToScreenAndOffset();
+  static void updateOffsetRelativeToScreen(int offsetx, int offsety);
 };
 
 #endif

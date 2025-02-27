@@ -16,7 +16,7 @@ int main(int argc, char const *argv[]) {
   while (system.running()) {
     Uint64 ticksStart = SDL_GetTicks64();
     game.update();
-    game.render(*system.renderer);
+    game.render();
     Uint64 ticksEnd = SDL_GetTicks64() - ticksStart;
     if (FRAMEDELAY > ticksEnd) {
       SDL_Delay(FRAMEDELAY - ticksEnd);

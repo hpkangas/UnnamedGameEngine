@@ -1,4 +1,6 @@
 #include "rendersystem.hpp"
+#include "../camera.hpp"
+#include "../gamesystem.hpp"
 
 void RenderSystem::update(Entity &player) {
   player.GetComponent<RenderComponent>()->destinationRect.x =
@@ -14,28 +16,25 @@ void RenderSystem::update(Entity &player) {
     player.GetComponent<RenderComponent>()->flip = SDL_FLIP_NONE;
   }
 }
-void RenderSystem::render(SDL_Renderer &renderer, Camera camera,
-                          std::vector<RenderComponent *> renderables) {
+void RenderSystem::renderComponents(std::vector<RenderComponent *> renderables) {
 
-  SDL_RenderClear(&renderer);
+  SDL_RenderClear(GameSystem::renderer);
   for (auto &object : renderables) {
-    draw(renderer, object->render(), camera);
+    draw(object->render());
   }
 
-  SDL_RenderPresent(&renderer);
+  SDL_RenderPresent(GameSystem::renderer);
 }
 
-void RenderSystem::render2(SDL_Renderer &renderer, Camera camera,
-                           RenderComponent &renderComponent) {
+void RenderSystem::render(RenderComponent &renderComponent) {
 
-  draw(renderer, renderComponent.render(), camera);
+  draw(renderComponent.render());
 }
 
-void RenderSystem::draw(SDL_Renderer &renderer, const RenderInfo &RenderInfo,
-                        const Camera &camera) {
+void RenderSystem::draw(const RenderInfo &RenderInfo) {
   SDL_Rect newDestination = RenderInfo.destinationRect;
-  newDestination.x -= camera.m_offset.x;
-  newDestination.y -= camera.m_offset.y;
-  SDL_RenderCopyEx(&renderer, RenderInfo.objTexture, &RenderInfo.sourceRect, &newDestination, 0,
+  newDestination.x -= Camera::m_offset.x;
+  newDestination.y -= Camera::m_offset.y;
+  SDL_RenderCopyEx(GameSystem::renderer, RenderInfo.objTexture, &RenderInfo.sourceRect, &newDestination, 0,
                    nullptr, RenderInfo.flip);
 }
