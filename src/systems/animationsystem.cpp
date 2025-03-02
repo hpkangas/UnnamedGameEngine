@@ -1,30 +1,21 @@
 #include "animationsystem.hpp"
 #include "../constants.hpp"
 
-void AnimationSystem::update(CollisionComponent &collisionComponent,
+void AnimationSystem::update(CollisionComponent const &collisionComponent,
                              GravityState const &gravityState,
-                             TransformComponent &transformComponent,
+                             TransformComponent const &transformComponent,
                              RenderComponent &renderComponent,
                              AnimationComponent &animationComponent) {
-
-  if (transformComponent.getXvel() != 0 && gravityState == GROUNDED) {
-    animationComponent.setAnimationState(WALKING);
-  }
 
   if (gravityState == INAIR) {
     animationComponent.setAnimationState(anims_INAIR);
   }
-
-  if (transformComponent.getXvel() == 0 && gravityState == GROUNDED) {
-    animationComponent.setAnimationState(STILL);
-  }
-
-  if (!collisionComponent.getCollisionLeft() && !collisionComponent.getCollisionRight()) {
-    if (animationComponent.getAnimationState() == PUSHING) {
+  else {
+    if (transformComponent.getXvel() != 0) {
+      animationComponent.setAnimationState(WALKING);
+    } else
       animationComponent.setAnimationState(STILL);
-    }
-  } else {
-    if (gravityState == GROUNDED) {
+    if (collisionComponent.getCollisionLeft() || collisionComponent.getCollisionRight()) {
       animationComponent.setAnimationState(PUSHING);
     }
   }
@@ -46,7 +37,6 @@ void AnimationSystem::update(CollisionComponent &collisionComponent,
     break;
 
   case PUSHING:
-    // baelog animaatiossa destination rectille pitäisi olla ehkä joku offset
     playFrame(renderComponent, 0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     animationComponent.animationFrame++;
@@ -67,7 +57,6 @@ void AnimationSystem::update(CollisionComponent &collisionComponent,
   default:
     break;
   }
-
 }
 
 void AnimationSystem::playFrame(RenderComponent &renderComponent, const int x, const int y,

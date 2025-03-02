@@ -8,10 +8,9 @@ void GravitySystem::gravity(TransformComponent &transformComponent) {
   }
 }
 
-void GravitySystem::update(CollisionComponent &collisionComponent,
-                           GravityComponent &gravityComponent,
+void GravitySystem::update(bool collisionDown, GravityComponent &gravityComponent,
                            TransformComponent &transformComponent) {
-  if (collisionComponent.collisionDown) {
+  if (collisionDown) {
     gravityComponent.setGravityState(GROUNDED);
   } else {
     gravityComponent.setGravityState(INAIR);

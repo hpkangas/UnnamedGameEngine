@@ -1,13 +1,12 @@
 #ifndef GRAVITYSYSTEM_HPP
 #define GRAVITYSYSTEM_HPP
-#include "../components/collisioncomponent.hpp"
 #include "../components/gravitycomponent.hpp"
 #include "../components/transformcomponent.hpp"
 
 class GravitySystem {
 public:
   void gravity(TransformComponent &transformComponent);
-  void update(CollisionComponent &collisionComponent, GravityComponent &gravityComponent,
+  void update(bool collisionDown, GravityComponent &gravityComponent,
               TransformComponent &transformComponent);
 };
 #endif

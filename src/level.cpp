@@ -1,9 +1,12 @@
 #include "level.hpp"
 #include "SDL_render.h"
+#include "components/animationcomponent.hpp"
+#include "components/collisioncomponent.hpp"
 #include "components/gravitycomponent.hpp"
 #include "components/rendercomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include "constants.hpp"
+#include "entities/entity.hpp"
 #include "texturemanager.hpp"
 #include <SDL2/SDL_rwops.h>
 #include <asm-generic/errno.h>
@@ -37,7 +40,8 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
         int y = std::stoi(values.at(2));
 
         if (gameObjectType.substr(0, 2) == "PC") {
-          level.entities.emplace_back(createPCEntity(x, y));
+          // level.entities.emplace_back(createPCEntity(x, y));
+          createPC(x, y, level);
         }
 
         if (gameObjectType.substr(0, 1) == "B") {
@@ -52,7 +56,6 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
 
     currentValue += c;
   }
-  
 
   return level;
 }
@@ -161,4 +164,62 @@ void Level::destroyTextures() {
   for (auto &tex : textures) {
     SDL_DestroyTexture(tex);
   }
-};
+}
+
+void Level::createPC(int x, int y, LevelInfo &level) {
+  int id = getID();
+  std::cout << id << "\n";
+
+  // TransformComponent transformComponent;
+  // RenderComponent renderComponent;
+  // CollisionComponent collisionComponent;
+  // GravityComponent gravityComponent;
+  // AnimationComponent animationComponent;
+
+  auto transformComponent = std::make_unique<TransformComponent>();
+  auto renderComponent = std::make_unique<RenderComponent>();
+  auto collisionComponent = std::make_unique<CollisionComponent>();
+  auto gravityComponent = std::make_unique<GravityComponent>();
+  auto animationComponent = std::make_unique<AnimationComponent>();
+
+  transformComponent->velocity = {0, 0};
+  transformComponent->position = {x, y};
+  transformComponent->parentID = id;
+
+  renderComponent->sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
+
+  // TODO Should probably be some constant value loaded at the start
+  renderComponent->objTexture = textures.at(0);
+
+  renderComponent->flip = SDL_FLIP_NONE;
+
+  renderComponent->destinationRect = {x, y, renderComponent->sourceRect.w,
+                                      renderComponent->sourceRect.h};
+
+  renderComponent->parentID = id;
+
+  // TODO sprite offsets. should be defined inside the specific character
+  // classes (once decided on)
+  collisionComponent->collisionRect = {transformComponent->position.x + 28,
+                                       transformComponent->position.y, PLAYER_WIDTH - 56,
+                                       PLAYER_HEIGHT};
+
+  collisionComponent->parentID = id;
+
+  gravityComponent->gravityState = INAIR;
+  gravityComponent->parentID = id;
+  animationComponent->parentID = id;
+
+  level.tcs.emplace(id, (std::move(transformComponent)));
+  level.rcs.emplace(id, (std::move(renderComponent)));
+  level.ccs.emplace(id, (std::move(collisionComponent)));
+  level.gcs.emplace(id, (std::move(gravityComponent)));
+  level.acs.emplace(id, (std::move(animationComponent)));
+  level.ids++;
+}
+
+int Level::getID() {
+  static int id = -1;
+  id++;
+  return id;
+}

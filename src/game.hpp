@@ -23,9 +23,6 @@ private:
   LevelInfo currentLevel;
   Camera camera;
 
-  std::vector<IComponent *> components;
-  void add(IComponent *component);
-
   int selectedPlayerIndex = 0;
   RenderSystem renderSystem;
   ControlSystem controlSystem;
@@ -36,6 +33,17 @@ private:
 
   void updateCamera(TransformComponent &transformComponent);
   void centerCamera(TransformComponent &transformComponent);
+
+  template <typename T> T *GetComponent(int entity) {
+    for (auto &c : currentLevel.components) {
+      if (c.first == entity) {
+        if (T *tc = dynamic_cast<T *>(c.second.get())) {
+          return tc;
+        }
+      }
+    }
+    return nullptr;
+  }
 };
 
 #endif /* GAME_HPP */
