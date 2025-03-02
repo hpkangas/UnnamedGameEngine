@@ -11,7 +11,8 @@ int main(int argc, char const *argv[]) {
   system.init("Totally not Lost Vikings", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
               SCREENWIDTH, SCREENHEIGHT, false);
   game.init();
-  std::cout << "Initialization complete at " << SDL_GetTicks64() / 1000.0 << " seconds" << std::endl;
+  std::cout << "Initialization complete at " << SDL_GetTicks64() / 1000.0 << " seconds"
+            << std::endl;
 
   while (system.running()) {
     Uint64 ticksStart = SDL_GetTicks64();
@@ -23,7 +24,7 @@ int main(int argc, char const *argv[]) {
       continue;
     }
   }
-  std::cout << "End after "<< SDL_GetTicks64() / 1000.0 << " seconds" << std::endl;
+  std::cout << "End after " << SDL_GetTicks64() / 1000.0 << " seconds" << std::endl;
   system.clean();
 
   return 0;

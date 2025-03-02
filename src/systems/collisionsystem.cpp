@@ -1,17 +1,16 @@
 #include "collisionsystem.hpp"
 #include "../physics.hpp"
 
-void CollisionSystem::update(Entity &selectedPlayer, LevelInfo &currentLevel) {
+void CollisionSystem::update(CollisionComponent &playerC, TransformComponent &playerT,
+                             LevelInfo &currentLevel) {
 
-  selectedPlayer.GetComponent<CollisionComponent>()->collisionRect.x =
-      selectedPlayer.GetComponent<TransformComponent>()->position.x + 28;
-  selectedPlayer.GetComponent<CollisionComponent>()->collisionRect.y =
-      selectedPlayer.GetComponent<TransformComponent>()->position.y;
+  playerC.collisionRect.x = playerT.position.x + 28;
+  playerC.collisionRect.y = playerT.position.y;
 
-  selectedPlayer.GetComponent<CollisionComponent>()->setCollisionDown(false);
-  selectedPlayer.GetComponent<CollisionComponent>()->setCollisionUp(false);
-  selectedPlayer.GetComponent<CollisionComponent>()->setCollisionRight(false);
-  selectedPlayer.GetComponent<CollisionComponent>()->setCollisionLeft(false);
+  playerC.setCollisionDown(false);
+  playerC.setCollisionUp(false);
+  playerC.setCollisionRight(false);
+  playerC.setCollisionLeft(false);
 
   int yposDif = 0;
   int xposDif = 0;
@@ -21,7 +20,7 @@ void CollisionSystem::update(Entity &selectedPlayer, LevelInfo &currentLevel) {
     // TODO How to not collide with other PCs?
 
     // player comes from right
-    if (Physics::playerCollisionLeft(selectedPlayer, *block) == true) {
+    if (Physics::playerCollisionLeft(playerC, *block) == true) {
       auto playerc = selectedPlayer.GetComponent<CollisionComponent>();
       auto blockc = block->GetComponent<CollisionComponent>();
       xposDif = playerc->collisionRect.x - (blockc->collisionRect.x + blockc->collisionRect.w);
@@ -72,10 +71,11 @@ void CollisionSystem::handleDownCollision(Entity &selectedPlayer) {
   auto playerc = selectedPlayer.GetComponent<CollisionComponent>();
 
   if (playerc->getCollisionDown()) {
-    if (playerc->getYposDifferenceWithCollisionObject() != 0)
+    if (playerc->getYposDifferenceWithCollisionObject() != 0) {
       selectedPlayer.GetComponent<TransformComponent>()->setYpos(
           selectedPlayer.GetComponent<TransformComponent>()->getYpos() -
           playerc->getYposDifferenceWithCollisionObject());
+    }
     selectedPlayer.GetComponent<TransformComponent>()->setYvel(0);
   }
 }

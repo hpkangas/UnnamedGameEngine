@@ -10,6 +10,7 @@ void GravitySystem::gravity(TransformComponent &transformComponent) {
 
 void GravitySystem::update(bool collisionDown, GravityComponent &gravityComponent,
                            TransformComponent &transformComponent) {
+
   if (collisionDown) {
     gravityComponent.setGravityState(GROUNDED);
   } else {

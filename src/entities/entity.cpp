@@ -5,10 +5,10 @@ Entity::Entity() { ID = getID(); }
 
 void Entity::add(std::unique_ptr<IComponent> component) {
   components.emplace_back(std::move(component));
-};
+}
 
 int Entity::getID() {
-  static int id = 0;
+  static int id = -1;
   id++;
   return id;
 }

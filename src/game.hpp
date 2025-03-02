@@ -24,6 +24,8 @@ private:
   Camera camera;
 
   int selectedPlayerIndex = 0;
+  int selectedPlayer = 0;
+
   RenderSystem renderSystem;
   ControlSystem controlSystem;
   CollisionSystem collisionSystem;
