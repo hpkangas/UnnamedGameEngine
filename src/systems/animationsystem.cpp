@@ -9,12 +9,12 @@ void AnimationSystem::update(CollisionComponent const &collisionComponent,
 
   if (gravityState == INAIR) {
     animationComponent.setAnimationState(anims_INAIR);
-  }
-  else {
+  } else {
     if (transformComponent.getXvel() != 0) {
       animationComponent.setAnimationState(WALKING);
-    } else
+    } else {
       animationComponent.setAnimationState(STILL);
+    }
     if (collisionComponent.getCollisionLeft() || collisionComponent.getCollisionRight()) {
       animationComponent.setAnimationState(PUSHING);
     }

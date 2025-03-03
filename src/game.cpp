@@ -2,7 +2,7 @@
 #include <iostream>
 
 void Game::init(const char *title, const int xpos, const int ypos, const int width,
-                      const int height, const bool fullscreen) {
+                const int height, const bool fullscreen) {
 
   int flags = 0;
   if (fullscreen) {
@@ -23,7 +23,7 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
       std::cout << "Renderer created\n";
     }
     isRunning = true;
-    std::cout<<"System init \n";
+    std::cout << "System init \n";
   } else {
     isRunning = false;
   }

@@ -1,4 +1,4 @@
-#include "level.hpp"
+#include "scenecreator.hpp"
 #include "SDL_render.h"
 #include "components/animationcomponent.hpp"
 #include "components/collisioncomponent.hpp"
@@ -16,12 +16,12 @@
 #include <string>
 #include <vector>
 
-LevelInfo Level::createLevel(SDL_RWops *Handle) {
-  LevelInfo level;
+SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
+  SceneInfo level;
   std::string currentValue;
   char c;
   std::vector<std::string> values;
-  std::cout << "creating level" << "\n";
+  std::cout << "creating scene" << "\n";
   loadTextures();
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
 
@@ -60,7 +60,7 @@ LevelInfo Level::createLevel(SDL_RWops *Handle) {
   return level;
 }
 
-void Level::createBlock(std::string gameObjectType, int x, int y, LevelInfo &level) {
+void SceneCreator::createBlock(std::string gameObjectType, int x, int y, SceneInfo &level) {
   if (gameObjectType == "B1") {
     createBlock1(x, y, level);
   }
@@ -73,11 +73,17 @@ void Level::createBlock(std::string gameObjectType, int x, int y, LevelInfo &lev
   createBlock1(0, 0, level);
 }
 
-void Level::createBlock1(int x, int y, LevelInfo &level) { createBlockEntity(x, y, 0, level); }
-void Level::createBlock2(int x, int y, LevelInfo &level) { createBlockEntity(x, y, 128, level); }
-void Level::createBlock3(int x, int y, LevelInfo &level) { createBlockEntity(x, y, 256, level); }
+void SceneCreator::createBlock1(int x, int y, SceneInfo &level) {
+  createBlockEntity(x, y, 0, level);
+}
+void SceneCreator::createBlock2(int x, int y, SceneInfo &level) {
+  createBlockEntity(x, y, 128, level);
+}
+void SceneCreator::createBlock3(int x, int y, SceneInfo &level) {
+  createBlockEntity(x, y, 256, level);
+}
 
-void Level::createBlockEntity(int x, int y, int sourceX, LevelInfo &level) {
+void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
   int id = getID();
   std::cout << id << "\n";
 
@@ -111,19 +117,19 @@ void Level::createBlockEntity(int x, int y, int sourceX, LevelInfo &level) {
   level.ids++;
 }
 
-void Level::loadTextures() {
+void SceneCreator::loadTextures() {
   std::cout << "Loading textures...\n";
   textures.emplace_back(TextureManager::LoadTexture("assets/baleog.png"));
   textures.emplace_back(TextureManager::LoadTexture("assets/tiles.png"));
 }
 
-void Level::destroyTextures() {
+void SceneCreator::destroyTextures() {
   for (auto &tex : textures) {
     SDL_DestroyTexture(tex);
   }
 }
 
-void Level::createPC(int x, int y, LevelInfo &level) {
+void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   int id = getID();
   std::cout << id << "\n";
 
@@ -169,7 +175,7 @@ void Level::createPC(int x, int y, LevelInfo &level) {
   level.ids++;
 }
 
-int Level::getID() {
+int SceneCreator::getID() {
   static int id = -1;
   id++;
   return id;

@@ -2,7 +2,7 @@
 #include "../physics.hpp"
 
 void CollisionSystem::update(CollisionComponent &playerC, TransformComponent &playerT,
-                             LevelInfo &currentLevel) {
+                             SceneInfo &currentLevel) {
 
   playerC.collisionRect.x = playerT.position.x + 28;
   playerC.collisionRect.y = playerT.position.y;

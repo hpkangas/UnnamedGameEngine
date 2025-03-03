@@ -8,8 +8,8 @@ int main(int argc, char const *argv[]) {
   Game game;
   Scene scene;
 
-  game.init("Totally not Lost Vikings", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-              SCREENWIDTH, SCREENHEIGHT, false);
+  game.init("Totally not Lost Vikings", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREENWIDTH,
+            SCREENHEIGHT, false);
   scene.init();
   std::cout << "Initialization complete at " << SDL_GetTicks64() / 1000.0 << " seconds"
             << std::endl;

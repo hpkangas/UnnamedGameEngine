@@ -8,8 +8,8 @@
 
 class GameObject {
 public:
-  GameObject() {};
-  virtual ~GameObject() {};
+  GameObject() {}
+  virtual ~GameObject() {}
   TransformComponent tc{};
   RenderComponent rc{};
   // Position m_position = {0, 0};

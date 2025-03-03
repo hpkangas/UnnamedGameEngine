@@ -3,7 +3,7 @@
 #define GAME_HPP
 #include "camera.hpp"
 #include "components/transformcomponent.hpp"
-#include "level.hpp"
+#include "scenecreator.hpp"
 #include "systems/animationsystem.hpp"
 #include "systems/collisionsystem.hpp"
 #include "systems/controlsystem.hpp"
@@ -19,8 +19,7 @@ public:
   void render();
 
 private:
-  Level level;
-  LevelInfo currentLevel;
+  SceneInfo currentLevel;
   Camera camera;
 
   int selectedPlayerIndex = 0;
@@ -36,16 +35,16 @@ private:
   void updateCamera(TransformComponent &transformComponent);
   void centerCamera(TransformComponent &transformComponent);
 
-  template <typename T> T *GetComponent(int entity) {
-    for (auto &c : currentLevel.components) {
-      if (c.first == entity) {
-        if (T *tc = dynamic_cast<T *>(c.second.get())) {
-          return tc;
-        }
-      }
-    }
-    return nullptr;
-  }
+  // template <typename T> T *GetComponent(int entity) {
+  //   for (auto &c : currentLevel.components) {
+  //     if (c.first == entity) {
+  //       if (T *tc = dynamic_cast<T *>(c.second.get())) {
+  //         return tc;
+  //       }
+  //     }
+  //   }
+  //   return nullptr;
+  // }
 };
 
 #endif /* GAME_HPP */

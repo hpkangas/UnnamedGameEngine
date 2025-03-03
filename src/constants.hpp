@@ -7,7 +7,7 @@ constexpr int SCREENHEIGHT = 1080;
 
 // TODO should be editable
 constexpr int FRAMERATE = 60;
-constexpr int FRAMEDELAY = 1000/FRAMERATE;
+constexpr int FRAMEDELAY = 1000 / FRAMERATE;
 
 // TODO player character specific, not global constants
 constexpr int PLAYER_HEIGHT = 128;

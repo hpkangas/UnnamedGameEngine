@@ -3,8 +3,7 @@
 
 Camera::Camera() {
   offset = {0, 0};
-  position = {SCREENWIDTH * 1 / 3, SCREENHEIGHT * 1 / 3, SCREENWIDTH * 2 / 3,
-                SCREENHEIGHT * 2 / 3};
+  position = {SCREENWIDTH * 1 / 3, SCREENHEIGHT * 1 / 3, SCREENWIDTH * 2 / 3, SCREENHEIGHT * 2 / 3};
 }
 
 void Camera::updatePositionRelativeToScreenAndOffset() {

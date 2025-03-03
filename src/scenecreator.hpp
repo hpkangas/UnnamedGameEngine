@@ -1,13 +1,13 @@
 #pragma once
-#include "components/animationcomponent.hpp"
-#include "components/collisioncomponent.hpp"
-#include "components/gravitycomponent.hpp"
-#include "components/rendercomponent.hpp"
-#include "components/transformcomponent.hpp"
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 #include "SDL_render.h"
+#include "components/animationcomponent.hpp"
+#include "components/collisioncomponent.hpp"
 #include "components/component.hpp"
+#include "components/gravitycomponent.hpp"
+#include "components/rendercomponent.hpp"
+#include "components/transformcomponent.hpp"
 #include "entities/entity.hpp"
 #include <memory>
 #include <unordered_map>
@@ -16,8 +16,7 @@
 using ComponentVector = std::vector<std::unique_ptr<IComponent>>;
 using EntityVector = std::vector<std::unique_ptr<Entity>>;
 
-struct LevelInfo {
-  std::unordered_map<int, std::unique_ptr<IComponent>> components;
+struct SceneInfo {
   std::unordered_map<int, std::unique_ptr<TransformComponent>> tcs;
   std::unordered_map<int, std::unique_ptr<RenderComponent>> rcs;
   std::unordered_map<int, std::unique_ptr<CollisionComponent>> ccs;
@@ -26,22 +25,22 @@ struct LevelInfo {
   int ids = 0;
 };
 
-class Level {
+class SceneCreator {
 public:
-  Level() {}
-  ~Level() {}
-  std::vector<SDL_Texture *> textures;
+  SceneCreator() {}
+  ~SceneCreator() {}
+  inline static std::vector<SDL_Texture *> textures;
 
-  LevelInfo createLevel(SDL_RWops *Handle);
-  void createBlock(std::string const object, int const x, int const y, LevelInfo &level);
-  void createBlock1(int x, int y, LevelInfo &level);
-  void createBlock2(int x, int y, LevelInfo &level);
-  void createBlock3(int x, int y, LevelInfo &level);
-  void createBlockEntity(int x, int y, int sourceX, LevelInfo &level);
-  void loadTextures();
+  static SceneInfo createLevel(SDL_RWops *Handle);
+  static void createBlock(std::string const object, int const x, int const y, SceneInfo &level);
+  static void createBlock1(int x, int y, SceneInfo &level);
+  static void createBlock2(int x, int y, SceneInfo &level);
+  static void createBlock3(int x, int y, SceneInfo &level);
+  static void createBlockEntity(int x, int y, int sourceX, SceneInfo &level);
+  static void loadTextures();
   void destroyTextures();
-  void createPC(int x, int y, LevelInfo &level);
-  int getID();
+  static void createPC(int x, int y, SceneInfo &level);
+  static int getID();
 
 }; // namespace Level
 

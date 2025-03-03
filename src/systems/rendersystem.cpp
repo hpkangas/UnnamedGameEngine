@@ -33,6 +33,6 @@ void RenderSystem::draw(const RenderInfo &RenderInfo) {
   SDL_Rect newDestination = RenderInfo.destinationRect;
   newDestination.x -= Camera::offset.x;
   newDestination.y -= Camera::offset.y;
-  SDL_RenderCopyEx(Game::renderer, RenderInfo.objTexture, &RenderInfo.sourceRect,
-                   &newDestination, 0, nullptr, RenderInfo.flip);
+  SDL_RenderCopyEx(Game::renderer, RenderInfo.objTexture, &RenderInfo.sourceRect, &newDestination,
+                   0, nullptr, RenderInfo.flip);
 }

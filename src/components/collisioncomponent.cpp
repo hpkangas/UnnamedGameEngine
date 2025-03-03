@@ -1,4 +1,2 @@
 #include "collisioncomponent.hpp"
-CollisionComponent::CollisionComponent(){
-    ID = CCID;
-}
+CollisionComponent::CollisionComponent() { ID = CCID; }

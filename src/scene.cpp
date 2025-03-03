@@ -1,10 +1,10 @@
-#include "game.hpp"
+#include "scene.hpp"
 #include "camera.hpp"
 #include "components/collisioncomponent.hpp"
 #include "components/gravitycomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include "constants.hpp"
-#include "scene.hpp"
+#include "game.hpp"
 #include "systems/transformsystem.hpp"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
@@ -14,13 +14,14 @@
 void Scene::init() {
 
   SDL_RWops *Handle{SDL_RWFromFile("src/level", "rb")};
-  currentLevel = level.createLevel(Handle);
+  currentLevel = SceneCreator::createLevel(Handle);
   SDL_RWclose(Handle);
   std::cout << "Game init \n";
 }
 
 void Scene::update() {
-  //TODO Some wonkiness with collision sprite position and walking animation staying after changing character
+  // TODO Some wonkiness with collision sprite position and walking animation staying after changing
+  // character
   controlSystem.update(transformSystem, *currentLevel.tcs.at(selectedPlayer), selectedPlayerIndex);
 
   if (selectedPlayer != selectedPlayerIndex) {

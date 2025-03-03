@@ -2,14 +2,16 @@
 
 void TransformSystem::moveRight(TransformComponent &transformComponent) {
   transformComponent.setXvel(transformComponent.getXvel() + playerSpeed);
-  if (transformComponent.getXvel() > playerSpeedMax)
+  if (transformComponent.getXvel() > playerSpeedMax) {
     transformComponent.setXvel(playerSpeedMax);
+  }
 }
 
 void TransformSystem::moveLeft(TransformComponent &transformComponent) {
   transformComponent.setXvel(transformComponent.getXvel() - playerSpeed);
-  if (transformComponent.getXvel() < -playerSpeedMax)
+  if (transformComponent.getXvel() < -playerSpeedMax) {
     transformComponent.setXvel(-playerSpeedMax);
+  }
 }
 
 void TransformSystem::moveUp(TransformComponent &transformComponent) {

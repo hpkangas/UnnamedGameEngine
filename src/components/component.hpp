@@ -4,11 +4,12 @@
 enum ComponentId { TCID = 0, RCID = 1, CCID = 2, GCID = 3, ACID = 4 };
 
 class IComponent {
-  public:
+public:
   int ID = -1;
-  public:
+
+public:
   int parentID = -1;
-  virtual ~IComponent() {};
+  virtual ~IComponent() {}
 };
 
 #endif

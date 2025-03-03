@@ -35,7 +35,7 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
         Camera::offset = {0, 0};
         break;
       case SDLK_c:
-      transformComponent.setXvel(0);
+        transformComponent.setXvel(0);
         changePlayerCharacter(selectedPlayerIndex);
         break;
       default:

@@ -4,7 +4,7 @@
 
 class Game {
 public:
-  Game() {};
+  Game() {}
   inline static SDL_Window *window = nullptr;
   inline static SDL_Renderer *renderer = nullptr;
   inline static TTF_Font *gFont = nullptr;
