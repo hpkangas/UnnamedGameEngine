@@ -3,21 +3,6 @@
 #include "../gamesystem.hpp"
 #include <memory>
 
-// void RenderSystem::update(Entity &player) {
-//   player.GetComponent<RenderComponent>()->destinationRect.x =
-//       player.GetComponent<TransformComponent>()->position.x;
-//   player.GetComponent<RenderComponent>()->destinationRect.y =
-//       player.GetComponent<TransformComponent>()->position.y;
-
-//   if (player.GetComponent<TransformComponent>()->velocity.x < 0) {
-//     player.GetComponent<RenderComponent>()->flip = SDL_FLIP_HORIZONTAL;
-//   }
-
-//   if (player.GetComponent<TransformComponent>()->velocity.x > 0) {
-//     player.GetComponent<RenderComponent>()->flip = SDL_FLIP_NONE;
-//   }
-// }
-
 void RenderSystem::update(const TransformComponent &tc, RenderComponent &rc) {
   rc.destinationRect.x = tc.position.x;
   rc.destinationRect.y = tc.position.y;

@@ -1,4 +1,5 @@
-
+#ifndef UTILS_HPP
+#define UTILS_HPP
 namespace Utils {
 
 struct Position {
@@ -10,3 +11,4 @@ struct Velocity {
 };
 
 } // namespace Utils
+#endif

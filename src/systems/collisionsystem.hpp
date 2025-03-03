@@ -8,8 +8,8 @@ public:
   CollisionSystem() {}
   ~CollisionSystem() {}
   void update(CollisionComponent &playerC, TransformComponent &playerT, LevelInfo &currentLevel);
-  void handleDownCollision(Entity &selectedPlayer);
-  void handleHorizontalCollision(Entity &selectedPlayer);
+  void handleDownCollision(TransformComponent &tc, CollisionComponent &cc);
+  void handleHorizontalCollision(TransformComponent &tc, CollisionComponent &cc);
 };
 
 #endif

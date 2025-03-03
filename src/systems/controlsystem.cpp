@@ -1,11 +1,12 @@
 #include "controlsystem.hpp"
+#include "../camera.hpp"
 #include "../constants.hpp"
 #include "../gamesystem.hpp"
 #include "SDL_events.h"
 #include "transformsystem.hpp"
 
 void ControlSystem::update(TransformSystem &transformSystem, TransformComponent &transformComponent,
-                           Camera &camera, int &selectedPlayerIndex) {
+                           int &selectedPlayerIndex) {
 
   SDL_Event event;
 
@@ -34,6 +35,7 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
         Camera::m_offset = {0, 0};
         break;
       case SDLK_c:
+      transformComponent.setXvel(0);
         changePlayerCharacter(selectedPlayerIndex);
         break;
       default:

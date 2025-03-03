@@ -14,9 +14,7 @@ struct RenderInfo {
 
 struct RenderComponent : public IComponent {
   RenderComponent() {}
-  ~RenderComponent() {
-    SDL_DestroyTexture(objTexture);
-  }
+  ~RenderComponent() { SDL_DestroyTexture(objTexture); }
 
   int ID = RCID;
 

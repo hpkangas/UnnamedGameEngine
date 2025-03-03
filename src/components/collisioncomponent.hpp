@@ -6,7 +6,7 @@
 struct CollisionComponent : public IComponent {
   SDL_Rect collisionRect{0, 0, 0, 0};
   CollisionComponent();
-  //int ID = CCID;
+  // int ID = CCID;
 
   int yposDif = 0;
   int xposDif = 0;

@@ -1,23 +1,18 @@
 #pragma once
 #ifndef TRANSFORMCOMPONENT_HPP
 #define TRANSFORMCOMPONENT_HPP
+#include "../utils.hpp"
 #include "component.hpp"
 
+using namespace Utils;
 struct TransformComponent : public IComponent {
-  struct Position {
-    int x, y;
-  };
-
-  struct Velocity {
-    float x, y;
-  };
 
   int ID = TCID;
 
   Position position{0, 0};
   Velocity velocity{0, 0};
 
-  TransformComponent() {};
+  TransformComponent() {}
   ~TransformComponent() {}
 
   int getXpos() const { return position.x; }
