@@ -11,8 +11,8 @@ class Camera {
 public:
   Camera();
   ~Camera() {}
-  inline static SDL_Rect m_position{};
-  inline static Position m_offset{};
+  inline static SDL_Rect position{};
+  inline static Position offset{};
 
   static void updatePositionRelativeToScreenAndOffset();
   static void updateOffsetRelativeToScreen(int offsetx, int offsety);

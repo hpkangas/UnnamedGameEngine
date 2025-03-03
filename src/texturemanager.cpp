@@ -1,6 +1,6 @@
 #include "texturemanager.hpp"
 #include "SDL_error.h"
-#include "gamesystem.hpp"
+#include "game.hpp"
 #include <iostream>
 
 namespace TextureManager {
@@ -9,7 +9,7 @@ SDL_Texture *LoadTexture(const char *fileName) {
   SDL_Surface *tempSurface = IMG_Load(fileName);
   if (tempSurface != nullptr) {
     SDL_SetColorKey(tempSurface, SDL_TRUE, SDL_MapRGB(tempSurface->format, 220, 0, 212));
-    SDL_Texture *tex = SDL_CreateTextureFromSurface(GameSystem::renderer, tempSurface);
+    SDL_Texture *tex = SDL_CreateTextureFromSurface(Game::renderer, tempSurface);
     SDL_FreeSurface(tempSurface);
     return tex;
   }

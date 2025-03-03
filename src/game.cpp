@@ -1,76 +1,41 @@
 #include "game.hpp"
-#include "camera.hpp"
-#include "components/collisioncomponent.hpp"
-#include "components/gravitycomponent.hpp"
-#include "components/transformcomponent.hpp"
-#include "constants.hpp"
-#include "gamesystem.hpp"
-#include "systems/transformsystem.hpp"
-#include <SDL2/SDL_keycode.h>
-#include <SDL2/SDL_render.h>
-#include <cstdio>
 #include <iostream>
 
-void Game::init() {
+void Game::init(const char *title, const int xpos, const int ypos, const int width,
+                      const int height, const bool fullscreen) {
 
-  SDL_RWops *Handle{SDL_RWFromFile("src/level", "rb")};
-  currentLevel = level.createLevel(Handle);
-  SDL_RWclose(Handle);
-  std::cout << "Game init \n";
+  int flags = 0;
+  if (fullscreen) {
+    flags = SDL_WINDOW_FULLSCREEN;
+  }
+  if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
+    TTF_Init();
+    gFont = TTF_OpenFont("font.ttf", 32);
+    std::cout << "Subsystems initialised \n";
+    window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
+    if (window) {
+      std::cout << "Window created\n";
+    }
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (renderer) {
+      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+      // SDL_RenderSetScale(renderer, 2,2);
+      std::cout << "Renderer created\n";
+    }
+    isRunning = true;
+    std::cout<<"System init \n";
+  } else {
+    isRunning = false;
+  }
 }
 
-void Game::update() {
-  //TODO Some wonkiness with collision sprite position and walking animation staying after changing character
-  controlSystem.update(transformSystem, *currentLevel.tcs.at(selectedPlayer), selectedPlayerIndex);
-
-  if (selectedPlayer != selectedPlayerIndex) {
-    selectedPlayer = selectedPlayerIndex;
-    centerCamera(*currentLevel.tcs.at(selectedPlayer));
-  };
-
-  for (int i = 0; i < currentLevel.gcs.size(); i++) {
-    gravitySystem.update(currentLevel.ccs.at(i)->getCollisionDown(), *currentLevel.gcs.at(i),
-                         *currentLevel.tcs.at(i));
-  }
-  for (int i = 0; i < currentLevel.ccs.size(); i++) {
-    collisionSystem.update(*currentLevel.ccs.at(i), *currentLevel.tcs.at(i), currentLevel);
-  }
-
-  for (int i = 0; i < currentLevel.tcs.size(); i++) {
-    transformSystem.update(*currentLevel.tcs.at(i));
-  }
-
-  for (int i = 0; i < currentLevel.rcs.size(); i++) {
-    renderSystem.update(*currentLevel.tcs.at(i), *currentLevel.rcs.at(i));
-  }
-
-  for (int i = 0; i < currentLevel.acs.size(); i++) {
-
-    animationSystem.update(*currentLevel.ccs.at(i), currentLevel.gcs.at(i)->getGravityState(),
-                           *currentLevel.tcs.at(i), *currentLevel.rcs.at(i),
-                           *currentLevel.acs.at(i));
-  }
-
-  updateCamera(*currentLevel.tcs.at(selectedPlayer));
+void Game::clean() {
+  TTF_CloseFont(gFont);
+  TTF_Quit();
+  SDL_DestroyWindow(window);
+  SDL_DestroyRenderer(renderer);
+  SDL_Quit();
+  std::cout << "Game cleaned\n";
 }
 
-void Game::render() { renderSystem.renderComponents(currentLevel.rcs); }
-
-void Game::updateCamera(TransformComponent &transformComponent) {
-  if ((transformComponent.getXpos() < Camera::m_position.x && transformComponent.getXvel() < 0) ||
-      (transformComponent.getXpos() + PLAYER_WIDTH > Camera::m_position.w &&
-       transformComponent.getXvel() > 0)) {
-    Camera::m_offset.x += transformComponent.getXvel();
-  }
-
-  if ((transformComponent.getYpos() < Camera::m_position.y && transformComponent.getYvel() < 0) ||
-      (transformComponent.getYpos() + PLAYER_HEIGHT > Camera::m_position.h &&
-       transformComponent.getYvel() > 0)) {
-    Camera::m_offset.y += transformComponent.getYvel();
-  }
-  Camera::updatePositionRelativeToScreenAndOffset();
-}
-
-void Game::centerCamera(TransformComponent &transformComponent) {
-  Camera::updateOffsetRelativeToScreen(transformComponent.getXpos(), transformComponent.getYpos());
-}
+bool Game::running() { return isRunning; }

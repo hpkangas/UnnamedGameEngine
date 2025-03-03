@@ -1,51 +1,19 @@
-#pragma once
-#ifndef GAME_HPP
-#define GAME_HPP
-#include "camera.hpp"
-#include "components/transformcomponent.hpp"
-#include "level.hpp"
-#include "systems/animationsystem.hpp"
-#include "systems/collisionsystem.hpp"
-#include "systems/controlsystem.hpp"
-#include "systems/gravitysystem.hpp"
-#include "systems/rendersystem.hpp"
-#include "systems/transformsystem.hpp"
+#include "SDL_render.h"
+#include "SDL_ttf.h"
+#include "SDL_video.h"
 
 class Game {
 public:
-  void init();
-  void handleEvents();
-  void update();
-  void render();
+  Game() {};
+  inline static SDL_Window *window = nullptr;
+  inline static SDL_Renderer *renderer = nullptr;
+  inline static TTF_Font *gFont = nullptr;
 
-private:
-  Level level;
-  LevelInfo currentLevel;
-  Camera camera;
+  inline static bool isRunning = false;
 
-  int selectedPlayerIndex = 0;
-  int selectedPlayer = 0;
+  void init(const char *title, const int xpos, const int ypos, const int width, const int height,
+            const bool fullscreen);
 
-  RenderSystem renderSystem;
-  ControlSystem controlSystem;
-  CollisionSystem collisionSystem;
-  TransformSystem transformSystem;
-  AnimationSystem animationSystem;
-  GravitySystem gravitySystem;
-
-  void updateCamera(TransformComponent &transformComponent);
-  void centerCamera(TransformComponent &transformComponent);
-
-  template <typename T> T *GetComponent(int entity) {
-    for (auto &c : currentLevel.components) {
-      if (c.first == entity) {
-        if (T *tc = dynamic_cast<T *>(c.second.get())) {
-          return tc;
-        }
-      }
-    }
-    return nullptr;
-  }
+  void clean();
+  bool running();
 };
-
-#endif /* GAME_HPP */

@@ -1,7 +1,7 @@
 #include "controlsystem.hpp"
 #include "../camera.hpp"
 #include "../constants.hpp"
-#include "../gamesystem.hpp"
+#include "../game.hpp"
 #include "SDL_events.h"
 #include "transformsystem.hpp"
 
@@ -17,7 +17,7 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
       switch (event.key.keysym.sym) {
       // quit game
       case SDLK_q:
-        GameSystem::isRunning = false;
+        Game::isRunning = false;
         break;
       case SDLK_RIGHT:
         inputR = true;
@@ -31,8 +31,8 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
         transformComponent.setYvel(0);
         transformComponent.setXpos(0);
         transformComponent.setYpos(0);
-        Camera::m_position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
-        Camera::m_offset = {0, 0};
+        Camera::position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
+        Camera::offset = {0, 0};
         break;
       case SDLK_c:
       transformComponent.setXvel(0);
@@ -58,7 +58,7 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
     case SDL_WINDOWEVENT:
       switch (event.window.event) {
       case SDL_WINDOWEVENT_CLOSE:
-        GameSystem::isRunning = false;
+        Game::isRunning = false;
         break;
       default:
         break;
