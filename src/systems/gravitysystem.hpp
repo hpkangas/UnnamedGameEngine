@@ -6,7 +6,7 @@
 class GravitySystem {
 public:
   void gravity(TransformComponent &transformComponent);
-  void update(bool collisionDown, GravityComponent &gravityComponent,
+  void update(bool collisionDown, bool climbing, GravityComponent &gravityComponent,
               TransformComponent &transformComponent);
 };
 #endif

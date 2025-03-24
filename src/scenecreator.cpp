@@ -2,8 +2,10 @@
 #include "SDL_render.h"
 #include "components/animationcomponent.hpp"
 #include "components/collisioncomponent.hpp"
+#include "components/controlcomponent.hpp"
 #include "components/gravitycomponent.hpp"
 #include "components/rendercomponent.hpp"
+#include "components/tilecomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include "constants.hpp"
 #include "entities/entity.hpp"
@@ -47,6 +49,9 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
         if (gameObjectType.substr(0, 1) == "B") {
           createBlock(gameObjectType, x, y, level);
         }
+        if (gameObjectType.substr(0, 1) == "L") {
+          createLadder(x, y, level);
+        }
 
         values.clear();
       }
@@ -85,8 +90,6 @@ void SceneCreator::createBlock3(int x, int y, SceneInfo &level) {
 
 void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
   int id = getID();
-  std::cout << id << "\n";
-
   std::unique_ptr<Entity> entity = std::make_unique<Entity>();
   auto transformComponent = std::make_unique<TransformComponent>();
   auto renderComponent = std::make_unique<RenderComponent>();
@@ -131,13 +134,13 @@ void SceneCreator::destroyTextures() {
 
 void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   int id = getID();
-  std::cout << id << "\n";
 
   auto transformComponent = std::make_unique<TransformComponent>();
   auto renderComponent = std::make_unique<RenderComponent>();
   auto collisionComponent = std::make_unique<CollisionComponent>();
   auto gravityComponent = std::make_unique<GravityComponent>();
   auto animationComponent = std::make_unique<AnimationComponent>();
+  auto controlComponent = std::make_unique<ControlComponent>();
 
   transformComponent->velocity = {0, 0};
   transformComponent->position = {x, y};
@@ -166,12 +169,37 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   gravityComponent->gravityState = INAIR;
   gravityComponent->parentID = id;
   animationComponent->parentID = id;
+  controlComponent->parentID = id;
 
   level.tcs.emplace(id, (std::move(transformComponent)));
   level.rcs.emplace(id, (std::move(renderComponent)));
   level.ccs.emplace(id, (std::move(collisionComponent)));
   level.gcs.emplace(id, (std::move(gravityComponent)));
   level.acs.emplace(id, (std::move(animationComponent)));
+  level.controlComponents.emplace(id, (std::move(controlComponent)));
+  level.ids++;
+}
+
+void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
+  std::cout << "Creating ladder \n";
+  int id = getID();
+  auto transformComponent = std::make_unique<TransformComponent>();
+  auto renderComponent = std::make_unique<RenderComponent>();
+  auto tileComponent = std::make_unique<TileComponent>();
+  transformComponent->position = {x, y};
+
+  renderComponent->sourceRect = {0, 64, 128, 448};
+  renderComponent->destinationRect = {x, y, renderComponent->sourceRect.w,
+                                      renderComponent->sourceRect.h};
+  renderComponent->objTexture = textures.at(1);
+  tileComponent->tile = LADDER;
+  transformComponent->parentID = id;
+  renderComponent->parentID = id;
+  tileComponent->parentID = id;
+
+  level.tcs.emplace(id, (std::move(transformComponent)));
+  level.rcs.emplace(id, (std::move(renderComponent)));
+  level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
 }
 

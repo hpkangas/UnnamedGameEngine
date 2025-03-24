@@ -1,24 +1,21 @@
 #ifndef COLLISIONCOMPONENT_HPP
 #define COLLISIONCOMPONENT_HPP
+#include "../utils.hpp"
 #include "SDL_rect.h"
 #include "component.hpp"
 
+using namespace Utils;
 struct CollisionComponent : public IComponent {
-  SDL_Rect collisionRect{0, 0, 0, 0};
   CollisionComponent();
+  SDL_Rect collisionRect{0, 0, 0, 0};
+  Utils::Position center = {(collisionRect.x + collisionRect.w + collisionRect.x) / 2,
+                            (collisionRect.y + collisionRect.h + collisionRect.y) / 2};
   // int ID = CCID;
-
-  int yposDif = 0;
-  int xposDif = 0;
 
   bool collisionUp = false;
   bool collisionDown = false;
   bool collisionLeft = false;
   bool collisionRight = false;
-
-  int getXposDifferenceWithCollisionObject() const { return xposDif; }
-
-  int getYposDifferenceWithCollisionObject() const { return yposDif; }
 
   bool getCollisionDown() const { return collisionDown; }
 
@@ -35,10 +32,6 @@ struct CollisionComponent : public IComponent {
   void setCollisionRight(const bool collision) { collisionRight = collision; }
 
   void setCollisionLeft(const bool collision) { collisionLeft = collision; }
-
-  void setXposDifferenceWithCollisionObject(const int dif) { xposDif = dif; }
-
-  void setYposDifferenceWithCollisionObject(const int dif) { yposDif = dif; }
 };
 
 #endif

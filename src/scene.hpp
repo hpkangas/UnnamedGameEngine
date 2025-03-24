@@ -9,6 +9,7 @@
 #include "systems/controlsystem.hpp"
 #include "systems/gravitysystem.hpp"
 #include "systems/rendersystem.hpp"
+#include "systems/tiledetectionsystem.hpp"
 #include "systems/transformsystem.hpp"
 
 class Scene {
@@ -31,6 +32,7 @@ private:
   TransformSystem transformSystem;
   AnimationSystem animationSystem;
   GravitySystem gravitySystem;
+  TileDetectionSystem tileDetectionSystem;
 
   void updateCamera(TransformComponent &transformComponent);
   void centerCamera(TransformComponent &transformComponent);

@@ -8,8 +8,10 @@ public:
   CollisionSystem() {}
   ~CollisionSystem() {}
   void update(CollisionComponent &playerC, TransformComponent &playerT, SceneInfo &currentLevel);
-  void handleDownCollision(TransformComponent &tc, CollisionComponent &cc);
-  void handleHorizontalCollision(TransformComponent &tc, CollisionComponent &cc);
+  void checkBlockCollision(CollisionComponent &playerC, TransformComponent &playerT,
+                           SceneInfo &currentLevel);
+  void handleDownBlockCollision(TransformComponent &tc, CollisionComponent &cc, int dif);
+  void handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent &cc, int dif);
 };
 
 #endif

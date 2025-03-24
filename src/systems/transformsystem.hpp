@@ -5,6 +5,7 @@
 class TransformSystem {
   float playerSpeed = 0.4f;
   float playerSpeedMax = 8.0f;
+  float playerClimbingSpeedMax = 4.0f;
 
 public:
   void update(TransformComponent &transformComponent);
@@ -13,7 +14,6 @@ public:
   void moveUp(TransformComponent &transformComponent);
   void moveDown(TransformComponent &transformComponent);
   void stopX(TransformComponent &transformComponent);
-  void stopYU(TransformComponent &transformComponent);
-  void stopYD(TransformComponent &transformComponent);
+  void stopY(TransformComponent &transformComponent);
 };
 #endif

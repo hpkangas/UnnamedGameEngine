@@ -1,5 +1,6 @@
 #ifndef CONTROLSYSTEM_HPP
 #define CONTROLSYSTEM_HPP
+#include "../components/controlcomponent.hpp"
 #include "transformsystem.hpp"
 
 class ControlSystem {
@@ -7,12 +8,15 @@ public:
   ControlSystem() {}
   ~ControlSystem() {}
   void update(TransformSystem &transformSystem, TransformComponent &transformComponent,
-              int &selectedPlayerIndex);
-  void handleInput(TransformSystem &transformSystem, TransformComponent &transformComponent);
+              int &selectedPlayerIndex, ControlComponent &controlcomponent);
+  void handleInput(TransformSystem &transformSystem, TransformComponent &transformComponent,
+                   bool grounded);
   void changePlayerCharacter(int &selectedPlayerIndex);
 
   bool inputR = false;
   bool inputL = false;
+  bool inputU = false;
+  bool inputD = false;
 };
 
 #endif

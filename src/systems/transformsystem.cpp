@@ -15,12 +15,18 @@ void TransformSystem::moveLeft(TransformComponent &transformComponent) {
 }
 
 void TransformSystem::moveUp(TransformComponent &transformComponent) {
-  transformComponent.setYvel(-playerSpeed);
+  transformComponent.setYvel(transformComponent.getYvel() - playerSpeed);
+  if (transformComponent.getYvel() < -playerClimbingSpeedMax) {
+    transformComponent.setYvel(-playerClimbingSpeedMax);
+  }
 }
 
 // debugging only mostly
 void TransformSystem::moveDown(TransformComponent &transformComponent) {
-  transformComponent.setYvel(playerSpeed);
+  transformComponent.setYvel(transformComponent.getYvel() + playerSpeed);
+  if (transformComponent.getYvel() > playerClimbingSpeedMax) {
+    transformComponent.setYvel(playerClimbingSpeedMax);
+  }
 }
 
 // debugging only mostly
@@ -30,16 +36,8 @@ void TransformSystem::stopX(TransformComponent &transformComponent) {
   }
 }
 
-// debugging only mostly
-void TransformSystem::stopYU(TransformComponent &transformComponent) {
-  if (transformComponent.velocity.y < 0) {
-    transformComponent.velocity.y = 0;
-  }
-}
-
-// debugging only mostly
-void TransformSystem::stopYD(TransformComponent &transformComponent) {
-  if (transformComponent.velocity.y > 0) {
+void TransformSystem::stopY(TransformComponent &transformComponent) {
+  if (transformComponent.velocity.y != 0) {
     transformComponent.velocity.y = 0;
   }
 }

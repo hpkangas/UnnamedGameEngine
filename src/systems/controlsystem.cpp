@@ -3,10 +3,12 @@
 #include "../constants.hpp"
 #include "../game.hpp"
 #include "SDL_events.h"
+#include "SDL_keycode.h"
 #include "transformsystem.hpp"
+#include <iostream>
 
 void ControlSystem::update(TransformSystem &transformSystem, TransformComponent &transformComponent,
-                           int &selectedPlayerIndex) {
+                           int &selectedPlayerIndex, ControlComponent &controlComponent) {
 
   SDL_Event event;
 
@@ -24,6 +26,26 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
         break;
       case SDLK_LEFT:
         inputL = true;
+        break;
+      case SDLK_UP:
+        if (controlComponent.canClimb && !controlComponent.climbing) {
+          controlComponent.climbing = true;
+        }
+        if (controlComponent.climbing) {
+          inputU = true;
+        } else {
+          inputU = false;
+        }
+        break;
+      case SDLK_DOWN:
+        if (controlComponent.canClimb && !controlComponent.climbing) {
+          controlComponent.climbing = true;
+        }
+        if (controlComponent.climbing) {
+          inputD = true;
+        } else {
+          inputU = false;
+        }
         break;
       // reset selectedPlayer pos for debugging
       case SDLK_r:
@@ -51,9 +73,16 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
       case SDLK_LEFT:
         inputL = false;
         break;
+      case SDLK_UP:
+        inputU = false;
+        break;
+      case SDLK_DOWN:
+        inputD = false;
+        break;
       default:
         break;
       }
+      break;
 
     case SDL_WINDOWEVENT:
       switch (event.window.event) {
@@ -63,28 +92,46 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
       default:
         break;
       }
+      break;
 
     default:
       break;
     }
   }
 
-  handleInput(transformSystem, transformComponent);
+  handleInput(transformSystem, transformComponent, controlComponent.climbing);
+
+  if (!controlComponent.canClimb) {
+    controlComponent.climbing = false;
+  }
 }
 
 void ControlSystem::handleInput(TransformSystem &transformSystem,
-                                TransformComponent &transformComponent) {
-  if (inputR && !inputL) {
+                                TransformComponent &transformComponent, bool grounded) {
+  if (inputR && !inputL && !inputU && !inputD) {
     transformSystem.moveRight(transformComponent);
     return;
   }
 
-  if (inputL && !inputR) {
+  if (inputL && !inputR && !inputU && !inputD) {
     transformSystem.moveLeft(transformComponent);
     return;
   }
 
+  if (inputU && !inputD) {
+    transformSystem.moveUp(transformComponent);
+    return;
+  }
+
+  if (inputD && !inputU) {
+    transformSystem.moveDown(transformComponent);
+    return;
+  }
+
   transformSystem.stopX(transformComponent);
+  if (grounded) {
+    transformSystem.stopY(transformComponent);
+  }
 }
 
 void ControlSystem::changePlayerCharacter(int &selectedPlayerIndex) {

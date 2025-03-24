@@ -1,4 +1,5 @@
 #pragma once
+#include "components/controlcomponent.hpp"
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 #include "SDL_render.h"
@@ -7,6 +8,7 @@
 #include "components/component.hpp"
 #include "components/gravitycomponent.hpp"
 #include "components/rendercomponent.hpp"
+#include "components/tilecomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include "entities/entity.hpp"
 #include <memory>
@@ -22,6 +24,8 @@ struct SceneInfo {
   std::unordered_map<int, std::unique_ptr<CollisionComponent>> ccs;
   std::unordered_map<int, std::unique_ptr<GravityComponent>> gcs;
   std::unordered_map<int, std::unique_ptr<AnimationComponent>> acs;
+  std::unordered_map<int, std::unique_ptr<TileComponent>> tiles;
+  std::unordered_map<int, std::unique_ptr<ControlComponent>> controlComponents;
   int ids = 0;
 };
 
@@ -37,6 +41,7 @@ public:
   static void createBlock2(int x, int y, SceneInfo &level);
   static void createBlock3(int x, int y, SceneInfo &level);
   static void createBlockEntity(int x, int y, int sourceX, SceneInfo &level);
+  static void createLadder(int x, int y, SceneInfo &level);
   static void loadTextures();
   void destroyTextures();
   static void createPC(int x, int y, SceneInfo &level);

@@ -2,6 +2,7 @@
 #include "camera.hpp"
 #include "components/collisioncomponent.hpp"
 #include "components/gravitycomponent.hpp"
+#include "components/tilecomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include "constants.hpp"
 #include "game.hpp"
@@ -16,24 +17,39 @@ void Scene::init() {
   SDL_RWops *Handle{SDL_RWFromFile("src/level", "rb")};
   currentLevel = SceneCreator::createLevel(Handle);
   SDL_RWclose(Handle);
-  std::cout << "Game init \n";
+  std::cout << "Scene init \n";
 }
 
 void Scene::update() {
   // TODO Some wonkiness with collision sprite position and walking animation staying after changing
   // character
-  controlSystem.update(transformSystem, *currentLevel.tcs.at(selectedPlayer), selectedPlayerIndex);
+  for (auto &tileComponent : currentLevel.tiles) {
+    tileDetectionSystem.update(currentLevel.ccs, *currentLevel.tcs.at(tileComponent.first),
+                               *tileComponent.second, currentLevel.controlComponents);
+  }
+  controlSystem.update(transformSystem, *currentLevel.tcs.at(selectedPlayer), selectedPlayerIndex,
+                       *currentLevel.controlComponents.at(selectedPlayerIndex));
 
   if (selectedPlayer != selectedPlayerIndex) {
     selectedPlayer = selectedPlayerIndex;
     centerCamera(*currentLevel.tcs.at(selectedPlayer));
   };
 
+  // Needs null checks
+  // for (int i = 0; i < currentLevel.ids; i++) {
+  //   gravitySystem.update(currentLevel.ccs.at(i)->getCollisionDown(), *currentLevel.gcs.at(i),
+  //   *currentLevel.tcs.at(i));
+  //   collisionSystem.update(*currentLevel.ccs.at(i), *currentLevel.tcs.at(i), currentLevel);
+  //   transformSystem.update(*currentLevel.tcs.at(i));
+  //   renderSystem.update(*currentLevel.tcs.at(i), *currentLevel.rcs.at(i));
+  // }
+
   for (int i = 0; i < currentLevel.gcs.size(); i++) {
-    gravitySystem.update(currentLevel.ccs.at(i)->getCollisionDown(), *currentLevel.gcs.at(i),
+    gravitySystem.update(currentLevel.ccs.at(i)->getCollisionDown(),
+                         currentLevel.controlComponents.at(i)->climbing, *currentLevel.gcs.at(i),
                          *currentLevel.tcs.at(i));
   }
-  for (int i = 0; i < currentLevel.ccs.size(); i++) {
+  for (int i = 0; i < 3; i++) {
     collisionSystem.update(*currentLevel.ccs.at(i), *currentLevel.tcs.at(i), currentLevel);
   }
 

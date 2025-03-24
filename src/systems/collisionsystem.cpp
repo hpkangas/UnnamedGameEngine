@@ -3,9 +3,17 @@
 
 void CollisionSystem::update(CollisionComponent &playerC, TransformComponent &playerT,
                              SceneInfo &currentLevel) {
+  checkBlockCollision(playerC, playerT, currentLevel);
+}
+
+void CollisionSystem::checkBlockCollision(CollisionComponent &playerC, TransformComponent &playerT,
+                                          SceneInfo &currentLevel) {
 
   playerC.collisionRect.x = playerT.position.x + 28;
   playerC.collisionRect.y = playerT.position.y;
+  playerC.center = {
+      (playerC.collisionRect.x + playerC.collisionRect.w + playerC.collisionRect.x) / 2,
+      (playerC.collisionRect.y + playerC.collisionRect.h + playerC.collisionRect.y) / 2};
 
   playerC.setCollisionDown(false);
   playerC.setCollisionUp(false);
@@ -14,31 +22,27 @@ void CollisionSystem::update(CollisionComponent &playerC, TransformComponent &pl
 
   int yposDif = 0;
   int xposDif = 0;
+
   for (int i = 3; i < currentLevel.ccs.size(); i++) {
+    auto &blockC = *currentLevel.ccs.at(i);
 
     // player comes from right
-    if (Physics::playerCollisionLeft(playerC, *currentLevel.ccs.at(i), playerT.velocity)) {
-      auto &block = *currentLevel.ccs.at(i);
-      xposDif = playerC.collisionRect.x - (block.collisionRect.x + block.collisionRect.w);
-      playerC.setXposDifferenceWithCollisionObject(xposDif);
+    if (Physics::playerCollisionLeft(playerC, blockC, playerT.velocity)) {
+      xposDif = playerC.collisionRect.x - (blockC.collisionRect.x + blockC.collisionRect.w);
       playerC.setCollisionLeft(true);
       continue;
     }
 
     // player comes from left
-    if (Physics::playerCollisionRight(playerC, *currentLevel.ccs.at(i), playerT.velocity)) {
-      auto &blockc = *currentLevel.ccs.at(i);
-      xposDif = (playerC.collisionRect.x + playerC.collisionRect.w) - blockc.collisionRect.x;
-      playerC.setXposDifferenceWithCollisionObject(xposDif);
+    if (Physics::playerCollisionRight(playerC, blockC, playerT.velocity)) {
+      xposDif = (playerC.collisionRect.x + playerC.collisionRect.w) - blockC.collisionRect.x;
       playerC.setCollisionRight(true);
       continue;
     }
 
     // player comes from above
-    if (Physics::playerCollisionDown(playerC, *currentLevel.ccs.at(i), playerT.velocity)) {
-      auto &blockC = *currentLevel.ccs.at(i);
+    if (Physics::playerCollisionDown(playerC, blockC, playerT.velocity)) {
       yposDif = (playerC.collisionRect.y + playerC.collisionRect.h) - blockC.collisionRect.y;
-      playerC.setYposDifferenceWithCollisionObject(yposDif);
       playerC.setCollisionDown(true);
 
       continue;
@@ -56,27 +60,28 @@ void CollisionSystem::update(CollisionComponent &playerC, TransformComponent &pl
   //     player->transformComponent.setYpos(player->transformComponent.getYpos() -
   //                                        player->transformComponent.getYvel());
   //   }
-  handleDownCollision(playerT, playerC);
+  handleDownBlockCollision(playerT, playerC, yposDif);
 
-  handleHorizontalCollision(playerT, playerC);
+  handleHorizontalBlockCollision(playerT, playerC, xposDif);
 }
 
-void CollisionSystem::handleDownCollision(TransformComponent &tc, CollisionComponent &cc) {
+void CollisionSystem::handleDownBlockCollision(TransformComponent &tc, CollisionComponent &cc,
+                                               int dif) {
 
   if (cc.getCollisionDown()) {
-    if (cc.getYposDifferenceWithCollisionObject() != 0) {
-      tc.setYpos(tc.getYpos() - cc.getYposDifferenceWithCollisionObject());
+    if (dif != 0) {
+      tc.setYpos(tc.getYpos() - dif);
     }
     tc.setYvel(0);
   }
 }
 
-void CollisionSystem::handleHorizontalCollision(TransformComponent &tc, CollisionComponent &cc) {
-  const int xposDif = cc.getXposDifferenceWithCollisionObject();
+void CollisionSystem::handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent &cc,
+                                                     int dif) {
 
   if (cc.getCollisionLeft() || cc.getCollisionRight()) {
-    if (xposDif != 0) {
-      tc.setXpos(tc.getXpos() - xposDif);
+    if (dif != 0) {
+      tc.setXpos(tc.getXpos() - dif);
     }
     tc.setXvel(0);
   }
