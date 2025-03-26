@@ -2,7 +2,7 @@
 #define ANIMATIONCOMPONENT_HPP
 #include "component.hpp"
 
-enum AnimationState { STILL = 0, WALKING = 1, PUSHING = 2, anims_INAIR = 3 };
+enum AnimationState { STILL = 0, WALKING = 1, PUSHING = 2, anims_INAIR = 3, CLIMBING = 4 };
 
 struct AnimationComponent : public IComponent {
 

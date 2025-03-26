@@ -23,6 +23,8 @@ void Scene::init() {
 void Scene::update() {
   // TODO Some wonkiness with collision sprite position and walking animation staying after changing
   // character
+
+  //REFACTOR
   for (auto &tileComponent : currentLevel.tiles) {
     tileDetectionSystem.update(currentLevel.ccs, *currentLevel.tcs.at(tileComponent.first),
                                *tileComponent.second, currentLevel.controlComponents);
@@ -62,10 +64,9 @@ void Scene::update() {
   }
 
   for (int i = 0; i < currentLevel.acs.size(); i++) {
-
-    animationSystem.update(*currentLevel.ccs.at(i), currentLevel.gcs.at(i)->getGravityState(),
-                           *currentLevel.tcs.at(i), *currentLevel.rcs.at(i),
-                           *currentLevel.acs.at(i));
+    animationSystem.update(*currentLevel.controlComponents.at(i), *currentLevel.ccs.at(i),
+                           currentLevel.gcs.at(i)->getGravityState(), *currentLevel.tcs.at(i),
+                           *currentLevel.rcs.at(i), *currentLevel.acs.at(i));
   }
 
   updateCamera(*currentLevel.tcs.at(selectedPlayer));

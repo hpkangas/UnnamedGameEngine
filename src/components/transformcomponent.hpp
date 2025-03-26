@@ -6,7 +6,6 @@
 
 using namespace Utils;
 struct TransformComponent : public IComponent {
-
   int ID = TCID;
 
   Position position{0, 0};

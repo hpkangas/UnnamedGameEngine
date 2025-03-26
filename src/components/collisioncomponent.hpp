@@ -8,8 +8,8 @@ using namespace Utils;
 struct CollisionComponent : public IComponent {
   CollisionComponent();
   SDL_Rect collisionRect{0, 0, 0, 0};
-  Utils::Position center = {(collisionRect.x + collisionRect.w + collisionRect.x) / 2,
-                            (collisionRect.y + collisionRect.h + collisionRect.y) / 2};
+  Utils::Position center = {(collisionRect.x + collisionRect.w + collisionRect.w) / 2,
+                            (collisionRect.y + collisionRect.h + collisionRect.h) / 2};
   // int ID = CCID;
 
   bool collisionUp = false;

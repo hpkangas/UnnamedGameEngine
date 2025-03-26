@@ -166,7 +166,7 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
 
   collisionComponent->parentID = id;
 
-  gravityComponent->gravityState = INAIR;
+  gravityComponent->gravityState = AIRBORNE;
   gravityComponent->parentID = id;
   animationComponent->parentID = id;
   controlComponent->parentID = id;

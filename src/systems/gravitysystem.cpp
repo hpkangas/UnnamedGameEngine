@@ -14,14 +14,14 @@ void GravitySystem::update(bool collisionDown, bool climbing, GravityComponent &
   if (collisionDown || climbing) {
     gravityComponent.setGravityState(GROUNDED);
   } else {
-    gravityComponent.setGravityState(INAIR);
+    gravityComponent.setGravityState(AIRBORNE);
   }
 
   switch (gravityComponent.getGravityState()) {
   case GROUNDED:
     break;
 
-  case INAIR:
+  case AIRBORNE:
     gravity(transformComponent);
     break;
 

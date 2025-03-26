@@ -1,13 +1,13 @@
 #include "animationsystem.hpp"
 #include "../constants.hpp"
 
-void AnimationSystem::update(CollisionComponent const &collisionComponent,
+void AnimationSystem::update(ControlComponent const &controlComponent,
+                             CollisionComponent const &collisionComponent,
                              GravityState const &gravityState,
                              TransformComponent const &transformComponent,
                              RenderComponent &renderComponent,
                              AnimationComponent &animationComponent) {
-
-  if (gravityState == INAIR) {
+  if (gravityState == AIRBORNE) {
     animationComponent.setAnimationState(anims_INAIR);
   } else {
     if (transformComponent.getXvel() != 0) {
@@ -18,6 +18,9 @@ void AnimationSystem::update(CollisionComponent const &collisionComponent,
     if (collisionComponent.getCollisionLeft() || collisionComponent.getCollisionRight()) {
       animationComponent.setAnimationState(PUSHING);
     }
+  }
+  if (controlComponent.climbing) {
+    animationComponent.setAnimationState(CLIMBING);
   }
 
   switch (animationComponent.getAnimationState()) {
@@ -50,6 +53,14 @@ void AnimationSystem::update(CollisionComponent const &collisionComponent,
               animationComponent.animationFrame / 8);
     animationComponent.animationFrame++;
     if (animationComponent.animationFrame / 8 > 1) {
+      animationComponent.animationFrame = 0;
+    }
+    break;
+  case CLIMBING:
+    playFrame(renderComponent, 0, CLIMBING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
+              animationComponent.animationFrame / 8);
+    animationComponent.animationFrame++;
+    if (animationComponent.animationFrame / 5 > 5) {
       animationComponent.animationFrame = 0;
     }
     break;

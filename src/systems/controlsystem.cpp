@@ -11,6 +11,9 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
                            int &selectedPlayerIndex, ControlComponent &controlComponent) {
 
   SDL_Event event;
+  std::cout << inputU;
+  std::cout << inputD << "\n";
+  std::cout << transformComponent.getYvel() << "\n";
 
   // WaitForEvent pudottaa cpu% mutta tökkii
   if (SDL_PollEvent(&event) != 0) {
@@ -28,24 +31,10 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
         inputL = true;
         break;
       case SDLK_UP:
-        if (controlComponent.canClimb && !controlComponent.climbing) {
-          controlComponent.climbing = true;
-        }
-        if (controlComponent.climbing) {
-          inputU = true;
-        } else {
-          inputU = false;
-        }
+        inputU = true;
         break;
       case SDLK_DOWN:
-        if (controlComponent.canClimb && !controlComponent.climbing) {
-          controlComponent.climbing = true;
-        }
-        if (controlComponent.climbing) {
-          inputD = true;
-        } else {
-          inputU = false;
-        }
+        inputD = true;
         break;
       // reset selectedPlayer pos for debugging
       case SDLK_r:
@@ -99,37 +88,75 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
     }
   }
 
-  handleInput(transformSystem, transformComponent, controlComponent.climbing);
+  handleInput(transformSystem, transformComponent, controlComponent, controlComponent.climbing);
+}
+
+void ControlSystem::handleInput(TransformSystem &transformSystem,
+                                TransformComponent &transformComponent,
+                                ControlComponent &controlComponent, bool grounded) {
+
+  if (controlComponent.canClimb && !controlComponent.climbing) {
+
+    if (inputU) {
+      controlComponent.climbing = true;
+      transformSystem.stopX(transformComponent);
+      transformSystem.stopY(transformComponent);
+      return;
+    }
+
+    if (inputD) {
+      controlComponent.climbing = true;
+      transformSystem.stopX(transformComponent);
+      transformSystem.stopY(transformComponent);
+      return;
+    }
+  }
 
   if (!controlComponent.canClimb) {
     controlComponent.climbing = false;
   }
-}
+  // Should this be determined elsewhere?
 
-void ControlSystem::handleInput(TransformSystem &transformSystem,
-                                TransformComponent &transformComponent, bool grounded) {
-  if (inputR && !inputL && !inputU && !inputD) {
+  if (controlComponent.climbing == true) {
+
+    if (inputR && !inputL && !inputU && !inputD) {
+      controlComponent.climbing = false;
+      transformSystem.moveRight(transformComponent);
+      return;
+    }
+
+    if (inputL && !inputR && !inputU && !inputD) {
+      controlComponent.climbing = false;
+      transformSystem.moveLeft(transformComponent);
+      return;
+    }
+
+    if (inputU) {
+      transformSystem.stopX(transformComponent);
+      transformSystem.moveUp(transformComponent);
+      return;
+    }
+
+    if (inputD) {
+      transformSystem.stopX(transformComponent);
+      transformSystem.moveDown(transformComponent);
+      return;
+    }
+  }
+
+  if (inputR && !inputL) {
     transformSystem.moveRight(transformComponent);
     return;
   }
 
-  if (inputL && !inputR && !inputU && !inputD) {
+  if (inputL && !inputR) {
     transformSystem.moveLeft(transformComponent);
     return;
   }
 
-  if (inputU && !inputD) {
-    transformSystem.moveUp(transformComponent);
-    return;
-  }
-
-  if (inputD && !inputU) {
-    transformSystem.moveDown(transformComponent);
-    return;
-  }
-
+  // No input
   transformSystem.stopX(transformComponent);
-  if (grounded) {
+  if (controlComponent.climbing) {
     transformSystem.stopY(transformComponent);
   }
 }

@@ -11,9 +11,11 @@ void TileDetectionSystem::update(
         player.at(i)->center.x < tileCollision.getXpos() + 128 &&
         player.at(i)->center.y > tileCollision.getYpos() &&
         player.at(i)->center.y < tileCollision.getYpos() + 448) {
-      controlComponent.at(i)->canClimb = true;
-    } else {
-      controlComponent.at(i)->canClimb = false;
+      if (tile.tile == LADDER) {
+        controlComponent.at(i)->canClimb = true;
+      } else {
+        controlComponent.at(i)->canClimb = false;
+      }
     }
   }
 }

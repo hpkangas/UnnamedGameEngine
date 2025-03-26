@@ -10,7 +10,7 @@ public:
   void update(TransformSystem &transformSystem, TransformComponent &transformComponent,
               int &selectedPlayerIndex, ControlComponent &controlcomponent);
   void handleInput(TransformSystem &transformSystem, TransformComponent &transformComponent,
-                   bool grounded);
+                   ControlComponent &controlComponent, bool grounded);
   void changePlayerCharacter(int &selectedPlayerIndex);
 
   bool inputR = false;
