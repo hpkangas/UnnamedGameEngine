@@ -10,8 +10,8 @@
 
 struct TileDetectionSystem {
 
-  void update(std::unordered_map<int, std::unique_ptr<CollisionComponent>> &players,
-              TransformComponent &tile, TileComponent tileInfo,
+  void update(std::unordered_map<int, std::unique_ptr<TileComponent>> &tiles, std::unordered_map<int, std::unique_ptr<CollisionComponent>> &players,
+    std::unordered_map<int, std::unique_ptr<TransformComponent>> &tileTransforms,
               std::unordered_map<int, std::unique_ptr<ControlComponent>> &controlComponent);
 };
 #endif

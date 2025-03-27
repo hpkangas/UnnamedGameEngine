@@ -5,12 +5,12 @@
 #include "SDL_events.h"
 #include "SDL_keycode.h"
 #include "transformsystem.hpp"
+#include <iostream>
 
 void ControlSystem::update(TransformSystem &transformSystem, TransformComponent &transformComponent,
                            int &selectedPlayerIndex, ControlComponent &controlComponent) {
 
   SDL_Event event;
-
   // WaitForEvent pudottaa cpu% mutta tökkii
   if (SDL_PollEvent(&event) != 0) {
     switch (event.type) {
@@ -42,8 +42,8 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
         Camera::offset = {0, 0};
         break;
       case SDLK_c:
-        transformComponent.setXvel(0);
-        changePlayerCharacter(selectedPlayerIndex);
+        inputChangeCharacter = true;
+
         break;
       default:
         break;
@@ -84,13 +84,19 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
     }
   }
 
-  handleInput(transformSystem, transformComponent, controlComponent, controlComponent.climbing);
+  handleInput(transformSystem, transformComponent, controlComponent, selectedPlayerIndex);
 }
 
 void ControlSystem::handleInput(TransformSystem &transformSystem,
                                 TransformComponent &transformComponent,
-                                ControlComponent &controlComponent, bool grounded) {
-
+                                ControlComponent &controlComponent, int &selectedPlayerIndex) {
+  if (inputChangeCharacter) {
+    changePlayerCharacter(selectedPlayerIndex);
+    transformComponent.setXvel(0);
+    transformComponent.setYvel(0);
+    inputChangeCharacter = false;
+    return;
+  }
   if (!controlComponent.canClimb) {
     controlComponent.climbing = false;
   }
@@ -99,6 +105,9 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
 
     if (inputU) {
       controlComponent.climbing = true;
+      // not sure I like this direct setting of xpos
+      transformComponent.setXpos(controlComponent.collidedTilePos.x);
+
       transformSystem.stopX(transformComponent);
       transformSystem.stopY(transformComponent);
       return;
