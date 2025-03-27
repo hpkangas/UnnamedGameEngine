@@ -1,21 +1,20 @@
 #include "tiledetectionsystem.hpp"
-#include <iostream>
 
 void TileDetectionSystem::update(
-    std::unordered_map<int, std::unique_ptr<CollisionComponent>> &player,
-    TransformComponent &tileCollision, TileComponent tile,
+    std::unordered_map<int, std::unique_ptr<CollisionComponent>> &players,
+    TransformComponent &tile, TileComponent tileInfo,
     std::unordered_map<int, std::unique_ptr<ControlComponent>> &controlComponent) {
 
   for (int i = 0; i < 3; i++) {
-    if (player.at(i)->center.x > tileCollision.getXpos() &&
-        player.at(i)->center.x < tileCollision.getXpos() + 128 &&
-        player.at(i)->center.y > tileCollision.getYpos() &&
-        player.at(i)->center.y < tileCollision.getYpos() + 448) {
-      if (tile.tile == LADDER) {
+    if (players.at(i)->center.x > tile.getXpos() &&
+        players.at(i)->center.x < tile.getXpos() + 128 &&
+        players.at(i)->center.y > tile.getYpos() &&
+        players.at(i)->center.y < tile.getYpos() + 448) {
+      if (tileInfo.tile == LADDER) {
         controlComponent.at(i)->canClimb = true;
-      } else {
-        controlComponent.at(i)->canClimb = false;
+        continue;
       }
     }
+    controlComponent.at(i)->canClimb = false;
   }
 }

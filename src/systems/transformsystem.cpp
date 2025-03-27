@@ -1,5 +1,4 @@
 #include "transformsystem.hpp"
-#include <iostream>
 
 void TransformSystem::moveRight(TransformComponent &transformComponent) {
   transformComponent.setXvel(transformComponent.getXvel() + playerSpeed);
@@ -16,7 +15,6 @@ void TransformSystem::moveLeft(TransformComponent &transformComponent) {
 }
 
 void TransformSystem::moveUp(TransformComponent &transformComponent) {
-  std::cout << "moving up \n";
   transformComponent.setYvel(transformComponent.getYvel() - playerSpeed);
   if (transformComponent.getYvel() < -playerClimbingSpeedMax) {
     transformComponent.setYvel(-playerClimbingSpeedMax);

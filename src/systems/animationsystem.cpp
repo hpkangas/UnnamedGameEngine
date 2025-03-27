@@ -59,7 +59,9 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
   case CLIMBING:
     playFrame(renderComponent, 0, CLIMBING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
-    animationComponent.animationFrame++;
+    if (transformComponent.getYvel() != 0) {
+      animationComponent.animationFrame++;
+    }
     if (animationComponent.animationFrame / 5 > 5) {
       animationComponent.animationFrame = 0;
     }

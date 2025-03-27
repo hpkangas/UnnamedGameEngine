@@ -5,15 +5,11 @@
 #include "SDL_events.h"
 #include "SDL_keycode.h"
 #include "transformsystem.hpp"
-#include <iostream>
 
 void ControlSystem::update(TransformSystem &transformSystem, TransformComponent &transformComponent,
                            int &selectedPlayerIndex, ControlComponent &controlComponent) {
 
   SDL_Event event;
-  std::cout << inputU;
-  std::cout << inputD << "\n";
-  std::cout << transformComponent.getYvel() << "\n";
 
   // WaitForEvent pudottaa cpu% mutta tökkii
   if (SDL_PollEvent(&event) != 0) {
@@ -95,6 +91,10 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
                                 TransformComponent &transformComponent,
                                 ControlComponent &controlComponent, bool grounded) {
 
+  if (!controlComponent.canClimb) {
+    controlComponent.climbing = false;
+  }
+
   if (controlComponent.canClimb && !controlComponent.climbing) {
 
     if (inputU) {
@@ -112,9 +112,6 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     }
   }
 
-  if (!controlComponent.canClimb) {
-    controlComponent.climbing = false;
-  }
   // Should this be determined elsewhere?
 
   if (controlComponent.climbing == true) {
