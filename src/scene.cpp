@@ -25,9 +25,9 @@ void Scene::update() {
   // character
 
   // REFACTOR<<
-  for (auto &tileComponent : currentLevel.tiles) {
-    tileDetectionSystem.update(currentLevel.tiles, currentLevel.ccs, currentLevel.tcs, currentLevel.controlComponents);
-  }
+  // for (auto &tileComponent : currentLevel.tiles) {
+  tileDetectionSystem.update(currentLevel.tiles, currentLevel.ccs, currentLevel.tcs,
+                             currentLevel.controlComponents);
   controlSystem.update(transformSystem, *currentLevel.tcs.at(selectedPlayer), selectedPlayerIndex,
                        *currentLevel.controlComponents.at(selectedPlayerIndex));
 
@@ -50,6 +50,7 @@ void Scene::update() {
                          currentLevel.controlComponents.at(i)->climbing, *currentLevel.gcs.at(i),
                          *currentLevel.tcs.at(i));
   }
+
   for (int i = 0; i < 3; i++) {
     collisionSystem.update(*currentLevel.ccs.at(i), *currentLevel.tcs.at(i), currentLevel);
   }
@@ -58,14 +59,13 @@ void Scene::update() {
     transformSystem.update(*currentLevel.tcs.at(i));
   }
 
-  for (int i = 0; i < currentLevel.rcs.size(); i++) {
-    renderSystem.update(*currentLevel.tcs.at(i), *currentLevel.rcs.at(i));
-  }
-
   for (int i = 0; i < currentLevel.acs.size(); i++) {
     animationSystem.update(*currentLevel.controlComponents.at(i), *currentLevel.ccs.at(i),
                            currentLevel.gcs.at(i)->getGravityState(), *currentLevel.tcs.at(i),
                            *currentLevel.rcs.at(i), *currentLevel.acs.at(i));
+  }
+  for (int i = 0; i < currentLevel.rcs.size(); i++) {
+    renderSystem.update(*currentLevel.tcs.at(i), *currentLevel.rcs.at(i));
   }
 
   updateCamera(*currentLevel.tcs.at(selectedPlayer));

@@ -2,17 +2,17 @@
 #define GRAVITYCOMPONENT_HPP
 #include "component.hpp"
 
-enum GravityState { GROUNDED = 0, AIRBORNE = 1, FALLING = 2 };
+enum class GRAVITY_STATE { GROUNDED = 0, AIRBORNE = 1, FALLING = 2 };
 
 struct GravityComponent : public IComponent {
 
   int ID = GCID;
 
-  GravityState gravityState = AIRBORNE;
+  GRAVITY_STATE gravityState = GRAVITY_STATE::AIRBORNE;
 
-  GravityState getGravityState() const { return gravityState; }
+  GRAVITY_STATE getGravityState() const { return gravityState; }
 
-  void setGravityState(const GravityState state) { gravityState = state; }
+  void setGravityState(const GRAVITY_STATE state) { gravityState = state; }
 };
 
 #endif

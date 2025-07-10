@@ -15,6 +15,7 @@
 #include <cstdio>
 #include <iostream>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -166,7 +167,7 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
 
   collisionComponent->parentID = id;
 
-  gravityComponent->gravityState = AIRBORNE;
+  gravityComponent->gravityState = GRAVITY_STATE::AIRBORNE;
   gravityComponent->parentID = id;
   animationComponent->parentID = id;
   controlComponent->parentID = id;

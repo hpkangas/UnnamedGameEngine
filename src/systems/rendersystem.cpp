@@ -17,12 +17,15 @@ void RenderSystem::update(const TransformComponent &tc, RenderComponent &rc) {
 }
 
 void RenderSystem::renderComponents(
-    std::unordered_map<int, std::unique_ptr<RenderComponent>> &components) {
+    std::unordered_map<int, std::unique_ptr<RenderComponent>> &renderComponents) {
 
   SDL_RenderClear(Game::renderer);
-  for (auto &object : components) {
-    draw(object.second->render());
+  for (int i = renderComponents.size() - 1; i > -1; i--) {
+    draw(renderComponents.at(i).get()->render());
   }
+  // for (auto &object : renderComponents) {
+  //   draw(object.second->render());
+  // }
 
   SDL_RenderPresent(Game::renderer);
 }

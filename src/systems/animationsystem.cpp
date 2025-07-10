@@ -3,34 +3,34 @@
 
 void AnimationSystem::update(ControlComponent const &controlComponent,
                              CollisionComponent const &collisionComponent,
-                             GravityState const &gravityState,
+                             GRAVITY_STATE const &gravityState,
                              TransformComponent const &transformComponent,
                              RenderComponent &renderComponent,
                              AnimationComponent &animationComponent) {
-  if (gravityState == AIRBORNE) {
-    animationComponent.setAnimationState(anims_INAIR);
+  if (gravityState == GRAVITY_STATE::AIRBORNE) {
+    animationComponent.setAnimationState(ANIMATION_STATE::AIRBORNE);
   } else {
     if (transformComponent.getXvel() != 0) {
-      animationComponent.setAnimationState(WALKING);
+      animationComponent.setAnimationState(ANIMATION_STATE::WALKING);
     } else {
-      animationComponent.setAnimationState(STILL);
+      animationComponent.setAnimationState(ANIMATION_STATE::STILL);
     }
     if (collisionComponent.getCollisionLeft() || collisionComponent.getCollisionRight()) {
-      animationComponent.setAnimationState(PUSHING);
+      animationComponent.setAnimationState(ANIMATION_STATE::PUSHING);
     }
   }
   if (controlComponent.climbing) {
-    animationComponent.setAnimationState(CLIMBING);
+    animationComponent.setAnimationState(ANIMATION_STATE::CLIMBING);
   }
 
   switch (animationComponent.getAnimationState()) {
-  case STILL:
+  case ANIMATION_STATE::STILL:
     animationComponent.animationFrame = 0;
     playFrame(renderComponent, 0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame);
     break;
 
-  case WALKING:
+  case ANIMATION_STATE::WALKING:
     playFrame(renderComponent, 0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.WALKING_ANIMATION_FRAMES);
     animationComponent.animationFrame++;
@@ -39,7 +39,7 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
     }
     break;
 
-  case PUSHING:
+  case ANIMATION_STATE::PUSHING:
     playFrame(renderComponent, 0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     animationComponent.animationFrame++;
@@ -48,7 +48,7 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
     }
     break;
 
-  case anims_INAIR:
+  case ANIMATION_STATE::AIRBORNE:
     playFrame(renderComponent, 0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     animationComponent.animationFrame++;
@@ -56,14 +56,21 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
       animationComponent.animationFrame = 0;
     }
     break;
-  case CLIMBING:
+
+  case ANIMATION_STATE::CLIMBING:
     playFrame(renderComponent, 0, CLIMBING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
-    if (transformComponent.getYvel() != 0) {
+    if (transformComponent.getYvel() < 0) {
       animationComponent.animationFrame++;
+      if (animationComponent.animationFrame / 5 > 5) {
+        animationComponent.animationFrame = 0;
+      }
     }
-    if (animationComponent.animationFrame / 5 > 5) {
-      animationComponent.animationFrame = 0;
+    if (transformComponent.getYvel() > 0) {
+      animationComponent.animationFrame--;
+      if (animationComponent.animationFrame < 0) {
+        animationComponent.animationFrame = 30;
+      }
     }
     break;
 

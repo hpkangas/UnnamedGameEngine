@@ -10,7 +10,7 @@
 class AnimationSystem {
 public:
   void update(ControlComponent const &controlControl, CollisionComponent const &collisionComponent,
-              GravityState const &gravityState, TransformComponent const &transformComponent,
+              GRAVITY_STATE const &gravityState, TransformComponent const &transformComponent,
               RenderComponent &renderComponent, AnimationComponent &animationComponent);
 
   void playFrame(RenderComponent &renderComponent, int const x, int const y, int const w,
