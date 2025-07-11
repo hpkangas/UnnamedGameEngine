@@ -10,7 +10,7 @@ public:
   void update(CollisionComponent &playerC, TransformComponent &playerT, SceneInfo &currentLevel);
   void checkBlockCollision(CollisionComponent &playerC, TransformComponent &playerT,
                            SceneInfo &currentLevel);
-  void handleDownBlockCollision(TransformComponent &tc, CollisionComponent &cc, int dif);
+  void handleVerticalBlockCollision(TransformComponent &tc, CollisionComponent &cc, int dif);
   void handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent &cc, int dif);
 };
 

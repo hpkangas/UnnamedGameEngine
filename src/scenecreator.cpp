@@ -95,6 +95,9 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   auto transformComponent = std::make_unique<TransformComponent>();
   auto renderComponent = std::make_unique<RenderComponent>();
   auto collisionComponent = std::make_unique<CollisionComponent>();
+  auto tileComponent = std::make_unique<TileComponent>();
+
+  tileComponent->tile = TILE::BLOCKING;
 
   transformComponent->velocity = {0, 0};
   transformComponent->position = {x, y};
@@ -118,6 +121,7 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   level.tcs.emplace(id, (std::move(transformComponent)));
   level.rcs.emplace(id, (std::move(renderComponent)));
   level.ccs.emplace(id, (std::move(collisionComponent)));
+  level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
 }
 
@@ -193,7 +197,7 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   renderComponent->destinationRect = {x, y, renderComponent->sourceRect.w,
                                       renderComponent->sourceRect.h};
   renderComponent->objTexture = textures.at(1);
-  tileComponent->tile = LADDER;
+  tileComponent->tile = TILE::LADDER;
   transformComponent->parentID = id;
   renderComponent->parentID = id;
   tileComponent->parentID = id;

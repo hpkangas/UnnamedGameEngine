@@ -11,11 +11,11 @@ void TileDetectionSystem::update(
   for (int i = 0; i < 3; i++) {
     for (auto &tile : tiles) {
 
-      if (players.at(i)->center.x > tileTransforms.at(tile.first)->getXpos() &&
-          players.at(i)->center.x < tileTransforms.at(tile.first)->getXpos() + 128 &&
-          players.at(i)->center.y > tileTransforms.at(tile.first)->getYpos() &&
-          players.at(i)->center.y < tileTransforms.at(tile.first)->getYpos() + 448) {
-        if (tile.second->tile == LADDER) {
+      if (players.at(i)->center.x >= tileTransforms.at(tile.first)->getXpos() &&
+          players.at(i)->center.x <= tileTransforms.at(tile.first)->getXpos() + 128 &&
+          players.at(i)->center.y >= tileTransforms.at(tile.first)->getYpos() &&
+          players.at(i)->center.y <= tileTransforms.at(tile.first)->getYpos() + 448) {
+        if (tile.second->tile == TILE::LADDER) {
           controlComponent.at(i)->canClimb = true;
           controlComponent.at(i)->collidedTilePos = {tileTransforms.at(tile.first)->getXpos(),
                                                      tileTransforms.at(tile.first)->getYpos()};

@@ -1,11 +1,11 @@
 #ifndef TILECOMPONENT_HPP
 #define TILECOMPONENT_HPP
 #include "component.hpp"
-enum Tile { NONE = 0, LADDER = 1 };
+enum class TILE { NONE = 0, BLOCKING = 1, LADDER = 2 };
 
 struct TileComponent : public IComponent {
-  Tile tile;
-  TileComponent() { tile = NONE; }
+  TILE tile;
+  TileComponent() { tile = TILE::NONE; }
 };
 
 #endif
