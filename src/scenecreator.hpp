@@ -1,22 +1,17 @@
 #pragma once
-#include "components/controlcomponent.hpp"
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 #include "SDL_render.h"
 #include "components/animationcomponent.hpp"
 #include "components/collisioncomponent.hpp"
-#include "components/component.hpp"
+#include "components/controlcomponent.hpp"
 #include "components/gravitycomponent.hpp"
 #include "components/rendercomponent.hpp"
 #include "components/tilecomponent.hpp"
 #include "components/transformcomponent.hpp"
-#include "entities/entity.hpp"
 #include <memory>
 #include <unordered_map>
 #include <vector>
-
-using ComponentVector = std::vector<std::unique_ptr<IComponent>>;
-using EntityVector = std::vector<std::unique_ptr<Entity>>;
 
 struct SceneInfo {
   std::unordered_map<int, std::unique_ptr<TransformComponent>> tcs;
@@ -41,6 +36,7 @@ public:
   static void createBlock2(int x, int y, SceneInfo &level);
   static void createBlock3(int x, int y, SceneInfo &level);
   static void createBlockEntity(int x, int y, int sourceX, SceneInfo &level);
+  static void createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level);
   static void createLadder(int x, int y, SceneInfo &level);
   static void loadTextures();
   void destroyTextures();

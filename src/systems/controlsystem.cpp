@@ -5,7 +5,6 @@
 #include "SDL_events.h"
 #include "SDL_keycode.h"
 #include "transformsystem.hpp"
-#include <iostream>
 
 void ControlSystem::update(TransformSystem &transformSystem, TransformComponent &transformComponent,
                            int &selectedPlayerIndex, ControlComponent &controlComponent) {

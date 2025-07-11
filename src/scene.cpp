@@ -2,7 +2,6 @@
 #include "camera.hpp"
 #include "components/collisioncomponent.hpp"
 #include "components/gravitycomponent.hpp"
-#include "components/tilecomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include "constants.hpp"
 #include "game.hpp"

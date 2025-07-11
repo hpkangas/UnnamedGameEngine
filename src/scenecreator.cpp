@@ -8,7 +8,6 @@
 #include "components/tilecomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include "constants.hpp"
-#include "entities/entity.hpp"
 #include "texturemanager.hpp"
 #include <SDL2/SDL_rwops.h>
 #include <asm-generic/errno.h>
@@ -91,13 +90,47 @@ void SceneCreator::createBlock3(int x, int y, SceneInfo &level) {
 
 void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
   int id = getID();
-  std::unique_ptr<Entity> entity = std::make_unique<Entity>();
   auto transformComponent = std::make_unique<TransformComponent>();
   auto renderComponent = std::make_unique<RenderComponent>();
   auto collisionComponent = std::make_unique<CollisionComponent>();
   auto tileComponent = std::make_unique<TileComponent>();
 
   tileComponent->tile = TILE::SOLID;
+
+  transformComponent->velocity = {0, 0};
+  transformComponent->position = {x, y};
+  transformComponent->parentID = id;
+
+  renderComponent->sourceRect = {sourceX, 0, 128, 64};
+  renderComponent->destinationRect.h = renderComponent->sourceRect.h;
+  renderComponent->destinationRect.w = renderComponent->sourceRect.w;
+  renderComponent->destinationRect.x = transformComponent->position.x;
+  renderComponent->destinationRect.y = transformComponent->position.y;
+  renderComponent->parentID = id;
+
+  collisionComponent->collisionRect.h = renderComponent->destinationRect.h;
+  collisionComponent->collisionRect.w = renderComponent->destinationRect.w;
+  collisionComponent->collisionRect.x = transformComponent->position.x;
+  collisionComponent->collisionRect.y = transformComponent->position.y + 4;
+  collisionComponent->parentID = id;
+
+  // TODO Should probably be some constant value loaded at the start
+  renderComponent->objTexture = textures.at(1);
+  level.tcs.emplace(id, (std::move(transformComponent)));
+  level.rcs.emplace(id, (std::move(renderComponent)));
+  level.ccs.emplace(id, (std::move(collisionComponent)));
+  level.tiles.emplace(id, (std::move(tileComponent)));
+  level.ids++;
+}
+
+void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
+  int id = getID();
+  auto transformComponent = std::make_unique<TransformComponent>();
+  auto renderComponent = std::make_unique<RenderComponent>();
+  auto collisionComponent = std::make_unique<CollisionComponent>();
+  auto tileComponent = std::make_unique<TileComponent>();
+
+  tileComponent->tile = TILE::SEMISOLID;
 
   transformComponent->velocity = {0, 0};
   transformComponent->position = {x, y};

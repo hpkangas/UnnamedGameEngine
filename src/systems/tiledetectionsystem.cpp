@@ -1,5 +1,4 @@
 #include "tiledetectionsystem.hpp"
-#include <iostream>
 
 void TileDetectionSystem::update(
     std::unordered_map<int, std::unique_ptr<TileComponent>> &tiles,

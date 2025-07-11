@@ -27,13 +27,28 @@ void CollisionSystem::checkBlockCollision(CollisionComponent &playerC, Transform
   for (int i = 3; i < currentLevel.tiles.size(); i++) {
     // if check or list that is defined in scene creation
     // what if list changes during run?
-    if (currentLevel.tiles.at(i)->tile == TILE::SOLID) {
 
+    
+    //LADDER does not have collision component
+    // if (currentLevel.tiles.at(i)->tile == TILE::LADDER) {
+      //   checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
+      
+      // }
+      if (currentLevel.tiles.at(i)->tile == TILE::SOLID) {
       auto &blockC = currentLevel.ccs.at(i);
+
 
       checkPlayerLeftCollision(playerC, *blockC, playerT.velocity);
       checkPlayerRightCollision(playerC, *blockC, playerT.velocity);
       checkPlayerUpCollision(playerC, *blockC, playerT.velocity);
+      checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
+    }
+
+    if (currentLevel.tiles.at(i)->tile == TILE::SEMISOLID) {
+      auto &blockC = currentLevel.ccs.at(i);
+
+      checkPlayerLeftCollision(playerC, *blockC, playerT.velocity);
+      checkPlayerRightCollision(playerC, *blockC, playerT.velocity);
       checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
     }
   }
