@@ -15,59 +15,26 @@ void CollisionSystem::checkBlockCollision(CollisionComponent &playerC, Transform
       (playerC.collisionRect.x + playerC.collisionRect.w + playerC.collisionRect.x) / 2,
       (playerC.collisionRect.y + playerC.collisionRect.h + playerC.collisionRect.y) / 2};
 
-  playerC.setCollisionDown(false);
-  playerC.setCollisionUp(false);
-  playerC.setCollisionRight(false);
   playerC.setCollisionLeft(false);
+  playerC.setCollisionRight(false);
+  playerC.setCollisionUp(false);
+  playerC.setCollisionDown(false);
 
-  int yposDif = 0;
-  int xposDif = 0;
+  yposDif = 0;
+  xposDif = 0;
 
   // for (int i = 3; i < currentLevel.ccs.size(); i++) {
   for (int i = 3; i < currentLevel.tiles.size(); i++) {
-    //if check or list that is defined in scene creation
-    //what if list changes during run?
-    if (currentLevel.tiles.at(i)->tile == TILE::BLOCKING) {
+    // if check or list that is defined in scene creation
+    // what if list changes during run?
+    if (currentLevel.tiles.at(i)->tile == TILE::SOLID) {
 
       auto &blockC = currentLevel.ccs.at(i);
 
-      // auto &blockC = *currentLevel.ccs.at(i);
-
-      // player comes from right
-      if (Physics::playerCollisionLeft(playerC, *blockC, playerT.velocity)) {
-        xposDif = playerC.collisionRect.x - (blockC->collisionRect.x + blockC->collisionRect.w);
-        playerC.setCollisionLeft(true);
-        continue;
-      }
-
-      // player comes from left
-      if (Physics::playerCollisionRight(playerC, *blockC, playerT.velocity)) {
-        xposDif = (playerC.collisionRect.x + playerC.collisionRect.w) - blockC->collisionRect.x;
-        playerC.setCollisionRight(true);
-        continue;
-      }
-
-      // player comes from above
-      if (Physics::playerCollisionDown(playerC, *blockC, playerT.velocity)) {
-        yposDif = (playerC.collisionRect.y + playerC.collisionRect.h) - blockC->collisionRect.y;
-        playerC.setCollisionDown(true);
-
-        continue;
-      }
-
-      // player comes from below
-      if (Physics::playerCollisionUp(playerC, *blockC, playerT.velocity)) {
-        yposDif = (playerC.collisionRect.y) - (blockC->collisionRect.y + blockC->collisionRect.h);
-
-        playerC.setCollisionUp(true);
-        continue;
-      }
-
-      //   if (playerCollisionUp) {
-      //     // TODO Fix when relevant
-      //     player->transformComponent.setYpos(player->transformComponent.getYpos() -
-      //                                        player->transformComponent.getYvel());
-      //   }
+      checkPlayerLeftCollision(playerC, *blockC, playerT.velocity);
+      checkPlayerRightCollision(playerC, *blockC, playerT.velocity);
+      checkPlayerUpCollision(playerC, *blockC, playerT.velocity);
+      checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
     }
   }
   handleVerticalBlockCollision(playerT, playerC, yposDif);
@@ -75,11 +42,40 @@ void CollisionSystem::checkBlockCollision(CollisionComponent &playerC, Transform
   handleHorizontalBlockCollision(playerT, playerC, xposDif);
 }
 
+void CollisionSystem::checkPlayerLeftCollision(CollisionComponent &player,
+                                               CollisionComponent &block, Velocity velocity) {
+  if (Physics::playerCollisionLeft(player, block, velocity)) {
+    xposDif = player.collisionRect.x - (block.collisionRect.x + block.collisionRect.w);
+    player.setCollisionLeft(true);
+  }
+}
 
+void CollisionSystem::checkPlayerRightCollision(CollisionComponent &player,
+                                                CollisionComponent &block, Velocity velocity) {
+  if (Physics::playerCollisionRight(player, block, velocity)) {
+    xposDif = (player.collisionRect.x + player.collisionRect.w) - block.collisionRect.x;
+    player.setCollisionRight(true);
+  }
+}
 
+void CollisionSystem::checkPlayerUpCollision(CollisionComponent &player, CollisionComponent &block,
+                                             Velocity velocity) {
+  if (Physics::playerCollisionUp(player, block, velocity)) {
+    yposDif = (player.collisionRect.y) - (block.collisionRect.y + block.collisionRect.h);
+    player.setCollisionUp(true);
+  }
+}
+
+void CollisionSystem::checkPlayerDownCollision(CollisionComponent &player,
+                                               CollisionComponent &block, Velocity velocity) {
+  if (Physics::playerCollisionDown(player, block, velocity)) {
+    yposDif = (player.collisionRect.y + player.collisionRect.h) - block.collisionRect.y;
+    player.setCollisionDown(true);
+  }
+}
 
 void CollisionSystem::handleVerticalBlockCollision(TransformComponent &tc, CollisionComponent &cc,
-                                               int dif) {
+                                                   int dif) {
 
   if (cc.getCollisionDown() || cc.getCollisionUp()) {
     if (dif != 0) {

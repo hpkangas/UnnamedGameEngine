@@ -97,7 +97,7 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   auto collisionComponent = std::make_unique<CollisionComponent>();
   auto tileComponent = std::make_unique<TileComponent>();
 
-  tileComponent->tile = TILE::BLOCKING;
+  tileComponent->tile = TILE::SOLID;
 
   transformComponent->velocity = {0, 0};
   transformComponent->position = {x, y};
