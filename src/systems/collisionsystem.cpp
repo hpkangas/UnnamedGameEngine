@@ -1,5 +1,7 @@
 #include "collisionsystem.hpp"
 #include "../physics.hpp"
+#include <cstdio>
+#include <iostream>
 
 void CollisionSystem::update(CollisionComponent &playerC, TransformComponent &playerT,
                              SceneInfo &currentLevel) {
@@ -27,16 +29,16 @@ void CollisionSystem::checkBlockCollision(CollisionComponent &playerC, Transform
   for (int i = 3; i < currentLevel.tiles.size(); i++) {
     // if check or list that is defined in scene creation
     // what if list changes during run?
-
-    
-    //LADDER does not have collision component
-    // if (currentLevel.tiles.at(i)->tile == TILE::LADDER) {
-      //   checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
-      
-      // }
-      if (currentLevel.tiles.at(i)->tile == TILE::SOLID) {
+    printf("%d",currentLevel.tiles.at(i)->tile == TILE::LADDER);
+    // LADDER does not have collision component
+    if (currentLevel.tiles.at(i)->tile == TILE::LADDER) {
       auto &blockC = currentLevel.ccs.at(i);
+      std::cout<<"asd";
+      checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
+    }
 
+    if (currentLevel.tiles.at(i)->tile == TILE::SOLID) {
+      auto &blockC = currentLevel.ccs.at(i);
 
       checkPlayerLeftCollision(playerC, *blockC, playerT.velocity);
       checkPlayerRightCollision(playerC, *blockC, playerT.velocity);

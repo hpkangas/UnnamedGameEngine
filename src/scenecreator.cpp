@@ -224,20 +224,24 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   auto transformComponent = std::make_unique<TransformComponent>();
   auto renderComponent = std::make_unique<RenderComponent>();
   auto tileComponent = std::make_unique<TileComponent>();
+  auto collisionComponent = std::make_unique<CollisionComponent>();
   transformComponent->position = {x, y};
 
   renderComponent->sourceRect = {0, 64, 128, 448};
   renderComponent->destinationRect = {x, y, renderComponent->sourceRect.w,
                                       renderComponent->sourceRect.h};
   renderComponent->objTexture = textures.at(1);
+  collisionComponent->collisionRect = {x,y,128,448};
   tileComponent->tile = TILE::LADDER;
   transformComponent->parentID = id;
   renderComponent->parentID = id;
   tileComponent->parentID = id;
+  collisionComponent->parentID = id;
 
   level.tcs.emplace(id, (std::move(transformComponent)));
   level.rcs.emplace(id, (std::move(renderComponent)));
   level.tiles.emplace(id, (std::move(tileComponent)));
+  level.ccs.emplace(id, (std::move(collisionComponent)));
   level.ids++;
 }
 
