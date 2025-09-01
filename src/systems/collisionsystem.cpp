@@ -25,33 +25,26 @@ void CollisionSystem::checkBlockCollision(CollisionComponent &playerC, Transform
   yposDif = 0;
   xposDif = 0;
 
-  // for (int i = 3; i < currentLevel.ccs.size(); i++) {
-  for (int i = 3; i < currentLevel.tiles.size(); i++) {
-    // if check or list that is defined in scene creation
-    // what if list changes during run?
-    printf("%d",currentLevel.tiles.at(i)->tile == TILE::LADDER);
-    // LADDER does not have collision component
+  for (int i = 3; i < currentLevel.ids; i++) {
+    auto &blockC = currentLevel.ccs.at(i);
     if (currentLevel.tiles.at(i)->tile == TILE::LADDER) {
-      auto &blockC = currentLevel.ccs.at(i);
-      std::cout<<"asd";
       checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
+      continue;
     }
 
     if (currentLevel.tiles.at(i)->tile == TILE::SOLID) {
-      auto &blockC = currentLevel.ccs.at(i);
-
       checkPlayerLeftCollision(playerC, *blockC, playerT.velocity);
       checkPlayerRightCollision(playerC, *blockC, playerT.velocity);
-      checkPlayerUpCollision(playerC, *blockC, playerT.velocity);
       checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
+      checkPlayerUpCollision(playerC, *blockC, playerT.velocity);
+      continue;
     }
 
     if (currentLevel.tiles.at(i)->tile == TILE::SEMISOLID) {
-      auto &blockC = currentLevel.ccs.at(i);
-
       checkPlayerLeftCollision(playerC, *blockC, playerT.velocity);
       checkPlayerRightCollision(playerC, *blockC, playerT.velocity);
       checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
+      continue;
     }
   }
   handleVerticalBlockCollision(playerT, playerC, yposDif);
