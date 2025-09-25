@@ -2,28 +2,29 @@
 #ifndef COLLISIONSYSTEM_HPP
 #define COLLISIONSYSTEM_HPP
 #include "../scenecreator.hpp"
+#include "transformsystem.hpp"
 
 class CollisionSystem {
 public:
-  CollisionSystem() {
-    yposDif = 0;
-    xposDif = 0;
-  }
+  CollisionSystem() {}
   ~CollisionSystem() {}
-  int yposDif;
-  int xposDif;
-  void update(CollisionComponent &playerC, TransformComponent &playerT, SceneInfo &currentLevel);
-  void checkBlockCollision(CollisionComponent &playerC, TransformComponent &playerT,
-                           SceneInfo &currentLevel);
 
-  void checkPlayerLeftCollision(CollisionComponent &playerC, CollisionComponent &block, Velocity velocity);
-  void checkPlayerRightCollision(CollisionComponent &playerC, CollisionComponent &block, Velocity velocity);
-  void checkPlayerUpCollision(CollisionComponent &playerC, CollisionComponent &block, Velocity velocity);
-  void checkPlayerDownCollision(CollisionComponent &playerC, CollisionComponent &block, Velocity velocity);
+  TransformSystem *transformSystem;
 
+  TILE currentTile = TILE::NONE;
+  Position collidedDownObjectPos = {0, 0};
+  Position collidedUpObjectPos = {0, 0};
 
-  void handleVerticalBlockCollision(TransformComponent &tc, CollisionComponent &cc, int dif);
-  void handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent &cc, int dif);
+  void update(int i, SceneInfo &currentLevel, TransformSystem &transformSystem);
+
+  void handleDownTileCollision(TransformComponent &playerTransformComponent,
+                               CollisionComponent &playerCollisionComponent,
+                               ControlComponent &playerControlComponent);
+
+  void handleUpTileCollision(TransformComponent &playerTransformComponent,
+                             CollisionComponent &playerCollisionComponent,
+                             ControlComponent &playerControlComponent);
+  void handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent &cc);
 };
 
 #endif

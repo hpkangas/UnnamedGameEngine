@@ -1,15 +1,16 @@
 #include "animationsystem.hpp"
 #include "../constants.hpp"
+#include <cstdio>
+#include <iostream>
 
-void AnimationSystem::update(ControlComponent const &controlComponent,
-                             CollisionComponent const &collisionComponent,
-                             GRAVITY_STATE const &gravityState,
-                             TransformComponent const &transformComponent,
-                             RenderComponent &renderComponent,
-                             AnimationComponent &animationComponent) {
-  if (gravityState == GRAVITY_STATE::AIRBORNE) {
-    animationComponent.setAnimationState(ANIMATION_STATE::AIRBORNE);
-  } else {
+void AnimationSystem::determineAnimationState(ControlComponent const &controlComponent,
+                                              CollisionComponent const &collisionComponent,
+                                              GRAVITY_STATE gravityState,
+                                              TransformComponent const &transformComponent,
+                                              RenderComponent &renderComponent,
+                                              AnimationComponent &animationComponent) {
+  switch (controlComponent.getControlState()) {
+  case CONTROL_STATE::NORMAL:
     if (transformComponent.getXvel() != 0) {
       animationComponent.setAnimationState(ANIMATION_STATE::WALKING);
     } else {
@@ -18,10 +19,27 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
     if (collisionComponent.getCollisionLeft() || collisionComponent.getCollisionRight()) {
       animationComponent.setAnimationState(ANIMATION_STATE::PUSHING);
     }
-  }
-  if (controlComponent.climbing) {
+    break;
+  case CONTROL_STATE::AIRBORNE:
+    animationComponent.setAnimationState(ANIMATION_STATE::AIRBORNE);
+    break;
+  case CONTROL_STATE::FALLING:
+    break;
+  case CONTROL_STATE::CLIMBING:
     animationComponent.setAnimationState(ANIMATION_STATE::CLIMBING);
+    break;
   }
+}
+
+void AnimationSystem::update(ControlComponent const &controlComponent,
+                             CollisionComponent const &collisionComponent,
+                             GRAVITY_STATE gravityState,
+                             TransformComponent const &transformComponent,
+                             RenderComponent &renderComponent,
+                             AnimationComponent &animationComponent) {
+
+  determineAnimationState(controlComponent, collisionComponent, gravityState, transformComponent,
+                          renderComponent, animationComponent);
 
   switch (animationComponent.getAnimationState()) {
   case ANIMATION_STATE::STILL:
@@ -31,6 +49,7 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
     break;
 
   case ANIMATION_STATE::WALKING:
+
     playFrame(renderComponent, 0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.WALKING_ANIMATION_FRAMES);
     animationComponent.animationFrame++;
@@ -40,6 +59,7 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
     break;
 
   case ANIMATION_STATE::PUSHING:
+
     playFrame(renderComponent, 0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     animationComponent.animationFrame++;
@@ -49,6 +69,7 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
     break;
 
   case ANIMATION_STATE::AIRBORNE:
+
     playFrame(renderComponent, 0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     animationComponent.animationFrame++;
@@ -58,6 +79,7 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
     break;
 
   case ANIMATION_STATE::CLIMBING:
+
     playFrame(renderComponent, 0, CLIMBING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     if (transformComponent.getYvel() < 0) {

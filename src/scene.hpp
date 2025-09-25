@@ -1,10 +1,11 @@
 #pragma once
-#ifndef GAME_HPP
-#define GAME_HPP
+#ifndef SCENE_HPP
+#define SCENE_HPP
 #include "camera.hpp"
 #include "components/transformcomponent.hpp"
 #include "scenecreator.hpp"
 #include "systems/animationsystem.hpp"
+#include "systems/collisiondetectionsystem.hpp"
 #include "systems/collisionsystem.hpp"
 #include "systems/controlsystem.hpp"
 #include "systems/gravitysystem.hpp"
@@ -28,6 +29,7 @@ private:
 
   RenderSystem renderSystem;
   ControlSystem controlSystem;
+  CollisionDetectionSystem collisionDetectionSystem;
   CollisionSystem collisionSystem;
   TransformSystem transformSystem;
   AnimationSystem animationSystem;

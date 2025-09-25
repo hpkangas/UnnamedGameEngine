@@ -1,4 +1,5 @@
 #include "transformsystem.hpp"
+#include <iostream>
 
 void TransformSystem::moveRight(TransformComponent &transformComponent) {
   transformComponent.setXvel(transformComponent.getXvel() + playerSpeed);
@@ -31,15 +32,31 @@ void TransformSystem::moveDown(TransformComponent &transformComponent) {
 
 // debugging only mostly
 void TransformSystem::stopX(TransformComponent &transformComponent) {
+  stopX(transformComponent, 0);
+}
+
+void TransformSystem::stopX(TransformComponent &transformComponent, int xposDif) {
+
   if (transformComponent.getXvel() != 0) {
+    if (xposDif != 0) {
+      transformComponent.setXpos(transformComponent.getXpos() - xposDif);
+    }
     transformComponent.setXvel(0);
   }
 }
 
 void TransformSystem::stopY(TransformComponent &transformComponent) {
-  if (transformComponent.getYvel() != 0) {
-    transformComponent.setYvel(0);
+  stopY(transformComponent, 0);
+}
+
+void TransformSystem::stopY(TransformComponent &transformComponent, int yposDif) {
+  if (yposDif != 0) {
+    std::cout << "new y pos " << transformComponent.getYpos() << " - " << yposDif << " = "
+              << (transformComponent.getYpos() - yposDif) << "\n";
+    transformComponent.setYpos(transformComponent.getYpos() - yposDif);
   }
+  // }
+  transformComponent.setYvel(0);
 }
 
 void TransformSystem::update(TransformComponent &transformComponent) {

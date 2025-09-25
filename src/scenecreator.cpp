@@ -26,18 +26,15 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
   std::cout << "creating scene" << "\n";
   loadTextures();
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
-
-    if (c == '\n') {
-      continue;
-    }
-
+    // read before comma, create object after line change
     if (c == ',') {
 
-      if (currentValue != "|") {
+      if (currentValue != "\n") {
 
         values.emplace_back(currentValue);
 
       } else {
+
         std::string gameObjectType = values.at(0);
         int x = std::stoi(values.at(1));
         int y = std::stoi(values.at(2));
@@ -46,10 +43,13 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
           createPC(x, y, level);
         }
 
-        if (gameObjectType.substr(0, 1) == "B") {
+        else if (gameObjectType.substr(0, 1) == "B") {
           createBlock(gameObjectType, x, y, level);
-        }
-        if (gameObjectType.substr(0, 1) == "L") {
+
+        } else if (gameObjectType.substr(0, 2) == "LS") {
+          createLadderStart(x, y, level);
+
+        } else if (gameObjectType.substr(0, 1) == "L") {
           createLadder(x, y, level);
         }
 
@@ -97,21 +97,21 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
 
   tileComponent->tile = TILE::SOLID;
 
-  transformComponent->velocity = {0, 0};
-  transformComponent->position = {x, y};
+  transformComponent->setVelocity({0, 0});
+  transformComponent->setPosition({x, y});
   transformComponent->parentID = id;
 
   renderComponent->sourceRect = {sourceX, 0, 128, 64};
   renderComponent->destinationRect.h = renderComponent->sourceRect.h;
   renderComponent->destinationRect.w = renderComponent->sourceRect.w;
-  renderComponent->destinationRect.x = transformComponent->position.x;
-  renderComponent->destinationRect.y = transformComponent->position.y;
+  renderComponent->destinationRect.x = transformComponent->getXpos();
+  renderComponent->destinationRect.y = transformComponent->getYpos();
   renderComponent->parentID = id;
 
   collisionComponent->collisionRect.h = renderComponent->destinationRect.h;
   collisionComponent->collisionRect.w = renderComponent->destinationRect.w;
-  collisionComponent->collisionRect.x = transformComponent->position.x;
-  collisionComponent->collisionRect.y = transformComponent->position.y + 4;
+  collisionComponent->collisionRect.x = transformComponent->getXpos();
+  collisionComponent->collisionRect.y = transformComponent->getYpos();
   collisionComponent->parentID = id;
 
   // TODO Should probably be some constant value loaded at the start
@@ -132,21 +132,21 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
 
   tileComponent->tile = TILE::SEMISOLID;
 
-  transformComponent->velocity = {0, 0};
-  transformComponent->position = {x, y};
+  transformComponent->setVelocity({0, 0});
+  transformComponent->setPosition({x, y});
   transformComponent->parentID = id;
 
   renderComponent->sourceRect = {sourceX, 0, 128, 64};
   renderComponent->destinationRect.h = renderComponent->sourceRect.h;
   renderComponent->destinationRect.w = renderComponent->sourceRect.w;
-  renderComponent->destinationRect.x = transformComponent->position.x;
-  renderComponent->destinationRect.y = transformComponent->position.y;
+  renderComponent->destinationRect.x = transformComponent->getXpos();
+  renderComponent->destinationRect.y = transformComponent->getYpos();
   renderComponent->parentID = id;
 
   collisionComponent->collisionRect.h = renderComponent->destinationRect.h;
   collisionComponent->collisionRect.w = renderComponent->destinationRect.w;
-  collisionComponent->collisionRect.x = transformComponent->position.x;
-  collisionComponent->collisionRect.y = transformComponent->position.y + 4;
+  collisionComponent->collisionRect.x = transformComponent->getXpos();
+  collisionComponent->collisionRect.y = transformComponent->getYpos() + 4;
   collisionComponent->parentID = id;
 
   // TODO Should probably be some constant value loaded at the start
@@ -180,8 +180,8 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   auto animationComponent = std::make_unique<AnimationComponent>();
   auto controlComponent = std::make_unique<ControlComponent>();
 
-  transformComponent->velocity = {0, 0};
-  transformComponent->position = {x, y};
+  transformComponent->setVelocity({0, 0});
+  transformComponent->setPosition({x, y});
   transformComponent->parentID = id;
 
   renderComponent->sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
@@ -198,11 +198,13 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
 
   // TODO sprite offsets. should be defined inside the specific character
   // classes (once decided on)
-  collisionComponent->collisionRect = {transformComponent->position.x + 28,
-                                       transformComponent->position.y, PLAYER_WIDTH - 56,
+  collisionComponent->collisionRect = {transformComponent->getXpos() + 28,
+                                       transformComponent->getYpos(), PLAYER_WIDTH - 56,
                                        PLAYER_HEIGHT};
 
   collisionComponent->parentID = id;
+
+  controlComponent->setControlState(CONTROL_STATE::AIRBORNE);
 
   gravityComponent->gravityState = GRAVITY_STATE::AIRBORNE;
   gravityComponent->parentID = id;
@@ -219,29 +221,60 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
-  std::cout << "Creating ladder \n";
+  std::cout << "ladder";
+
   int id = getID();
   auto transformComponent = std::make_unique<TransformComponent>();
   auto renderComponent = std::make_unique<RenderComponent>();
   auto tileComponent = std::make_unique<TileComponent>();
   auto collisionComponent = std::make_unique<CollisionComponent>();
-  transformComponent->position = {x, y};
+  transformComponent->setPosition({x, y});
+  transformComponent->parentID = id;
 
-  renderComponent->sourceRect = {0, 64, 128, 448};
+  renderComponent->sourceRect = {0, 192, 128, 128};
   renderComponent->destinationRect = {x, y, renderComponent->sourceRect.w,
                                       renderComponent->sourceRect.h};
   renderComponent->objTexture = textures.at(1);
-  collisionComponent->collisionRect = {x,y,128,448};
-  tileComponent->tile = TILE::LADDER;
-  transformComponent->parentID = id;
   renderComponent->parentID = id;
-  tileComponent->parentID = id;
+
+  collisionComponent->collisionRect = {x, y, 128, 128};
   collisionComponent->parentID = id;
+
+  tileComponent->tile = TILE::LADDER;
+  tileComponent->parentID = id;
 
   level.tcs.emplace(id, (std::move(transformComponent)));
   level.rcs.emplace(id, (std::move(renderComponent)));
-  level.tiles.emplace(id, (std::move(tileComponent)));
   level.ccs.emplace(id, (std::move(collisionComponent)));
+  level.tiles.emplace(id, (std::move(tileComponent)));
+  level.ids++;
+}
+
+void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
+  int id = getID();
+  auto transformComponent = std::make_unique<TransformComponent>();
+  auto renderComponent = std::make_unique<RenderComponent>();
+  auto tileComponent = std::make_unique<TileComponent>();
+  auto collisionComponent = std::make_unique<CollisionComponent>();
+  transformComponent->setPosition({x, y});
+  transformComponent->parentID = id;
+
+  renderComponent->sourceRect = {0, 128, 128, 64};
+  renderComponent->destinationRect = {x, y, renderComponent->sourceRect.w,
+                                      renderComponent->sourceRect.h};
+  renderComponent->objTexture = textures.at(1);
+  renderComponent->parentID = id;
+
+  collisionComponent->collisionRect = {x, y, 128, 64};
+  collisionComponent->parentID = id;
+
+  tileComponent->tile = TILE::LADDERSTART;
+  tileComponent->parentID = id;
+
+  level.tcs.emplace(id, (std::move(transformComponent)));
+  level.rcs.emplace(id, (std::move(renderComponent)));
+  level.ccs.emplace(id, (std::move(collisionComponent)));
+  level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
 }
 

@@ -33,20 +33,20 @@ void Background::update() {
   // m_destinationRect.h = m_sourceRect.h;
 }
 
-GameText::GameText(std::string textureText, int x, int y) {
-  text = textureText;
-  tc.position = {x, y};
-}
+// GameText::GameText(std::string textureText, int x, int y) {
+//   text = textureText;
+//   tc.position = {x, y};
+// }
 
-void GameText::update() {
-  rc.sourceRect.x = 0;
-  rc.sourceRect.y = 4;
+// void GameText::update() {
+//   rc.sourceRect.x = 0;
+//   rc.sourceRect.y = 4;
 
-  rc.destinationRect.x = tc.position.x;
-  rc.destinationRect.y = tc.position.y;
-  rc.destinationRect.w = rc.sourceRect.w;
-  rc.destinationRect.h = rc.sourceRect.h;
-}
+//   rc.destinationRect.x = tc.position.x;
+//   rc.destinationRect.y = tc.position.y;
+//   rc.destinationRect.w = rc.sourceRect.w;
+//   rc.destinationRect.h = rc.sourceRect.h;
+// }
 
 // TODO Repurpose this text drawing code
 

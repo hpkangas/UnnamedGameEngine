@@ -1,19 +1,23 @@
 #include "gravitysystem.hpp"
 
+const float GRAVITY_UNIT = 0.50f;
+const float MAX_GRAVITY = 11.0;
+
 void GravitySystem::gravity(TransformComponent &transformComponent) {
-  const float GRAVITY_UNIT = 0.50f;
-  const float MAX_GRAVITY = 11.0;
   if (transformComponent.getYvel() < MAX_GRAVITY) {
     transformComponent.setYvel(transformComponent.getYvel() + GRAVITY_UNIT);
   }
 }
 
-void GravitySystem::update(bool collisionDown, bool climbing, GravityComponent &gravityComponent,
+void GravitySystem::update(ControlComponent &controlComponent, GravityComponent &gravityComponent,
                            TransformComponent &transformComponent) {
 
-  if (collisionDown || climbing) {
+  if (controlComponent.getControlState() == CONTROL_STATE::NORMAL ||
+      controlComponent.getControlState() == CONTROL_STATE::CLIMBING) {
     gravityComponent.setGravityState(GRAVITY_STATE::GROUNDED);
-  } else {
+  }
+
+  if (controlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
     gravityComponent.setGravityState(GRAVITY_STATE::AIRBORNE);
   }
 

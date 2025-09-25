@@ -4,14 +4,14 @@
 #include <memory>
 
 void RenderSystem::update(const TransformComponent &tc, RenderComponent &rc) {
-  rc.destinationRect.x = tc.position.x;
-  rc.destinationRect.y = tc.position.y;
+  rc.destinationRect.x = tc.getXpos();
+  rc.destinationRect.y = tc.getYpos();
 
-  if (tc.velocity.x < 0) {
+  if (tc.getXvel() < 0) {
     rc.flip = SDL_FLIP_HORIZONTAL;
   }
 
-  if (tc.velocity.x > 0) {
+  if (tc.getXvel() > 0) {
     rc.flip = SDL_FLIP_NONE;
   }
 }
