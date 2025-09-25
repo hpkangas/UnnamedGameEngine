@@ -1,107 +1,102 @@
 #include "collisionsystem.hpp"
-#include "../physics.hpp"
+#include "transformsystem.hpp"
 #include <cstdio>
 #include <iostream>
 
-void CollisionSystem::update(CollisionComponent &playerC, TransformComponent &playerT,
-                             SceneInfo &currentLevel) {
-  checkBlockCollision(playerC, playerT, currentLevel);
+void CollisionSystem::update(int i, SceneInfo &currentLevel, TransformSystem &transformSystem) {
+  std::cout << "COLLISION SYSTEM PLAYER " << i << "\n";
+
+  this->transformSystem = &transformSystem;
+
+  CollisionComponent &playerC = *currentLevel.ccs.at(i);
+  TransformComponent &playerT = *currentLevel.tcs.at(i);
+  ControlComponent &playerControl = *currentLevel.controlComponents.at(i);
+
+  handleDownTileCollision(playerT, playerC, playerControl);
+  handleUpTileCollision(playerT, playerC, playerControl);
+
+  handleHorizontalBlockCollision(playerT, playerC);
 }
 
-void CollisionSystem::checkBlockCollision(CollisionComponent &playerC, TransformComponent &playerT,
-                                          SceneInfo &currentLevel) {
+void CollisionSystem::handleDownTileCollision(TransformComponent &playerTransformComponent,
+                                              CollisionComponent &playerCollisionComponent,
+                                              ControlComponent &playerControlComponent) {
 
-  playerC.collisionRect.x = playerT.position.x + 28;
-  playerC.collisionRect.y = playerT.position.y;
-  playerC.center = {
-      (playerC.collisionRect.x + playerC.collisionRect.w + playerC.collisionRect.x) / 2,
-      (playerC.collisionRect.y + playerC.collisionRect.h + playerC.collisionRect.y) / 2};
+  // ei kollisioi kun kiipeää
+  switch (playerCollisionComponent.collisionTileDown) {
 
-  playerC.setCollisionLeft(false);
-  playerC.setCollisionRight(false);
-  playerC.setCollisionUp(false);
-  playerC.setCollisionDown(false);
+  case TILE::NONE:
+    std::cout << "down none tile \n";
 
-  yposDif = 0;
-  xposDif = 0;
+    // if (playerCollisionComponent.collisionTileUp == TILE::NONE) {
+    //   playerControlComponent.controlState = CONTROL_STATE::AIRBORNE;
+    // }
 
-  for (int i = 3; i < currentLevel.ids; i++) {
-    auto &blockC = currentLevel.ccs.at(i);
-    if (currentLevel.tiles.at(i)->tile == TILE::LADDER) {
-      checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
-      continue;
+    // playerControlComponent.setCanClimbDown(false);
+    // playerControlComponent.canClimbUp = false;
+    break;
+
+  case TILE::SOLID:
+    std::cout << "down solid tile \n";
+    if (playerControlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
+      // I'm not sure I like collision system deciding what the control state is but for now let's
+      // go with this
+      transformSystem->stopY(playerTransformComponent, playerCollisionComponent.yposDif);
+      playerControlComponent.setControlState(CONTROL_STATE::NORMAL);
+    }
+    break;
+
+  case TILE::SEMISOLID:
+    break;
+
+  case TILE::LADDER:
+    std::cout << "down ladder tile \n";
+
+    break;
+
+  case TILE::LADDERSTART:
+    std::cout << "down ladderstart tile \n";
+    if (playerControlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
+      transformSystem->stopY(playerTransformComponent, playerCollisionComponent.yposDif);
+      playerControlComponent.setControlState(CONTROL_STATE::NORMAL);
     }
 
-    if (currentLevel.tiles.at(i)->tile == TILE::SOLID) {
-      checkPlayerLeftCollision(playerC, *blockC, playerT.velocity);
-      checkPlayerRightCollision(playerC, *blockC, playerT.velocity);
-      checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
-      checkPlayerUpCollision(playerC, *blockC, playerT.velocity);
-      continue;
-    }
+    break;
 
-    if (currentLevel.tiles.at(i)->tile == TILE::SEMISOLID) {
-      checkPlayerLeftCollision(playerC, *blockC, playerT.velocity);
-      checkPlayerRightCollision(playerC, *blockC, playerT.velocity);
-      checkPlayerDownCollision(playerC, *blockC, playerT.velocity);
-      continue;
-    }
-  }
-  handleVerticalBlockCollision(playerT, playerC, yposDif);
-
-  handleHorizontalBlockCollision(playerT, playerC, xposDif);
-}
-
-void CollisionSystem::checkPlayerLeftCollision(CollisionComponent &player,
-                                               CollisionComponent &block, Velocity velocity) {
-  if (Physics::playerCollisionLeft(player, block, velocity)) {
-    xposDif = player.collisionRect.x - (block.collisionRect.x + block.collisionRect.w);
-    player.setCollisionLeft(true);
+  default:
+    // playerCollisionComponent.collisionTileDown = TILE::NONE;
+    break;
   }
 }
 
-void CollisionSystem::checkPlayerRightCollision(CollisionComponent &player,
-                                                CollisionComponent &block, Velocity velocity) {
-  if (Physics::playerCollisionRight(player, block, velocity)) {
-    xposDif = (player.collisionRect.x + player.collisionRect.w) - block.collisionRect.x;
-    player.setCollisionRight(true);
+void CollisionSystem::handleUpTileCollision(TransformComponent &playerTransformComponent,
+                                            CollisionComponent &playerCollisionComponent,
+                                            ControlComponent &playerControlComponent) {
+
+  switch (playerCollisionComponent.collisionTileUp) {
+
+  case TILE::NONE:
+    break;
+
+  case TILE::SOLID:
+    break;
+
+  case TILE::SEMISOLID:
+    break;
+
+  case TILE::LADDER:
+    std::cout << "up ladder tile \n";
+    break;
+
+  case TILE::LADDERSTART:
+    std::cout << "up ladderstart tile \n";
+    break;
   }
 }
 
-void CollisionSystem::checkPlayerUpCollision(CollisionComponent &player, CollisionComponent &block,
-                                             Velocity velocity) {
-  if (Physics::playerCollisionUp(player, block, velocity)) {
-    yposDif = (player.collisionRect.y) - (block.collisionRect.y + block.collisionRect.h);
-    player.setCollisionUp(true);
-  }
-}
-
-void CollisionSystem::checkPlayerDownCollision(CollisionComponent &player,
-                                               CollisionComponent &block, Velocity velocity) {
-  if (Physics::playerCollisionDown(player, block, velocity)) {
-    yposDif = (player.collisionRect.y + player.collisionRect.h) - block.collisionRect.y;
-    player.setCollisionDown(true);
-  }
-}
-
-void CollisionSystem::handleVerticalBlockCollision(TransformComponent &tc, CollisionComponent &cc,
-                                                   int dif) {
-
-  if (cc.getCollisionDown() || cc.getCollisionUp()) {
-    if (dif != 0) {
-      tc.setYpos(tc.getYpos() - dif);
-    }
-    tc.setYvel(0);
-  }
-}
-
-void CollisionSystem::handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent &cc,
-                                                     int dif) {
-
-  if (cc.getCollisionLeft() || cc.getCollisionRight()) {
-    if (dif != 0) {
-      tc.setXpos(tc.getXpos() - dif);
-    }
-    tc.setXvel(0);
+void CollisionSystem::handleHorizontalBlockCollision(TransformComponent &tc,
+                                                     CollisionComponent &cc) {
+  if (cc.collisionTileLeft == TILE::SOLID || cc.collisionTileRight == TILE::SOLID) {
+    transformSystem->stopX(tc, cc.xposDif);
   }
 }

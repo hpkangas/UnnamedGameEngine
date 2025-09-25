@@ -1,6 +1,5 @@
 #include "scene.hpp"
 #include "camera.hpp"
-#include "components/collisioncomponent.hpp"
 #include "components/gravitycomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include "constants.hpp"
@@ -25,10 +24,15 @@ void Scene::update() {
 
   // REFACTOR<<
   // for (auto &tileComponent : currentLevel.tiles) {
-  tileDetectionSystem.update(currentLevel.tiles, currentLevel.ccs, currentLevel.tcs,
-                             currentLevel.controlComponents);
-  controlSystem.update(transformSystem, *currentLevel.tcs.at(selectedPlayer), selectedPlayerIndex,
-                       *currentLevel.controlComponents.at(selectedPlayerIndex));
+  // tileDetectionSystem.update(currentLevel.tiles, currentLevel.ccs, currentLevel.tcs,
+  //                            currentLevel.controlComponents);
+
+  for (int i = 0; i < 3; i++) {
+
+    controlSystem.update(transformSystem, *currentLevel.tcs.at(i), i, selectedPlayerIndex,
+                         *currentLevel.controlComponents.at(i), *currentLevel.gcs.at(i),
+                         *currentLevel.ccs.at(i));
+  }
 
   if (selectedPlayer != selectedPlayerIndex) {
     selectedPlayer = selectedPlayerIndex;
@@ -45,13 +49,16 @@ void Scene::update() {
   // }
 
   for (int i = 0; i < currentLevel.gcs.size(); i++) {
-    gravitySystem.update(currentLevel.ccs.at(i)->getCollisionDown(),
-                         currentLevel.controlComponents.at(i)->climbing, *currentLevel.gcs.at(i),
+    gravitySystem.update(*currentLevel.controlComponents.at(i), *currentLevel.gcs.at(i),
                          *currentLevel.tcs.at(i));
   }
 
   for (int i = 0; i < 3; i++) {
-    collisionSystem.update(*currentLevel.ccs.at(i), *currentLevel.tcs.at(i), currentLevel);
+    collisionDetectionSystem.update(i, currentLevel);
+  }
+
+  for (int i = 0; i < 3; i++) {
+    collisionSystem.update(i, currentLevel, transformSystem);
   }
 
   for (int i = 0; i < currentLevel.tcs.size(); i++) {

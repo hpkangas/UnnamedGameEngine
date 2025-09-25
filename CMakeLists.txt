@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-project(game_cmake)
+project(mygame)
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)

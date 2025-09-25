@@ -6,17 +6,21 @@
 
 using namespace Utils;
 struct TransformComponent : public IComponent {
+private:
   int ID = TCID;
-
   Position position{0, 0};
   Velocity velocity{0, 0};
 
+public:
   TransformComponent() {}
   ~TransformComponent() {}
 
   int getXpos() const { return position.x; }
 
   int getYpos() const { return position.y; }
+
+  Position getPosition() { return position; }
+  void setPosition(Position position) { this->position = position; }
 
   void setXpos(const int xpos) { position.x = xpos; }
 
@@ -25,6 +29,9 @@ struct TransformComponent : public IComponent {
   float getXvel() const { return velocity.x; }
 
   float getYvel() const { return velocity.y; }
+
+  Velocity getVelocity() { return velocity; }
+  void setVelocity(Velocity velocity) { this->velocity = velocity; }
 
   void setXvel(const float xvel) { velocity.x = xvel; }
 

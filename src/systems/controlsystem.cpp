@@ -5,10 +5,58 @@
 #include "SDL_events.h"
 #include "SDL_keycode.h"
 #include "transformsystem.hpp"
+#include <cstdio>
+#include <iostream>
 
 void ControlSystem::update(TransformSystem &transformSystem, TransformComponent &transformComponent,
-                           int &selectedPlayerIndex, ControlComponent &controlComponent) {
+                           int selectedPlayer, int &selectedPlayerIndex,
+                           ControlComponent &controlComponent, GravityComponent &gravityComponent,
+                           CollisionComponent &collisionComponent) {
 
+  std::cout << "-------" << "\n";
+  std::cout << "controlled plaeyr " << selectedPlayerIndex << "\n";
+  std::cout << "selected player" << selectedPlayer << "\n";
+  this->transformSystem = &transformSystem;
+
+  // inputR = false;
+  // inputL = false;
+  // inputU = false;
+  // inputD = false;
+  inputChangeCharacter = false;
+  inputResetCharacter = false;
+
+  determineControlState(controlComponent, gravityComponent.getGravityState(), collisionComponent,
+                        transformComponent);
+
+  handleDownTileCollision(transformComponent, collisionComponent, controlComponent);
+  handleUpTileCollision(transformComponent, collisionComponent, controlComponent);
+
+  if (selectedPlayer == selectedPlayerIndex) {
+
+    takeInput(transformComponent, selectedPlayerIndex);
+    handleInput(transformSystem, transformComponent, collisionComponent, controlComponent,
+                selectedPlayerIndex);
+  }
+
+  std::cout << "---------" << "\n";
+}
+
+void ControlSystem::determineControlState(ControlComponent &controlComponent,
+                                          GRAVITY_STATE gravityState,
+                                          CollisionComponent &collisionComponent,
+                                          TransformComponent &transformComponent) {
+  //   controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+  // } else {
+  //   controlComponent.setControlState(CONTROL_STATE::NORMAL);
+  // }
+  // if (gravityState == GRAVITY_STATE::AIRBORNE) {
+  //   if (transformComponent.getYvel() == 0) {
+  //     controlComponent.setControlState(CONTROL_STATE::NORMAL);
+  //   }
+  // }
+}
+
+void ControlSystem::takeInput(TransformComponent &transformComponent, int &selectedPlayerIndex) {
   SDL_Event event;
   // WaitForEvent pudottaa cpu% mutta tökkii
   if (SDL_PollEvent(&event) != 0) {
@@ -33,12 +81,7 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
         break;
       // reset selectedPlayer pos for debugging
       case SDLK_r:
-        transformComponent.setXvel(0);
-        transformComponent.setYvel(0);
-        transformComponent.setXpos(0);
-        transformComponent.setYpos(0);
-        Camera::position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
-        Camera::offset = {0, 0};
+        inputResetCharacter = true;
         break;
       case SDLK_c:
         inputChangeCharacter = true;
@@ -82,13 +125,28 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
       break;
     }
   }
-
-  handleInput(transformSystem, transformComponent, controlComponent, selectedPlayerIndex);
 }
 
 void ControlSystem::handleInput(TransformSystem &transformSystem,
                                 TransformComponent &transformComponent,
+                                CollisionComponent &collisionComponent,
                                 ControlComponent &controlComponent, int &selectedPlayerIndex) {
+
+  std::cout << "CONTROL SYSTEM" << "\n";
+  std::cout << "climb down " << controlComponent.getCanClimbDown() << "\n";
+  std::cout << "climb up " << controlComponent.getCanClimbUp() << "\n";
+
+  if (inputResetCharacter) {
+    transformComponent.setXvel(0);
+    transformComponent.setYvel(0);
+    transformComponent.setXpos(0);
+    transformComponent.setYpos(-200);
+    controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+    Camera::position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
+    Camera::offset = {0, -200};
+    return;
+  }
+
   if (inputChangeCharacter) {
     changePlayerCharacter(selectedPlayerIndex);
     transformComponent.setXvel(0);
@@ -96,73 +154,127 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     inputChangeCharacter = false;
     return;
   }
-  if (!controlComponent.canClimb) {
-    controlComponent.climbing = false;
-  }
 
-  if (controlComponent.canClimb && !controlComponent.climbing) {
+  switch (controlComponent.getControlState()) {
+  case CONTROL_STATE::NORMAL:
+    std::cout << "control normal \n";
+    if (inputR && !inputL) {
+      transformSystem.moveRight(transformComponent);
+      return;
+    }
+
+    if (inputL && !inputR) {
+      transformSystem.moveLeft(transformComponent);
+      return;
+    }
+    // No input
 
     if (inputU) {
-      controlComponent.climbing = true;
-      // not sure I like this direct setting of xpos
-      transformComponent.setXpos(controlComponent.collidedTilePos.x);
+      if (controlComponent.getCanClimbUp()) {
+        std::cout << "input up \n";
 
-      transformSystem.stopX(transformComponent);
-      transformSystem.stopY(transformComponent);
-      return;
+        transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
+
+        transformSystem.stopX(transformComponent);
+        transformSystem.stopY(transformComponent);
+        controlComponent.setControlState(CONTROL_STATE::CLIMBING);
+        // not sure I like this direct setting of xpos
+        return;
+      }
     }
 
     if (inputD) {
-      controlComponent.climbing = true;
-      transformSystem.stopX(transformComponent);
-      transformSystem.stopY(transformComponent);
+      if (controlComponent.getCanClimbDown()) {
+        transformComponent.setXpos(collisionComponent.collidedDownTilePos.x);
+
+        transformSystem.stopX(transformComponent);
+        transformSystem.stopY(transformComponent);
+        controlComponent.setControlState(CONTROL_STATE::CLIMBING);
+        return;
+      }
+    }
+
+    transformSystem.stopX(transformComponent);
+    break;
+
+  case CONTROL_STATE::AIRBORNE:
+    std::cout << "control  airborjne \n";
+
+    if (inputR && !inputL) {
+      transformSystem.moveRight(transformComponent);
       return;
     }
-  }
 
-  // Should this be determined elsewhere?
+    if (inputL && !inputR) {
+      transformSystem.moveLeft(transformComponent);
+      return;
+    }
+    // No input
 
-  if (controlComponent.climbing == true) {
+    if (inputU) {
+      std::cout << "input up \n";
+
+      if (controlComponent.getCanClimbUp()) {
+        std::cout << "climb up \n";
+
+        // not sure I like this direct setting of xpos
+        transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
+
+        transformSystem.stopX(transformComponent);
+        transformSystem.stopY(transformComponent);
+        controlComponent.setControlState(CONTROL_STATE::CLIMBING);
+        return;
+      }
+    }
+
+    if (inputD) {
+      if (controlComponent.getCanClimbDown()) {
+        transformComponent.setXpos(collisionComponent.collidedDownTilePos.x);
+
+        transformSystem.stopX(transformComponent);
+        transformSystem.stopY(transformComponent);
+        controlComponent.setControlState(CONTROL_STATE::CLIMBING);
+        return;
+      }
+    }
+    transformSystem.stopX(transformComponent);
+
+    break;
+
+  case CONTROL_STATE::FALLING:
+    std::cout << "control falling \n";
+
+    break;
+
+  case CONTROL_STATE::CLIMBING:
+    std::cout << "control climbing \n";
 
     if (inputR && !inputL && !inputU && !inputD) {
-      controlComponent.climbing = false;
+      controlComponent.setControlState(CONTROL_STATE::NORMAL);
       transformSystem.moveRight(transformComponent);
       return;
     }
 
     if (inputL && !inputR && !inputU && !inputD) {
-      controlComponent.climbing = false;
+      controlComponent.setControlState(CONTROL_STATE::NORMAL);
       transformSystem.moveLeft(transformComponent);
       return;
     }
 
-    if (inputU) {
+    if (controlComponent.getCanClimbUp() && inputU) {
       transformSystem.stopX(transformComponent);
       transformSystem.moveUp(transformComponent);
       return;
     }
 
-    if (inputD) {
+    if (controlComponent.getCanClimbDown() && inputD) {
       transformSystem.stopX(transformComponent);
       transformSystem.moveDown(transformComponent);
       return;
     }
-  }
 
-  if (inputR && !inputL) {
-    transformSystem.moveRight(transformComponent);
-    return;
-  }
-
-  if (inputL && !inputR) {
-    transformSystem.moveLeft(transformComponent);
-    return;
-  }
-
-  // No input
-  transformSystem.stopX(transformComponent);
-  if (controlComponent.climbing) {
     transformSystem.stopY(transformComponent);
+    break;
   }
 }
 
@@ -170,5 +282,124 @@ void ControlSystem::changePlayerCharacter(int &selectedPlayerIndex) {
   selectedPlayerIndex++;
   if (selectedPlayerIndex == 3) {
     selectedPlayerIndex = 0;
+  }
+}
+
+void ControlSystem::handleDownTileCollision(TransformComponent &playerTransformComponent,
+                                            CollisionComponent &playerCollisionComponent,
+                                            ControlComponent &playerControlComponent) {
+
+  // ei kollisioi kun kiipeää
+  switch (playerCollisionComponent.collisionTileDown) {
+
+  case TILE::NONE:
+    std::cout << "down none tile \n";
+    if (playerControlComponent.getControlState() != CONTROL_STATE::CLIMBING) {
+
+      playerControlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+    }
+
+    // if (playerControlComponent.getControlState() == CONTROL_STATE::CLIMBING) {
+    //   if (playerCollisionComponent.collisionTileUp == TILE::LADDER ||
+    //       playerCollisionComponent.collisionTileUp == TILE::LADDERSTART) {
+    //     playerControlComponent.setCanClimbDown(true);
+    //   } else {
+    //     playerControlComponent.setCanClimbDown(false);
+    //   }
+    // }
+
+    // if (playerCollisionComponent.collisionTileUp == TILE::NONE) {
+    //   playerControlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+    // }
+
+    // playerControlComponent.setCanClimbDown(false);
+    // playerControlComponent.setCanClimbUp(false);
+    break;
+
+  case TILE::SOLID:
+    std::cout << "down solid tile \n";
+    // stopObjectY(playerTransformComponent, playerCollisionComponent);
+    // if (playerControlComponent.controlState == CONTROL_STATE::CLIMBING) {
+    // playerControlComponent.controlState = CONTROL_STATE::NORMAL;
+    playerControlComponent.setCanClimbDown(false);
+    // }
+    break;
+
+  case TILE::SEMISOLID:
+    break;
+
+  case TILE::LADDER:
+    std::cout << "down ladder tile \n";
+
+    playerControlComponent.setCanClimbDown(true);
+    break;
+
+  case TILE::LADDERSTART:
+    std::cout << "down ladderstart tile \n";
+
+    playerControlComponent.setCanClimbDown(true);
+    if (playerControlComponent.getControlState() != CONTROL_STATE::CLIMBING) {
+      transformSystem->stopY(playerTransformComponent);
+    }
+    break;
+
+  default:
+    // playerCollisionComponent.collisionTileDown = TILE::NONE;
+    break;
+  }
+}
+
+void ControlSystem::handleUpTileCollision(TransformComponent &playerTransformComponent,
+                                          CollisionComponent &playerCollisionComponent,
+                                          ControlComponent &playerControlComponent) {
+
+  switch (playerCollisionComponent.collisionTileUp) {
+
+  case TILE::NONE:
+    std::cout << "up none tile \n";
+    // if (playerControlComponent.getControlState() == CONTROL_STATE::CLIMBING) {
+    //   if (playerCollisionComponent.collisionTileDown == TILE::LADDER ||
+    //       playerCollisionComponent.collisionTileDown == TILE::LADDERSTART) {
+    //     playerControlComponent.setCanClimbUp(true);
+    //   } else {
+    //     playerControlComponent.setCanClimbUp(false);
+    //   }
+    // }
+
+    // if (playerCollisionComponent.collisionTileDown == TILE::NONE) {
+    //   // playerControlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+    // }
+
+    // }
+
+    break;
+
+  case TILE::SOLID:
+    std::cout << "up solid tile \n";
+
+    break;
+
+  case TILE::SEMISOLID:
+    break;
+
+  case TILE::LADDER:
+    std::cout << "up ladder tile \n";
+
+    playerControlComponent.setCanClimbUp(true);
+    break;
+
+  case TILE::LADDERSTART:
+    std::cout << "up ladderstart tile \n";
+
+    playerControlComponent.setCanClimbUp(true);
+    break;
+  default:
+    break;
+  }
+}
+
+void ControlSystem::handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent &cc) {
+  if (cc.collisionTileLeft == TILE::SOLID || cc.collisionTileRight == TILE::SOLID) {
+    transformSystem->stopX(tc);
   }
 }

@@ -31,13 +31,30 @@ void TransformSystem::moveDown(TransformComponent &transformComponent) {
 
 // debugging only mostly
 void TransformSystem::stopX(TransformComponent &transformComponent) {
+  stopX(transformComponent, 0);
+}
+void TransformSystem::stopX(TransformComponent &transformComponent, int xposDif) {
+
   if (transformComponent.getXvel() != 0) {
+
+    if (xposDif != 0) {
+      transformComponent.setXpos(transformComponent.getXpos() - xposDif);
+    }
     transformComponent.setXvel(0);
   }
 }
 
 void TransformSystem::stopY(TransformComponent &transformComponent) {
+  stopY(transformComponent, 0);
+}
+
+void TransformSystem::stopY(TransformComponent &transformComponent, int yposDif) {
   if (transformComponent.getYvel() != 0) {
+    transformComponent.setYvel(0);
+
+    if (yposDif != 0) {
+      transformComponent.setYpos(transformComponent.getYpos() - yposDif);
+    }
     transformComponent.setYvel(0);
   }
 }

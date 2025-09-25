@@ -14,6 +14,8 @@ public:
   void moveUp(TransformComponent &transformComponent);
   void moveDown(TransformComponent &transformComponent);
   void stopX(TransformComponent &transformComponent);
+  void stopX(TransformComponent &transformComponent, int xposDif);
   void stopY(TransformComponent &transformComponent);
+  void stopY(TransformComponent &transformComponent, int yposDif);
 };
 #endif

@@ -38,6 +38,7 @@ public:
   static void createBlockEntity(int x, int y, int sourceX, SceneInfo &level);
   static void createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level);
   static void createLadder(int x, int y, SceneInfo &level);
+  static void createLadderStart(int x, int y, SceneInfo &level);
   static void loadTextures();
   void destroyTextures();
   static void createPC(int x, int y, SceneInfo &level);

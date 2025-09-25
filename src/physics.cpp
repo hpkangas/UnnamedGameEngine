@@ -1,5 +1,6 @@
 #include "physics.hpp"
 #include "components/collisioncomponent.hpp"
+#include <iostream>
 
 namespace Physics {
 bool checkCollision(SDL_Rect &a, SDL_Rect b) {
@@ -55,9 +56,10 @@ bool checkLeft(SDL_Rect a, SDL_Rect b) {
 bool playerCollisionDown(CollisionComponent &player, CollisionComponent &obj,
                          Velocity playerVelocity) {
 
-  if (player.collisionRect.y + player.collisionRect.h <= obj.collisionRect.y) {
+  if (player.collisionRect.y + player.collisionRect.h <=
+      obj.collisionRect.y + obj.collisionRect.h) {
     {
-      return player.collisionRect.y + player.collisionRect.h + playerVelocity.y >=
+      return player.collisionRect.y + player.collisionRect.h + abs(playerVelocity.y) >=
                  obj.collisionRect.y &&
              player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w - 1 &&
              player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x;
@@ -69,9 +71,9 @@ bool playerCollisionDown(CollisionComponent &player, CollisionComponent &obj,
 bool playerCollisionUp(CollisionComponent &player, CollisionComponent &obj,
                        Velocity playerVelocity) {
 
-  if (player.collisionRect.y >= obj.collisionRect.y + obj.collisionRect.h) {
-
-    return player.collisionRect.y + playerVelocity.y <= obj.collisionRect.y + obj.collisionRect.h &&
+  if (player.collisionRect.y >= obj.collisionRect.y) {
+    return player.collisionRect.y - abs(playerVelocity.y) <=
+               obj.collisionRect.y + obj.collisionRect.h &&
            player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w - 1 &&
            player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x;
   }
