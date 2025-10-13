@@ -18,18 +18,8 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
   std::cout << "selected player" << selectedPlayer << "\n";
   this->transformSystem = &transformSystem;
 
-  // inputR = false;
-  // inputL = false;
-  // inputU = false;
-  // inputD = false;
-  inputChangeCharacter = false;
-  inputResetCharacter = false;
-
   determineControlState(controlComponent, gravityComponent.getGravityState(), collisionComponent,
                         transformComponent);
-
-  handleDownTileCollision(transformComponent, collisionComponent, controlComponent);
-  handleUpTileCollision(transformComponent, collisionComponent, controlComponent);
 
   if (selectedPlayer == selectedPlayerIndex) {
 
@@ -106,6 +96,11 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
       case SDLK_DOWN:
         inputD = false;
         break;
+      case SDLK_r:
+        inputResetCharacter = false;
+        break;
+      case SDLK_c:
+        inputChangeCharacter = false;
       default:
         break;
       }
@@ -133,8 +128,6 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
                                 ControlComponent &controlComponent, int &selectedPlayerIndex) {
 
   std::cout << "CONTROL SYSTEM" << "\n";
-  std::cout << "climb down " << controlComponent.getCanClimbDown() << "\n";
-  std::cout << "climb up " << controlComponent.getCanClimbUp() << "\n";
 
   if (inputResetCharacter) {
     transformComponent.setXvel(0);
@@ -167,16 +160,16 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
       transformSystem.moveLeft(transformComponent);
       return;
     }
-    // No input
 
     if (inputU) {
-      if (controlComponent.getCanClimbUp()) {
+      if (collisionComponent.collisionTileUp == TILE::LADDER ||
+          collisionComponent.collisionTileUp == TILE::LADDERSTART) {
         std::cout << "input up \n";
 
         transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
 
         transformSystem.stopX(transformComponent);
-        transformSystem.stopY(transformComponent);
+        // transformSystem.stopY(transformComponent);
         controlComponent.setControlState(CONTROL_STATE::CLIMBING);
         // not sure I like this direct setting of xpos
         return;
@@ -184,7 +177,8 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     }
 
     if (inputD) {
-      if (controlComponent.getCanClimbDown()) {
+      if (collisionComponent.collisionTileDown == TILE::LADDER ||
+          collisionComponent.collisionTileDown == TILE::LADDERSTART) {
         transformComponent.setXpos(collisionComponent.collidedDownTilePos.x);
 
         transformSystem.stopX(transformComponent);
@@ -212,9 +206,9 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     // No input
 
     if (inputU) {
-      std::cout << "input up \n";
+      std::cout << "input up airborjne\n";
 
-      if (controlComponent.getCanClimbUp()) {
+      if (controlComponent.getCanClimb()) {
         std::cout << "climb up \n";
 
         // not sure I like this direct setting of xpos
@@ -228,7 +222,9 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     }
 
     if (inputD) {
-      if (controlComponent.getCanClimbDown()) {
+      std::cout << "input down airborjne\n";
+
+      if (controlComponent.getCanClimb()) {
         transformComponent.setXpos(collisionComponent.collidedDownTilePos.x);
 
         transformSystem.stopX(transformComponent);
@@ -237,6 +233,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
         return;
       }
     }
+
     transformSystem.stopX(transformComponent);
 
     break;
@@ -250,26 +247,45 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     std::cout << "control climbing \n";
 
     if (inputR && !inputL && !inputU && !inputD) {
-      controlComponent.setControlState(CONTROL_STATE::NORMAL);
+      controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
       transformSystem.moveRight(transformComponent);
       return;
     }
 
     if (inputL && !inputR && !inputU && !inputD) {
-      controlComponent.setControlState(CONTROL_STATE::NORMAL);
+      controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
       transformSystem.moveLeft(transformComponent);
       return;
     }
 
-    if (controlComponent.getCanClimbUp() && inputU) {
-      transformSystem.stopX(transformComponent);
-      transformSystem.moveUp(transformComponent);
+    if (inputU) {
+      std::cout << "input up climbing\n";
+      if (collisionComponent.collisionTileUp != TILE::LADDER &&
+          collisionComponent.collisionTileUp != TILE::LADDERSTART &&
+          collisionComponent.collisionTileDown != TILE::LADDER &&
+          collisionComponent.collisionTileDown != TILE::LADDERSTART) {
+
+      } else {
+        transformSystem.stopX(transformComponent);
+        transformSystem.moveUp(transformComponent);
+      }
+
       return;
     }
 
-    if (controlComponent.getCanClimbDown() && inputD) {
-      transformSystem.stopX(transformComponent);
-      transformSystem.moveDown(transformComponent);
+    if (inputD) {
+      std::cout << "input down climbing\n";
+
+      if (collisionComponent.collisionTileDown != TILE::LADDER &&
+          collisionComponent.collisionTileDown != TILE::LADDERSTART) {
+        controlComponent.setControlState(CONTROL_STATE::NORMAL);
+        transformSystem.stopY(transformComponent, collisionComponent.yposDif);
+
+      } else {
+        transformSystem.stopX(transformComponent);
+        // bugi: menee pikselin tai pari liian alas törmäävään blockiin nähen
+        transformSystem.moveDown(transformComponent);
+      }
       return;
     }
 

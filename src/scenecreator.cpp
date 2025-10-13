@@ -26,18 +26,15 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
   std::cout << "creating scene" << "\n";
   loadTextures();
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
-
-    if (c == '\n') {
-      continue;
-    }
-
+    // read before comma, create object after line change
     if (c == ',') {
 
-      if (currentValue != "|") {
+      if (currentValue != "\n") {
 
         values.emplace_back(currentValue);
 
       } else {
+
         std::string gameObjectType = values.at(0);
         int x = std::stoi(values.at(1));
         int y = std::stoi(values.at(2));
@@ -114,7 +111,7 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   collisionComponent->collisionRect.h = renderComponent->destinationRect.h;
   collisionComponent->collisionRect.w = renderComponent->destinationRect.w;
   collisionComponent->collisionRect.x = transformComponent->getXpos();
-  collisionComponent->collisionRect.y = transformComponent->getYpos() + 4;
+  collisionComponent->collisionRect.y = transformComponent->getYpos();
   collisionComponent->parentID = id;
 
   // TODO Should probably be some constant value loaded at the start

@@ -13,8 +13,6 @@ void GravitySystem::gravity(TransformComponent &transformComponent) {
 void GravitySystem::update(ControlComponent &controlComponent, GravityComponent &gravityComponent,
                            TransformComponent &transformComponent) {
 
-  std::cout << "GRAVITY: ";
-
   if (controlComponent.getControlState() == CONTROL_STATE::NORMAL ||
       controlComponent.getControlState() == CONTROL_STATE::CLIMBING) {
     gravityComponent.setGravityState(GRAVITY_STATE::GROUNDED);

@@ -4,7 +4,7 @@
 #include <iostream>
 
 void CollisionDetectionSystem::update(int i, SceneInfo &currentLevel) {
-  std::cout << "COLLISION DETECTION \n";
+  std::cout << "player " << i << "\n";
   checkBlockCollision(i, currentLevel);
 }
 
@@ -26,6 +26,7 @@ void CollisionDetectionSystem::checkBlockCollision(int i, SceneInfo &currentLeve
     checkPlayerDownCollision(playerC, *blockC, playerT.getVelocity(), collisionTile);
     checkPlayerUpCollision(playerC, *blockC, playerT.getVelocity(), collisionTile);
   }
+  std::cout << "--------player chagne ------------" << "\n";
 }
 
 void CollisionDetectionSystem::checkPlayerLeftCollision(CollisionComponent &player,
@@ -67,6 +68,10 @@ void CollisionDetectionSystem::checkPlayerDownCollision(CollisionComponent &play
 
   if (Physics::playerCollisionDown(player, block, velocity)) {
     player.yposDif = (player.collisionRect.y + player.collisionRect.h) - block.collisionRect.y;
+    std::cout << "player col y " << player.collisionRect.y << " + h " << player.collisionRect.h
+              << " = " << player.collisionRect.y + player.collisionRect.h << "\n";
+    std::cout << "block col y " << block.collisionRect.y << "\n";
+    std::cout << "dif " << player.yposDif << "\n";
     player.collisionTileDown = collisionTile;
     player.collidedDownTilePos = {block.collisionRect.x, block.collisionRect.y};
     player.setCollisionDown(true);
