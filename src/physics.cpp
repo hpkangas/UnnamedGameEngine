@@ -1,6 +1,5 @@
 #include "physics.hpp"
 #include "components/collisioncomponent.hpp"
-#include <iostream>
 
 namespace Physics {
 bool checkCollision(SDL_Rect &a, SDL_Rect b) {

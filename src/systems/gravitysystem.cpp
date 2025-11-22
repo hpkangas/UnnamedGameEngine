@@ -1,8 +1,7 @@
 #include "gravitysystem.hpp"
-#include <iostream>
 
-const float GRAVITY_UNIT = 0.50f;
-const float MAX_GRAVITY = 11.0;
+constexpr float GRAVITY_UNIT = 0.50f;
+constexpr float MAX_GRAVITY = 11.0;
 
 void GravitySystem::gravity(TransformComponent &transformComponent) {
   if (transformComponent.getYvel() < MAX_GRAVITY) {
@@ -24,17 +23,13 @@ void GravitySystem::update(ControlComponent &controlComponent, GravityComponent 
 
   switch (gravityComponent.getGravityState()) {
   case GRAVITY_STATE::GROUNDED:
-    std::cout << "grounded";
     break;
 
   case GRAVITY_STATE::AIRBORNE:
-    std::cout << "gravity";
-    // controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     gravity(transformComponent);
     break;
 
   default:
     break;
   }
-  std::cout << "gravity done \n";
 }

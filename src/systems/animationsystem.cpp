@@ -1,7 +1,6 @@
 #include "animationsystem.hpp"
 #include "../constants.hpp"
 #include <cstdio>
-#include <iostream>
 
 void AnimationSystem::determineAnimationState(ControlComponent const &controlComponent,
                                               CollisionComponent const &collisionComponent,

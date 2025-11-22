@@ -26,15 +26,6 @@ private:
                    int &selectedPlayerIndex);
   void changePlayerCharacter(int &selectedPlayerIndex);
 
-  void handleDownTileCollision(TransformComponent &playerTransformComponent,
-                               CollisionComponent &playerCollisionComponent,
-                               ControlComponent &playerControlComponent);
-
-  void handleUpTileCollision(TransformComponent &playerTransformComponent,
-                             CollisionComponent &playerCollisionComponent,
-                             ControlComponent &playerControlComponent);
-  void handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent &cc);
-
   bool inputR = false;
   bool inputL = false;
   bool inputU = false;
