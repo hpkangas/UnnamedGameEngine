@@ -23,43 +23,41 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
   std::string currentValue;
   char c;
   std::vector<std::string> values;
+
   std::cout << "creating scene" << "\n";
   loadTextures();
+
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
-    // read before comma, create object after line change
-    if (c == ',') {
+    // Read value before comma. Create stuff from values at new line
 
-      if (currentValue != "\n") {
+    if (c == '\n') {
+      std::string gameObjectType = values.at(0);
+      int x = std::stoi(values.at(1));
+      int y = std::stoi(values.at(2));
 
-        values.emplace_back(currentValue);
+      if (gameObjectType.substr(0, 2) == "PC") {
+        createPC(x, y, level);
 
-      } else {
+      } else if (gameObjectType.substr(0, 1) == "B") {
+        createBlock(gameObjectType, x, y, level);
 
-        std::string gameObjectType = values.at(0);
-        int x = std::stoi(values.at(1));
-        int y = std::stoi(values.at(2));
+      } else if (gameObjectType.substr(0, 2) == "LS") {
+        createLadderStart(x, y, level);
 
-        if (gameObjectType.substr(0, 2) == "PC") {
-          createPC(x, y, level);
-        }
-
-        else if (gameObjectType.substr(0, 1) == "B") {
-          createBlock(gameObjectType, x, y, level);
-
-        } else if (gameObjectType.substr(0, 2) == "LS") {
-          createLadderStart(x, y, level);
-
-        } else if (gameObjectType.substr(0, 1) == "L") {
-          createLadder(x, y, level);
-        }
-
-        values.clear();
+      } else if (gameObjectType.substr(0, 1) == "L") {
+        createLadder(x, y, level);
       }
-      currentValue = "";
+
+      values.clear();
       continue;
     }
 
-    currentValue += c;
+    if (c != ',') {
+      currentValue += c;
+    } else {
+      values.emplace_back(currentValue);
+      currentValue = "";
+    }
   }
 
   return level;
@@ -185,15 +183,11 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   transformComponent->parentID = id;
 
   renderComponent->sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
-
   // TODO Should probably be some constant value loaded at the start
   renderComponent->objTexture = textures.at(0);
-
   renderComponent->flip = SDL_FLIP_NONE;
-
   renderComponent->destinationRect = {x, y, renderComponent->sourceRect.w,
                                       renderComponent->sourceRect.h};
-
   renderComponent->parentID = id;
 
   // TODO sprite offsets. should be defined inside the specific character
@@ -201,15 +195,15 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   collisionComponent->collisionRect = {transformComponent->getXpos() + 28,
                                        transformComponent->getYpos(), PLAYER_WIDTH - 56,
                                        PLAYER_HEIGHT};
-
   collisionComponent->parentID = id;
 
   controlComponent->setControlState(CONTROL_STATE::AIRBORNE);
+  controlComponent->parentID = id;
 
   gravityComponent->gravityState = GRAVITY_STATE::AIRBORNE;
   gravityComponent->parentID = id;
+
   animationComponent->parentID = id;
-  controlComponent->parentID = id;
 
   level.tcs.emplace(id, (std::move(transformComponent)));
   level.rcs.emplace(id, (std::move(renderComponent)));
@@ -221,13 +215,12 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
-  std::cout << "ladder";
-
   int id = getID();
   auto transformComponent = std::make_unique<TransformComponent>();
   auto renderComponent = std::make_unique<RenderComponent>();
   auto tileComponent = std::make_unique<TileComponent>();
   auto collisionComponent = std::make_unique<CollisionComponent>();
+
   transformComponent->setPosition({x, y});
   transformComponent->parentID = id;
 
@@ -256,6 +249,7 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   auto renderComponent = std::make_unique<RenderComponent>();
   auto tileComponent = std::make_unique<TileComponent>();
   auto collisionComponent = std::make_unique<CollisionComponent>();
+
   transformComponent->setPosition({x, y});
   transformComponent->parentID = id;
 
