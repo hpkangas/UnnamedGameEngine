@@ -9,7 +9,6 @@ void CollisionDetectionSystem::update(int i, SceneInfo &currentLevel) {
 void CollisionDetectionSystem::checkBlockCollision(int i, SceneInfo &currentLevel) {
   CollisionComponent &playerC = *currentLevel.ccs.at(i);
   TransformComponent &playerT = *currentLevel.tcs.at(i);
-  ControlComponent &playerControl = *currentLevel.controlComponents.at(i);
 
   updatePlayerCollisionRect(playerC, playerT);
   resetPlayerCollisions(playerC);

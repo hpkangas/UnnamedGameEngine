@@ -20,17 +20,27 @@ struct SceneInfo {
   std::unordered_map<int, std::unique_ptr<GravityComponent>> gcs;
   std::unordered_map<int, std::unique_ptr<AnimationComponent>> acs;
   std::unordered_map<int, std::unique_ptr<TileComponent>> tiles;
-  std::unordered_map<int, std::unique_ptr<ControlComponent>> controlComponents;
+  std::unordered_map<int, std::unique_ptr<ControlComponent>> ctrlComponents;
+  std::vector<int> transformIds;
+  std::vector<int> renderIds;
+  std::vector<int> collisionIds;
+  std::vector<int> gravityIds;
+  std::vector<int> animationIds;
+  std::vector<int> tileIds;
+  std::vector<int> controlIds;
   int ids = 0;
 };
 
 class SceneCreator {
 public:
+  static SceneInfo createLevel(SDL_RWops *Handle);
+
+private:
   SceneCreator() {}
   ~SceneCreator() {}
+
   inline static std::vector<SDL_Texture *> textures;
 
-  static SceneInfo createLevel(SDL_RWops *Handle);
   static void createBlock(std::string const object, int const x, int const y, SceneInfo &level);
   static void createBlock1(int x, int y, SceneInfo &level);
   static void createBlock2(int x, int y, SceneInfo &level);

@@ -119,6 +119,10 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   level.ccs.emplace(id, (std::move(collisionComponent)));
   level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
+  level.transformIds.emplace_back(id);
+  level.renderIds.emplace_back(id);
+  level.collisionIds.emplace_back(id);
+  level.tileIds.emplace_back(id);
 }
 
 void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
@@ -154,6 +158,10 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   level.ccs.emplace(id, (std::move(collisionComponent)));
   level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
+  level.transformIds.emplace_back(id);
+  level.renderIds.emplace_back(id);
+  level.collisionIds.emplace_back(id);
+  level.tileIds.emplace_back(id);
 }
 
 void SceneCreator::loadTextures() {
@@ -210,8 +218,15 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   level.ccs.emplace(id, (std::move(collisionComponent)));
   level.gcs.emplace(id, (std::move(gravityComponent)));
   level.acs.emplace(id, (std::move(animationComponent)));
-  level.controlComponents.emplace(id, (std::move(controlComponent)));
+  level.ctrlComponents.emplace(id, (std::move(controlComponent)));
   level.ids++;
+  level.transformIds.emplace_back(id);
+  level.renderIds.emplace_back(id);
+  level.collisionIds.emplace_back(id);
+  level.gravityIds.emplace_back(id);
+  level.tileIds.emplace_back(id);
+  level.controlIds.emplace_back(id);
+  level.animationIds.emplace_back(id);
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
@@ -241,6 +256,10 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   level.ccs.emplace(id, (std::move(collisionComponent)));
   level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
+  level.transformIds.emplace_back(id);
+  level.renderIds.emplace_back(id);
+  level.collisionIds.emplace_back(id);
+  level.tileIds.emplace_back(id);
 }
 
 void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
@@ -270,6 +289,10 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   level.ccs.emplace(id, (std::move(collisionComponent)));
   level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
+  level.transformIds.emplace_back(id);
+  level.renderIds.emplace_back(id);
+  level.collisionIds.emplace_back(id);
+  level.tileIds.emplace_back(id);
 }
 
 int SceneCreator::getID() {

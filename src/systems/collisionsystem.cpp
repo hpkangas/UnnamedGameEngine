@@ -2,37 +2,35 @@
 #include "transformsystem.hpp"
 #include <cstdio>
 
-void CollisionSystem::update(int i, SceneInfo &currentLevel, TransformSystem &transformSystem) {
+void CollisionSystem::update(int id, SceneInfo &currentLevel, TransformSystem &transformSystem) {
 
   this->transformSystem = &transformSystem;
 
-  CollisionComponent &playerC = *currentLevel.ccs.at(i);
-  TransformComponent &playerT = *currentLevel.tcs.at(i);
-  ControlComponent &playerControl = *currentLevel.controlComponents.at(i);
+  CollisionComponent &cc = *currentLevel.ccs.at(id);
+  TransformComponent &tc = *currentLevel.tcs.at(id);
+  ControlComponent &ctrlc = *currentLevel.ctrlComponents.at(id);
 
-  handleDownTileCollision(playerT, playerC, playerControl);
+  handleDownTileCollision(tc, cc, ctrlc);
   // handleUpTileCollision(playerT, playerC, playerControl);
 
-  handleHorizontalBlockCollision(playerT, playerC);
+  handleHorizontalBlockCollision(tc, cc);
 }
 
-void CollisionSystem::handleDownTileCollision(TransformComponent &playerTransformComponent,
-                                              CollisionComponent &playerCollisionComponent,
-                                              ControlComponent &playerControlComponent) {
-
-  switch (playerCollisionComponent.collisionTileDown) {
+void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionComponent &cc,
+                                              ControlComponent &ctrlc) {
+  switch (cc.collisionTileDown) {
 
   case TILE::NONE:
-    playerControlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+    ctrlc.setControlState(CONTROL_STATE::AIRBORNE);
 
     break;
 
   case TILE::SOLID:
-    if (playerControlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
+    if (ctrlc.getControlState() == CONTROL_STATE::AIRBORNE) {
       // I'm not sure I like collision system deciding what the control state is but for now let's
       // go with this
-      transformSystem->stopY(playerTransformComponent, playerCollisionComponent.yposDif);
-      playerControlComponent.setControlState(CONTROL_STATE::NORMAL);
+      transformSystem->stopY(tc, cc.yposDif);
+      ctrlc.setControlState(CONTROL_STATE::NORMAL);
     }
     break;
 
@@ -44,9 +42,9 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &playerTransfor
     break;
 
   case TILE::LADDERSTART:
-    if (playerControlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
-      transformSystem->stopY(playerTransformComponent, playerCollisionComponent.yposDif);
-      playerControlComponent.setControlState(CONTROL_STATE::NORMAL);
+    if (ctrlc.getControlState() == CONTROL_STATE::AIRBORNE) {
+      transformSystem->stopY(tc, cc.yposDif);
+      ctrlc.setControlState(CONTROL_STATE::NORMAL);
     }
 
     break;
@@ -56,11 +54,10 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &playerTransfor
   }
 }
 
-void CollisionSystem::handleUpTileCollision(TransformComponent &playerTransformComponent,
-                                            CollisionComponent &playerCollisionComponent,
-                                            ControlComponent &playerControlComponent) {
+void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionComponent &cc,
+                                            ControlComponent &ctrlc) {
 
-  switch (playerCollisionComponent.collisionTileUp) {
+  switch (cc.collisionTileUp) {
 
   case TILE::NONE:
     break;

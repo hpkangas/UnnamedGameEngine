@@ -11,7 +11,6 @@
 #include <iostream>
 
 void Scene::init() {
-
   SDL_RWops *Handle{SDL_RWFromFile("src/level", "rb")};
   currentLevel = SceneCreator::createLevel(Handle);
   SDL_RWclose(Handle);
@@ -22,16 +21,10 @@ void Scene::update() {
   // TODO Some wonkiness with collision sprite position and walking animation staying after changing
   // character
 
-  // REFACTOR<<
-  // for (auto &tileComponent : currentLevel.tiles) {
-  // tileDetectionSystem.update(currentLevel.tiles, currentLevel.ccs, currentLevel.tcs,
-  //                            currentLevel.controlComponents);
-
-  for (int i = 0; i < 3; i++) {
-
-    controlSystem.update(transformSystem, *currentLevel.tcs.at(i), i, selectedPlayerIndex,
-                         *currentLevel.controlComponents.at(i), *currentLevel.gcs.at(i),
-                         *currentLevel.ccs.at(i));
+  for (int id : currentLevel.controlIds) {
+    controlSystem.update(transformSystem, *currentLevel.tcs.at(id), id, selectedPlayerIndex,
+                         *currentLevel.ctrlComponents.at(id), *currentLevel.gcs.at(id),
+                         *currentLevel.ccs.at(id));
   }
 
   if (selectedPlayer != selectedPlayerIndex) {
@@ -39,39 +32,32 @@ void Scene::update() {
     centerCamera(*currentLevel.tcs.at(selectedPlayer));
   };
 
-  // Needs null checks
-  // for (int i = 0; i < currentLevel.ids; i++) {
-  //   gravitySystem.update(currentLevel.ccs.at(i)->getCollisionDown(), *currentLevel.gcs.at(i),
-  //   *currentLevel.tcs.at(i));
-  //   collisionSystem.update(*currentLevel.ccs.at(i), *currentLevel.tcs.at(i), currentLevel);
-  //   transformSystem.update(*currentLevel.tcs.at(i));
-  //   renderSystem.update(*currentLevel.tcs.at(i), *currentLevel.rcs.at(i));
-  // }
-
-  for (int i = 0; i < currentLevel.gcs.size(); i++) {
-    gravitySystem.update(*currentLevel.controlComponents.at(i), *currentLevel.gcs.at(i),
-                         *currentLevel.tcs.at(i));
+  // What if component list doens't have the id/i? How to go through only ids that are in the list?
+  for (int id : currentLevel.gravityIds) {
+    gravitySystem.update(*currentLevel.ctrlComponents.at(id), *currentLevel.gcs.at(id),
+                         *currentLevel.tcs.at(id));
   }
 
-  for (int i = 0; i < 3; i++) {
-    collisionDetectionSystem.update(i, currentLevel);
+  for (int id : currentLevel.collisionIds) {
+    collisionDetectionSystem.update(id, currentLevel);
   }
 
+  // Not all collision have controls too, will crash with id for range loop
   for (int i = 0; i < 3; i++) {
     collisionSystem.update(i, currentLevel, transformSystem);
   }
 
-  for (int i = 0; i < currentLevel.tcs.size(); i++) {
-    transformSystem.update(*currentLevel.tcs.at(i));
+  for (int id : currentLevel.transformIds) {
+    transformSystem.update(*currentLevel.tcs.at(id));
   }
 
-  for (int i = 0; i < currentLevel.acs.size(); i++) {
-    animationSystem.update(*currentLevel.controlComponents.at(i), *currentLevel.ccs.at(i),
-                           currentLevel.gcs.at(i)->getGravityState(), *currentLevel.tcs.at(i),
-                           *currentLevel.rcs.at(i), *currentLevel.acs.at(i));
+  for (int id : currentLevel.animationIds) {
+    animationSystem.update(*currentLevel.ctrlComponents.at(id), *currentLevel.ccs.at(id),
+                           currentLevel.gcs.at(id)->getGravityState(), *currentLevel.tcs.at(id),
+                           *currentLevel.rcs.at(id), *currentLevel.acs.at(id));
   }
-  for (int i = 0; i < currentLevel.rcs.size(); i++) {
-    renderSystem.update(*currentLevel.tcs.at(i), *currentLevel.rcs.at(i));
+  for (int id : currentLevel.renderIds) {
+    renderSystem.update(*currentLevel.tcs.at(id), *currentLevel.rcs.at(id));
   }
 
   updateCamera(*currentLevel.tcs.at(selectedPlayer));

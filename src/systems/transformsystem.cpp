@@ -50,7 +50,6 @@ void TransformSystem::stopY(TransformComponent &transformComponent, int yposDif)
   if (yposDif != 0) {
     transformComponent.setYpos(transformComponent.getYpos() - yposDif);
   }
-  // }
   transformComponent.setYvel(0);
 }
 

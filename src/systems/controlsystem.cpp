@@ -201,6 +201,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
         // not sure I like this direct setting of xpos
         transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
 
+        //SHould systems call other systems?
         transformSystem.stopX(transformComponent);
         transformSystem.stopY(transformComponent);
         controlComponent.setControlState(CONTROL_STATE::CLIMBING);

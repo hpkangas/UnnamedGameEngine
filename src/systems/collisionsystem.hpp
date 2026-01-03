@@ -17,13 +17,11 @@ public:
 
   void update(int i, SceneInfo &currentLevel, TransformSystem &transformSystem);
 
-  void handleDownTileCollision(TransformComponent &playerTransformComponent,
-                               CollisionComponent &playerCollisionComponent,
-                               ControlComponent &playerControlComponent);
+  void handleDownTileCollision(TransformComponent &tc, CollisionComponent &cc,
+                               ControlComponent &ctrlc);
 
-  void handleUpTileCollision(TransformComponent &playerTransformComponent,
-                             CollisionComponent &playerCollisionComponent,
-                             ControlComponent &playerControlComponent);
+  void handleUpTileCollision(TransformComponent &tc, CollisionComponent &cc,
+                             ControlComponent &ctrlc);
   void handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent &cc);
 };
 
