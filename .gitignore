@@ -7,6 +7,7 @@ player
 physics
 gameobject
 /bin
+mygame
 
 #Cmake:
 /CMakeFiles
