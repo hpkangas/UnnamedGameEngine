@@ -40,6 +40,8 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
   determineAnimationState(controlComponent, collisionComponent, gravityState, transformComponent,
                           renderComponent, animationComponent);
 
+  // Magic numbers should eventually be switched to something like enums, class data or json
+  // information etc These are for the placeholder art
   switch (animationComponent.getAnimationState()) {
   case ANIMATION_STATE::STILL:
     animationComponent.animationFrame = 0;

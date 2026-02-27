@@ -200,9 +200,8 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
 
   // TODO sprite offsets. should be defined inside the specific character
   // classes (once decided on)
-  collisionComponent->collisionRect = {transformComponent->getXpos() + 28,
-                                       transformComponent->getYpos(), PLAYER_WIDTH - 56,
-                                       PLAYER_HEIGHT};
+  collisionComponent->collisionRect = {transformComponent->getXpos(), transformComponent->getYpos(),
+                                       PLAYER_WIDTH, PLAYER_HEIGHT};
   collisionComponent->parentID = id;
 
   controlComponent->setControlState(CONTROL_STATE::AIRBORNE);

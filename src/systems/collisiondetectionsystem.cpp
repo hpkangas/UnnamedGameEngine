@@ -84,7 +84,7 @@ void CollisionDetectionSystem::resetPlayerCollisions(CollisionComponent &playerC
 
 void CollisionDetectionSystem::updatePlayerCollisionRect(
     CollisionComponent &playerCollisionComponent, TransformComponent &playerTransformComponent) {
-  playerCollisionComponent.collisionRect.x = playerTransformComponent.getXpos() + 28;
+  playerCollisionComponent.collisionRect.x = playerTransformComponent.getXpos();
   playerCollisionComponent.collisionRect.y = playerTransformComponent.getYpos();
   playerCollisionComponent.center = {
       (playerCollisionComponent.collisionRect.x + playerCollisionComponent.collisionRect.w +
