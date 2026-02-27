@@ -17,5 +17,7 @@ public:
   void stopX(TransformComponent &transformComponent, int xposDif);
   void stopY(TransformComponent &transformComponent);
   void stopY(TransformComponent &transformComponent, int yposDif);
+  void jump(TransformComponent &transformComponent);
+  void resetJump(TransformComponent &transformComponent);
 };
 #endif

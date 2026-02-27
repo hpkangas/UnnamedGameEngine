@@ -12,6 +12,7 @@ private:
   Velocity velocity{0, 0};
 
 public:
+  int jumpTics = 0;
   TransformComponent() {}
   ~TransformComponent() {}
 

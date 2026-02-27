@@ -32,6 +32,7 @@ private:
   bool inputD = false;
   bool inputChangeCharacter = false;
   bool inputResetCharacter = false;
+  bool inputJump = false;
 };
 
 #endif

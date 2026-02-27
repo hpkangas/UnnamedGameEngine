@@ -1,4 +1,6 @@
 #include "transformsystem.hpp"
+#include <iostream>
+#include <ostream>
 
 void TransformSystem::moveRight(TransformComponent &transformComponent) {
   transformComponent.setXvel(transformComponent.getXvel() + playerSpeed);
@@ -28,6 +30,12 @@ void TransformSystem::moveDown(TransformComponent &transformComponent) {
   }
 }
 
+void TransformSystem::jump(TransformComponent &transformComponent) {
+  transformComponent.jumpTics = 6;
+}
+
+void TransformSystem::resetJump(TransformComponent &transformComponent) {}
+
 void TransformSystem::stopX(TransformComponent &transformComponent) {
   stopX(transformComponent, 0);
 }
@@ -54,6 +62,12 @@ void TransformSystem::stopY(TransformComponent &transformComponent, int yposDif)
 }
 
 void TransformSystem::update(TransformComponent &transformComponent) {
+
+  if (transformComponent.jumpTics > 0) {
+    transformComponent.setYvel(transformComponent.getYvel() - 4);
+    transformComponent.jumpTics--;
+  }
+
   const float xvel = transformComponent.getXvel();
   const float yvel = transformComponent.getYvel();
   const int xpos = transformComponent.getXpos();

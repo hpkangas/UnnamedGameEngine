@@ -69,7 +69,9 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
         break;
       case SDLK_c:
         inputChangeCharacter = true;
-
+        break;
+      case SDLK_d:
+        inputJump = true;
         break;
       default:
         break;
@@ -95,6 +97,10 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
         break;
       case SDLK_c:
         inputChangeCharacter = false;
+        break;
+      case SDLK_d:
+        inputJump = false;
+        break;
       default:
         break;
       }
@@ -178,7 +184,14 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
       }
     }
 
+    if (inputJump) {
+      transformSystem.jump(transformComponent);
+      inputJump = false;
+      return;
+    }
+
     transformSystem.stopX(transformComponent);
+    // transformSystem.stopY(transformComponent);
     break;
 
   case CONTROL_STATE::AIRBORNE:
@@ -201,7 +214,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
         // not sure I like this direct setting of xpos
         transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
 
-        //SHould systems call other systems?
+        // SHould systems call other systems?
         transformSystem.stopX(transformComponent);
         transformSystem.stopY(transformComponent);
         controlComponent.setControlState(CONTROL_STATE::CLIMBING);
