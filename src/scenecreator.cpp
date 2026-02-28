@@ -24,7 +24,7 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
   char c;
   std::vector<std::string> values;
 
-  std::cout << "creating scene" << "\n";
+  std::cout << "Creating scene" << "\n";
   loadTextures();
 
   while (SDL_RWread(Handle, &c, 1, 1) == 1) {
@@ -46,6 +46,8 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
 
       } else if (gameObjectType.substr(0, 1) == "L") {
         createLadder(x, y, level);
+      } else {
+        std::cout << "Warning: Scene creator: " << gameObjectType << "is unknown" << std::endl;
       }
 
       values.clear();
@@ -66,14 +68,13 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
 void SceneCreator::createBlock(std::string gameObjectType, int x, int y, SceneInfo &level) {
   if (gameObjectType == "B1") {
     createBlock1(x, y, level);
-  }
-  if (gameObjectType == "B2") {
+  } else if (gameObjectType == "B2") {
     createBlock2(x, y, level);
-  }
-  if (gameObjectType == "B3") {
+  } else if (gameObjectType == "B3") {
     createBlock3(x, y, level);
+  } else {
+    std::cout << "Scene creator: couldn't create block " << gameObjectType << std::endl;
   }
-  createBlock1(0, 0, level);
 }
 
 void SceneCreator::createBlock1(int x, int y, SceneInfo &level) {
