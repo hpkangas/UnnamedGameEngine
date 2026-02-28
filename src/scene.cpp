@@ -20,12 +20,7 @@ void Scene::init() {
 void Scene::update() {
   // TODO Some wonkiness with collision sprite position and walking animation staying after changing
   // character
-
-  for (int id : currentLevel.controlIds) {
-    controlSystem.update(transformSystem, *currentLevel.tcs.at(id), id, selectedPlayerIndex,
-                         *currentLevel.ctrlComponents.at(id), *currentLevel.gcs.at(id),
-                         *currentLevel.ccs.at(id));
-  }
+  std::cout << "--------------" << std::endl;
 
   if (selectedPlayer != selectedPlayerIndex) {
     selectedPlayer = selectedPlayerIndex;
@@ -38,13 +33,18 @@ void Scene::update() {
                          *currentLevel.tcs.at(id));
   }
 
-  for (int id : currentLevel.collisionIds) {
-    collisionDetectionSystem.update(id, currentLevel);
-  }
+  // for (int id : currentLevel.collisionIds) {
+  collisionDetectionSystem.update(0, currentLevel);
+  // }
 
   // Not all collision have controls too, will crash with id for range loop
-  for (int i = 0; i < 3; i++) {
-    collisionSystem.update(i, currentLevel, transformSystem);
+  // for (int i = 0; i < 3; i++) {
+  collisionSystem.update(0, currentLevel, transformSystem);
+  // }
+  for (int id : currentLevel.controlIds) {
+    controlSystem.update(transformSystem, *currentLevel.tcs.at(id), id, selectedPlayerIndex,
+                         *currentLevel.ctrlComponents.at(id), *currentLevel.gcs.at(id),
+                         *currentLevel.ccs.at(id));
   }
 
   for (int id : currentLevel.transformIds) {

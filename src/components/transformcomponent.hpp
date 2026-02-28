@@ -12,7 +12,11 @@ private:
   Velocity velocity{0, 0};
 
 public:
-  int jumpTics = 0;
+  // jump component?
+  int jumpTics = -1;
+  // read from the end.. because of reasons
+  int jumpTable[3] = {2, 3, 4};
+
   TransformComponent() {}
   ~TransformComponent() {}
 

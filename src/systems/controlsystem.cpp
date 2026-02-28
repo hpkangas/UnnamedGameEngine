@@ -6,6 +6,7 @@
 #include "SDL_keycode.h"
 #include "transformsystem.hpp"
 #include <cstdio>
+#include <iostream>
 
 void ControlSystem::update(TransformSystem &transformSystem, TransformComponent &transformComponent,
                            int selectedPlayer, int &selectedPlayerIndex,
@@ -14,8 +15,8 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
 
   this->transformSystem = &transformSystem;
 
-  determineControlState(controlComponent, gravityComponent.getGravityState(), collisionComponent,
-                        transformComponent);
+  // determineControlState(controlComponent, gravityComponent.getGravityState(), collisionComponent,
+  //                       transformComponent);
 
   if (selectedPlayer == selectedPlayerIndex) {
 
@@ -71,7 +72,13 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
         inputChangeCharacter = true;
         break;
       case SDLK_d:
-        inputJump = true;
+        if (inputJump) {
+          inputJump = false;
+          std::cout << "jump false" << std::endl;
+        } else {
+          inputJump = true;
+          std::cout << "jump true" << std::endl;
+        }
         break;
       default:
         break;
@@ -148,6 +155,8 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
 
   switch (controlComponent.getControlState()) {
   case CONTROL_STATE::NORMAL:
+    std::cout << "normal" << std::endl;
+
     if (inputR && !inputL) {
       transformSystem.moveRight(transformComponent);
       return;
@@ -165,7 +174,6 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
         transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
 
         transformSystem.stopX(transformComponent);
-        // transformSystem.stopY(transformComponent);
         controlComponent.setControlState(CONTROL_STATE::CLIMBING);
         // not sure I like this direct setting of xpos
         return;
@@ -185,16 +193,16 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     }
 
     if (inputJump) {
+      std::cout << "handling jump input" << std::endl;
       transformSystem.jump(transformComponent);
-      inputJump = false;
       return;
     }
 
     transformSystem.stopX(transformComponent);
-    // transformSystem.stopY(transformComponent);
     break;
 
   case CONTROL_STATE::AIRBORNE:
+    std::cout << "airborne" << std::endl;
 
     if (inputR && !inputL) {
       transformSystem.moveRight(transformComponent);
@@ -286,7 +294,11 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
 
     transformSystem.stopY(transformComponent);
     break;
+
+  default:
+    break;
   }
+  inputJump = false;
 }
 
 void ControlSystem::changePlayerCharacter(int &selectedPlayerIndex) {

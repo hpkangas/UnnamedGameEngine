@@ -1,6 +1,6 @@
 #include "physics.hpp"
 #include "components/collisioncomponent.hpp"
-
+#include <cstdio>
 namespace Physics {
 bool checkCollision(SDL_Rect &a, SDL_Rect b) {
   // The sides of the rectangles
@@ -58,10 +58,10 @@ bool playerCollisionDown(CollisionComponent &player, CollisionComponent &obj,
   if (player.collisionRect.y + player.collisionRect.h <=
       obj.collisionRect.y + obj.collisionRect.h) {
     {
-      return player.collisionRect.y + player.collisionRect.h + abs(playerVelocity.y) >=
+      return player.collisionRect.y + player.collisionRect.h + (playerVelocity.y) >=
                  obj.collisionRect.y &&
-             player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w - 1 &&
-             player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x;
+             player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w &&
+             player.collisionRect.x + player.collisionRect.w > obj.collisionRect.x;
     }
   }
   return false;
@@ -73,8 +73,8 @@ bool playerCollisionUp(CollisionComponent &player, CollisionComponent &obj,
   if (player.collisionRect.y >= obj.collisionRect.y) {
     return player.collisionRect.y - abs(playerVelocity.y) <=
                obj.collisionRect.y + obj.collisionRect.h &&
-           player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w - 1 &&
-           player.collisionRect.x + player.collisionRect.w - 1 > obj.collisionRect.x;
+           player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w &&
+           player.collisionRect.x + player.collisionRect.w > obj.collisionRect.x;
   }
   return false;
 }
@@ -85,8 +85,8 @@ bool playerCollisionLeft(CollisionComponent &player, CollisionComponent &obj,
   if (player.collisionRect.x >= obj.collisionRect.x + obj.collisionRect.w) {
 
     return player.collisionRect.x + playerVelocity.x < obj.collisionRect.x + obj.collisionRect.w &&
-           player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
-           player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y;
+           player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h &&
+           player.collisionRect.y + player.collisionRect.h > obj.collisionRect.y;
   }
   return false;
 }
@@ -98,8 +98,8 @@ bool playerCollisionRight(CollisionComponent &player, CollisionComponent &obj,
 
     return player.collisionRect.x + player.collisionRect.w + playerVelocity.x >
                obj.collisionRect.x &&
-           player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h - 1 &&
-           player.collisionRect.y + player.collisionRect.h - 1 > obj.collisionRect.y;
+           player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h &&
+           player.collisionRect.y + player.collisionRect.h > obj.collisionRect.y;
   }
   return false;
 }

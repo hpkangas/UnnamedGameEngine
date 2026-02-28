@@ -31,7 +31,7 @@ void TransformSystem::moveDown(TransformComponent &transformComponent) {
 }
 
 void TransformSystem::jump(TransformComponent &transformComponent) {
-  transformComponent.jumpTics = 6;
+  transformComponent.jumpTics = 2;
 }
 
 void TransformSystem::resetJump(TransformComponent &transformComponent) {}
@@ -63,8 +63,10 @@ void TransformSystem::stopY(TransformComponent &transformComponent, int yposDif)
 
 void TransformSystem::update(TransformComponent &transformComponent) {
 
-  if (transformComponent.jumpTics > 0) {
-    transformComponent.setYvel(transformComponent.getYvel() - 4);
+  if (transformComponent.jumpTics > -1) {
+    std::cout << "jump tics: " << transformComponent.jumpTics << std::endl;
+    transformComponent.setYvel(transformComponent.getYvel() -
+                               transformComponent.jumpTable[transformComponent.jumpTics]);
     transformComponent.jumpTics--;
   }
 
