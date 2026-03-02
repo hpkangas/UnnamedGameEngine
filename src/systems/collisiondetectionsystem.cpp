@@ -12,12 +12,10 @@ void CollisionDetectionSystem::checkBlockCollision(int i, SceneInfo &currentLeve
 
   updatePlayerCollisionRect(playerC, playerT);
   resetPlayerCollisions(playerC);
-
-  for (int i = 3; i < currentLevel.ids; i++) {
-
+  // other than player ids
+  for (int i = 1; i < currentLevel.ids; i++) {
     auto &blockC = currentLevel.ccs.at(i);
     TILE collisionTile = currentLevel.tiles.at(i)->getTile();
-
     checkPlayerLeftCollision(playerC, *blockC, playerT.getVelocity(), collisionTile);
     checkPlayerRightCollision(playerC, *blockC, playerT.getVelocity(), collisionTile);
     checkPlayerDownCollision(playerC, *blockC, playerT.getVelocity(), collisionTile);
@@ -86,6 +84,7 @@ void CollisionDetectionSystem::updatePlayerCollisionRect(
     CollisionComponent &playerCollisionComponent, TransformComponent &playerTransformComponent) {
   playerCollisionComponent.collisionRect.x = playerTransformComponent.getXpos();
   playerCollisionComponent.collisionRect.y = playerTransformComponent.getYpos();
+
   playerCollisionComponent.center = {
       (playerCollisionComponent.collisionRect.x + playerCollisionComponent.collisionRect.w +
        playerCollisionComponent.collisionRect.x) /

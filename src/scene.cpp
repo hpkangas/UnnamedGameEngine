@@ -27,12 +27,17 @@ void Scene::update() {
     centerCamera(*currentLevel.tcs.at(selectedPlayer));
   };
 
+  for (int id : currentLevel.controlIds) {
+    controlSystem.update(transformSystem, *currentLevel.tcs.at(id), id, selectedPlayerIndex,
+                         *currentLevel.ctrlComponents.at(id), *currentLevel.gcs.at(id),
+                         *currentLevel.ccs.at(id));
+  }
   // What if component list doens't have the id/i? How to go through only ids that are in the list?
+
   for (int id : currentLevel.gravityIds) {
     gravitySystem.update(*currentLevel.ctrlComponents.at(id), *currentLevel.gcs.at(id),
                          *currentLevel.tcs.at(id));
   }
-
   // for (int id : currentLevel.collisionIds) {
   collisionDetectionSystem.update(0, currentLevel);
   // }
@@ -41,11 +46,6 @@ void Scene::update() {
   // for (int i = 0; i < 3; i++) {
   collisionSystem.update(0, currentLevel, transformSystem);
   // }
-  for (int id : currentLevel.controlIds) {
-    controlSystem.update(transformSystem, *currentLevel.tcs.at(id), id, selectedPlayerIndex,
-                         *currentLevel.ctrlComponents.at(id), *currentLevel.gcs.at(id),
-                         *currentLevel.ccs.at(id));
-  }
 
   for (int id : currentLevel.transformIds) {
     transformSystem.update(*currentLevel.tcs.at(id));

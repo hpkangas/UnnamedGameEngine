@@ -1,5 +1,6 @@
 #include "transformsystem.hpp"
 #include <iostream>
+#include <iterator>
 #include <ostream>
 
 void TransformSystem::moveRight(TransformComponent &transformComponent) {
@@ -31,7 +32,7 @@ void TransformSystem::moveDown(TransformComponent &transformComponent) {
 }
 
 void TransformSystem::jump(TransformComponent &transformComponent) {
-  transformComponent.jumpTics = 2;
+  transformComponent.jumpTics = std::size(transformComponent.jumpTable) - 1;
 }
 
 void TransformSystem::resetJump(TransformComponent &transformComponent) {}

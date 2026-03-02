@@ -15,7 +15,7 @@ public:
   // jump component?
   int jumpTics = -1;
   // read from the end.. because of reasons
-  int jumpTable[3] = {2, 3, 4};
+  int jumpTable[3] = {2, 4, 6};
 
   TransformComponent() {}
   ~TransformComponent() {}

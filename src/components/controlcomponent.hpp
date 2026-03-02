@@ -8,7 +8,7 @@ class ControlComponent : public IComponent {
   CONTROL_STATE controlState = CONTROL_STATE::NORMAL;
 
 public:
-  void setCanClimb(bool climbDown) { this->canClimb = climbDown; }
+  void setCanClimb(bool canClimb) { this->canClimb = canClimb; }
   bool getCanClimb() const { return this->canClimb; }
 
   void setControlState(CONTROL_STATE state) { this->controlState = state; }

@@ -133,7 +133,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
                                 TransformComponent &transformComponent,
                                 CollisionComponent &collisionComponent,
                                 ControlComponent &controlComponent, int &selectedPlayerIndex) {
-
+  // for debugging
   if (inputResetCharacter) {
     transformComponent.setXvel(0);
     transformComponent.setYvel(0);
@@ -168,8 +168,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     }
 
     if (inputU) {
-      if (collisionComponent.collisionTileUp == TILE::LADDER ||
-          collisionComponent.collisionTileUp == TILE::LADDERSTART) {
+      if (controlComponent.getCanClimb()) {
 
         transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
 
@@ -181,8 +180,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     }
 
     if (inputD) {
-      if (collisionComponent.collisionTileDown == TILE::LADDER ||
-          collisionComponent.collisionTileDown == TILE::LADDERSTART) {
+      if (controlComponent.getCanClimb()) {
         transformComponent.setXpos(collisionComponent.collidedDownTilePos.x);
 
         transformSystem.stopX(transformComponent);
@@ -195,7 +193,8 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     if (inputJump) {
       std::cout << "handling jump input" << std::endl;
       transformSystem.jump(transformComponent);
-      return;
+      controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+      break;
     }
 
     transformSystem.stopX(transformComponent);
@@ -218,11 +217,13 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     if (inputU) {
 
       if (controlComponent.getCanClimb()) {
-
+        std::cout << "can climb from air \n";
         // not sure I like this direct setting of xpos
         transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
 
         // SHould systems call other systems?
+        // maybe but I think they should be put on the systems "list of things to do" rather than do
+        // it immediately (which is not possible at the moment)
         transformSystem.stopX(transformComponent);
         transformSystem.stopY(transformComponent);
         controlComponent.setControlState(CONTROL_STATE::CLIMBING);
