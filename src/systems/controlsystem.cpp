@@ -4,7 +4,6 @@
 #include "../game.hpp"
 #include "SDL_events.h"
 #include "SDL_keyboard.h"
-#include "SDL_keycode.h"
 #include "SDL_scancode.h"
 #include "SDL_stdinc.h"
 #include "transformsystem.hpp"
@@ -23,8 +22,8 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
   inputU = false;
   inputJump = false;
   inputResetCharacter = false;
-  // determineControlState(controlComponent, gravityComponent.getGravityState(), collisionComponent,
-  //                       transformComponent);
+  determineControlState(controlComponent, gravityComponent.getGravityState(), collisionComponent,
+                        transformComponent);
 
   if (selectedPlayer == selectedPlayerIndex) {
 
@@ -38,15 +37,45 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
                                           GRAVITY_STATE gravityState,
                                           CollisionComponent &collisionComponent,
                                           TransformComponent &transformComponent) {
-  //   controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
-  // } else {
-  //   controlComponent.setControlState(CONTROL_STATE::NORMAL);
-  // }
-  // if (gravityState == GRAVITY_STATE::AIRBORNE) {
-  //   if (transformComponent.getYvel() == 0) {
-  //     controlComponent.setControlState(CONTROL_STATE::NORMAL);
-  //   }
-  // }
+
+  // tuplahyppy tulee siitä kun collision detection
+  switch (collisionComponent.collisionTileDown) {
+  case TILE::NONE:
+    printf("asd");
+    controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+
+    break;
+
+  case TILE::SOLID:
+    if (controlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
+      transformSystem->stopY(transformComponent, collisionComponent.yposDif);
+      controlComponent.setControlState(CONTROL_STATE::NORMAL);
+    }
+    break;
+
+  case TILE::SEMISOLID:
+    break;
+
+  case TILE::LADDER:
+
+    break;
+
+  case TILE::LADDERSTART:
+    if (controlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
+      transformSystem->stopY(transformComponent, collisionComponent.yposDif);
+      controlComponent.setControlState(CONTROL_STATE::NORMAL);
+    }
+
+    break;
+
+  default:
+    break;
+  }
+
+  if (collisionComponent.collisionTileLeft == TILE::SOLID ||
+      collisionComponent.collisionTileRight == TILE::SOLID) {
+    transformSystem->stopX(transformComponent, collisionComponent.xposDif);
+  }
 }
 
 void ControlSystem::takeInput(TransformComponent &transformComponent, int &selectedPlayerIndex) {
@@ -58,26 +87,17 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
     }
   }
   const Uint8 *keyboardStateArray = SDL_GetKeyboardState(NULL);
-  // switch (SDL_Scancode) {}
   if (keyboardStateArray[SDL_SCANCODE_Q]) {
     Game::isRunning = false;
   }
   if (keyboardStateArray[SDL_SCANCODE_RIGHT]) {
     inputR = true;
-    std::cout << "right\n";
   }
-  // if (!keyboardStateArray[SDL_SCANCODE_RIGHT]) {
-  //   inputR = false;
-  // }
   if (keyboardStateArray[SDL_SCANCODE_LEFT]) {
     inputL = true;
   }
-  // if (!keyboardStateArray[SDL_SCANCODE_LEFT]) {
-  //   inputL = false;
-  // }
   if (keyboardStateArray[SDL_SCANCODE_D]) {
     inputJump = true;
-    std::cout << "jump\n";
   }
   if (keyboardStateArray[SDL_SCANCODE_UP]) {
     inputU = true;
@@ -88,100 +108,6 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
   if (keyboardStateArray[SDL_SCANCODE_R]) {
     inputResetCharacter = true;
   }
-  // if (keyboardStateArray[SDL_SCANCODE_D] && keyboardStateArray[SDL_SCANCODE_RIGHT]) {
-  //   inputJump = true;
-  //   inputR = true;
-  //   std::cout << "right and jump\n";
-  // }
-  // if (keyboardStateArray[SDL_SCANCODE_D] && keyboardStateArray[SDL_SCANCODE_LEFT]) {
-  //   inputJump = true;
-  //   inputL = true;
-  //   std::cout << "left and jump\n";
-  // }
-  // if (!keyboardStateArray[SDL_SCANCODE_D]) {
-  //   inputJump = false;
-  // }
-  //   switch (event.type) {
-  //   case SDL_KEYDOWN:
-  //     switch (event.key.keysym.sym) {
-  //     // quit game
-  //     case SDLK_q:
-  //       Game::isRunning = false;
-  //       break;
-  //     case SDLK_RIGHT:
-  //       inputR = true;
-  //       break;
-  //     case SDLK_LEFT:
-  //       inputL = true;
-  //       break;
-  //     case SDLK_UP:
-  //       inputU = true;
-  //       break;
-  //     case SDLK_DOWN:
-  //       inputD = true;
-  //       break;
-  //     // reset selectedPlayer pos for debugging
-  //     case SDLK_r:
-  //       inputResetCharacter = true;
-  //       break;
-  //     case SDLK_c:
-  //       inputChangeCharacter = true;
-  //       break;
-  //     case SDLK_d:
-  //       if (inputJump) {
-  //         inputJump = false;
-  //         std::cout << "jump false" << std::endl;
-  //       } else {
-  //         inputJump = true;
-  //         std::cout << "jump true" << std::endl;
-  //       }
-  //       break;
-  //     default:
-  //       break;
-  //     }
-  //     break;
-
-  //   case SDL_KEYUP:
-  //     switch (event.key.keysym.sym) {
-  //     case SDLK_RIGHT:
-  //       inputR = false;
-  //       break;
-  //     case SDLK_LEFT:
-  //       inputL = false;
-  //       break;
-  //     case SDLK_UP:
-  //       inputU = false;
-  //       break;
-  //     case SDLK_DOWN:
-  //       inputD = false;
-  //       break;
-  //     case SDLK_r:
-  //       inputResetCharacter = false;
-  //       break;
-  //     case SDLK_c:
-  //       inputChangeCharacter = false;
-  //       break;
-  //     case SDLK_d:
-  //       inputJump = false;
-  //       break;
-  //     default:
-  //       break;
-  //     }
-  //     break;
-
-  //   case SDL_WINDOWEVENT:
-  //     switch (event.window.event) {
-  //     case SDL_WINDOWEVENT_CLOSE:
-  //       Game::isRunning = false;
-  //       break;
-  //     default:
-  //       break;
-  //     }
-  //     break;
-
-  //   default:
-  //     break;
-  //   }
 }
 
 void ControlSystem::handleInput(TransformSystem &transformSystem,
@@ -208,40 +134,44 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     return;
   }
 
-  bool anyInput = false;
+  bool noInput = true;
+
   switch (controlComponent.getControlState()) {
   case CONTROL_STATE::NORMAL:
-    // if (inputR && inputJump) {
-    //   transformSystem.moveRight(transformComponent);
-    //   transformSystem.jump(transformComponent);
-    //   controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
-    // }
+    std::cout << "normal" << std ::endl;
+
     if (inputR && !inputL) {
+      if (transformComponent.getXvel() < 0) {
+        transformSystem.stopX(transformComponent);
+      }
       transformSystem.moveRight(transformComponent);
-      anyInput = true;
+      noInput = false;
     }
 
     if (inputL && !inputR) {
+      if (transformComponent.getXvel() > 0) {
+        transformSystem.stopX(transformComponent);
+      }
       transformSystem.moveLeft(transformComponent);
-      anyInput = true;
+      noInput = false;
     }
 
     if (inputU) {
-      anyInput = true;
+      noInput = false;
       if (controlComponent.getCanClimb()) {
 
         transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
 
         transformSystem.stopX(transformComponent);
         controlComponent.setControlState(CONTROL_STATE::CLIMBING);
-        // not sure I like this direct setting of xpos
         return;
       }
     }
 
     if (inputD) {
-      anyInput = true;
+      noInput = false;
       if (controlComponent.getCanClimb()) {
+        // not sure I like this direct setting of xpos
         transformComponent.setXpos(collisionComponent.collidedDownTilePos.x);
 
         transformSystem.stopX(transformComponent);
@@ -252,31 +182,37 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     }
 
     if (inputJump) {
-      anyInput = true;
+      noInput = true;
       std::cout << "handling jump input" << std::endl;
       transformSystem.jump(transformComponent);
-      controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
-      // collision systemi varmaan kattoo ettei olekaan airborne
+      // transformComponent.setYvel(-20);
+      // controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
     }
 
-    if (!anyInput) {
+    if (noInput) {
       transformSystem.stopX(transformComponent);
     }
 
     break;
 
   case CONTROL_STATE::AIRBORNE:
+    std::cout << "airborne" << std ::endl;
 
     if (inputR && !inputL) {
+      noInput = false;
+      if (transformComponent.getXvel() < 0) {
+        transformSystem.stopX(transformComponent);
+      }
       transformSystem.moveRight(transformComponent);
-      return;
     }
 
     if (inputL && !inputR) {
+      noInput = false;
+      if (transformComponent.getXvel() > 0) {
+        transformSystem.stopX(transformComponent);
+      }
       transformSystem.moveLeft(transformComponent);
-      return;
     }
-    // No input
 
     if (inputU) {
 
@@ -291,7 +227,6 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
         transformSystem.stopX(transformComponent);
         transformSystem.stopY(transformComponent);
         controlComponent.setControlState(CONTROL_STATE::CLIMBING);
-        return;
       }
     }
 
@@ -303,11 +238,12 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
         transformSystem.stopX(transformComponent);
         transformSystem.stopY(transformComponent);
         controlComponent.setControlState(CONTROL_STATE::CLIMBING);
-        return;
       }
     }
 
-    transformSystem.stopX(transformComponent);
+    if (noInput) {
+      transformSystem.stopX(transformComponent);
+    }
 
     break;
 
@@ -363,7 +299,6 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
   default:
     break;
   }
-  // inputJump = false;
 }
 
 void ControlSystem::changePlayerCharacter(int &selectedPlayerIndex) {

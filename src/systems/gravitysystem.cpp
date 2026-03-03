@@ -1,4 +1,5 @@
 #include "gravitysystem.hpp"
+#include <iostream>
 
 constexpr float GRAVITY_UNIT = 0.50f;
 constexpr float MAX_GRAVITY = 11.0;
@@ -6,6 +7,7 @@ constexpr float MAX_GRAVITY = 11.0;
 void GravitySystem::gravity(TransformComponent &transformComponent) {
   if (transformComponent.getYvel() < MAX_GRAVITY) {
     transformComponent.setYvel(transformComponent.getYvel() + GRAVITY_UNIT);
+    std::cout << "gravity" << std::endl;
   }
 }
 

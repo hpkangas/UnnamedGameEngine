@@ -58,7 +58,7 @@ bool playerCollisionDown(CollisionComponent &player, CollisionComponent &obj,
   if (player.collisionRect.y + player.collisionRect.h <=
       obj.collisionRect.y + obj.collisionRect.h) {
     {
-      return player.collisionRect.y + player.collisionRect.h + (playerVelocity.y) >=
+      return player.collisionRect.y + player.collisionRect.h + playerVelocity.y >=
                  obj.collisionRect.y &&
              player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w &&
              player.collisionRect.x + player.collisionRect.w > obj.collisionRect.x;

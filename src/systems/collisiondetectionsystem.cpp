@@ -1,6 +1,7 @@
 #include "collisiondetectionsystem.hpp"
 #include "../physics.hpp"
 #include <cstdio>
+#include <iostream>
 
 void CollisionDetectionSystem::update(int i, SceneInfo &currentLevel) {
   checkBlockCollision(i, currentLevel);
@@ -65,6 +66,7 @@ void CollisionDetectionSystem::checkPlayerDownCollision(CollisionComponent &play
     player.collisionTileDown = collisionTile;
     player.collidedDownTilePos = {block.collisionRect.x, block.collisionRect.y};
     player.setCollisionDown(true);
+    std::cout << "velocity when collided " << velocity.y << std::endl;
   }
 }
 

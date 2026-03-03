@@ -3,6 +3,7 @@
 #define TRANSFORMCOMPONENT_HPP
 #include "../utils.hpp"
 #include "component.hpp"
+#include <iostream>
 
 using namespace Utils;
 struct TransformComponent : public IComponent {
@@ -40,7 +41,12 @@ public:
 
   void setXvel(const float xvel) { velocity.x = xvel; }
 
-  void setYvel(const float yvel) { velocity.y = yvel; }
+  void setYvel(const float yvel) {
+    if (yvel != 0) {
+      std::cout << yvel << std::endl;
+    }
+    velocity.y = yvel;
+  }
 };
 
 #endif
