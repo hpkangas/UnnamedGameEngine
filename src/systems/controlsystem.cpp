@@ -38,10 +38,8 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
                                           CollisionComponent &collisionComponent,
                                           TransformComponent &transformComponent) {
 
-  // tuplahyppy tulee siitä kun collision detection
   switch (collisionComponent.collisionTileDown) {
   case TILE::NONE:
-    printf("asd");
     controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
 
     break;
@@ -72,10 +70,10 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
     break;
   }
 
-  if (collisionComponent.collisionTileLeft == TILE::SOLID ||
-      collisionComponent.collisionTileRight == TILE::SOLID) {
-    transformSystem->stopX(transformComponent, collisionComponent.xposDif);
-  }
+  // if (collisionComponent.collisionTileLeft == TILE::SOLID ||
+  //     collisionComponent.collisionTileRight == TILE::SOLID) {
+  //   transformSystem->stopX(transformComponent, collisionComponent.xposDif);
+  // }
 }
 
 void ControlSystem::takeInput(TransformComponent &transformComponent, int &selectedPlayerIndex) {
@@ -182,7 +180,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     }
 
     if (inputJump) {
-      noInput = true;
+      noInput = false;
       std::cout << "handling jump input" << std::endl;
       transformSystem.jump(transformComponent);
       // transformComponent.setYvel(-20);

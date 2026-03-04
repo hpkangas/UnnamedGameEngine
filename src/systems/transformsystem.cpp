@@ -4,16 +4,18 @@
 #include <ostream>
 
 void TransformSystem::moveRight(TransformComponent &transformComponent) {
-  transformComponent.setXvel(transformComponent.getXvel() + playerSpeed);
-  if (transformComponent.getXvel() > playerSpeedMax) {
+  if (transformComponent.getXvel()+playerSpeed>playerSpeedMax) {
     transformComponent.setXvel(playerSpeedMax);
+  }else {
+    transformComponent.setXvel(transformComponent.getXvel() + playerSpeed);
   }
 }
 
 void TransformSystem::moveLeft(TransformComponent &transformComponent) {
-  transformComponent.setXvel(transformComponent.getXvel() - playerSpeed);
   if (transformComponent.getXvel() < -playerSpeedMax) {
     transformComponent.setXvel(-playerSpeedMax);
+  } else {
+    transformComponent.setXvel(transformComponent.getXvel() - playerSpeed);
   }
 }
 
@@ -32,7 +34,8 @@ void TransformSystem::moveDown(TransformComponent &transformComponent) {
 }
 
 void TransformSystem::jump(TransformComponent &transformComponent) {
-  transformComponent.jumpTics = std::size(transformComponent.jumpTable) - 1;
+  // transformComponent.jumpTics = std::size(transformComponent.jumpTable) - 1;
+  transformComponent.setYvel(-12);
 }
 
 void TransformSystem::resetJump(TransformComponent &transformComponent) {}

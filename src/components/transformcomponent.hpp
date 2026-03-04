@@ -39,11 +39,13 @@ public:
   Velocity getVelocity() { return velocity; }
   void setVelocity(Velocity velocity) { this->velocity = velocity; }
 
-  void setXvel(const float xvel) { velocity.x = xvel; }
+  void setXvel(const float xvel) {if (xvel != 0) {
+      std::cout <<"xvel "<< xvel << std::endl;
+    } velocity.x = xvel; }
 
   void setYvel(const float yvel) {
     if (yvel != 0) {
-      std::cout << yvel << std::endl;
+      std::cout << "yvel "<<yvel << std::endl;
     }
     velocity.y = yvel;
   }

@@ -1,7 +1,7 @@
 #include "gravitysystem.hpp"
 #include <iostream>
 
-constexpr float GRAVITY_UNIT = 0.50f;
+constexpr float GRAVITY_UNIT = 0.75f;
 constexpr float MAX_GRAVITY = 11.0;
 
 void GravitySystem::gravity(TransformComponent &transformComponent) {

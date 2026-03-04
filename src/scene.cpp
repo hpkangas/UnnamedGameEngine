@@ -43,9 +43,9 @@ void Scene::update() {
   // }
 
   // Not all collision have controls too, will crash with id for range loop
-  // for (int i = 0; i < 3; i++) {
-  // collisionSystem.update(0, currentLevel, transformSystem);
-  // }
+  for (int i = 0; i < 3; i++) {
+  collisionSystem.update(0, currentLevel, transformSystem);
+  }
 
   for (int id : currentLevel.transformIds) {
     transformSystem.update(*currentLevel.tcs.at(id));

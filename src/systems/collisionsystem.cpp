@@ -21,7 +21,7 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
   switch (cc.collisionTileDown) {
 
   case TILE::NONE:
-    ctrlc.setControlState(CONTROL_STATE::AIRBORNE);
+    // ctrlc.setControlState(CONTROL_STATE::AIRBORNE);
 
     break;
 
@@ -30,6 +30,7 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
       // I'm not sure I like collision system deciding what the control state is but for now let's
       // go with this
       transformSystem->stopY(tc, cc.yposDif);
+      //removal causes pc to go through ground
       ctrlc.setControlState(CONTROL_STATE::NORMAL);
     }
     break;
@@ -44,7 +45,7 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
   case TILE::LADDERSTART:
     if (ctrlc.getControlState() == CONTROL_STATE::AIRBORNE) {
       transformSystem->stopY(tc, cc.yposDif);
-      ctrlc.setControlState(CONTROL_STATE::NORMAL);
+      // ctrlc.setControlState(CONTROL_STATE::NORMAL);
     }
 
     break;
