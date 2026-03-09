@@ -3,6 +3,7 @@
 #include "../components/transformcomponent.hpp"
 
 class TransformSystem {
+  float playerJumpSpeed = -16.0f;
   float playerSpeed = 0.4f;
   float playerSpeedMax = 8.0f;
   float playerClimbingSpeedMax = 4.0f;

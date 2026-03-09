@@ -11,7 +11,7 @@
 #include <iostream>
 
 void Scene::init() {
-  SDL_RWops *Handle{SDL_RWFromFile("src/level", "rb")};
+  SDL_RWops *Handle{SDL_RWFromFile("level", "rb")};
   currentLevel = SceneCreator::createLevel(Handle);
   SDL_RWclose(Handle);
   std::cout << "Scene init \n";
@@ -43,9 +43,9 @@ void Scene::update() {
   // }
 
   // Not all collision have controls too, will crash with id for range loop
-  for (int i = 0; i < 3; i++) {
+  // for (int i = 0; i < 3; i++) {
   collisionSystem.update(0, currentLevel, transformSystem);
-  }
+  // }
 
   for (int id : currentLevel.transformIds) {
     transformSystem.update(*currentLevel.tcs.at(id));

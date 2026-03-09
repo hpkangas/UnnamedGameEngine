@@ -46,8 +46,11 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
 
   case TILE::SOLID:
     if (controlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
-      transformSystem->stopY(transformComponent, collisionComponent.yposDif);
-      controlComponent.setControlState(CONTROL_STATE::NORMAL);
+      if (transformComponent.getYvel() == 0) {
+
+        controlComponent.setControlState(CONTROL_STATE::NORMAL);
+      }
+      // transformSystem->stopY(transformComponent, collisionComponent.yposDif);
     }
     break;
 
@@ -60,8 +63,12 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
 
   case TILE::LADDERSTART:
     if (controlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
-      transformSystem->stopY(transformComponent, collisionComponent.yposDif);
-      controlComponent.setControlState(CONTROL_STATE::NORMAL);
+      if (transformComponent.getYvel() == 0) {
+
+        controlComponent.setControlState(CONTROL_STATE::NORMAL);
+      }
+      // transformSystem->stopY(transformComponent, collisionComponent.yposDif);
+      // controlComponent.setControlState(CONTROL_STATE::NORMAL);
     }
 
     break;
@@ -183,7 +190,6 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
       noInput = false;
       std::cout << "handling jump input" << std::endl;
       transformSystem.jump(transformComponent);
-      // transformComponent.setYvel(-20);
       // controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
     }
 

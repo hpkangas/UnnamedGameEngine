@@ -30,8 +30,8 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
       // I'm not sure I like collision system deciding what the control state is but for now let's
       // go with this
       transformSystem->stopY(tc, cc.yposDif);
-      //removal causes pc to go through ground
-      ctrlc.setControlState(CONTROL_STATE::NORMAL);
+      // removal causes pc to go through ground
+      // ctrlc.setControlState(CONTROL_STATE::NORMAL);
     }
     break;
 
