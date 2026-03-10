@@ -1,5 +1,4 @@
 #include "physics.hpp"
-#include "components/collisioncomponent.hpp"
 #include <cstdio>
 namespace Physics {
 bool checkCollision(SDL_Rect &a, SDL_Rect b) {
@@ -52,54 +51,54 @@ bool checkLeft(SDL_Rect a, SDL_Rect b) {
   return true;
 }
 
-bool playerCollisionDown(CollisionComponent &player, CollisionComponent &obj,
+bool playerCollisionDown(SDL_Rect &player, SDL_Rect &obj,
                          Velocity playerVelocity) {
 
-  if (player.collisionRect.y + player.collisionRect.h <=
-      obj.collisionRect.y + obj.collisionRect.h) {
+  if (player.y + player.h <=
+      obj.y + obj.h) {
     {
-      return player.collisionRect.y + player.collisionRect.h + playerVelocity.y >=
-                 obj.collisionRect.y &&
-             player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w &&
-             player.collisionRect.x + player.collisionRect.w > obj.collisionRect.x;
+      return player.y + player.h + playerVelocity.y >=
+                 obj.y &&
+             player.x < obj.x + obj.w &&
+             player.x + player.w > obj.x;
     }
   }
   return false;
 }
 
-bool playerCollisionUp(CollisionComponent &player, CollisionComponent &obj,
+bool playerCollisionUp(SDL_Rect &player, SDL_Rect &obj,
                        Velocity playerVelocity) {
 
-  if (player.collisionRect.y >= obj.collisionRect.y) {
-    return player.collisionRect.y - abs(playerVelocity.y) <=
-               obj.collisionRect.y + obj.collisionRect.h &&
-           player.collisionRect.x < obj.collisionRect.x + obj.collisionRect.w &&
-           player.collisionRect.x + player.collisionRect.w > obj.collisionRect.x;
+  if (player.y >= obj.y) {
+    return player.y - abs(playerVelocity.y) <=
+               obj.y + obj.h &&
+           player.x < obj.x + obj.w &&
+           player.x + player.w > obj.x;
   }
   return false;
 }
 
-bool playerCollisionLeft(CollisionComponent &player, CollisionComponent &obj,
+bool playerCollisionLeft(SDL_Rect &player, SDL_Rect &obj,
                          Velocity playerVelocity) {
 
-  if (player.collisionRect.x >= obj.collisionRect.x + obj.collisionRect.w) {
+  if (player.x >= obj.x + obj.w) {
 
-    return player.collisionRect.x + playerVelocity.x < obj.collisionRect.x + obj.collisionRect.w &&
-           player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h &&
-           player.collisionRect.y + player.collisionRect.h > obj.collisionRect.y;
+    return player.x + playerVelocity.x < obj.x + obj.w &&
+           player.y < obj.y + obj.h &&
+           player.y + player.h > obj.y;
   }
   return false;
 }
 
-bool playerCollisionRight(CollisionComponent &player, CollisionComponent &obj,
+bool playerCollisionRight(SDL_Rect &player, SDL_Rect &obj,
                           Velocity playerVelocity) {
 
-  if (player.collisionRect.x + player.collisionRect.w <= obj.collisionRect.x) {
+  if (player.x + player.w <= obj.x) {
 
-    return player.collisionRect.x + player.collisionRect.w + playerVelocity.x >
-               obj.collisionRect.x &&
-           player.collisionRect.y < obj.collisionRect.y + obj.collisionRect.h &&
-           player.collisionRect.y + player.collisionRect.h > obj.collisionRect.y;
+    return player.x + player.w + playerVelocity.x >
+               obj.x &&
+           player.y < obj.y + obj.h &&
+           player.y + player.h > obj.y;
   }
   return false;
 }

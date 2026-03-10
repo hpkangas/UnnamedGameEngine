@@ -27,7 +27,7 @@ void CollisionDetectionSystem::checkBlockCollision(int i, SceneInfo &currentLeve
 void CollisionDetectionSystem::checkPlayerLeftCollision(CollisionComponent &player,
                                                         CollisionComponent &block,
                                                         Velocity velocity, TILE &collisionTile) {
-  if (Physics::playerCollisionLeft(player, block, velocity)) {
+  if (Physics::playerCollisionLeft(player.collisionRect, block.collisionRect, velocity)) {
     player.xposDif = player.collisionRect.x - (block.collisionRect.x + block.collisionRect.w);
     player.collisionTileLeft = collisionTile;
 
@@ -38,7 +38,7 @@ void CollisionDetectionSystem::checkPlayerLeftCollision(CollisionComponent &play
 void CollisionDetectionSystem::checkPlayerRightCollision(CollisionComponent &player,
                                                          CollisionComponent &block,
                                                          Velocity velocity, TILE &collisionTile) {
-  if (Physics::playerCollisionRight(player, block, velocity)) {
+  if (Physics::playerCollisionRight(player.collisionRect, block.collisionRect, velocity)) {
     player.xposDif = (player.collisionRect.x + player.collisionRect.w) - block.collisionRect.x;
     player.collisionTileRight = collisionTile;
 
@@ -49,7 +49,7 @@ void CollisionDetectionSystem::checkPlayerRightCollision(CollisionComponent &pla
 void CollisionDetectionSystem::checkPlayerUpCollision(CollisionComponent &player,
                                                       CollisionComponent &block, Velocity velocity,
                                                       TILE &collisionTile) {
-  if (Physics::playerCollisionUp(player, block, velocity)) {
+  if (Physics::playerCollisionUp(player.collisionRect, block.collisionRect, velocity)) {
     player.yposDif = (player.collisionRect.y) - (block.collisionRect.y + block.collisionRect.h);
     player.collisionTileUp = collisionTile;
     player.collidedUpTilePos = {block.collisionRect.x, block.collisionRect.y};
@@ -61,7 +61,7 @@ void CollisionDetectionSystem::checkPlayerDownCollision(CollisionComponent &play
                                                         CollisionComponent &block,
                                                         Velocity velocity, TILE &collisionTile) {
 
-  if (Physics::playerCollisionDown(player, block, velocity)) {
+  if (Physics::playerCollisionDown(player.collisionRect, block.collisionRect, velocity)) {
     player.yposDif = (player.collisionRect.y + player.collisionRect.h) - block.collisionRect.y;
     player.collisionTileDown = collisionTile;
     player.collidedDownTilePos = {block.collisionRect.x, block.collisionRect.y};

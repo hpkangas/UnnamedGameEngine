@@ -1,6 +1,5 @@
 #ifndef PHYSICS_HPP
 #define PHYSICS_HPP
-#include "components/collisioncomponent.hpp"
 #include "utils.hpp"
 #include <SDL2/SDL.h>
 
@@ -11,16 +10,16 @@ bool checkCollision(SDL_Rect &a, SDL_Rect b);
 
 bool checkLeft(SDL_Rect a, SDL_Rect b);
 
-bool playerCollisionDown(CollisionComponent &player, CollisionComponent &obj,
+bool playerCollisionDown(SDL_Rect &player, SDL_Rect &obj,
                          Velocity playerVelocity);
 
-bool playerCollisionUp(CollisionComponent &player, CollisionComponent &obj,
+bool playerCollisionUp(SDL_Rect &player, SDL_Rect &obj,
                        Velocity playerVelocity);
 
-bool playerCollisionLeft(CollisionComponent &player, CollisionComponent &obj,
+bool playerCollisionLeft(SDL_Rect &player, SDL_Rect &obj,
                          Velocity playerVelocity);
 
-bool playerCollisionRight(CollisionComponent &player, CollisionComponent &obj,
+bool playerCollisionRight(SDL_Rect &player, SDL_Rect &obj,
                           Velocity playerVelocity);
 
 }; // namespace Physics
