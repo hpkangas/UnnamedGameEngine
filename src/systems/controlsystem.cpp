@@ -40,7 +40,10 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
 
   switch (collisionComponent.collisionTileDown) {
   case TILE::NONE:
-    controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+    if (controlComponent.getControlState() != CONTROL_STATE::AIRBORNE) {
+
+      controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+    }
 
     break;
 
@@ -190,7 +193,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
       noInput = false;
       std::cout << "handling jump input" << std::endl;
       transformSystem.jump(transformComponent);
-      // controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+      controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
     }
 
     if (noInput) {

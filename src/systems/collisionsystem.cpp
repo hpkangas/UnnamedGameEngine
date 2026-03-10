@@ -11,7 +11,7 @@ void CollisionSystem::update(int id, SceneInfo &currentLevel, TransformSystem &t
   ControlComponent &ctrlc = *currentLevel.ctrlComponents.at(id);
 
   handleDownTileCollision(tc, cc, ctrlc);
-  // handleUpTileCollision(playerT, playerC, playerControl);
+  handleUpTileCollision(tc, cc, ctrlc);
 
   handleHorizontalBlockCollision(tc, cc);
 }
@@ -27,11 +27,7 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
 
   case TILE::SOLID:
     if (ctrlc.getControlState() == CONTROL_STATE::AIRBORNE) {
-      // I'm not sure I like collision system deciding what the control state is but for now let's
-      // go with this
       transformSystem->stopY(tc, cc.yposDif);
-      // removal causes pc to go through ground
-      // ctrlc.setControlState(CONTROL_STATE::NORMAL);
     }
     break;
 
@@ -39,14 +35,15 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
     break;
 
   case TILE::LADDER:
+    ctrlc.setCanClimb(true);
 
     break;
 
   case TILE::LADDERSTART:
     if (ctrlc.getControlState() == CONTROL_STATE::AIRBORNE) {
       transformSystem->stopY(tc, cc.yposDif);
-      // ctrlc.setControlState(CONTROL_STATE::NORMAL);
     }
+    ctrlc.setCanClimb(true);
 
     break;
 
@@ -64,15 +61,25 @@ void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionCom
     break;
 
   case TILE::SOLID:
+
+    if (ctrlc.getControlState() == CONTROL_STATE::AIRBORNE) {
+      if (tc.getYvel() < 0) {
+        transformSystem->stopY(tc, cc.yposDif);
+      }
+    }
     break;
 
   case TILE::SEMISOLID:
     break;
 
   case TILE::LADDER:
+    ctrlc.setCanClimb(true);
+
     break;
 
   case TILE::LADDERSTART:
+    ctrlc.setCanClimb(true);
+
     break;
   }
 }

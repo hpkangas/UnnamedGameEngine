@@ -66,8 +66,6 @@ void CollisionDetectionSystem::checkPlayerDownCollision(CollisionComponent &play
     player.collisionTileDown = collisionTile;
     player.collidedDownTilePos = {block.collisionRect.x, block.collisionRect.y};
     player.setCollisionDown(true);
-    std::cout << "velocity when collided " << velocity.y << std::endl;
-    std::cout << "yposidf " << player.yposDif << std::endl;
   }
 }
 
