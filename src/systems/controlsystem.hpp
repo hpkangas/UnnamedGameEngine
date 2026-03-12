@@ -10,8 +10,6 @@ public:
   ControlSystem() {}
   ~ControlSystem() {}
 
-  TransformSystem *transformSystem;
-
   void update(TransformSystem &transformSystem, TransformComponent &transformComponent,
               int selectedPlayer, int &selectedPlayerIndex, ControlComponent &controlcomponent,
               GravityComponent &gravityComponent, CollisionComponent &collisionComponent);

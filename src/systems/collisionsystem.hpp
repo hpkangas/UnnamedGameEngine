@@ -9,7 +9,7 @@ public:
   CollisionSystem() {}
   ~CollisionSystem() {}
 
-  TransformSystem *transformSystem;
+  TransformSystem *transformSystem = nullptr;
 
   TILE currentTile = TILE::NONE;
   Position collidedDownObjectPos = {0, 0};

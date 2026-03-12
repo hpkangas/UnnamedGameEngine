@@ -8,7 +8,6 @@
 using namespace Utils;
 struct TransformComponent : public IComponent {
 private:
-  int ID = TCID;
   Position position{0, 0};
   Velocity velocity{0, 0};
 

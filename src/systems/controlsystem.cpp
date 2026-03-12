@@ -15,7 +15,6 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
                            ControlComponent &controlComponent, GravityComponent &gravityComponent,
                            CollisionComponent &collisionComponent) {
 
-  this->transformSystem = &transformSystem;
   inputR = false;
   inputL = false;
   inputD = false;
