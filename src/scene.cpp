@@ -12,14 +12,14 @@
 #include <iostream>
 
 bool Scene::init() {
-  const char *fileName = "level";
+  const char *fileName = "level2";
     SDL_RWops *file = SDL_RWFromFile(fileName, "rb");
     if (file == NULL) {
       std::cout<<"Error: "<<SDL_GetError()<<std::endl;
       return false;
     }
     else {
-      currentLevel = SceneCreator::createLevel(file);
+      currentLevel = SceneCreator::createLevel2(file);
       std::cout << "Scene init \n";
       return true;
     }

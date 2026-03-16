@@ -19,6 +19,55 @@
 #include <string>
 #include <vector>
 
+SceneInfo SceneCreator::createLevel2(SDL_RWops *file) {
+  SceneInfo level;
+  std::string currentValue;
+  char c = '0';
+
+  std::cout << "Creating scene" << "\n";
+  loadTextures();
+
+  int y = 0;
+  int x = 0;
+  while (SDL_RWread(file, &c, 1, 1) == 1) {
+    if (c == '\n') {
+        std::cout<<"new line\n";
+            y++;
+            x=0;
+            continue;
+    }
+    if (c == ',') {
+      std::cout<<currentValue<<std::endl;
+
+      if (currentValue.substr(0, 2) == "PC") {
+        createPC(128*x, 128*y, level);
+
+      } else if (currentValue.substr(0, 1) == "B") {
+        createBlock(currentValue, 128*x, 128*y, level);
+
+      } else if (currentValue.substr(0, 2) == "LS") {
+        createLadderStart(128*x, 128*y, level);
+
+      } else if (currentValue.substr(0, 1) == "L") {
+        createLadder(128*x, 128*y, level);
+    
+      } else {
+        std::cout << "Error: Scene creator: " << currentValue << "is unknown. Line "<<y<<" "<<x<< std::endl;
+      }
+
+      x++;
+      currentValue = "";
+      continue;
+    }
+
+    else {
+      currentValue += c;
+    }
+  }
+  SDL_RWclose(file);
+
+  return level;
+}
 SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   SceneInfo level;
   std::string currentValue;

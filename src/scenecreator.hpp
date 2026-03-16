@@ -34,6 +34,7 @@ struct SceneInfo {
 class SceneCreator {
 public:
   static SceneInfo createLevel(SDL_RWops *Handle);
+  static SceneInfo createLevel2(SDL_RWops *Handle);
 
 private:
   SceneCreator() {}
