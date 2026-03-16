@@ -1,4 +1,5 @@
 #include "scenecreator.hpp"
+#include "SDL_error.h"
 #include "SDL_render.h"
 #include "components/animationcomponent.hpp"
 #include "components/collisioncomponent.hpp"
@@ -18,7 +19,7 @@
 #include <string>
 #include <vector>
 
-SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
+SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   SceneInfo level;
   std::string currentValue;
   char c;
@@ -27,7 +28,7 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
   std::cout << "Creating scene" << "\n";
   loadTextures();
 
-  while (SDL_RWread(Handle, &c, 1, 1) == 1) {
+  while (SDL_RWread(file, &c, 1, 1) == 1) {
     // Read value before comma. Create stuff from values at new line
 
     if (c == '\n') {
@@ -47,7 +48,7 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
       } else if (gameObjectType.substr(0, 1) == "L") {
         createLadder(x, y, level);
       } else {
-        std::cout << "Warning: Scene creator: " << gameObjectType << "is unknown" << std::endl;
+        std::cout << "Error: Scene creator: " << gameObjectType << "is unknown" << std::endl;
       }
 
       values.clear();
@@ -60,8 +61,9 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *Handle) {
       values.emplace_back(currentValue);
       currentValue = "";
     }
+  
   }
-
+  SDL_RWclose(file);
   return level;
 }
 

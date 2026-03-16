@@ -1,4 +1,5 @@
 #include "scene.hpp"
+#include "SDL_error.h"
 #include "camera.hpp"
 #include "components/gravitycomponent.hpp"
 #include "components/transformcomponent.hpp"
@@ -10,16 +11,22 @@
 #include <cstdio>
 #include <iostream>
 
-void Scene::init() {
-  SDL_RWops *Handle{SDL_RWFromFile("level", "rb")};
-  currentLevel = SceneCreator::createLevel(Handle);
-  SDL_RWclose(Handle);
-  std::cout << "Scene init \n";
-}
+bool Scene::init() {
+  const char *fileName = "level";
+    SDL_RWops *file = SDL_RWFromFile(fileName, "rb");
+    if (file == NULL) {
+      std::cout<<"Error: "<<SDL_GetError()<<std::endl;
+      return false;
+    }
+    else {
+      currentLevel = SceneCreator::createLevel(file);
+      std::cout << "Scene init \n";
+      return true;
+    }
+  }
+
 
 void Scene::update() {
-  // TODO Some wonkiness with collision sprite position and walking animation staying after changing
-  // character
   std::cout << "--------------" << std::endl;
 
   if (selectedPlayer != selectedPlayerIndex) {

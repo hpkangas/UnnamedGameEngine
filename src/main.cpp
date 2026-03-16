@@ -11,7 +11,12 @@ int main(int argc, char const *argv[]) {
 
   game.init("Totally not Lost Vikings", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREENWIDTH,
             SCREENHEIGHT, false);
-  scene.init();
+
+if (!scene.init()){
+  std::cout<<"Error iniatializing scene. Abort. \n";
+  game.clean();
+  return 0;
+}
   std::cout << "Initialization complete at " << SDL_GetTicks64() / 1000.0 << " seconds"
             << std::endl;
 
@@ -25,6 +30,7 @@ int main(int argc, char const *argv[]) {
       continue;
     }
   }
+
   std::cout << "End after " << SDL_GetTicks64() / 1000.0 << " seconds" << std::endl;
   game.clean();
 

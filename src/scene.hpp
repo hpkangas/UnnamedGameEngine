@@ -15,7 +15,7 @@
 
 class Scene {
 public:
-  void init();
+  bool init();
   void handleEvents();
   void update();
   void render();
