@@ -66,13 +66,6 @@ void TransformSystem::stopY(TransformComponent &transformComponent, int yposDif)
 
 void TransformSystem::update(TransformComponent &transformComponent) {
 
-  if (transformComponent.jumpTics > -1) {
-    std::cout << "jump tics: " << transformComponent.jumpTics << std::endl;
-    transformComponent.setYvel(transformComponent.getYvel() -
-                               transformComponent.jumpTable[transformComponent.jumpTics]);
-    transformComponent.jumpTics--;
-  }
-
   const float xvel = transformComponent.getXvel();
   const float yvel = transformComponent.getYvel();
   const int xpos = transformComponent.getXpos();

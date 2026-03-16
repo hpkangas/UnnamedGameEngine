@@ -3,7 +3,6 @@
 #define TRANSFORMCOMPONENT_HPP
 #include "../utils.hpp"
 #include "component.hpp"
-#include <iostream>
 
 using namespace Utils;
 struct TransformComponent : public IComponent {
@@ -12,10 +11,6 @@ private:
   Velocity velocity{0, 0};
 
 public:
-  // jump component?
-  int jumpTics = -1;
-  // read from the end.. because of reasons
-  int jumpTable[3] = {2, 4, 6};
 
   TransformComponent() {}
   ~TransformComponent() {}
@@ -39,12 +34,10 @@ public:
   void setVelocity(Velocity velocity) { this->velocity = velocity; }
 
   void setXvel(const float xvel) {if (xvel != 0) {
-      std::cout <<"xvel "<< xvel << std::endl;
     } velocity.x = xvel; }
 
   void setYvel(const float yvel) {
     if (yvel != 0) {
-      std::cout << "yvel "<<yvel << std::endl;
     }
     velocity.y = yvel;
   }

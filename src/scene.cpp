@@ -1,5 +1,5 @@
 #include "scene.hpp"
-#include "SDL_error.h"
+#include <SDL2/SDL_error.h>
 #include "camera.hpp"
 #include "components/gravitycomponent.hpp"
 #include "components/transformcomponent.hpp"
@@ -73,16 +73,21 @@ void Scene::update() {
 void Scene::render() { renderSystem.renderComponents(currentLevel.rcs); }
 
 void Scene::updateCamera(TransformComponent &transformComponent) {
-  if ((transformComponent.getXpos() < Camera::position.x && transformComponent.getXvel() < 0) ||
-      (transformComponent.getXpos() + PLAYER_WIDTH > Camera::position.w &&
-       transformComponent.getXvel() > 0)) {
-    Camera::offset.x += transformComponent.getXvel();
+  const int xpos = transformComponent.getXpos();
+  const float xvel = transformComponent.getXvel();
+  const int ypos = transformComponent.getYpos();
+  const float yvel = transformComponent.getYvel();
+
+  if ((xpos < Camera::position.x && xvel < 0) ||
+      (xpos + PLAYER_WIDTH > Camera::position.w &&
+       xvel > 0)) {
+    Camera::offset.x += xvel;
   }
 
-  if ((transformComponent.getYpos() < Camera::position.y && transformComponent.getYvel() < 0) ||
-      (transformComponent.getYpos() + PLAYER_HEIGHT > Camera::position.h &&
-       transformComponent.getYvel() > 0)) {
-    Camera::offset.y += transformComponent.getYvel();
+  if ((ypos < Camera::position.y && yvel < 0) ||
+      (ypos + PLAYER_HEIGHT > Camera::position.h &&
+       yvel > 0)) {
+    Camera::offset.y += yvel;
   }
   Camera::updatePositionRelativeToScreenAndOffset();
 }
