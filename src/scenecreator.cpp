@@ -31,7 +31,6 @@ SceneInfo SceneCreator::createLevel2(SDL_RWops *file) {
   int x = 0;
   while (SDL_RWread(file, &c, 1, 1) == 1) {
     if (c == '\n') {
-        std::cout<<"new line\n";
             y++;
             x=0;
             continue;
@@ -51,7 +50,11 @@ SceneInfo SceneCreator::createLevel2(SDL_RWops *file) {
       } else if (currentValue.substr(0, 1) == "L") {
         createLadder(128*x, 128*y, level);
     
-      } else {
+      } else if (currentValue == "") {
+        // createEmptyTile(128*x, 128*y, level);
+        std::cout<<"asd \n";
+    
+      }else {
         std::cout << "Error: Scene creator: " << currentValue << "is unknown. Line "<<y<<" "<<x<< std::endl;
       }
 
@@ -136,6 +139,24 @@ void SceneCreator::createBlock2(int x, int y, SceneInfo &level) {
 }
 void SceneCreator::createBlock3(int x, int y, SceneInfo &level) {
   createBlockEntity(x, y, 256, level);
+}
+void SceneCreator::createEmptyTile(int x, int y,SceneInfo &level){
+  int id = getID();
+
+  auto transformComponent = std::make_unique<TransformComponent>();
+  transformComponent->setVelocity({0, 0});
+  transformComponent->setPosition({x, y});
+  transformComponent->parentID = id;
+
+  auto tileComponent = std::make_unique<TileComponent>();
+  tileComponent->tile = TILE::NONE;
+
+  level.tcs.emplace(id, (std::move(transformComponent)));
+  level.tiles.emplace(id, (std::move(tileComponent)));
+  level.ids++;
+  level.transformIds.emplace_back(id);
+  level.tileIds.emplace_back(id);
+
 }
 
 void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level) {

@@ -46,6 +46,7 @@ private:
   static void createBlock1(int x, int y, SceneInfo &level);
   static void createBlock2(int x, int y, SceneInfo &level);
   static void createBlock3(int x, int y, SceneInfo &level);
+  static void createEmptyTile(int x, int y, SceneInfo &level);
   static void createBlockEntity(int x, int y, int sourceX, SceneInfo &level);
   static void createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level);
   static void createLadder(int x, int y, SceneInfo &level);
