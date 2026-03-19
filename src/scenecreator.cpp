@@ -31,31 +31,31 @@ SceneInfo SceneCreator::createLevel2(SDL_RWops *file) {
   int x = 0;
   while (SDL_RWread(file, &c, 1, 1) == 1) {
     if (c == '\n') {
-            y++;
-            x=0;
-            continue;
+      y++;
+      x = 0;
+      continue;
     }
     if (c == ',') {
-      std::cout<<currentValue<<std::endl;
+      std::cout << currentValue << std::endl;
 
       if (currentValue.substr(0, 2) == "PC") {
-        createPC(128*x, 128*y, level);
+        createPC(128 * x, 128 * y, level);
 
       } else if (currentValue.substr(0, 1) == "B") {
-        createBlock(currentValue, 128*x, 128*y, level);
+        createBlock(currentValue, 128 * x, 128 * y, level);
 
       } else if (currentValue.substr(0, 2) == "LS") {
-        createLadderStart(128*x, 128*y, level);
+        createLadderStart(128 * x, 128 * y, level);
 
       } else if (currentValue.substr(0, 1) == "L") {
-        createLadder(128*x, 128*y, level);
-    
+        createLadder(128 * x, 128 * y, level);
+
       } else if (currentValue == "") {
-        // createEmptyTile(128*x, 128*y, level);
-        std::cout<<"asd \n";
-    
-      }else {
-        std::cout << "Error: Scene creator: " << currentValue << "is unknown. Line "<<y<<" "<<x<< std::endl;
+        createEmptyTile(128 * x, 128 * y, level);
+
+      } else {
+        std::cout << "Error: Scene creator: " << currentValue << "is unknown. Line " << y << " "
+                  << x << std::endl;
       }
 
       x++;
@@ -113,7 +113,6 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
       values.emplace_back(currentValue);
       currentValue = "";
     }
-  
   }
   SDL_RWclose(file);
   return level;
@@ -140,7 +139,7 @@ void SceneCreator::createBlock2(int x, int y, SceneInfo &level) {
 void SceneCreator::createBlock3(int x, int y, SceneInfo &level) {
   createBlockEntity(x, y, 256, level);
 }
-void SceneCreator::createEmptyTile(int x, int y,SceneInfo &level){
+void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
   int id = getID();
 
   auto transformComponent = std::make_unique<TransformComponent>();
@@ -156,7 +155,6 @@ void SceneCreator::createEmptyTile(int x, int y,SceneInfo &level){
   level.ids++;
   level.transformIds.emplace_back(id);
   level.tileIds.emplace_back(id);
-
 }
 
 void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
@@ -172,7 +170,7 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   transformComponent->setPosition({x, y});
   transformComponent->parentID = id;
 
-  renderComponent->sourceRect = {sourceX, 0, 128, 64};
+  renderComponent->sourceRect = {sourceX, 0, 128, 128};
   renderComponent->destinationRect.h = renderComponent->sourceRect.h;
   renderComponent->destinationRect.w = renderComponent->sourceRect.w;
   renderComponent->destinationRect.x = transformComponent->getXpos();

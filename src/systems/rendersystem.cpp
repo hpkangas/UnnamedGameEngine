@@ -2,6 +2,7 @@
 #include "../camera.hpp"
 #include "../game.hpp"
 #include <memory>
+#include <vector>
 
 void RenderSystem::update(const TransformComponent &tc, RenderComponent &rc) {
   rc.destinationRect.x = tc.getXpos();
@@ -17,11 +18,12 @@ void RenderSystem::update(const TransformComponent &tc, RenderComponent &rc) {
 }
 
 void RenderSystem::renderComponents(
-    std::unordered_map<int, std::unique_ptr<RenderComponent>> &renderComponents) {
+    std::unordered_map<int, std::unique_ptr<RenderComponent>> &renderComponents,
+    std::vector<int> renderIds) {
 
   SDL_RenderClear(Game::renderer);
-  for (int i = renderComponents.size() - 1; i > -1; i--) {
-    draw(renderComponents.at(i).get()->render());
+  for (int id : renderIds) {
+    draw(renderComponents.at(id).get()->render());
   }
   // for (auto &object : renderComponents) {
   //   draw(object.second->render());

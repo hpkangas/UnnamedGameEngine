@@ -1,6 +1,7 @@
 #include "collisiondetectionsystem.hpp"
 #include "../physics.hpp"
 #include <cstdio>
+#include <iostream>
 
 void CollisionDetectionSystem::update(int i, SceneInfo &currentLevel) {
   checkBlockCollision(i, currentLevel);
@@ -15,23 +16,27 @@ void CollisionDetectionSystem::checkBlockCollision(int i, SceneInfo &currentLeve
   Velocity velocity = playerT.getVelocity();
   // other than player ids
   for (int j : currentLevel.collisionIds) {
-    if (j==0) {
-    j++;
+    if (j == 0) {
+      continue;
     }
     auto &blockC = currentLevel.ccs.at(j);
-    TILE collisionTile = currentLevel.tiles.at(j)->getTile();
+    TILE collisionTile = TILE::NONE;
+    if (currentLevel.tiles.find(j) != currentLevel.tiles.end()) {
+      collisionTile = currentLevel.tiles.at(j)->getTile();
+    }
 
     if (!playerC.getCollisionLeft()) {
       checkPlayerLeftCollision(playerC, *blockC, velocity, collisionTile);
     }
     if (!playerC.getCollisionRight()) {
       checkPlayerRightCollision(playerC, *blockC, velocity, collisionTile);
-      
     }
     if (!playerC.getCollisionDown()) {
-      checkPlayerDownCollision(playerC, *blockC, velocity, collisionTile);}
-      if (!playerC.getCollisionUp()) {
-    checkPlayerUpCollision(playerC, *blockC, velocity, collisionTile);}
+      checkPlayerDownCollision(playerC, *blockC, velocity, collisionTile);
+    }
+    if (!playerC.getCollisionUp()) {
+      checkPlayerUpCollision(playerC, *blockC, velocity, collisionTile);
+    }
   }
 }
 

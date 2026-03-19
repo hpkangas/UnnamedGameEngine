@@ -7,7 +7,7 @@ class CollisionDetectionSystem {
 public:
   CollisionDetectionSystem() {}
   ~CollisionDetectionSystem() {}
-  
+
   TILE currentTile = TILE::NONE;
   Position collidedDownObjectPos = {0, 0};
   Position collidedUpObjectPos = {0, 0};

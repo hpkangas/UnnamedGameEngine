@@ -70,7 +70,7 @@ void Scene::update() {
   updateCamera(*currentLevel.tcs.at(selectedPlayer));
 }
 
-void Scene::render() { renderSystem.renderComponents(currentLevel.rcs); }
+void Scene::render() { renderSystem.renderComponents(currentLevel.rcs, currentLevel.renderIds); }
 
 void Scene::updateCamera(TransformComponent &transformComponent) {
   const int xpos = transformComponent.getXpos();
