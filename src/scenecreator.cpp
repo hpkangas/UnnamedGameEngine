@@ -1,5 +1,6 @@
 #include "scenecreator.hpp"
 #include "SDL_error.h"
+#include "SDL_rect.h"
 #include "SDL_render.h"
 #include "components/animationcomponent.hpp"
 #include "components/collisioncomponent.hpp"
@@ -13,13 +14,21 @@
 #include <SDL2/SDL_rwops.h>
 #include <asm-generic/errno.h>
 #include <cstdio>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <ostream>
 #include <string>
 #include <vector>
 
+// for convenience
 SceneInfo SceneCreator::createLevel2(SDL_RWops *file) {
+  using json = nlohmann::json;
+  std::ifstream f("example.json");
+  json data = json::parse(f);
+  std::string asd = data.at("avain");
+  std::cout << asd;
+
   SceneInfo level;
   std::string currentValue;
   char c = '0';
@@ -140,15 +149,12 @@ void SceneCreator::createBlock3(int x, int y, SceneInfo &level) {
   createBlockEntity(x, y, 256, level);
 }
 void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
-  int id = getID();
+  int id = getId();
 
-  auto transformComponent = std::make_unique<TransformComponent>();
-  transformComponent->setVelocity({0, 0});
-  transformComponent->setPosition({x, y});
+  auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   transformComponent->parentID = id;
 
-  auto tileComponent = std::make_unique<TileComponent>();
-  tileComponent->tile = TILE::NONE;
+  auto tileComponent = std::make_unique<TileComponent>(TILE::NONE);
 
   level.tcs.emplace(id, (std::move(transformComponent)));
   level.tiles.emplace(id, (std::move(tileComponent)));
@@ -158,33 +164,15 @@ void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
-  int id = getID();
-  auto transformComponent = std::make_unique<TransformComponent>();
-  auto renderComponent = std::make_unique<RenderComponent>();
-  auto collisionComponent = std::make_unique<CollisionComponent>();
-  auto tileComponent = std::make_unique<TileComponent>();
+  int id = getId();
+  auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
+  SDL_Rect sourceRect = {sourceX, 0, 128, 128};
+  SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
+  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
+                                                           SDL_FLIP_NONE, textures.at(1), id);
+  auto collisionComponent = std::make_unique<CollisionComponent>(destinationRect, id);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::SOLID);
 
-  tileComponent->tile = TILE::SOLID;
-
-  transformComponent->setVelocity({0, 0});
-  transformComponent->setPosition({x, y});
-  transformComponent->parentID = id;
-
-  renderComponent->sourceRect = {sourceX, 0, 128, 128};
-  renderComponent->destinationRect.h = renderComponent->sourceRect.h;
-  renderComponent->destinationRect.w = renderComponent->sourceRect.w;
-  renderComponent->destinationRect.x = transformComponent->getXpos();
-  renderComponent->destinationRect.y = transformComponent->getYpos();
-  renderComponent->parentID = id;
-
-  collisionComponent->collisionRect.h = renderComponent->destinationRect.h;
-  collisionComponent->collisionRect.w = renderComponent->destinationRect.w;
-  collisionComponent->collisionRect.x = transformComponent->getXpos();
-  collisionComponent->collisionRect.y = transformComponent->getYpos();
-  collisionComponent->parentID = id;
-
-  // TODO Should probably be some constant value loaded at the start
-  renderComponent->objTexture = textures.at(1);
   level.tcs.emplace(id, (std::move(transformComponent)));
   level.rcs.emplace(id, (std::move(renderComponent)));
   level.ccs.emplace(id, (std::move(collisionComponent)));
@@ -197,33 +185,15 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
 }
 
 void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
-  int id = getID();
-  auto transformComponent = std::make_unique<TransformComponent>();
-  auto renderComponent = std::make_unique<RenderComponent>();
-  auto collisionComponent = std::make_unique<CollisionComponent>();
-  auto tileComponent = std::make_unique<TileComponent>();
+  int id = getId();
+  auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
+  SDL_Rect sourceRect = {sourceX, 0, 128, 128};
+  SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
+  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
+                                                           SDL_FLIP_NONE, textures.at(1), id);
+  auto collisionComponent = std::make_unique<CollisionComponent>(sourceRect, id);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::SEMISOLID);
 
-  tileComponent->tile = TILE::SEMISOLID;
-
-  transformComponent->setVelocity({0, 0});
-  transformComponent->setPosition({x, y});
-  transformComponent->parentID = id;
-
-  renderComponent->sourceRect = {sourceX, 0, 128, 64};
-  renderComponent->destinationRect.h = renderComponent->sourceRect.h;
-  renderComponent->destinationRect.w = renderComponent->sourceRect.w;
-  renderComponent->destinationRect.x = transformComponent->getXpos();
-  renderComponent->destinationRect.y = transformComponent->getYpos();
-  renderComponent->parentID = id;
-
-  collisionComponent->collisionRect.h = renderComponent->destinationRect.h;
-  collisionComponent->collisionRect.w = renderComponent->destinationRect.w;
-  collisionComponent->collisionRect.x = transformComponent->getXpos();
-  collisionComponent->collisionRect.y = transformComponent->getYpos() + 4;
-  collisionComponent->parentID = id;
-
-  // TODO Should probably be some constant value loaded at the start
-  renderComponent->objTexture = textures.at(1);
   level.tcs.emplace(id, (std::move(transformComponent)));
   level.rcs.emplace(id, (std::move(renderComponent)));
   level.ccs.emplace(id, (std::move(collisionComponent)));
@@ -248,38 +218,19 @@ void SceneCreator::destroyTextures() {
 }
 
 void SceneCreator::createPC(int x, int y, SceneInfo &level) {
-  int id = getID();
+  int id = getId();
 
-  auto transformComponent = std::make_unique<TransformComponent>();
-  auto renderComponent = std::make_unique<RenderComponent>();
-  auto collisionComponent = std::make_unique<CollisionComponent>();
-  auto gravityComponent = std::make_unique<GravityComponent>();
+  auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
+  SDL_Rect sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
+  SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
+  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
+                                                           SDL_FLIP_NONE, textures.at(0), id);
+  SDL_Rect collisionRect = {transformComponent->getXpos(), transformComponent->getYpos(),
+                            PLAYER_WIDTH, PLAYER_HEIGHT};
+  auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
+  auto gravityComponent = std::make_unique<GravityComponent>(GRAVITY_STATE::AIRBORNE, id);
   auto animationComponent = std::make_unique<AnimationComponent>();
-  auto controlComponent = std::make_unique<ControlComponent>();
-
-  transformComponent->setVelocity({0, 0});
-  transformComponent->setPosition({x, y});
-  transformComponent->parentID = id;
-
-  renderComponent->sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
-  // TODO Should probably be some constant value loaded at the start
-  renderComponent->objTexture = textures.at(0);
-  renderComponent->flip = SDL_FLIP_NONE;
-  renderComponent->destinationRect = {x, y, renderComponent->sourceRect.w,
-                                      renderComponent->sourceRect.h};
-  renderComponent->parentID = id;
-
-  // TODO sprite offsets. should be defined inside the specific character
-  // classes (once decided on)
-  collisionComponent->collisionRect = {transformComponent->getXpos(), transformComponent->getYpos(),
-                                       PLAYER_WIDTH, PLAYER_HEIGHT};
-  collisionComponent->parentID = id;
-
-  controlComponent->setControlState(CONTROL_STATE::AIRBORNE);
-  controlComponent->parentID = id;
-
-  gravityComponent->gravityState = GRAVITY_STATE::AIRBORNE;
-  gravityComponent->parentID = id;
+  auto controlComponent = std::make_unique<ControlComponent>(CONTROL_STATE::AIRBORNE, id);
 
   animationComponent->parentID = id;
 
@@ -300,26 +251,15 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
-  int id = getID();
-  auto transformComponent = std::make_unique<TransformComponent>();
-  auto renderComponent = std::make_unique<RenderComponent>();
-  auto tileComponent = std::make_unique<TileComponent>();
-  auto collisionComponent = std::make_unique<CollisionComponent>();
-
-  transformComponent->setPosition({x, y});
-  transformComponent->parentID = id;
-
-  renderComponent->sourceRect = {0, 192, 128, 128};
-  renderComponent->destinationRect = {x, y, renderComponent->sourceRect.w,
-                                      renderComponent->sourceRect.h};
-  renderComponent->objTexture = textures.at(1);
-  renderComponent->parentID = id;
-
-  collisionComponent->collisionRect = {x, y, 128, 128};
-  collisionComponent->parentID = id;
-
-  tileComponent->tile = TILE::LADDER;
-  tileComponent->parentID = id;
+  int id = getId();
+  auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
+  SDL_Rect sourceRect = {0, 192, 128, 128};
+  SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
+  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
+                                                           SDL_FLIP_NONE, textures.at(1), id);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::LADDER);
+  SDL_Rect collisionRect = {x, y, 128, 128};
+  auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
 
   level.tcs.emplace(id, (std::move(transformComponent)));
   level.rcs.emplace(id, (std::move(renderComponent)));
@@ -333,26 +273,15 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
-  int id = getID();
-  auto transformComponent = std::make_unique<TransformComponent>();
-  auto renderComponent = std::make_unique<RenderComponent>();
-  auto tileComponent = std::make_unique<TileComponent>();
-  auto collisionComponent = std::make_unique<CollisionComponent>();
-
-  transformComponent->setPosition({x, y});
-  transformComponent->parentID = id;
-
-  renderComponent->sourceRect = {0, 128, 128, 64};
-  renderComponent->destinationRect = {x, y, renderComponent->sourceRect.w,
-                                      renderComponent->sourceRect.h};
-  renderComponent->objTexture = textures.at(1);
-  renderComponent->parentID = id;
-
-  collisionComponent->collisionRect = {x, y, 128, 64};
-  collisionComponent->parentID = id;
-
-  tileComponent->tile = TILE::LADDERSTART;
-  tileComponent->parentID = id;
+  int id = getId();
+  auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
+  SDL_Rect sourceRect = {0, 192, 128, 64};
+  SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
+  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
+                                                           SDL_FLIP_NONE, textures.at(1), id);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::LADDERSTART);
+  SDL_Rect collisionRect = {x, y, 128, 64};
+  auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
 
   level.tcs.emplace(id, (std::move(transformComponent)));
   level.rcs.emplace(id, (std::move(renderComponent)));
@@ -365,7 +294,7 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   level.tileIds.emplace_back(id);
 }
 
-int SceneCreator::getID() {
+int SceneCreator::getId() {
   static int id = -1;
   id++;
   return id;

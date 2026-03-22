@@ -7,7 +7,11 @@
 
 using namespace Utils;
 struct CollisionComponent : public IComponent {
-  CollisionComponent();
+  CollisionComponent(SDL_Rect collision, int id) {
+    collisionRect = collision;
+    parentID = id;
+  }
+  ~CollisionComponent() {}
   SDL_Rect collisionRect{0, 0, 0, 0};
   Utils::Position center = {(collisionRect.x + collisionRect.w + collisionRect.w) / 2,
                             (collisionRect.y + collisionRect.h + collisionRect.h) / 2};

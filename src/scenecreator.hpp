@@ -10,6 +10,7 @@
 #include "components/tilecomponent.hpp"
 #include "components/transformcomponent.hpp"
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <unordered_map>
 #include <vector>
 
@@ -54,7 +55,7 @@ private:
   static void loadTextures();
   void destroyTextures();
   static void createPC(int x, int y, SceneInfo &level);
-  static int getID();
+  static int getId();
 
 }; // namespace Level
 

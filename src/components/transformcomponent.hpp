@@ -11,8 +11,12 @@ private:
   Velocity velocity{0, 0};
 
 public:
-
-  TransformComponent() {}
+  TransformComponent(int x, int y, float velx, float vely, int id) {
+    this->position = {x, y};
+    this->velocity = {velx, vely};
+    parentID = id;
+  }
+  TransformComponent(int x, int y, int id) : TransformComponent(x, y, 0, 0, id) {}
   ~TransformComponent() {}
 
   int getXpos() const { return position.x; }
@@ -33,8 +37,11 @@ public:
   Velocity getVelocity() { return velocity; }
   void setVelocity(Velocity velocity) { this->velocity = velocity; }
 
-  void setXvel(const float xvel) {if (xvel != 0) {
-    } velocity.x = xvel; }
+  void setXvel(const float xvel) {
+    if (xvel != 0) {
+    }
+    velocity.x = xvel;
+  }
 
   void setYvel(const float yvel) {
     if (yvel != 0) {

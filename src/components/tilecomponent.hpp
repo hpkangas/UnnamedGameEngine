@@ -4,7 +4,7 @@
 enum class TILE { NONE = 0, SOLID = 1, SEMISOLID = 2, LADDER = 3, LADDERSTART = 4 };
 
 struct TileComponent : public IComponent {
-  TileComponent() { tile = TILE::NONE; }
+  TileComponent(TILE tile) { this->tile = tile; }
   TILE tile;
   TILE getTile() { return this->tile; }
 };

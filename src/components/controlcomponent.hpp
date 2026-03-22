@@ -8,6 +8,11 @@ class ControlComponent : public IComponent {
   CONTROL_STATE controlState = CONTROL_STATE::NORMAL;
 
 public:
+  ControlComponent(CONTROL_STATE state, int id) {
+    controlState = state;
+    parentID = id;
+  }
+  ~ControlComponent() {}
   void setCanClimb(bool canClimb) { this->canClimb = canClimb; }
   bool getCanClimb() const { return this->canClimb; }
 
