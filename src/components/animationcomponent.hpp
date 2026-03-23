@@ -9,7 +9,6 @@ struct AnimationComponent : public IComponent {
   ANIMATION_STATE animationState = ANIMATION_STATE::STILL;
   int animationFrame = 0;
   const int WALKING_ANIMATION_FRAMES = 8;
-
 };
 
 #endif

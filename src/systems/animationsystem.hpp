@@ -14,7 +14,6 @@ public:
               RenderComponent &renderComponent, AnimationComponent &animationComponent) const;
 
 private:
-
   void determineAnimationState(ControlComponent const &controlComponent,
                                CollisionComponent const &collisionComponent,
                                GRAVITY_STATE gravityState,

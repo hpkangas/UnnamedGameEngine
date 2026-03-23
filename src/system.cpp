@@ -2,7 +2,7 @@
 #include <iostream>
 
 void System::init(const char *title, const int xpos, const int ypos, const int width,
-                const int height, const bool fullscreen) const{
+                  const int height, const bool fullscreen) const {
 
   int flags = 0;
   if (fullscreen) {

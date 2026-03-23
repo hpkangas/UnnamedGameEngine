@@ -16,10 +16,11 @@ struct RenderInfo {
 
 struct RenderComponent : public IComponent {
   RenderComponent(SDL_Rect source, SDL_Rect destination, SDL_RendererFlip flip,
-                  SDL_Texture *texture, int id) : sourceRect(source), destinationRect(destination), objTexture(texture), flip(flip){
+                  SDL_Texture *texture, int id)
+      : sourceRect(source), destinationRect(destination), objTexture(texture), flip(flip) {
     parentID = id;
   }
-  
+
   // ~RenderComponent() { SDL_DestroyTexture(objTexture); }
 
   SDL_Rect sourceRect{};
@@ -29,8 +30,7 @@ struct RenderComponent : public IComponent {
 
   RenderInfo render();
 
-void to_json(json &j, const RenderComponent &rc);
-void from_json(const json &j, RenderComponent &rc);
-
+  void to_json(json &j, const RenderComponent &rc);
+  void from_json(const json &j, RenderComponent &rc);
 };
 #endif

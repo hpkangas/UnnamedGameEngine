@@ -5,12 +5,9 @@
 enum class GRAVITY_STATE { GROUNDED = 0, AIRBORNE = 1, FALLING = 2 };
 
 struct GravityComponent : public IComponent {
-  GravityComponent(GRAVITY_STATE state, int id): gravityState(state) {
-    parentID = id;
-  }
+  GravityComponent(GRAVITY_STATE state, int id) : gravityState(state) { parentID = id; }
 
   GRAVITY_STATE gravityState = GRAVITY_STATE::AIRBORNE;
-
 };
 
 #endif

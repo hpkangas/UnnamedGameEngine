@@ -36,7 +36,8 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
                              RenderComponent &renderComponent,
                              AnimationComponent &animationComponent) const {
 
-  determineAnimationState(controlComponent, collisionComponent, gravityState, transformComponent,animationComponent);
+  determineAnimationState(controlComponent, collisionComponent, gravityState, transformComponent,
+                          animationComponent);
 
   // Magic numbers should eventually be switched to something like enums, class data or json
   switch (animationComponent.animationState) {
@@ -100,6 +101,6 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
 }
 
 void AnimationSystem::playFrame(RenderComponent &renderComponent, const int x, const int y,
-                                const int w, const int h, const int frame) const{
+                                const int w, const int h, const int frame) const {
   renderComponent.sourceRect = {x + w * frame, y, w, h};
 }

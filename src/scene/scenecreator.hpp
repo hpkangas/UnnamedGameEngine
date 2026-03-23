@@ -1,7 +1,6 @@
 #pragma once
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
-#include "SDL_render.h"
 #include "../components/animationcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/controlcomponent.hpp"
@@ -9,10 +8,11 @@
 #include "../components/rendercomponent.hpp"
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
+#include "SDL_render.h"
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <unordered_map>
 #include <vector>
-#include <nlohmann/json.hpp>
 
 using json = nlohmann::basic_json<>;
 
@@ -33,7 +33,6 @@ struct SceneInfo {
   std::vector<int> controlIds;
   int ids = 0;
 };
-
 
 class SceneCreator {
 public:

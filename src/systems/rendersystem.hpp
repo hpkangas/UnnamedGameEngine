@@ -12,7 +12,7 @@ public:
                         std::vector<int> const &renderIds) const;
   void render(RenderComponent &renderComponent) const;
   void update(const TransformComponent &tc, RenderComponent &rc) const;
-  void draw(const RenderInfo &RenderInfo)const;
+  void draw(const RenderInfo &RenderInfo) const;
 };
 
 #endif

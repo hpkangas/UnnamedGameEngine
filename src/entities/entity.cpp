@@ -13,7 +13,8 @@
 //   return id;
 // }
 
-// TransformComponent *Entity::getTransformComponent() { return GetComponent<TransformComponent>(); }
+// TransformComponent *Entity::getTransformComponent() { return GetComponent<TransformComponent>();
+// }
 
 // // not working, refactor like above?
 // RenderComponent *Entity::getRenderComponent() {

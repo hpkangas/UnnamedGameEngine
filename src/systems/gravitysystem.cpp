@@ -9,16 +9,17 @@ void GravitySystem::gravity(TransformComponent &transformComponent) const {
   }
 }
 
-void GravitySystem::update(ControlComponent const &controlComponent, GravityComponent &gravityComponent,
-                           TransformComponent &transformComponent) const{
+void GravitySystem::update(ControlComponent const &controlComponent,
+                           GravityComponent &gravityComponent,
+                           TransformComponent &transformComponent) const {
 
   if (controlComponent.controlState == CONTROL_STATE::NORMAL ||
       controlComponent.controlState == CONTROL_STATE::CLIMBING) {
-    gravityComponent.gravityState =GRAVITY_STATE::GROUNDED;
+    gravityComponent.gravityState = GRAVITY_STATE::GROUNDED;
   }
 
   if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
-    gravityComponent.gravityState =GRAVITY_STATE::AIRBORNE;
+    gravityComponent.gravityState = GRAVITY_STATE::AIRBORNE;
   }
 
   switch (gravityComponent.gravityState) {

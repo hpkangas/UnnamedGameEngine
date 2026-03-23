@@ -19,7 +19,7 @@ void RenderSystem::update(const TransformComponent &tc, RenderComponent &rc) con
 
 void RenderSystem::renderComponents(
     std::unordered_map<int, std::unique_ptr<RenderComponent>> &renderComponents,
-    std::vector<int> const &renderIds) const{
+    std::vector<int> const &renderIds) const {
 
   SDL_RenderClear(System::renderer);
   for (int id : renderIds) {
@@ -32,9 +32,11 @@ void RenderSystem::renderComponents(
   SDL_RenderPresent(System::renderer);
 }
 
-void RenderSystem::render(RenderComponent &renderComponent) const { draw(renderComponent.render()); }
+void RenderSystem::render(RenderComponent &renderComponent) const {
+  draw(renderComponent.render());
+}
 
-void RenderSystem::draw(const RenderInfo &RenderInfo) const{
+void RenderSystem::draw(const RenderInfo &RenderInfo) const {
   SDL_Rect newDestination = RenderInfo.destinationRect;
   newDestination.x -= Camera::offset.x;
   newDestination.y -= Camera::offset.y;

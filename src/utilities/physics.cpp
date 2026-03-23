@@ -56,19 +56,16 @@ bool playerCollisionDown(SDL_Rect const &player, SDL_Rect const &obj,
                          Velocity const playerVelocity) {
 
   if (player.y + player.h <= obj.y + obj.h) {
-      return player.y + player.h + playerVelocity.y >= obj.y &&
-             player.x < obj.x + obj.w &&
-             player.x + player.w > obj.x;
+    return player.y + player.h + playerVelocity.y >= obj.y && player.x < obj.x + obj.w &&
+           player.x + player.w > obj.x;
   }
   return false;
 }
 
-bool playerCollisionUp(SDL_Rect const &player, SDL_Rect const &obj,
-                       Velocity const playerVelocity) {
+bool playerCollisionUp(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
 
   if (player.y >= obj.y) {
-    return player.y + playerVelocity.y <= obj.y + obj.h &&
-           player.x < obj.x + obj.w &&
+    return player.y + playerVelocity.y <= obj.y + obj.h && player.x < obj.x + obj.w &&
            player.x + player.w > obj.x;
   }
   return false;
@@ -78,8 +75,7 @@ bool playerCollisionLeft(SDL_Rect const &player, SDL_Rect const &obj,
                          Velocity const playerVelocity) {
 
   if (player.x >= obj.x + obj.w) {
-    return player.x + playerVelocity.x < obj.x + obj.w &&
-           player.y < obj.y + obj.h &&
+    return player.x + playerVelocity.x < obj.x + obj.w && player.y < obj.y + obj.h &&
            player.y + player.h > obj.y;
   }
   return false;
@@ -89,8 +85,7 @@ bool playerCollisionRight(SDL_Rect const &player, SDL_Rect const &obj,
                           Velocity const playerVelocity) {
 
   if (player.x + player.w <= obj.x) {
-    return player.x + player.w + playerVelocity.x > obj.x &&
-           player.y < obj.y + obj.h &&
+    return player.x + player.w + playerVelocity.x > obj.x && player.y < obj.y + obj.h &&
            player.y + player.h > obj.y;
   }
   return false;

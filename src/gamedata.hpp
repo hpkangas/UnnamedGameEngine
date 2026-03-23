@@ -4,8 +4,8 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
-struct GameData{
- static nlohmann::json init();
+struct GameData {
+  static nlohmann::json init();
 };
 
 #endif

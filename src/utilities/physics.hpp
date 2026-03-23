@@ -13,14 +13,13 @@ bool checkLeft(SDL_Rect a, SDL_Rect b);
 bool playerCollisionDown(SDL_Rect const &player, SDL_Rect const &obj,
                          Velocity const playerVelocity);
 
-bool playerCollisionUp(SDL_Rect const &player, SDL_Rect const &obj,
-                       Velocity const playerVelocity);
+bool playerCollisionUp(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity);
 
-bool playerCollisionLeft(SDL_Rect const& player, SDL_Rect const &obj,
+bool playerCollisionLeft(SDL_Rect const &player, SDL_Rect const &obj,
                          Velocity const playerVelocity);
 
 bool playerCollisionRight(SDL_Rect const &player, SDL_Rect const &obj,
-                          Velocity const    playerVelocity);
+                          Velocity const playerVelocity);
 
 }; // namespace Physics
 #endif

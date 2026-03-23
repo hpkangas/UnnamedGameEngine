@@ -1,11 +1,11 @@
 #include "scene.hpp"
-#include <SDL2/SDL_error.h>
 #include "../camera.hpp"
 #include "../components/gravitycomponent.hpp"
 #include "../components/transformcomponent.hpp"
-#include "../utilities/constants.hpp"
 #include "../system.hpp"
 #include "../systems/transformsystem.hpp"
+#include "../utilities/constants.hpp"
+#include <SDL2/SDL_error.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
 #include <cstdio>
@@ -13,18 +13,16 @@
 
 bool Scene::init() {
   const char *fileName = "level2";
-    SDL_RWops *file = SDL_RWFromFile(fileName, "rb");
-    if (file == nullptr) {
-      std::cout<<"Error: "<<SDL_GetError()<<std::endl;
-      return false;
-    }
-    else {
-      currentLevel = SceneCreator::createLevel(file);
-      std::cout << "Scene init \n";
-      return true;
-    }
+  SDL_RWops *file = SDL_RWFromFile(fileName, "rb");
+  if (file == nullptr) {
+    std::cout << "Error: " << SDL_GetError() << std::endl;
+    return false;
+  } else {
+    currentLevel = SceneCreator::createLevel(file);
+    std::cout << "Scene init \n";
+    return true;
   }
-
+}
 
 void Scene::update() {
   if (selectedPlayer != selectedPlayerIndex) {
@@ -34,8 +32,7 @@ void Scene::update() {
 
   for (int id : currentLevel.controlIds) {
     controlSystem.update(transformSystem, *currentLevel.tcs.at(id), id, selectedPlayerIndex,
-                         *currentLevel.ctrlComponents.at(id),
-                         *currentLevel.ccs.at(id));
+                         *currentLevel.ctrlComponents.at(id), *currentLevel.ccs.at(id));
   }
   // What if component list doens't have the id/i? How to go through only ids that are in the list?
 
@@ -77,19 +74,18 @@ void Scene::updateCamera(const TransformComponent &transformComponent) const {
   const float yvel = transformComponent.velocity.y;
 
   if ((xpos < Camera::position.x && xvel < 0) ||
-      (xpos + PLAYER_WIDTH > Camera::position.w &&
-       xvel > 0)) {
+      (xpos + PLAYER_WIDTH > Camera::position.w && xvel > 0)) {
     Camera::offset.x += xvel;
   }
 
   if ((ypos < Camera::position.y && yvel < 0) ||
-      (ypos + PLAYER_HEIGHT > Camera::position.h &&
-       yvel > 0)) {
+      (ypos + PLAYER_HEIGHT > Camera::position.h && yvel > 0)) {
     Camera::offset.y += yvel;
   }
   Camera::updatePositionRelativeToScreenAndOffset();
 }
 
 void Scene::centerCamera(const TransformComponent &transformComponent) const {
-  Camera::updateOffsetRelativeToScreen(transformComponent.position.x, transformComponent.position.y);
+  Camera::updateOffsetRelativeToScreen(transformComponent.position.x,
+                                       transformComponent.position.y);
 }

@@ -5,7 +5,7 @@
 
 namespace TextureManager {
 SDL_Texture *LoadTexture(const char *fileName);
-}; 
+};
 // namespace TextureManager
 
 #endif

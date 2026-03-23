@@ -1,7 +1,7 @@
 #include "controlsystem.hpp"
 #include "../camera.hpp"
-#include "../utilities/constants.hpp"
 #include "../system.hpp"
+#include "../utilities/constants.hpp"
 #include "SDL_events.h"
 #include "SDL_keyboard.h"
 #include "SDL_scancode.h"
@@ -10,9 +10,9 @@
 #include <cstdio>
 #include <iostream>
 
-void ControlSystem::update(TransformSystem const &transformSystem, TransformComponent &transformComponent,
-                           int selectedPlayer, int &selectedPlayerIndex,
-                           ControlComponent &controlComponent,
+void ControlSystem::update(TransformSystem const &transformSystem,
+                           TransformComponent &transformComponent, int selectedPlayer,
+                           int &selectedPlayerIndex, ControlComponent &controlComponent,
                            CollisionComponent const &collisionComponent) {
 
   inputR = false;
@@ -21,9 +21,8 @@ void ControlSystem::update(TransformSystem const &transformSystem, TransformComp
   inputU = false;
   inputJump = false;
   inputResetCharacter = false;
-  
-  determineControlState(controlComponent, collisionComponent,
-                        transformComponent);
+
+  determineControlState(controlComponent, collisionComponent, transformComponent);
 
   if (selectedPlayer == selectedPlayerIndex) {
     takeInput(transformComponent, selectedPlayerIndex);
@@ -122,10 +121,10 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
                                 ControlComponent &controlComponent, int &selectedPlayerIndex) {
   // for debugging
   if (inputResetCharacter) {
-    transformComponent.velocity.x=0;
-    transformComponent.velocity.y=0;
-    transformComponent.position.x=0;
-    transformComponent.position.y=0;
+    transformComponent.velocity.x = 0;
+    transformComponent.velocity.y = 0;
+    transformComponent.position.x = 0;
+    transformComponent.position.y = 0;
     controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     Camera::position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
     Camera::offset = {0, -200};
@@ -134,8 +133,8 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
 
   if (inputChangeCharacter) {
     changePlayerCharacter(selectedPlayerIndex);
-    transformComponent.velocity.x=0;
-    transformComponent.velocity.y=0;
+    transformComponent.velocity.x = 0;
+    transformComponent.velocity.y = 0;
     inputChangeCharacter = false;
     return;
   }
@@ -221,7 +220,7 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
       if (controlComponent.canClimb) {
         std::cout << "can climb from air \n";
         // not sure I like this direct setting of xpos
-        transformComponent.position.x=collisionComponent.collidedUpTilePos.x;
+        transformComponent.position.x = collisionComponent.collidedUpTilePos.x;
 
         // SHould systems call other systems?
         // maybe but I think they should be put on the systems "list of things to do" rather than do
@@ -235,7 +234,7 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
     if (inputD) {
 
       if (controlComponent.canClimb) {
-        transformComponent.position.x=collisionComponent.collidedDownTilePos.x;
+        transformComponent.position.x = collisionComponent.collidedDownTilePos.x;
 
         transformSystem.stopX(transformComponent);
         transformSystem.stopY(transformComponent);
@@ -271,8 +270,8 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
       if (collisionComponent.collisionTileUp != TILE::LADDER &&
           collisionComponent.collisionTileUp != TILE::LADDERSTART &&
           collisionComponent.collisionTileDown != TILE::LADDER &&
-          collisionComponent.collisionTileDown != TILE::LADDERSTART) {}
-        else {
+          collisionComponent.collisionTileDown != TILE::LADDERSTART) {
+      } else {
         transformSystem.stopX(transformComponent);
         transformSystem.moveUp(transformComponent);
       }

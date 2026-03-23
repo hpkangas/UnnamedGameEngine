@@ -6,7 +6,6 @@
 
 class ControlSystem {
 public:
-
   void update(TransformSystem const &transformSystem, TransformComponent &transformComponent,
               int selectedPlayer, int &selectedPlayerIndex, ControlComponent &controlcomponent,
               CollisionComponent const &collisionComponent);

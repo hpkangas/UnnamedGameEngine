@@ -1,6 +1,4 @@
 #include "scenecreator.hpp"
-#include "SDL_rect.h"
-#include "SDL_render.h"
 #include "../components/animationcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/controlcomponent.hpp"
@@ -8,8 +6,11 @@
 #include "../components/rendercomponent.hpp"
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
-#include "../utilities/constants.hpp"
+#include "../gamedata.hpp"
 #include "../texturemanager.hpp"
+#include "../utilities/constants.hpp"
+#include "SDL_rect.h"
+#include "SDL_render.h"
 #include <SDL2/SDL_rwops.h>
 #include <asm-generic/errno.h>
 #include <cstdio>
@@ -18,9 +19,8 @@
 #include <ostream>
 #include <string>
 #include <vector>
-#include "../gamedata.hpp"
 
-json SceneCreator::data{getGameData()};
+// json SceneCreator::data{getGameData()};
 
 SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   SceneInfo level;
@@ -73,7 +73,6 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
 
   return level;
 }
-
 
 void SceneCreator::createBlock(std::string const &gameObjectType, int x, int y, SceneInfo &level) {
   if (gameObjectType == "B1") {
@@ -159,7 +158,7 @@ void SceneCreator::loadTextures() {
   textures.emplace_back(TextureManager::LoadTexture("assets/tiles.png"));
 }
 
-void SceneCreator::destroyTextures() const{
+void SceneCreator::destroyTextures() const {
   for (auto &tex : textures) {
     SDL_DestroyTexture(tex);
   }
@@ -248,6 +247,4 @@ int SceneCreator::getId() {
   return id;
 }
 
-json SceneCreator::getGameData(){
-  return GameData::init();
-}
+json SceneCreator::getGameData() { return GameData::init(); }

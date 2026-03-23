@@ -6,7 +6,6 @@
 
 class CollisionSystem {
 public:
-
   TransformSystem *transformSystem = nullptr;
 
   TILE currentTile = TILE::NONE;

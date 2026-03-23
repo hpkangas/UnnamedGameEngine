@@ -3,7 +3,6 @@
 #define SCENE_HPP
 #include "../camera.hpp"
 #include "../components/transformcomponent.hpp"
-#include "scenecreator.hpp"
 #include "../systems/animationsystem.hpp"
 #include "../systems/collisiondetectionsystem.hpp"
 #include "../systems/collisionsystem.hpp"
@@ -11,6 +10,7 @@
 #include "../systems/gravitysystem.hpp"
 #include "../systems/rendersystem.hpp"
 #include "../systems/transformsystem.hpp"
+#include "scenecreator.hpp"
 
 struct Scene {
   bool init();
@@ -19,18 +19,18 @@ struct Scene {
   void render();
 
   SceneInfo currentLevel;
-  [[no_unique_address]]Camera camera;
+  [[no_unique_address]] Camera camera;
 
   int selectedPlayerIndex = 0;
   int selectedPlayer = 0;
 
-   [[no_unique_address]]RenderSystem renderSystem;
-   [[no_unique_address]]ControlSystem controlSystem;
-   [[no_unique_address]]CollisionDetectionSystem collisionDetectionSystem;
-   [[no_unique_address]]CollisionSystem collisionSystem;
-   [[no_unique_address]]TransformSystem transformSystem;
-   [[no_unique_address]]AnimationSystem animationSystem;
-   [[no_unique_address]]GravitySystem gravitySystem;
+  [[no_unique_address]] RenderSystem renderSystem;
+  [[no_unique_address]] ControlSystem controlSystem;
+  [[no_unique_address]] CollisionDetectionSystem collisionDetectionSystem;
+  [[no_unique_address]] CollisionSystem collisionSystem;
+  [[no_unique_address]] TransformSystem transformSystem;
+  [[no_unique_address]] AnimationSystem animationSystem;
+  [[no_unique_address]] GravitySystem gravitySystem;
 
   void updateCamera(const TransformComponent &transformComponent) const;
   void centerCamera(const TransformComponent &transformComponent) const;
