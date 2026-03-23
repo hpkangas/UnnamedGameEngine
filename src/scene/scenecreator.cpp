@@ -13,20 +13,16 @@
 #include <SDL2/SDL_rwops.h>
 #include <asm-generic/errno.h>
 #include <cstdio>
-#include <fstream>
 #include <iostream>
 #include <memory>
 #include <ostream>
 #include <string>
 #include <vector>
+#include "../gamedata.hpp"
 
-// for convenience
-using json = nlohmann::json;
+json SceneCreator::data{getGameData()};
+
 SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
-  std::ifstream f("example.json");
-  json data = json::parse(f);
-  std::cout<<data.at("avain").at("1")<<std::endl;
-
   SceneInfo level;
   std::string currentValue;
   char c = '0';
@@ -250,4 +246,8 @@ int SceneCreator::getId() {
   static int id = -1;
   id++;
   return id;
+}
+
+json SceneCreator::getGameData(){
+  return GameData::init();
 }

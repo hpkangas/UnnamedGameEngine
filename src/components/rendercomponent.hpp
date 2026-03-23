@@ -4,6 +4,8 @@
 
 #include "SDL_render.h"
 #include "component.hpp"
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 struct RenderInfo {
   SDL_Texture *objTexture{};
@@ -26,5 +28,9 @@ struct RenderComponent : public IComponent {
   SDL_RendererFlip flip = SDL_FLIP_NONE;
 
   RenderInfo render();
+
+void to_json(json &j, const RenderComponent &rc);
+void from_json(const json &j, RenderComponent &rc);
+
 };
 #endif

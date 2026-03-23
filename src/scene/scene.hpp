@@ -12,14 +12,12 @@
 #include "../systems/rendersystem.hpp"
 #include "../systems/transformsystem.hpp"
 
-class Scene {
-public:
+struct Scene {
   bool init();
   void handleEvents();
   void update();
   void render();
 
-private:
   SceneInfo currentLevel;
   [[no_unique_address]]Camera camera;
 

@@ -10,9 +10,11 @@
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
 #include <memory>
-#include <nlohmann/json.hpp>
 #include <unordered_map>
 #include <vector>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::basic_json<>;
 
 struct SceneInfo {
   std::unordered_map<int, std::unique_ptr<TransformComponent>> tcs;
@@ -32,8 +34,11 @@ struct SceneInfo {
   int ids = 0;
 };
 
+
 class SceneCreator {
 public:
+  static json getGameData();
+  static json data;
   static SceneInfo createLevel(SDL_RWops *Handle);
 
 private:
