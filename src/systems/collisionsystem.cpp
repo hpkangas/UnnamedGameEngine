@@ -6,7 +6,7 @@ void CollisionSystem::update(int id, SceneInfo &currentLevel, TransformSystem &t
 
   this->transformSystem = &transformSystem;
 
-  CollisionComponent &cc = *currentLevel.ccs.at(id);
+  CollisionComponent const &cc = *currentLevel.ccs.at(id);
   TransformComponent &tc = *currentLevel.tcs.at(id);
   ControlComponent &ctrlc = *currentLevel.ctrlComponents.at(id);
 
@@ -16,8 +16,8 @@ void CollisionSystem::update(int id, SceneInfo &currentLevel, TransformSystem &t
   handleHorizontalBlockCollision(tc, cc);
 }
 
-void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionComponent &cc,
-                                              ControlComponent &ctrlc) {
+void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionComponent const &cc,
+                                              ControlComponent &ctrlc) const {
   switch (cc.collisionTileDown) {
 
   case TILE::NONE:
@@ -26,7 +26,7 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
     break;
 
   case TILE::SOLID:
-    if (ctrlc.getControlState() == CONTROL_STATE::AIRBORNE) {
+    if (ctrlc.controlState == CONTROL_STATE::AIRBORNE) {
       transformSystem->stopY(tc, cc.yposDif);
     }
     break;
@@ -35,15 +35,15 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
     break;
 
   case TILE::LADDER:
-    ctrlc.setCanClimb(true);
+    ctrlc.canClimb = true;
 
     break;
 
   case TILE::LADDERSTART:
-    if (ctrlc.getControlState() == CONTROL_STATE::AIRBORNE) {
+    if (ctrlc.controlState == CONTROL_STATE::AIRBORNE) {
       transformSystem->stopY(tc, cc.yposDif);
     }
-    ctrlc.setCanClimb(true);
+    ctrlc.canClimb = true;
 
     break;
 
@@ -52,8 +52,8 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
   }
 }
 
-void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionComponent &cc,
-                                            ControlComponent &ctrlc) {
+void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionComponent const &cc,
+                                            ControlComponent &ctrlc) const {
 
   switch (cc.collisionTileUp) {
 
@@ -62,8 +62,8 @@ void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionCom
 
   case TILE::SOLID:
 
-    if (ctrlc.getControlState() == CONTROL_STATE::AIRBORNE) {
-      if (tc.getYvel() < 0) {
+    if (ctrlc.controlState == CONTROL_STATE::AIRBORNE) {
+      if (tc.velocity.y < 0) {
         transformSystem->stopY(tc, cc.yposDif);
       }
     }
@@ -73,19 +73,19 @@ void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionCom
     break;
 
   case TILE::LADDER:
-    ctrlc.setCanClimb(true);
+    ctrlc.canClimb = true;
 
     break;
 
   case TILE::LADDERSTART:
-    ctrlc.setCanClimb(true);
+    ctrlc.canClimb = true;
 
     break;
   }
 }
 
 void CollisionSystem::handleHorizontalBlockCollision(TransformComponent &tc,
-                                                     CollisionComponent &cc) {
+                                                     CollisionComponent const &cc) const {
   if (cc.collisionTileLeft == TILE::SOLID || cc.collisionTileRight == TILE::SOLID) {
     transformSystem->stopX(tc, cc.xposDif);
   }

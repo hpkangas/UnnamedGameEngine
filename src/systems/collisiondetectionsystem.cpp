@@ -1,95 +1,94 @@
 #include "collisiondetectionsystem.hpp"
-#include "../physics.hpp"
+#include "../utilities/physics.hpp"
 #include <cstdio>
-#include <iostream>
 
-void CollisionDetectionSystem::update(int i, SceneInfo &currentLevel) {
+void CollisionDetectionSystem::update(int i, SceneInfo &currentLevel) const{
   checkBlockCollision(i, currentLevel);
 }
 
-void CollisionDetectionSystem::checkBlockCollision(int i, SceneInfo &currentLevel) {
+void CollisionDetectionSystem::checkBlockCollision(int i, SceneInfo &currentLevel) const{
   CollisionComponent &playerC = *currentLevel.ccs.at(i);
-  TransformComponent &playerT = *currentLevel.tcs.at(i);
+  TransformComponent const &playerT = *currentLevel.tcs.at(i);
 
   updatePlayerCollisionRect(playerC, playerT);
   resetPlayerCollisions(playerC);
-  Velocity velocity = playerT.getVelocity();
+  Velocity velocity = playerT.velocity;
   // other than player ids
   for (int j : currentLevel.collisionIds) {
     if (j == 0) {
       continue;
     }
-    auto &blockC = currentLevel.ccs.at(j);
+    auto const &blockC = currentLevel.ccs.at(j);
     TILE collisionTile = TILE::NONE;
-    if (currentLevel.tiles.find(j) != currentLevel.tiles.end()) {
-      collisionTile = currentLevel.tiles.at(j)->getTile();
+    if (currentLevel.tiles.contains(j) ) {
+      collisionTile = currentLevel.tiles.at(j)->tile;
     }
 
-    if (!playerC.getCollisionLeft()) {
+    if (!playerC.collisionLeft) {
       checkPlayerLeftCollision(playerC, *blockC, velocity, collisionTile);
     }
-    if (!playerC.getCollisionRight()) {
+    if (!playerC.collisionRight) {
       checkPlayerRightCollision(playerC, *blockC, velocity, collisionTile);
     }
-    if (!playerC.getCollisionDown()) {
+    if (!playerC.collisionDown) {
       checkPlayerDownCollision(playerC, *blockC, velocity, collisionTile);
     }
-    if (!playerC.getCollisionUp()) {
+    if (!playerC.collisionUp) {
       checkPlayerUpCollision(playerC, *blockC, velocity, collisionTile);
     }
   }
 }
 
 void CollisionDetectionSystem::checkPlayerLeftCollision(CollisionComponent &player,
-                                                        CollisionComponent &block,
-                                                        Velocity velocity, TILE &collisionTile) {
+                                                        CollisionComponent const &block,
+                                                        Velocity velocity, TILE const &collisionTile) const{
   if (Physics::playerCollisionLeft(player.collisionRect, block.collisionRect, velocity)) {
     player.xposDif = player.collisionRect.x - (block.collisionRect.x + block.collisionRect.w);
     player.collisionTileLeft = collisionTile;
 
-    player.setCollisionLeft(true);
+    player.collisionLeft = true;
   }
 }
 
 void CollisionDetectionSystem::checkPlayerRightCollision(CollisionComponent &player,
-                                                         CollisionComponent &block,
-                                                         Velocity velocity, TILE &collisionTile) {
+                                                         CollisionComponent const &block,
+                                                         Velocity velocity, TILE  const &collisionTile) const{
   if (Physics::playerCollisionRight(player.collisionRect, block.collisionRect, velocity)) {
     player.xposDif = (player.collisionRect.x + player.collisionRect.w) - block.collisionRect.x;
     player.collisionTileRight = collisionTile;
 
-    player.setCollisionRight(true);
+    player.collisionRight = true;
   }
 }
 
 void CollisionDetectionSystem::checkPlayerUpCollision(CollisionComponent &player,
-                                                      CollisionComponent &block, Velocity velocity,
-                                                      TILE &collisionTile) {
+                                                      CollisionComponent  const&block, Velocity velocity,
+                                                      TILE  const &collisionTile) const{
   if (Physics::playerCollisionUp(player.collisionRect, block.collisionRect, velocity)) {
     player.yposDif = (player.collisionRect.y) - (block.collisionRect.y + block.collisionRect.h);
     player.collisionTileUp = collisionTile;
     player.collidedUpTilePos = {block.collisionRect.x, block.collisionRect.y};
-    player.setCollisionUp(true);
+    player.collisionUp = true;
   }
 }
 
 void CollisionDetectionSystem::checkPlayerDownCollision(CollisionComponent &player,
-                                                        CollisionComponent &block,
-                                                        Velocity velocity, TILE &collisionTile) {
+                                                        CollisionComponent  const &block,
+                                                        Velocity velocity, TILE  const &collisionTile) const{
 
   if (Physics::playerCollisionDown(player.collisionRect, block.collisionRect, velocity)) {
     player.yposDif = (player.collisionRect.y + player.collisionRect.h) - block.collisionRect.y;
     player.collisionTileDown = collisionTile;
     player.collidedDownTilePos = {block.collisionRect.x, block.collisionRect.y};
-    player.setCollisionDown(true);
+    player.collisionDown = true;
   }
 }
 
-void CollisionDetectionSystem::resetPlayerCollisions(CollisionComponent &playerCollisionComponent) {
-  playerCollisionComponent.setCollisionLeft(false);
-  playerCollisionComponent.setCollisionRight(false);
-  playerCollisionComponent.setCollisionUp(false);
-  playerCollisionComponent.setCollisionDown(false);
+void CollisionDetectionSystem::resetPlayerCollisions(CollisionComponent &playerCollisionComponent) const{
+  playerCollisionComponent.collisionLeft = false;
+  playerCollisionComponent.collisionRight = false;
+  playerCollisionComponent.collisionUp = false;
+  playerCollisionComponent.collisionDown = false;
 
   playerCollisionComponent.collisionTileDown = TILE::NONE;
   playerCollisionComponent.collisionTileLeft = TILE::NONE;
@@ -98,9 +97,9 @@ void CollisionDetectionSystem::resetPlayerCollisions(CollisionComponent &playerC
 }
 
 void CollisionDetectionSystem::updatePlayerCollisionRect(
-    CollisionComponent &playerCollisionComponent, TransformComponent &playerTransformComponent) {
-  playerCollisionComponent.collisionRect.x = playerTransformComponent.getXpos();
-  playerCollisionComponent.collisionRect.y = playerTransformComponent.getYpos();
+    CollisionComponent &playerCollisionComponent, TransformComponent  const &playerTransformComponent) const{
+  playerCollisionComponent.collisionRect.x = playerTransformComponent.position.x;
+  playerCollisionComponent.collisionRect.y = playerTransformComponent.position.y;
 
   playerCollisionComponent.center = {
       (playerCollisionComponent.collisionRect.x + playerCollisionComponent.collisionRect.w +

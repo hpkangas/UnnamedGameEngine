@@ -1,8 +1,8 @@
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_main.h>
-#include "constants.hpp"
+#include "utilities/constants.hpp"
 #include "game.hpp"
-#include "scene.hpp"
+#include "scene/scene.hpp"
 #include <iostream>
 
 int main(int argc, char const *argv[]) {

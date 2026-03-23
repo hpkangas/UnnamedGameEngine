@@ -2,7 +2,7 @@
 #include <iostream>
 
 void Game::init(const char *title, const int xpos, const int ypos, const int width,
-                const int height, const bool fullscreen) {
+                const int height, const bool fullscreen) const{
 
   int flags = 0;
   if (fullscreen) {
@@ -29,7 +29,7 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   }
 }
 
-void Game::clean() {
+void Game::clean() const {
   TTF_CloseFont(gFont);
   TTF_Quit();
   SDL_DestroyWindow(window);
@@ -38,4 +38,4 @@ void Game::clean() {
   std::cout << "Game cleaned\n";
 }
 
-bool Game::running() { return isRunning; }
+bool Game::running() const { return isRunning; }

@@ -1,16 +1,15 @@
 #include "scenecreator.hpp"
-#include "SDL_error.h"
 #include "SDL_rect.h"
 #include "SDL_render.h"
-#include "components/animationcomponent.hpp"
-#include "components/collisioncomponent.hpp"
-#include "components/controlcomponent.hpp"
-#include "components/gravitycomponent.hpp"
-#include "components/rendercomponent.hpp"
-#include "components/tilecomponent.hpp"
-#include "components/transformcomponent.hpp"
-#include "constants.hpp"
-#include "texturemanager.hpp"
+#include "../components/animationcomponent.hpp"
+#include "../components/collisioncomponent.hpp"
+#include "../components/controlcomponent.hpp"
+#include "../components/gravitycomponent.hpp"
+#include "../components/rendercomponent.hpp"
+#include "../components/tilecomponent.hpp"
+#include "../components/transformcomponent.hpp"
+#include "../utilities/constants.hpp"
+#include "../texturemanager.hpp"
 #include <SDL2/SDL_rwops.h>
 #include <asm-generic/errno.h>
 #include <cstdio>
@@ -22,12 +21,11 @@
 #include <vector>
 
 // for convenience
+using json = nlohmann::json;
 SceneInfo SceneCreator::createLevel2(SDL_RWops *file) {
-  using json = nlohmann::json;
   std::ifstream f("example.json");
   json data = json::parse(f);
-  std::string asd = data.at("avain");
-  std::cout << asd;
+  std::cout<<data.at("avain").at("1")<<std::endl;
 
   SceneInfo level;
   std::string currentValue;
@@ -45,18 +43,17 @@ SceneInfo SceneCreator::createLevel2(SDL_RWops *file) {
       continue;
     }
     if (c == ',') {
-      std::cout << currentValue << std::endl;
 
-      if (currentValue.substr(0, 2) == "PC") {
+      if (currentValue.starts_with("PC")) {
         createPC(128 * x, 128 * y, level);
 
-      } else if (currentValue.substr(0, 1) == "B") {
+      } else if (currentValue.starts_with("B")) {
         createBlock(currentValue, 128 * x, 128 * y, level);
 
-      } else if (currentValue.substr(0, 2) == "LS") {
+      } else if (currentValue.starts_with("LS")) {
         createLadderStart(128 * x, 128 * y, level);
 
-      } else if (currentValue.substr(0, 1) == "L") {
+      } else if (currentValue.starts_with("L")) {
         createLadder(128 * x, 128 * y, level);
 
       } else if (currentValue == "") {
@@ -97,16 +94,16 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
       int x = std::stoi(values.at(1));
       int y = std::stoi(values.at(2));
 
-      if (gameObjectType.substr(0, 2) == "PC") {
+      if (gameObjectType.starts_with("PC")) {
         createPC(x, y, level);
 
-      } else if (gameObjectType.substr(0, 1) == "B") {
+      } else if (gameObjectType.starts_with("B")) {
         createBlock(gameObjectType, x, y, level);
 
-      } else if (gameObjectType.substr(0, 2) == "LS") {
+      } else if (gameObjectType.starts_with("LS")) {
         createLadderStart(x, y, level);
 
-      } else if (gameObjectType.substr(0, 1) == "L") {
+      } else if (gameObjectType.starts_with("L")) {
         createLadder(x, y, level);
       } else {
         std::cout << "Error: Scene creator: " << gameObjectType << "is unknown" << std::endl;
@@ -127,7 +124,7 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   return level;
 }
 
-void SceneCreator::createBlock(std::string gameObjectType, int x, int y, SceneInfo &level) {
+void SceneCreator::createBlock(std::string const &gameObjectType, int x, int y, SceneInfo &level) {
   if (gameObjectType == "B1") {
     createBlock1(x, y, level);
   } else if (gameObjectType == "B2") {
@@ -211,7 +208,7 @@ void SceneCreator::loadTextures() {
   textures.emplace_back(TextureManager::LoadTexture("assets/tiles.png"));
 }
 
-void SceneCreator::destroyTextures() {
+void SceneCreator::destroyTextures() const{
   for (auto &tex : textures) {
     SDL_DestroyTexture(tex);
   }
@@ -225,7 +222,7 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(0), id);
-  SDL_Rect collisionRect = {transformComponent->getXpos(), transformComponent->getYpos(),
+  SDL_Rect collisionRect = {transformComponent->position.x, transformComponent->position.y,
                             PLAYER_WIDTH, PLAYER_HEIGHT};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
   auto gravityComponent = std::make_unique<GravityComponent>(GRAVITY_STATE::AIRBORNE, id);

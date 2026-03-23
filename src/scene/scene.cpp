@@ -1,11 +1,11 @@
 #include "scene.hpp"
 #include <SDL2/SDL_error.h>
-#include "camera.hpp"
-#include "components/gravitycomponent.hpp"
-#include "components/transformcomponent.hpp"
-#include "constants.hpp"
-#include "game.hpp"
-#include "systems/transformsystem.hpp"
+#include "../camera.hpp"
+#include "../components/gravitycomponent.hpp"
+#include "../components/transformcomponent.hpp"
+#include "../utilities/constants.hpp"
+#include "../game.hpp"
+#include "../systems/transformsystem.hpp"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
 #include <cstdio>
@@ -14,7 +14,7 @@
 bool Scene::init() {
   const char *fileName = "level2";
     SDL_RWops *file = SDL_RWFromFile(fileName, "rb");
-    if (file == NULL) {
+    if (file == nullptr) {
       std::cout<<"Error: "<<SDL_GetError()<<std::endl;
       return false;
     }
@@ -32,11 +32,11 @@ void Scene::update() {
   if (selectedPlayer != selectedPlayerIndex) {
     selectedPlayer = selectedPlayerIndex;
     centerCamera(*currentLevel.tcs.at(selectedPlayer));
-  };
+  }
 
   for (int id : currentLevel.controlIds) {
     controlSystem.update(transformSystem, *currentLevel.tcs.at(id), id, selectedPlayerIndex,
-                         *currentLevel.ctrlComponents.at(id), *currentLevel.gcs.at(id),
+                         *currentLevel.ctrlComponents.at(id),
                          *currentLevel.ccs.at(id));
   }
   // What if component list doens't have the id/i? How to go through only ids that are in the list?
@@ -60,7 +60,7 @@ void Scene::update() {
 
   for (int id : currentLevel.animationIds) {
     animationSystem.update(*currentLevel.ctrlComponents.at(id), *currentLevel.ccs.at(id),
-                           currentLevel.gcs.at(id)->getGravityState(), *currentLevel.tcs.at(id),
+                           currentLevel.gcs.at(id)->gravityState, *currentLevel.tcs.at(id),
                            *currentLevel.rcs.at(id), *currentLevel.acs.at(id));
   }
   for (int id : currentLevel.renderIds) {
@@ -72,11 +72,11 @@ void Scene::update() {
 
 void Scene::render() { renderSystem.renderComponents(currentLevel.rcs, currentLevel.renderIds); }
 
-void Scene::updateCamera(TransformComponent &transformComponent) {
-  const int xpos = transformComponent.getXpos();
-  const float xvel = transformComponent.getXvel();
-  const int ypos = transformComponent.getYpos();
-  const float yvel = transformComponent.getYvel();
+void Scene::updateCamera(const TransformComponent &transformComponent) const {
+  const int xpos = transformComponent.position.x;
+  const int ypos = transformComponent.position.y;
+  const float xvel = transformComponent.velocity.x;
+  const float yvel = transformComponent.velocity.y;
 
   if ((xpos < Camera::position.x && xvel < 0) ||
       (xpos + PLAYER_WIDTH > Camera::position.w &&
@@ -92,6 +92,6 @@ void Scene::updateCamera(TransformComponent &transformComponent) {
   Camera::updatePositionRelativeToScreenAndOffset();
 }
 
-void Scene::centerCamera(TransformComponent &transformComponent) {
-  Camera::updateOffsetRelativeToScreen(transformComponent.getXpos(), transformComponent.getYpos());
+void Scene::centerCamera(const TransformComponent &transformComponent) const {
+  Camera::updateOffsetRelativeToScreen(transformComponent.position.x, transformComponent.position.y);
 }

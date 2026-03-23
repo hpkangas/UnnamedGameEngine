@@ -1,6 +1,6 @@
 #include "controlsystem.hpp"
 #include "../camera.hpp"
-#include "../constants.hpp"
+#include "../utilities/constants.hpp"
 #include "../game.hpp"
 #include "SDL_events.h"
 #include "SDL_keyboard.h"
@@ -10,10 +10,10 @@
 #include <cstdio>
 #include <iostream>
 
-void ControlSystem::update(TransformSystem &transformSystem, TransformComponent &transformComponent,
+void ControlSystem::update(TransformSystem const &transformSystem, TransformComponent &transformComponent,
                            int selectedPlayer, int &selectedPlayerIndex,
-                           ControlComponent &controlComponent, GravityComponent &gravityComponent,
-                           CollisionComponent &collisionComponent) {
+                           ControlComponent &controlComponent,
+                           CollisionComponent const &collisionComponent) {
 
   inputR = false;
   inputL = false;
@@ -21,7 +21,7 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
   inputU = false;
   inputJump = false;
   inputResetCharacter = false;
-  determineControlState(controlComponent, gravityComponent.getGravityState(), collisionComponent,
+  determineControlState(controlComponent, collisionComponent,
                         transformComponent);
 
   if (selectedPlayer == selectedPlayerIndex) {
@@ -33,24 +33,23 @@ void ControlSystem::update(TransformSystem &transformSystem, TransformComponent 
 }
 
 void ControlSystem::determineControlState(ControlComponent &controlComponent,
-                                          GRAVITY_STATE gravityState,
-                                          CollisionComponent &collisionComponent,
-                                          TransformComponent &transformComponent) {
+                                          CollisionComponent const &collisionComponent,
+                                          TransformComponent const &transformComponent) const {
 
   switch (collisionComponent.collisionTileDown) {
   case TILE::NONE:
-    if (controlComponent.getControlState() != CONTROL_STATE::AIRBORNE) {
+    if (controlComponent.controlState != CONTROL_STATE::AIRBORNE) {
 
-      controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+      controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     }
 
     break;
 
   case TILE::SOLID:
-    if (controlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
-      if (transformComponent.getYvel() == 0) {
+    if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
+      if (transformComponent.velocity.y == 0) {
 
-        controlComponent.setControlState(CONTROL_STATE::NORMAL);
+        controlComponent.controlState = CONTROL_STATE::NORMAL;
       }
       // transformSystem->stopY(transformComponent, collisionComponent.yposDif);
     }
@@ -64,13 +63,13 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
     break;
 
   case TILE::LADDERSTART:
-    if (controlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
-      if (transformComponent.getYvel() == 0) {
+    if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
+      if (transformComponent.velocity.y == 0) {
 
-        controlComponent.setControlState(CONTROL_STATE::NORMAL);
+        controlComponent.controlState = CONTROL_STATE::NORMAL;
       }
       // transformSystem->stopY(transformComponent, collisionComponent.yposDif);
-      // controlComponent.setControlState(CONTROL_STATE::NORMAL);
+      // controlComponent.controlState = CONTROL_STATE::NORMAL);
     }
 
     break;
@@ -93,7 +92,7 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
       Game::isRunning = false;
     }
   }
-  const Uint8 *keyboardStateArray = SDL_GetKeyboardState(NULL);
+  const Uint8 *keyboardStateArray = SDL_GetKeyboardState(nullptr);
   if (keyboardStateArray[SDL_SCANCODE_Q]) {
     Game::isRunning = false;
   }
@@ -117,17 +116,17 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
   }
 }
 
-void ControlSystem::handleInput(TransformSystem &transformSystem,
+void ControlSystem::handleInput(TransformSystem const &transformSystem,
                                 TransformComponent &transformComponent,
-                                CollisionComponent &collisionComponent,
+                                CollisionComponent const &collisionComponent,
                                 ControlComponent &controlComponent, int &selectedPlayerIndex) {
   // for debugging
   if (inputResetCharacter) {
-    transformComponent.setXvel(0);
-    transformComponent.setYvel(0);
-    transformComponent.setXpos(0);
-    transformComponent.setYpos(-200);
-    controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+    transformComponent.velocity.x=0;
+    transformComponent.velocity.y=0;
+    transformComponent.position.x=0;
+    transformComponent.position.y=0;
+    controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     Camera::position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
     Camera::offset = {0, -200};
     return;
@@ -135,20 +134,19 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
 
   if (inputChangeCharacter) {
     changePlayerCharacter(selectedPlayerIndex);
-    transformComponent.setXvel(0);
-    transformComponent.setYvel(0);
+    transformComponent.velocity.x=0;
+    transformComponent.velocity.y=0;
     inputChangeCharacter = false;
     return;
   }
 
   bool noInput = true;
 
-  switch (controlComponent.getControlState()) {
+  switch (controlComponent.controlState) {
   case CONTROL_STATE::NORMAL:
-    std::cout << "normal" << std ::endl;
 
     if (inputR && !inputL) {
-      if (transformComponent.getXvel() < 0) {
+      if (transformComponent.velocity.x < 0) {
         transformSystem.stopX(transformComponent);
       }
       transformSystem.moveRight(transformComponent);
@@ -156,7 +154,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     }
 
     if (inputL && !inputR) {
-      if (transformComponent.getXvel() > 0) {
+      if (transformComponent.velocity.y > 0) {
         transformSystem.stopX(transformComponent);
       }
       transformSystem.moveLeft(transformComponent);
@@ -165,34 +163,33 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
 
     if (inputU) {
       noInput = false;
-      if (controlComponent.getCanClimb()) {
+      if (controlComponent.canClimb) {
 
-        transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
+        transformComponent.position.x = collisionComponent.collidedUpTilePos.x;
 
         transformSystem.stopX(transformComponent);
-        controlComponent.setControlState(CONTROL_STATE::CLIMBING);
+        controlComponent.controlState = CONTROL_STATE::CLIMBING;
         return;
       }
     }
 
     if (inputD) {
       noInput = false;
-      if (controlComponent.getCanClimb()) {
+      if (controlComponent.canClimb) {
         // not sure I like this direct setting of xpos
-        transformComponent.setXpos(collisionComponent.collidedDownTilePos.x);
+        transformComponent.position.x = collisionComponent.collidedDownTilePos.x;
 
         transformSystem.stopX(transformComponent);
         transformSystem.stopY(transformComponent);
-        controlComponent.setControlState(CONTROL_STATE::CLIMBING);
+        controlComponent.controlState = CONTROL_STATE::CLIMBING;
         return;
       }
     }
 
     if (inputJump) {
       noInput = false;
-      std::cout << "handling jump input" << std::endl;
       transformSystem.jump(transformComponent);
-      controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+      controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     }
 
     if (noInput) {
@@ -202,11 +199,10 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
     break;
 
   case CONTROL_STATE::AIRBORNE:
-    std::cout << "airborne" << std ::endl;
 
     if (inputR && !inputL) {
       noInput = false;
-      if (transformComponent.getXvel() < 0) {
+      if (transformComponent.velocity.x < 0) {
         transformSystem.stopX(transformComponent);
       }
       transformSystem.moveRight(transformComponent);
@@ -214,7 +210,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
 
     if (inputL && !inputR) {
       noInput = false;
-      if (transformComponent.getXvel() > 0) {
+      if (transformComponent.velocity.x > 0) {
         transformSystem.stopX(transformComponent);
       }
       transformSystem.moveLeft(transformComponent);
@@ -222,28 +218,28 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
 
     if (inputU) {
 
-      if (controlComponent.getCanClimb()) {
+      if (controlComponent.canClimb) {
         std::cout << "can climb from air \n";
         // not sure I like this direct setting of xpos
-        transformComponent.setXpos(collisionComponent.collidedUpTilePos.x);
+        transformComponent.position.x=collisionComponent.collidedUpTilePos.x;
 
         // SHould systems call other systems?
         // maybe but I think they should be put on the systems "list of things to do" rather than do
         // it immediately (which is not possible at the moment)
         transformSystem.stopX(transformComponent);
         transformSystem.stopY(transformComponent);
-        controlComponent.setControlState(CONTROL_STATE::CLIMBING);
+        controlComponent.controlState = CONTROL_STATE::CLIMBING;
       }
     }
 
     if (inputD) {
 
-      if (controlComponent.getCanClimb()) {
-        transformComponent.setXpos(collisionComponent.collidedDownTilePos.x);
+      if (controlComponent.canClimb) {
+        transformComponent.position.x=collisionComponent.collidedDownTilePos.x;
 
         transformSystem.stopX(transformComponent);
         transformSystem.stopY(transformComponent);
-        controlComponent.setControlState(CONTROL_STATE::CLIMBING);
+        controlComponent.controlState = CONTROL_STATE::CLIMBING;
       }
     }
 
@@ -260,13 +256,13 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
   case CONTROL_STATE::CLIMBING:
 
     if (inputR && !inputL && !inputU && !inputD) {
-      controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+      controlComponent.controlState = CONTROL_STATE::AIRBORNE;
       transformSystem.moveRight(transformComponent);
       return;
     }
 
     if (inputL && !inputR && !inputU && !inputD) {
-      controlComponent.setControlState(CONTROL_STATE::AIRBORNE);
+      controlComponent.controlState = CONTROL_STATE::AIRBORNE;
       transformSystem.moveLeft(transformComponent);
       return;
     }
@@ -275,9 +271,8 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
       if (collisionComponent.collisionTileUp != TILE::LADDER &&
           collisionComponent.collisionTileUp != TILE::LADDERSTART &&
           collisionComponent.collisionTileDown != TILE::LADDER &&
-          collisionComponent.collisionTileDown != TILE::LADDERSTART) {
-
-      } else {
+          collisionComponent.collisionTileDown != TILE::LADDERSTART) {}
+        else {
         transformSystem.stopX(transformComponent);
         transformSystem.moveUp(transformComponent);
       }
@@ -289,7 +284,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
 
       if (collisionComponent.collisionTileDown != TILE::LADDER &&
           collisionComponent.collisionTileDown != TILE::LADDERSTART) {
-        controlComponent.setControlState(CONTROL_STATE::NORMAL);
+        controlComponent.controlState = CONTROL_STATE::NORMAL;
         transformSystem.stopY(transformComponent);
 
       } else {
@@ -307,7 +302,7 @@ void ControlSystem::handleInput(TransformSystem &transformSystem,
   }
 }
 
-void ControlSystem::changePlayerCharacter(int &selectedPlayerIndex) {
+void ControlSystem::changePlayerCharacter(int &selectedPlayerIndex) const {
   selectedPlayerIndex++;
   if (selectedPlayerIndex == 3) {
     selectedPlayerIndex = 0;

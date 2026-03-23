@@ -4,22 +4,22 @@
 #include <memory>
 #include <vector>
 
-void RenderSystem::update(const TransformComponent &tc, RenderComponent &rc) {
-  rc.destinationRect.x = tc.getXpos();
-  rc.destinationRect.y = tc.getYpos();
+void RenderSystem::update(const TransformComponent &tc, RenderComponent &rc) const {
+  rc.destinationRect.x = tc.position.x;
+  rc.destinationRect.y = tc.position.y;
 
-  if (tc.getXvel() < 0) {
+  if (tc.velocity.x < 0) {
     rc.flip = SDL_FLIP_HORIZONTAL;
   }
 
-  if (tc.getXvel() > 0) {
+  if (tc.velocity.x > 0) {
     rc.flip = SDL_FLIP_NONE;
   }
 }
 
 void RenderSystem::renderComponents(
     std::unordered_map<int, std::unique_ptr<RenderComponent>> &renderComponents,
-    std::vector<int> renderIds) {
+    std::vector<int> const &renderIds) const{
 
   SDL_RenderClear(Game::renderer);
   for (int id : renderIds) {
@@ -32,9 +32,9 @@ void RenderSystem::renderComponents(
   SDL_RenderPresent(Game::renderer);
 }
 
-void RenderSystem::render(RenderComponent &renderComponent) { draw(renderComponent.render()); }
+void RenderSystem::render(RenderComponent &renderComponent) const { draw(renderComponent.render()); }
 
-void RenderSystem::draw(const RenderInfo &RenderInfo) {
+void RenderSystem::draw(const RenderInfo &RenderInfo) const{
   SDL_Rect newDestination = RenderInfo.destinationRect;
   newDestination.x -= Camera::offset.x;
   newDestination.y -= Camera::offset.y;

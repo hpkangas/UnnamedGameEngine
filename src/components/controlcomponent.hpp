@@ -3,20 +3,13 @@
 #include "component.hpp"
 
 enum class CONTROL_STATE { NORMAL = 0, AIRBORNE = 1, FALLING = 2, CLIMBING = 3 };
-class ControlComponent : public IComponent {
+struct ControlComponent : public IComponent {
+  ControlComponent(CONTROL_STATE state, int id): controlState(state) {
+    parentID = id;
+  }
+
   bool canClimb = false;
   CONTROL_STATE controlState = CONTROL_STATE::NORMAL;
 
-public:
-  ControlComponent(CONTROL_STATE state, int id) {
-    controlState = state;
-    parentID = id;
-  }
-  ~ControlComponent() {}
-  void setCanClimb(bool canClimb) { this->canClimb = canClimb; }
-  bool getCanClimb() const { return this->canClimb; }
-
-  void setControlState(CONTROL_STATE state) { this->controlState = state; }
-  CONTROL_STATE getControlState() const { return this->controlState; }
 };
 #endif

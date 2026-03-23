@@ -4,26 +4,26 @@
 constexpr float GRAVITY_UNIT = 0.75f;
 constexpr float MAX_GRAVITY = 11.0;
 
-void GravitySystem::gravity(TransformComponent &transformComponent) {
-  if (transformComponent.getYvel() < MAX_GRAVITY) {
-    transformComponent.setYvel(transformComponent.getYvel() + GRAVITY_UNIT);
+void GravitySystem::gravity(TransformComponent &transformComponent) const {
+  if (transformComponent.velocity.y < MAX_GRAVITY) {
+    transformComponent.velocity.y = transformComponent.velocity.y + GRAVITY_UNIT;
     std::cout << "gravity" << std::endl;
   }
 }
 
-void GravitySystem::update(ControlComponent &controlComponent, GravityComponent &gravityComponent,
-                           TransformComponent &transformComponent) {
+void GravitySystem::update(ControlComponent const &controlComponent, GravityComponent &gravityComponent,
+                           TransformComponent &transformComponent) const{
 
-  if (controlComponent.getControlState() == CONTROL_STATE::NORMAL ||
-      controlComponent.getControlState() == CONTROL_STATE::CLIMBING) {
-    gravityComponent.setGravityState(GRAVITY_STATE::GROUNDED);
+  if (controlComponent.controlState == CONTROL_STATE::NORMAL ||
+      controlComponent.controlState == CONTROL_STATE::CLIMBING) {
+    gravityComponent.gravityState =GRAVITY_STATE::GROUNDED;
   }
 
-  if (controlComponent.getControlState() == CONTROL_STATE::AIRBORNE) {
-    gravityComponent.setGravityState(GRAVITY_STATE::AIRBORNE);
+  if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
+    gravityComponent.gravityState =GRAVITY_STATE::AIRBORNE;
   }
 
-  switch (gravityComponent.getGravityState()) {
+  switch (gravityComponent.gravityState) {
   case GRAVITY_STATE::GROUNDED:
     break;
 

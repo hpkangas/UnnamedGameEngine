@@ -4,7 +4,6 @@
 
 class Game {
 public:
-  Game() {}
   inline static SDL_Window *window = nullptr;
   inline static SDL_Renderer *renderer = nullptr;
   inline static TTF_Font *gFont = nullptr;
@@ -12,8 +11,8 @@ public:
   inline static bool isRunning = false;
 
   void init(const char *title, const int xpos, const int ypos, const int width, const int height,
-            const bool fullscreen);
+            const bool fullscreen) const;
 
-  void clean();
-  bool running();
+  void clean() const;
+  bool running() const;
 };

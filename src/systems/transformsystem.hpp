@@ -9,16 +9,16 @@ class TransformSystem {
   float playerClimbingSpeedMax = 4.0f;
 
 public:
-  void update(TransformComponent &transformComponent);
-  void moveRight(TransformComponent &transformComponent);
-  void moveLeft(TransformComponent &transformComponent);
-  void moveUp(TransformComponent &transformComponent);
-  void moveDown(TransformComponent &transformComponent);
-  void stopX(TransformComponent &transformComponent);
-  void stopX(TransformComponent &transformComponent, int xposDif);
-  void stopY(TransformComponent &transformComponent);
-  void stopY(TransformComponent &transformComponent, int yposDif);
-  void jump(TransformComponent &transformComponent);
-  void resetJump(TransformComponent &transformComponent);
+  void update(TransformComponent &transformComponent)const;
+  void moveRight(TransformComponent &transformComponent)const;
+  void moveLeft(TransformComponent &transformComponent)const;
+  void moveUp(TransformComponent &transformComponent)const;
+  void moveDown(TransformComponent &transformComponent)const;
+  void stopX(TransformComponent &transformComponent)const;
+  void stopX(TransformComponent &transformComponent, int xposDif)const;
+  void stopY(TransformComponent &transformComponent)const;
+  void stopY(TransformComponent &transformComponent, int yposDif)const;
+  void jump(TransformComponent &transformComponent)const;
+  void resetJump(TransformComponent &transformComponent)const;
 };
 #endif

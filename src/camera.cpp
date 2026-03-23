@@ -1,5 +1,5 @@
 #include "camera.hpp"
-#include "constants.hpp"
+#include "utilities/constants.hpp"
 
 Camera::Camera() {
   offset = {0, 0};

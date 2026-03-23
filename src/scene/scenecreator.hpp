@@ -2,13 +2,13 @@
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 #include "SDL_render.h"
-#include "components/animationcomponent.hpp"
-#include "components/collisioncomponent.hpp"
-#include "components/controlcomponent.hpp"
-#include "components/gravitycomponent.hpp"
-#include "components/rendercomponent.hpp"
-#include "components/tilecomponent.hpp"
-#include "components/transformcomponent.hpp"
+#include "../components/animationcomponent.hpp"
+#include "../components/collisioncomponent.hpp"
+#include "../components/controlcomponent.hpp"
+#include "../components/gravitycomponent.hpp"
+#include "../components/rendercomponent.hpp"
+#include "../components/tilecomponent.hpp"
+#include "../components/transformcomponent.hpp"
 #include <memory>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
@@ -38,12 +38,9 @@ public:
   static SceneInfo createLevel2(SDL_RWops *Handle);
 
 private:
-  SceneCreator() {}
-  ~SceneCreator() {}
-
   inline static std::vector<SDL_Texture *> textures;
 
-  static void createBlock(std::string const object, int const x, int const y, SceneInfo &level);
+  static void createBlock(std::string const &object, int const x, int const y, SceneInfo &level);
   static void createBlock1(int x, int y, SceneInfo &level);
   static void createBlock2(int x, int y, SceneInfo &level);
   static void createBlock3(int x, int y, SceneInfo &level);
@@ -53,7 +50,7 @@ private:
   static void createLadder(int x, int y, SceneInfo &level);
   static void createLadderStart(int x, int y, SceneInfo &level);
   static void loadTextures();
-  void destroyTextures();
+  void destroyTextures() const;
   static void createPC(int x, int y, SceneInfo &level);
   static int getId();
 

@@ -6,8 +6,8 @@
 
 class GravitySystem {
 public:
-  void gravity(TransformComponent &transformComponent);
-  void update(ControlComponent &controlComponent, GravityComponent &gravityComponent,
-              TransformComponent &transformComponent);
+  void gravity(TransformComponent &transformComponent) const;
+  void update(ControlComponent const &controlComponent, GravityComponent &gravityComponent,
+              TransformComponent &transformComponent) const;
 };
 #endif

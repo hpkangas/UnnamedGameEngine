@@ -2,27 +2,24 @@
 #define CONTROLSYSTEM_HPP
 #include "../components/collisioncomponent.hpp"
 #include "../components/controlcomponent.hpp"
-#include "../components/gravitycomponent.hpp"
 #include "transformsystem.hpp"
 
 class ControlSystem {
 public:
-  ControlSystem() {}
-  ~ControlSystem() {}
 
-  void update(TransformSystem &transformSystem, TransformComponent &transformComponent,
+  void update(TransformSystem const &transformSystem, TransformComponent &transformComponent,
               int selectedPlayer, int &selectedPlayerIndex, ControlComponent &controlcomponent,
-              GravityComponent &gravityComponent, CollisionComponent &collisionComponent);
+              CollisionComponent const &collisionComponent);
 
 private:
-  void determineControlState(ControlComponent &controlComponent, GRAVITY_STATE gravityState,
-                             CollisionComponent &collisionComponent,
-                             TransformComponent &transformComponent);
+  void determineControlState(ControlComponent &controlComponent,
+                             CollisionComponent const &collisionComponent,
+                             TransformComponent const &transformComponent) const;
   void takeInput(TransformComponent &transformComponent, int &selectedPlayerIndex);
-  void handleInput(TransformSystem &transformSystem, TransformComponent &transformComponent,
-                   CollisionComponent &collisionCOmponent, ControlComponent &controlComponent,
+  void handleInput(TransformSystem const &transformSystem, TransformComponent &transformComponent,
+                   CollisionComponent const &collisionCOmponent, ControlComponent &controlComponent,
                    int &selectedPlayerIndex);
-  void changePlayerCharacter(int &selectedPlayerIndex);
+  void changePlayerCharacter(int &selectedPlayerIndex) const;
 
   bool inputR = false;
   bool inputL = false;

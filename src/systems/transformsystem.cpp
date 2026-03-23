@@ -1,81 +1,78 @@
 #include "transformsystem.hpp"
-#include <iostream>
-#include <iterator>
-#include <ostream>
 
-void TransformSystem::moveRight(TransformComponent &transformComponent) {
-  if (transformComponent.getXvel() + playerSpeed > playerSpeedMax) {
-    transformComponent.setXvel(playerSpeedMax);
+void TransformSystem::moveRight(TransformComponent &transformComponent) const {
+  if (transformComponent.velocity.x + playerSpeed > playerSpeedMax) {
+    transformComponent.velocity.x = playerSpeedMax;
   } else {
-    transformComponent.setXvel(transformComponent.getXvel() + playerSpeed);
+    transformComponent.velocity.x = transformComponent.velocity.x + playerSpeed;
   }
 }
 
-void TransformSystem::moveLeft(TransformComponent &transformComponent) {
-  if (transformComponent.getXvel() < -playerSpeedMax) {
-    transformComponent.setXvel(-playerSpeedMax);
+void TransformSystem::moveLeft(TransformComponent &transformComponent) const{
+  if (transformComponent.velocity.x < -playerSpeedMax) {
+    transformComponent.velocity.x = -playerSpeedMax;
   } else {
-    transformComponent.setXvel(transformComponent.getXvel() - playerSpeed);
+    transformComponent.velocity.x = transformComponent.velocity.x - playerSpeed;
   }
 }
 
-void TransformSystem::moveUp(TransformComponent &transformComponent) {
-  transformComponent.setYvel(transformComponent.getYvel() - 8);
-  if (transformComponent.getYvel() < -playerClimbingSpeedMax) {
-    transformComponent.setYvel(-playerClimbingSpeedMax);
+void TransformSystem::moveUp(TransformComponent &transformComponent) const{
+  transformComponent.velocity.y = transformComponent.velocity.y - 8;
+  if (transformComponent.velocity.y < -playerClimbingSpeedMax) {
+    transformComponent.velocity.y = -playerClimbingSpeedMax;
   }
 }
 
-void TransformSystem::moveDown(TransformComponent &transformComponent) {
-  transformComponent.setYvel(transformComponent.getYvel() + 8);
-  if (transformComponent.getYvel() > playerClimbingSpeedMax) {
-    transformComponent.setYvel(playerClimbingSpeedMax);
+void TransformSystem::moveDown(TransformComponent &transformComponent) const{
+  transformComponent.velocity.y = transformComponent.velocity.y + 8;
+  if (transformComponent.velocity.y > playerClimbingSpeedMax) {
+    transformComponent.velocity.y = playerClimbingSpeedMax;
   }
 }
 
-void TransformSystem::jump(TransformComponent &transformComponent) {
-  transformComponent.setYvel(playerJumpSpeed);
+void TransformSystem::jump(TransformComponent &transformComponent) const{
+  transformComponent.velocity.y = playerJumpSpeed;
 }
 
-void TransformSystem::resetJump(TransformComponent &transformComponent) {}
+void TransformSystem::resetJump(TransformComponent &transformComponent) const{}
 
-void TransformSystem::stopX(TransformComponent &transformComponent) {
+void TransformSystem::stopX(TransformComponent &transformComponent) const{
   stopX(transformComponent, 0);
 }
 
-void TransformSystem::stopX(TransformComponent &transformComponent, int xposDif) {
+void TransformSystem::stopX(TransformComponent &transformComponent, int xposDif)const {
 
-  if (transformComponent.getXvel() != 0) {
+  if (transformComponent.velocity.x != 0) {
     if (xposDif != 0) {
-      transformComponent.setXpos(transformComponent.getXpos() - xposDif);
+      transformComponent.position.x = transformComponent.position.x - xposDif;
     }
-    transformComponent.setXvel(0);
+    transformComponent.velocity.x = 0;
   }
 }
 
-void TransformSystem::stopY(TransformComponent &transformComponent) {
+void TransformSystem::stopY(TransformComponent &transformComponent) const{
   stopY(transformComponent, 0);
 }
 
-void TransformSystem::stopY(TransformComponent &transformComponent, int yposDif) {
+void TransformSystem::stopY(TransformComponent &transformComponent, int yposDif) const{
   if (yposDif != 0) {
-    transformComponent.setYpos(transformComponent.getYpos() - yposDif);
+    transformComponent.position.y = transformComponent.position.y - yposDif;
   }
-  transformComponent.setYvel(0);
+  transformComponent.velocity.y = 0;
 }
 
-void TransformSystem::update(TransformComponent &transformComponent) {
+void TransformSystem::update(TransformComponent &transformComponent) const{
 
-  const float xvel = transformComponent.getXvel();
-  const float yvel = transformComponent.getYvel();
-  const int xpos = transformComponent.getXpos();
-  const int ypos = transformComponent.getYpos();
+  const float xvel = transformComponent.velocity.x;
+  const float yvel = transformComponent.velocity.y;
+  const int xpos = transformComponent.position.x;
+  const int ypos = transformComponent.position.y;
 
   if (!(xvel == 0)) {
-    transformComponent.setXpos(xpos + xvel);
+    transformComponent.position.x = xpos + xvel;
   }
 
   if (!(yvel == 0)) {
-    transformComponent.setYpos(ypos + yvel);
+    transformComponent.position.y = ypos + yvel;
   }
 }

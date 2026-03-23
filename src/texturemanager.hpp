@@ -4,8 +4,8 @@
 #include <SDL2/SDL_image.h>
 
 namespace TextureManager {
-
 SDL_Texture *LoadTexture(const char *fileName);
-}; // namespace TextureManager
+}; 
+// namespace TextureManager
 
 #endif

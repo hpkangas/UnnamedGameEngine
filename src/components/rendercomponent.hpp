@@ -14,19 +14,17 @@ struct RenderInfo {
 
 struct RenderComponent : public IComponent {
   RenderComponent(SDL_Rect source, SDL_Rect destination, SDL_RendererFlip flip,
-                  SDL_Texture *texture, int id) {
-    sourceRect = source;
-    destinationRect = destination;
-    this->flip = flip;
-    objTexture = texture;
+                  SDL_Texture *texture, int id) : sourceRect(source), destinationRect(destination), objTexture(texture), flip(flip){
     parentID = id;
   }
+  
   ~RenderComponent() { SDL_DestroyTexture(objTexture); }
 
+  SDL_Rect sourceRect{};
+  SDL_Rect destinationRect{};
   SDL_Texture *objTexture{};
-  SDL_Rect sourceRect{}, destinationRect{};
   SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-  RenderInfo const render();
+  RenderInfo render();
 };
 #endif

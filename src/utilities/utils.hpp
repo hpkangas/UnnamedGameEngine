@@ -3,11 +3,13 @@
 namespace Utils {
 
 struct Position {
-  int x, y;
+  int x;
+  int y;
 };
 
 struct Velocity {
-  float x, y;
+  float x;
+  float y;
 };
 
 } // namespace Utils

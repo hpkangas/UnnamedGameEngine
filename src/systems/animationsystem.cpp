@@ -1,31 +1,30 @@
 #include "animationsystem.hpp"
-#include "../constants.hpp"
+#include "../utilities/constants.hpp"
 #include <cstdio>
 
 void AnimationSystem::determineAnimationState(ControlComponent const &controlComponent,
                                               CollisionComponent const &collisionComponent,
                                               GRAVITY_STATE gravityState,
                                               TransformComponent const &transformComponent,
-                                              RenderComponent &renderComponent,
-                                              AnimationComponent &animationComponent) {
-  switch (controlComponent.getControlState()) {
+                                              AnimationComponent &animationComponent) const {
+  switch (controlComponent.controlState) {
   case CONTROL_STATE::NORMAL:
-    if (transformComponent.getXvel() != 0) {
-      animationComponent.setAnimationState(ANIMATION_STATE::WALKING);
+    if (transformComponent.velocity.x != 0) {
+      animationComponent.animationState = ANIMATION_STATE::WALKING;
     } else {
-      animationComponent.setAnimationState(ANIMATION_STATE::STILL);
+      animationComponent.animationState = ANIMATION_STATE::STILL;
     }
-    if (collisionComponent.getCollisionLeft() || collisionComponent.getCollisionRight()) {
-      animationComponent.setAnimationState(ANIMATION_STATE::PUSHING);
+    if (collisionComponent.collisionLeft || collisionComponent.collisionRight) {
+      animationComponent.animationState = ANIMATION_STATE::PUSHING;
     }
     break;
   case CONTROL_STATE::AIRBORNE:
-    animationComponent.setAnimationState(ANIMATION_STATE::AIRBORNE);
+    animationComponent.animationState = ANIMATION_STATE::AIRBORNE;
     break;
   case CONTROL_STATE::FALLING:
     break;
   case CONTROL_STATE::CLIMBING:
-    animationComponent.setAnimationState(ANIMATION_STATE::CLIMBING);
+    animationComponent.animationState = ANIMATION_STATE::CLIMBING;
     break;
   }
 }
@@ -35,13 +34,12 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
                              GRAVITY_STATE gravityState,
                              TransformComponent const &transformComponent,
                              RenderComponent &renderComponent,
-                             AnimationComponent &animationComponent) {
+                             AnimationComponent &animationComponent) const {
 
-  determineAnimationState(controlComponent, collisionComponent, gravityState, transformComponent,
-                          renderComponent, animationComponent);
+  determineAnimationState(controlComponent, collisionComponent, gravityState, transformComponent,animationComponent);
 
   // Magic numbers should eventually be switched to something like enums, class data or json
-  switch (animationComponent.getAnimationState()) {
+  switch (animationComponent.animationState) {
   case ANIMATION_STATE::STILL:
     animationComponent.animationFrame = 0;
     playFrame(renderComponent, 0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
@@ -82,13 +80,13 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
 
     playFrame(renderComponent, 0, CLIMBING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
-    if (transformComponent.getYvel() < 0) {
+    if (transformComponent.velocity.y < 0) {
       animationComponent.animationFrame++;
       if (animationComponent.animationFrame / 5 > 5) {
         animationComponent.animationFrame = 0;
       }
     }
-    if (transformComponent.getYvel() > 0) {
+    if (transformComponent.velocity.y > 0) {
       animationComponent.animationFrame--;
       if (animationComponent.animationFrame < 0) {
         animationComponent.animationFrame = 30;
@@ -102,6 +100,6 @@ void AnimationSystem::update(ControlComponent const &controlComponent,
 }
 
 void AnimationSystem::playFrame(RenderComponent &renderComponent, const int x, const int y,
-                                const int w, const int h, const int frame) {
+                                const int w, const int h, const int frame) const{
   renderComponent.sourceRect = {x + w * frame, y, w, h};
 }

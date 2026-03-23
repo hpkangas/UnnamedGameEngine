@@ -10,9 +10,6 @@ struct AnimationComponent : public IComponent {
   int animationFrame = 0;
   const int WALKING_ANIMATION_FRAMES = 8;
 
-  ANIMATION_STATE getAnimationState() const { return animationState; }
-
-  void setAnimationState(const ANIMATION_STATE state) { animationState = state; }
 };
 
 #endif

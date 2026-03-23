@@ -1,53 +1,18 @@
 #pragma once
 #ifndef TRANSFORMCOMPONENT_HPP
 #define TRANSFORMCOMPONENT_HPP
-#include "../utils.hpp"
+#include "../utilities/utils.hpp"
 #include "component.hpp"
 
-using namespace Utils;
 struct TransformComponent : public IComponent {
-private:
-  Position position{0, 0};
-  Velocity velocity{0, 0};
+  Utils::Position position{0, 0};
+  Utils::Velocity velocity{0, 0};
 
-public:
-  TransformComponent(int x, int y, float velx, float vely, int id) {
-    this->position = {x, y};
-    this->velocity = {velx, vely};
+  TransformComponent(int x, int y, float velx, float vely, int id): position({x,y}), velocity({velx,vely}) {
     parentID = id;
   }
   TransformComponent(int x, int y, int id) : TransformComponent(x, y, 0, 0, id) {}
-  ~TransformComponent() {}
 
-  int getXpos() const { return position.x; }
-
-  int getYpos() const { return position.y; }
-
-  Position getPosition() { return position; }
-  void setPosition(Position position) { this->position = position; }
-
-  void setXpos(const int xpos) { position.x = xpos; }
-
-  void setYpos(const int ypos) { position.y = ypos; }
-
-  float getXvel() const { return velocity.x; }
-
-  float getYvel() const { return velocity.y; }
-
-  Velocity getVelocity() { return velocity; }
-  void setVelocity(Velocity velocity) { this->velocity = velocity; }
-
-  void setXvel(const float xvel) {
-    if (xvel != 0) {
-    }
-    velocity.x = xvel;
-  }
-
-  void setYvel(const float yvel) {
-    if (yvel != 0) {
-    }
-    velocity.y = yvel;
-  }
 };
 
 #endif
