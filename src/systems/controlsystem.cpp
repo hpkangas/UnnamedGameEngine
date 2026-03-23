@@ -1,7 +1,7 @@
 #include "controlsystem.hpp"
 #include "../camera.hpp"
 #include "../utilities/constants.hpp"
-#include "../game.hpp"
+#include "../system.hpp"
 #include "SDL_events.h"
 #include "SDL_keyboard.h"
 #include "SDL_scancode.h"
@@ -21,11 +21,11 @@ void ControlSystem::update(TransformSystem const &transformSystem, TransformComp
   inputU = false;
   inputJump = false;
   inputResetCharacter = false;
+  
   determineControlState(controlComponent, collisionComponent,
                         transformComponent);
 
   if (selectedPlayer == selectedPlayerIndex) {
-
     takeInput(transformComponent, selectedPlayerIndex);
     handleInput(transformSystem, transformComponent, collisionComponent, controlComponent,
                 selectedPlayerIndex);
@@ -89,12 +89,12 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
 
   if (SDL_PollEvent(&event) != 0) {
     if (event.type == SDL_QUIT) {
-      Game::isRunning = false;
+      System::isRunning = false;
     }
   }
   const Uint8 *keyboardStateArray = SDL_GetKeyboardState(nullptr);
   if (keyboardStateArray[SDL_SCANCODE_Q]) {
-    Game::isRunning = false;
+    System::isRunning = false;
   }
   if (keyboardStateArray[SDL_SCANCODE_RIGHT]) {
     inputR = true;

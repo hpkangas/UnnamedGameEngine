@@ -1,7 +1,7 @@
-#include "game.hpp"
+#include "system.hpp"
 #include <iostream>
 
-void Game::init(const char *title, const int xpos, const int ypos, const int width,
+void System::init(const char *title, const int xpos, const int ypos, const int width,
                 const int height, const bool fullscreen) const{
 
   int flags = 0;
@@ -19,7 +19,6 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (renderer) {
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-      // SDL_RenderSetScale(renderer, 2,2);
       std::cout << "Renderer created\n";
     }
     isRunning = true;
@@ -29,7 +28,7 @@ void Game::init(const char *title, const int xpos, const int ypos, const int wid
   }
 }
 
-void Game::clean() const {
+void System::clean() const {
   TTF_CloseFont(gFont);
   TTF_Quit();
   SDL_DestroyWindow(window);
@@ -38,4 +37,4 @@ void Game::clean() const {
   std::cout << "Game cleaned\n";
 }
 
-bool Game::running() const { return isRunning; }
+bool System::running() const { return isRunning; }

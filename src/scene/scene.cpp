@@ -4,7 +4,7 @@
 #include "../components/gravitycomponent.hpp"
 #include "../components/transformcomponent.hpp"
 #include "../utilities/constants.hpp"
-#include "../game.hpp"
+#include "../system.hpp"
 #include "../systems/transformsystem.hpp"
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>

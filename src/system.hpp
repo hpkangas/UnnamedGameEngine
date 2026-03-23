@@ -2,7 +2,7 @@
 #include "SDL_ttf.h"
 #include "SDL_video.h"
 
-class Game {
+class System {
 public:
   inline static SDL_Window *window = nullptr;
   inline static SDL_Renderer *renderer = nullptr;

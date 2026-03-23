@@ -1,6 +1,6 @@
 #include "rendersystem.hpp"
 #include "../camera.hpp"
-#include "../game.hpp"
+#include "../system.hpp"
 #include <memory>
 #include <vector>
 
@@ -21,7 +21,7 @@ void RenderSystem::renderComponents(
     std::unordered_map<int, std::unique_ptr<RenderComponent>> &renderComponents,
     std::vector<int> const &renderIds) const{
 
-  SDL_RenderClear(Game::renderer);
+  SDL_RenderClear(System::renderer);
   for (int id : renderIds) {
     draw(renderComponents.at(id).get()->render());
   }
@@ -29,7 +29,7 @@ void RenderSystem::renderComponents(
   //   draw(object.second->render());
   // }
 
-  SDL_RenderPresent(Game::renderer);
+  SDL_RenderPresent(System::renderer);
 }
 
 void RenderSystem::render(RenderComponent &renderComponent) const { draw(renderComponent.render()); }
@@ -38,6 +38,6 @@ void RenderSystem::draw(const RenderInfo &RenderInfo) const{
   SDL_Rect newDestination = RenderInfo.destinationRect;
   newDestination.x -= Camera::offset.x;
   newDestination.y -= Camera::offset.y;
-  SDL_RenderCopyEx(Game::renderer, RenderInfo.objTexture, &RenderInfo.sourceRect, &newDestination,
+  SDL_RenderCopyEx(System::renderer, RenderInfo.objTexture, &RenderInfo.sourceRect, &newDestination,
                    0, nullptr, RenderInfo.flip);
 }
