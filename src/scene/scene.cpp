@@ -19,7 +19,7 @@ bool Scene::init() {
       return false;
     }
     else {
-      currentLevel = SceneCreator::createLevel2(file);
+      currentLevel = SceneCreator::createLevel(file);
       std::cout << "Scene init \n";
       return true;
     }
@@ -27,8 +27,6 @@ bool Scene::init() {
 
 
 void Scene::update() {
-  std::cout << "--------------" << std::endl;
-
   if (selectedPlayer != selectedPlayerIndex) {
     selectedPlayer = selectedPlayerIndex;
     centerCamera(*currentLevel.tcs.at(selectedPlayer));

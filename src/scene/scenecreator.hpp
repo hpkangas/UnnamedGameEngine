@@ -35,7 +35,6 @@ struct SceneInfo {
 class SceneCreator {
 public:
   static SceneInfo createLevel(SDL_RWops *Handle);
-  static SceneInfo createLevel2(SDL_RWops *Handle);
 
 private:
   inline static std::vector<SDL_Texture *> textures;

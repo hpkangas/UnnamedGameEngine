@@ -22,7 +22,7 @@
 
 // for convenience
 using json = nlohmann::json;
-SceneInfo SceneCreator::createLevel2(SDL_RWops *file) {
+SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   std::ifstream f("example.json");
   json data = json::parse(f);
   std::cout<<data.at("avain").at("1")<<std::endl;
@@ -77,52 +77,7 @@ SceneInfo SceneCreator::createLevel2(SDL_RWops *file) {
 
   return level;
 }
-SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
-  SceneInfo level;
-  std::string currentValue;
-  char c;
-  std::vector<std::string> values;
 
-  std::cout << "Creating scene" << "\n";
-  loadTextures();
-
-  while (SDL_RWread(file, &c, 1, 1) == 1) {
-    // Read value before comma. Create stuff from values at new line
-
-    if (c == '\n') {
-      std::string gameObjectType = values.at(0);
-      int x = std::stoi(values.at(1));
-      int y = std::stoi(values.at(2));
-
-      if (gameObjectType.starts_with("PC")) {
-        createPC(x, y, level);
-
-      } else if (gameObjectType.starts_with("B")) {
-        createBlock(gameObjectType, x, y, level);
-
-      } else if (gameObjectType.starts_with("LS")) {
-        createLadderStart(x, y, level);
-
-      } else if (gameObjectType.starts_with("L")) {
-        createLadder(x, y, level);
-      } else {
-        std::cout << "Error: Scene creator: " << gameObjectType << "is unknown" << std::endl;
-      }
-
-      values.clear();
-      continue;
-    }
-
-    if (c != ',') {
-      currentValue += c;
-    } else {
-      values.emplace_back(currentValue);
-      currentValue = "";
-    }
-  }
-  SDL_RWclose(file);
-  return level;
-}
 
 void SceneCreator::createBlock(std::string const &gameObjectType, int x, int y, SceneInfo &level) {
   if (gameObjectType == "B1") {
