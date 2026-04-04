@@ -104,6 +104,9 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
   if (keyboardStateArray[SDL_SCANCODE_D]) {
     inputJump = true;
   }
+  if (!keyboardStateArray[SDL_SCANCODE_D]) {
+    canJump = true;
+  }
   if (keyboardStateArray[SDL_SCANCODE_UP]) {
     inputU = true;
   }
@@ -185,10 +188,11 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
       }
     }
 
-    if (inputJump) {
+    if (inputJump && canJump) {
       noInput = false;
       transformSystem.jump(transformComponent);
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
+      canJump = false;
     }
 
     if (noInput) {

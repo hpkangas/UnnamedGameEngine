@@ -27,6 +27,7 @@ private:
   bool inputChangeCharacter = false;
   bool inputResetCharacter = false;
   bool inputJump = false;
+  bool canJump = true;
 };
 
 #endif
