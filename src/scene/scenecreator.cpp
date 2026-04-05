@@ -42,9 +42,13 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
       continue;
     }
     if (c == ',') {
-
       if (currentValue.starts_with("PC")) {
         createPC(128 * x, 128 * y, level);
+        createEmptyTile(128 * x, 128 * y, level);
+
+      } else if (currentValue.starts_with("E")) {
+        createEnemy(128 * x, 128 * y, level);
+        createEmptyTile(128 * x, 128 * y, level);
 
       } else if (currentValue.starts_with("B")) {
         createBlock(currentValue, 128 * x, 128 * y, level);
@@ -198,9 +202,35 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   level.ObjectRenderIds.emplace_back(id);
   level.collisionIds.emplace_back(id);
   level.gravityIds.emplace_back(id);
-  level.tileIds.emplace_back(id);
   level.controlIds.emplace_back(id);
   level.animationIds.emplace_back(id);
+  level.healthIds.emplace_back(id);
+}
+
+void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
+  int id = getId();
+
+  auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
+  SDL_Rect sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
+  SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
+  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
+                                                           SDL_FLIP_NONE, textures.at(0), id);
+  SDL_Rect collisionRect = {transformComponent->position.x, transformComponent->position.y,
+                            PLAYER_WIDTH, PLAYER_HEIGHT};
+  auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
+  auto gravityComponent = std::make_unique<GravityComponent>(GRAVITY_STATE::AIRBORNE, id);
+  auto healthComponent = std::make_unique<HealthComponent>(3);
+
+  level.tcs.emplace(id, (std::move(transformComponent)));
+  level.rcs.emplace(id, (std::move(renderComponent)));
+  level.ccs.emplace(id, (std::move(collisionComponent)));
+  level.gcs.emplace(id, (std::move(gravityComponent)));
+  level.healthComponents.emplace(id, (std::move(healthComponent)));
+  level.ids++;
+  level.transformIds.emplace_back(id);
+  level.ObjectRenderIds.emplace_back(id);
+  level.collisionIds.emplace_back(id);
+  level.gravityIds.emplace_back(id);
   level.healthIds.emplace_back(id);
 }
 

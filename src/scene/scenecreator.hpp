@@ -58,6 +58,7 @@ private:
   static void createLadder(int x, int y, SceneInfo &level);
   static void createLadderStart(int x, int y, SceneInfo &level);
   static void createPC(int x, int y, SceneInfo &level);
+  static void createEnemy(int x, int y, SceneInfo &level);
   static void createUI(int x, int y, SceneInfo &level);
 
   static void loadTextures();
