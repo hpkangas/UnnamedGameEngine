@@ -21,8 +21,6 @@ struct RenderComponent : public IComponent {
     parentID = id;
   }
 
-  // ~RenderComponent() { SDL_DestroyTexture(objTexture); }
-
   SDL_Rect sourceRect{};
   SDL_Rect destinationRect{};
   SDL_Texture *objTexture{};

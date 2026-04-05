@@ -4,11 +4,12 @@
 #include "../scene/scenecreator.hpp"
 
 class RenderSystem {
+  void renderStatic(const RenderInfo &RenderInfo) const;
+  void renderNonStatic(const RenderInfo &RenderInfo) const;
+
 public:
-  void renderComponents(SceneInfo &currentLevel) const;
-  void render(const RenderInfo &RenderInfo) const;
   void update(SceneInfo &currentLevel) const;
-  void renderWithCamera(const RenderInfo &RenderInfo) const;
+  void render(SceneInfo &currentLevel) const;
 };
 
 #endif

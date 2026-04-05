@@ -37,32 +37,32 @@ void RenderSystem::update(SceneInfo &currentLevel) const {
   }
 }
 
-void RenderSystem::renderComponents(SceneInfo &currentLevel) const {
+void RenderSystem::render(SceneInfo &currentLevel) const {
   std::unordered_map<int, std::unique_ptr<RenderComponent>> &renderComponents = currentLevel.rcs;
 
   SDL_RenderClear(System::renderer);
 
   for (int id : currentLevel.ObjectRenderIds) {
-    renderWithCamera(renderComponents.at(id).get()->render());
+    renderNonStatic(renderComponents.at(id).get()->render());
   }
 
   for (int id : currentLevel.TileRenderIds) {
-    renderWithCamera(renderComponents.at(id).get()->render());
+    renderNonStatic(renderComponents.at(id).get()->render());
   }
 
   for (int id : currentLevel.UIRenderIds) {
-    render(renderComponents.at(id)->render());
+    renderStatic(renderComponents.at(id)->render());
   }
 
   SDL_RenderPresent(System::renderer);
 }
 
-void RenderSystem::render(const RenderInfo &ri) const {
+void RenderSystem::renderStatic(const RenderInfo &ri) const {
   SDL_RenderCopyEx(System::renderer, ri.objTexture, &ri.sourceRect, &ri.destinationRect, 0, nullptr,
                    ri.flip);
 }
 
-void RenderSystem::renderWithCamera(const RenderInfo &RenderInfo) const {
+void RenderSystem::renderNonStatic(const RenderInfo &RenderInfo) const {
   SDL_Rect newDestination = RenderInfo.destinationRect;
   newDestination.x -= Camera::offset.x;
   newDestination.y -= Camera::offset.y;
