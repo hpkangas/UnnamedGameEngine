@@ -8,10 +8,11 @@
 class Camera {
 public:
   Camera();
-  inline static SDL_Rect position{};
+  inline static SDL_Rect focusArea{};
+  inline static SDL_Rect viewPort{};
   inline static Utils::Position offset{};
 
-  static void updatePositionRelativeToScreenAndOffset();
+  static void update();
   static void updateOffsetRelativeToScreen(int offsetx, int offsety);
 };
 

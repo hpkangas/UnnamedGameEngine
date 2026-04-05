@@ -129,7 +129,7 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
     transformComponent.position.x = 0;
     transformComponent.position.y = 0;
     controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-    Camera::position = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
+    Camera::focusArea = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
     Camera::offset = {0, -200};
     return;
   }
