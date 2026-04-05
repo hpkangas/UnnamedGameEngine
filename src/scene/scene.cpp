@@ -37,7 +37,7 @@ void Scene::update() {
   // What if component list doens't have the id/i? How to go through only ids that are in the list?
 
   for (int id : currentLevel.gravityIds) {
-    gravitySystem.update(*currentLevel.ctrlComponents.at(id), *currentLevel.gcs.at(id),
+    gravitySystem.update(*currentLevel.ccs.at(id), *currentLevel.gcs.at(id),
                          *currentLevel.tcs.at(id));
   }
   // for (int id : currentLevel.collisionIds) {
