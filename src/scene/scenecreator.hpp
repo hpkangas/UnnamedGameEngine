@@ -5,6 +5,7 @@
 #include "../components/collisioncomponent.hpp"
 #include "../components/controlcomponent.hpp"
 #include "../components/gravitycomponent.hpp"
+#include "../components/healthcomponent.hpp"
 #include "../components/rendercomponent.hpp"
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
@@ -24,13 +25,17 @@ struct SceneInfo {
   std::unordered_map<int, std::unique_ptr<AnimationComponent>> acs;
   std::unordered_map<int, std::unique_ptr<TileComponent>> tiles;
   std::unordered_map<int, std::unique_ptr<ControlComponent>> ctrlComponents;
+  std::unordered_map<int, std::unique_ptr<HealthComponent>> healthComponents;
   std::vector<int> transformIds;
-  std::vector<int> renderIds;
+  std::vector<int> ObjectRenderIds;
+  std::vector<int> UIRenderIds;
+  std::vector<int> TileRenderIds;
   std::vector<int> collisionIds;
   std::vector<int> gravityIds;
   std::vector<int> animationIds;
   std::vector<int> tileIds;
   std::vector<int> controlIds;
+  std::vector<int> healthIds;
   int ids = 0;
 };
 
@@ -52,9 +57,12 @@ private:
   static void createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level);
   static void createLadder(int x, int y, SceneInfo &level);
   static void createLadderStart(int x, int y, SceneInfo &level);
+  static void createPC(int x, int y, SceneInfo &level);
+  static void createUI(int x, int y, SceneInfo &level);
+
   static void loadTextures();
   void destroyTextures() const;
-  static void createPC(int x, int y, SceneInfo &level);
+
   static int getId();
 
 }; // namespace Level

@@ -32,6 +32,9 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
 
   int y = 0;
   int x = 0;
+
+  createUI(0, 0, level);
+
   while (SDL_RWread(file, &c, 1, 1) == 1) {
     if (c == '\n') {
       y++;
@@ -126,7 +129,7 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.renderIds.emplace_back(id);
+  level.TileRenderIds.emplace_back(id);
   level.collisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
@@ -147,7 +150,7 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.renderIds.emplace_back(id);
+  level.TileRenderIds.emplace_back(id);
   level.collisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
@@ -156,6 +159,7 @@ void SceneCreator::loadTextures() {
   std::cout << "Loading textures...\n";
   textures.emplace_back(TextureManager::LoadTexture("assets/baleog.png"));
   textures.emplace_back(TextureManager::LoadTexture("assets/tiles.png"));
+  textures.emplace_back(TextureManager::LoadTexture("assets/UI.png"));
 }
 
 void SceneCreator::destroyTextures() const {
@@ -178,6 +182,7 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   auto gravityComponent = std::make_unique<GravityComponent>(GRAVITY_STATE::AIRBORNE, id);
   auto animationComponent = std::make_unique<AnimationComponent>();
   auto controlComponent = std::make_unique<ControlComponent>(CONTROL_STATE::AIRBORNE, id);
+  auto healthComponent = std::make_unique<HealthComponent>(3);
 
   animationComponent->parentID = id;
 
@@ -187,14 +192,16 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   level.gcs.emplace(id, (std::move(gravityComponent)));
   level.acs.emplace(id, (std::move(animationComponent)));
   level.ctrlComponents.emplace(id, (std::move(controlComponent)));
+  level.healthComponents.emplace(id, (std::move(healthComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.renderIds.emplace_back(id);
+  level.ObjectRenderIds.emplace_back(id);
   level.collisionIds.emplace_back(id);
   level.gravityIds.emplace_back(id);
   level.tileIds.emplace_back(id);
   level.controlIds.emplace_back(id);
   level.animationIds.emplace_back(id);
+  level.healthIds.emplace_back(id);
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
@@ -214,7 +221,7 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.renderIds.emplace_back(id);
+  level.TileRenderIds.emplace_back(id);
   level.collisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
@@ -236,9 +243,23 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   level.tiles.emplace(id, (std::move(tileComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.renderIds.emplace_back(id);
+  level.TileRenderIds.emplace_back(id);
   level.collisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
+}
+
+void SceneCreator::createUI(int x, int y, SceneInfo &level) {
+  int id = getId();
+  auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
+  SDL_Rect sourceRect = {0, 0, 31, 31};
+  SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
+  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
+                                                           SDL_FLIP_NONE, textures.at(2), id);
+  level.tcs.emplace(id, (std::move(transformComponent)));
+  level.rcs.emplace(id, (std::move(renderComponent)));
+  level.ids++;
+  level.transformIds.emplace_back(id);
+  level.UIRenderIds.emplace_back(id);
 }
 
 int SceneCreator::getId() {

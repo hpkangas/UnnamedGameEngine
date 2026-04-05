@@ -17,5 +17,6 @@ constexpr int WALK_FRAME = 0;
 constexpr int PUSH_FRAME = 640;
 constexpr int INAIR_FRAME = 384;
 constexpr int CLIMBING_FRAME = 128;
+constexpr int PLAYER_INDEX = 1;
 
 #endif

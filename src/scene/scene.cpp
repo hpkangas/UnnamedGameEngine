@@ -41,12 +41,12 @@ void Scene::update() {
                          *currentLevel.tcs.at(id));
   }
   // for (int id : currentLevel.collisionIds) {
-  collisionDetectionSystem.update(0, currentLevel);
+  collisionDetectionSystem.update(PLAYER_INDEX, currentLevel);
   // }
 
   // Not all collision have controls too, will crash with id for range loop
   // for (int i = 0; i < 3; i++) {
-  collisionSystem.update(0, currentLevel, transformSystem);
+  collisionSystem.update(PLAYER_INDEX, currentLevel, transformSystem);
   // }
 
   for (int id : currentLevel.transformIds) {
@@ -58,14 +58,13 @@ void Scene::update() {
                            currentLevel.gcs.at(id)->gravityState, *currentLevel.tcs.at(id),
                            *currentLevel.rcs.at(id), *currentLevel.acs.at(id));
   }
-  for (int id : currentLevel.renderIds) {
-    renderSystem.update(*currentLevel.tcs.at(id), *currentLevel.rcs.at(id));
-  }
+
+  renderSystem.update(currentLevel);
 
   updateCamera(*currentLevel.tcs.at(selectedPlayer));
 }
 
-void Scene::render() { renderSystem.renderComponents(currentLevel.rcs, currentLevel.renderIds); }
+void Scene::render() { renderSystem.renderComponents(currentLevel); }
 
 void Scene::updateCamera(const TransformComponent &transformComponent) const {
   const int xpos = transformComponent.position.x;

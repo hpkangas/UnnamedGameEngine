@@ -10,6 +10,7 @@
 #include "../systems/gravitysystem.hpp"
 #include "../systems/rendersystem.hpp"
 #include "../systems/transformsystem.hpp"
+#include "../utilities/constants.hpp"
 #include "scenecreator.hpp"
 
 struct Scene {
@@ -21,8 +22,8 @@ struct Scene {
   SceneInfo currentLevel;
   [[no_unique_address]] Camera camera;
 
-  int selectedPlayerIndex = 0;
-  int selectedPlayer = 0;
+  int selectedPlayerIndex = PLAYER_INDEX;
+  int selectedPlayer = PLAYER_INDEX;
 
   [[no_unique_address]] RenderSystem renderSystem;
   [[no_unique_address]] ControlSystem controlSystem;

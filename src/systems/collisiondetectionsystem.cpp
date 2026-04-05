@@ -1,5 +1,7 @@
 #include "collisiondetectionsystem.hpp"
+#include "../utilities/constants.hpp"
 #include "../utilities/physics.hpp"
+
 #include <cstdio>
 
 void CollisionDetectionSystem::update(int i, SceneInfo &currentLevel) const {
@@ -15,7 +17,7 @@ void CollisionDetectionSystem::checkBlockCollision(int i, SceneInfo &currentLeve
   Velocity velocity = playerT.velocity;
   // other than player ids
   for (int j : currentLevel.collisionIds) {
-    if (j == 0) {
+    if (j == PLAYER_INDEX) {
       continue;
     }
     auto const &blockC = currentLevel.ccs.at(j);
