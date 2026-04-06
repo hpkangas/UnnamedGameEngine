@@ -12,13 +12,13 @@ public:
   Utils::Position collidedDownObjectPos = {0, 0};
   Utils::Position collidedUpObjectPos = {0, 0};
 
-  void update(int i, SceneInfo &currentLevel, TransformSystem &transformSystem);
+  void update(SceneInfo &currentLevel, TransformSystem &transformSystem);
 
   void handleDownTileCollision(TransformComponent &tc, CollisionComponent const &cc,
-                               ControlComponent &ctrlc) const;
+                               GravityComponent const &ctrlc) const;
 
   void handleUpTileCollision(TransformComponent &tc, CollisionComponent const &cc,
-                             ControlComponent &ctrlc) const;
+                             GravityComponent const &ctrlc) const;
   void handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent const &cc) const;
 };
 

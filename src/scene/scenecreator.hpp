@@ -27,9 +27,10 @@ struct SceneInfo {
   std::unordered_map<int, std::unique_ptr<ControlComponent>> ctrlComponents;
   std::unordered_map<int, std::unique_ptr<HealthComponent>> healthComponents;
   std::vector<int> transformIds;
-  std::vector<int> ObjectRenderIds;
+  std::vector<int> objectRenderIds;
   std::vector<int> UIRenderIds;
   std::vector<int> TileRenderIds;
+  std::vector<int> staticCollisionIds;
   std::vector<int> collisionIds;
   std::vector<int> gravityIds;
   std::vector<int> animationIds;

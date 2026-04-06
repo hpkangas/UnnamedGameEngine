@@ -5,7 +5,7 @@
 #include <memory>
 
 void RenderSystem::update(SceneInfo &currentLevel) const {
-  for (int id : currentLevel.ObjectRenderIds) {
+  for (int id : currentLevel.objectRenderIds) {
     RenderComponent &rc = *currentLevel.rcs.at(id);
     TransformComponent const &tc = *currentLevel.tcs.at(id);
 
@@ -43,7 +43,7 @@ void RenderSystem::render(SceneInfo &currentLevel) const {
 
   SDL_RenderClear(System::renderer);
 
-  for (int id : currentLevel.ObjectRenderIds) {
+  for (int id : currentLevel.objectRenderIds) {
     renderNonStatic(renderComponents.at(id).get()->render());
   }
 

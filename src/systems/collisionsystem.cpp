@@ -2,22 +2,25 @@
 #include "transformsystem.hpp"
 #include <cstdio>
 
-void CollisionSystem::update(int id, SceneInfo &currentLevel, TransformSystem &transformSystem) {
+void CollisionSystem::update(SceneInfo &currentLevel, TransformSystem &transformSystem) {
 
   this->transformSystem = &transformSystem;
 
-  CollisionComponent const &cc = *currentLevel.ccs.at(id);
-  TransformComponent &tc = *currentLevel.tcs.at(id);
-  ControlComponent &ctrlc = *currentLevel.ctrlComponents.at(id);
+  for (int id : currentLevel.collisionIds) {
 
-  handleDownTileCollision(tc, cc, ctrlc);
-  handleUpTileCollision(tc, cc, ctrlc);
+    CollisionComponent const &cc = *currentLevel.ccs.at(id);
+    TransformComponent &tc = *currentLevel.tcs.at(id);
+    GravityComponent const &gc = *currentLevel.gcs.at(id);
 
-  handleHorizontalBlockCollision(tc, cc);
+    handleDownTileCollision(tc, cc, gc);
+    handleUpTileCollision(tc, cc, gc);
+
+    handleHorizontalBlockCollision(tc, cc);
+  }
 }
 
 void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionComponent const &cc,
-                                              ControlComponent &ctrlc) const {
+                                              GravityComponent const &gc) const {
   switch (cc.collisionTileDown) {
 
   case TILE::NONE:
@@ -26,7 +29,7 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
     break;
 
   case TILE::SOLID:
-    if (ctrlc.controlState == CONTROL_STATE::AIRBORNE) {
+    if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
       transformSystem->stopY(tc, cc.yposDif);
     }
     break;
@@ -35,15 +38,15 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
     break;
 
   case TILE::LADDER:
-    ctrlc.canClimb = true;
+    // gc.canClimb = true;
 
     break;
 
   case TILE::LADDERSTART:
-    if (ctrlc.controlState == CONTROL_STATE::AIRBORNE) {
+    if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
       transformSystem->stopY(tc, cc.yposDif);
     }
-    ctrlc.canClimb = true;
+    // gc.canClimb = true;
 
     break;
 
@@ -53,7 +56,7 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
 }
 
 void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionComponent const &cc,
-                                            ControlComponent &ctrlc) const {
+                                            GravityComponent const &gc) const {
 
   switch (cc.collisionTileUp) {
 
@@ -62,7 +65,7 @@ void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionCom
 
   case TILE::SOLID:
 
-    if (ctrlc.controlState == CONTROL_STATE::AIRBORNE) {
+    if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
       if (tc.velocity.y < 0) {
         transformSystem->stopY(tc, cc.yposDif);
       }
@@ -73,12 +76,12 @@ void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionCom
     break;
 
   case TILE::LADDER:
-    ctrlc.canClimb = true;
+    // gc.canClimb = true;
 
     break;
 
   case TILE::LADDERSTART:
-    ctrlc.canClimb = true;
+    // gc.canClimb = true;
 
     break;
   }

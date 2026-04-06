@@ -134,7 +134,7 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   level.ids++;
   level.transformIds.emplace_back(id);
   level.TileRenderIds.emplace_back(id);
-  level.collisionIds.emplace_back(id);
+  level.staticCollisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
 
@@ -155,7 +155,7 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   level.ids++;
   level.transformIds.emplace_back(id);
   level.TileRenderIds.emplace_back(id);
-  level.collisionIds.emplace_back(id);
+  level.staticCollisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
 
@@ -199,7 +199,7 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   level.healthComponents.emplace(id, (std::move(healthComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.ObjectRenderIds.emplace_back(id);
+  level.objectRenderIds.emplace_back(id);
   level.collisionIds.emplace_back(id);
   level.gravityIds.emplace_back(id);
   level.controlIds.emplace_back(id);
@@ -228,7 +228,7 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   level.healthComponents.emplace(id, (std::move(healthComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.ObjectRenderIds.emplace_back(id);
+  level.objectRenderIds.emplace_back(id);
   level.collisionIds.emplace_back(id);
   level.gravityIds.emplace_back(id);
   level.healthIds.emplace_back(id);
@@ -252,7 +252,7 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   level.ids++;
   level.transformIds.emplace_back(id);
   level.TileRenderIds.emplace_back(id);
-  level.collisionIds.emplace_back(id);
+  level.staticCollisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
 
@@ -274,7 +274,7 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   level.ids++;
   level.transformIds.emplace_back(id);
   level.TileRenderIds.emplace_back(id);
-  level.collisionIds.emplace_back(id);
+  level.staticCollisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
 
