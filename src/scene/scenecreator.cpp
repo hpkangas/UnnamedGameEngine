@@ -1,4 +1,5 @@
 #include "scenecreator.hpp"
+#include "../components/aicomponent.hpp"
 #include "../components/animationcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/controlcomponent.hpp"
@@ -21,7 +22,7 @@
 #include <vector>
 
 // json SceneCreator::data{getGameData()};
-
+using namespace Constants;
 SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   SceneInfo level;
   std::string currentValue;
@@ -32,6 +33,7 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
 
   int y = 0;
   int x = 0;
+  int maxX = 0;
 
   createUI(0, 0, level);
 
@@ -68,6 +70,10 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
       }
 
       x++;
+      if (x > maxX) {
+        maxX = x;
+      };
+
       currentValue = "";
       continue;
     }
@@ -77,6 +83,9 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
     }
   }
   SDL_RWclose(file);
+
+  level.levelLength = maxX * 128;
+  level.levelHeight = y * 128;
 
   return level;
 }
@@ -107,7 +116,6 @@ void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
 
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   transformComponent->parentID = id;
-
   auto tileComponent = std::make_unique<TileComponent>(TILE::NONE);
 
   level.transformsComponents.emplace(id, (std::move(transformComponent)));
@@ -115,6 +123,14 @@ void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
   level.ids++;
   level.transformIds.emplace_back(id);
   level.tileIds.emplace_back(id);
+
+  // render for testing
+  SDL_Rect sourceRect = {128, 384, 128, 128};
+  SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
+  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
+                                                           SDL_FLIP_NONE, textures.at(1), id);
+  level.renderComponents.emplace(id, (std::move(renderComponent)));
+  level.tileRenderIds.emplace_back(id);
 }
 
 void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
@@ -173,7 +189,7 @@ void SceneCreator::destroyTextures() const {
 }
 
 void SceneCreator::createPC(int x, int y, SceneInfo &level) {
-  int id = getId();
+  int id = 1;
 
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
@@ -211,15 +227,17 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   int id = getId();
 
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
+  transformComponent->velocity.x = 4;
   SDL_Rect sourceRect = {0, 512, PLAYER_WIDTH, PLAYER_HEIGHT};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(0), id);
-  SDL_Rect collisionRect = {transformComponent->position.x, transformComponent->position.y,
-                            PLAYER_WIDTH, PLAYER_HEIGHT};
+  SDL_Rect collisionRect = {transformComponent->position.x + 4, transformComponent->position.y,
+                            PLAYER_WIDTH - 4, PLAYER_HEIGHT};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
   auto gravityComponent = std::make_unique<GravityComponent>(GRAVITY_STATE::AIRBORNE, id);
   auto healthComponent = std::make_unique<HealthComponent>(3);
+  auto aiComponent = std::make_unique<AIComponent>();
 
   level.transformsComponents.emplace(id, (std::move(transformComponent)));
   level.renderComponents.emplace(id, (std::move(renderComponent)));
@@ -232,6 +250,7 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   level.collisionIds.emplace_back(id);
   level.gravityIds.emplace_back(id);
   level.healthIds.emplace_back(id);
+  level.AIIds.emplace_back(id);
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
@@ -279,7 +298,7 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createUI(int x, int y, SceneInfo &level) {
-  int id = getId();
+  int id = 0;
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {0, 0, 31, 31};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -293,7 +312,7 @@ void SceneCreator::createUI(int x, int y, SceneInfo &level) {
 }
 
 int SceneCreator::getId() {
-  static int id = -1;
+  static int id = 2;
   id++;
   return id;
 }

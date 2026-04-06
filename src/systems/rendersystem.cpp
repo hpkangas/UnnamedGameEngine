@@ -44,11 +44,10 @@ void RenderSystem::render(SceneInfo &currentLevel) const {
 
   SDL_RenderClear(System::renderer);
 
-  for (int id : currentLevel.objectRenderIds) {
+  for (int id : currentLevel.tileRenderIds) {
     renderNonStatic(renderComponents.at(id).get()->render());
   }
-
-  for (int id : currentLevel.tileRenderIds) {
+  for (int id : currentLevel.objectRenderIds) {
     renderNonStatic(renderComponents.at(id).get()->render());
   }
 

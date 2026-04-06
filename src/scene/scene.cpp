@@ -12,7 +12,7 @@
 #include <iostream>
 
 bool Scene::init() {
-  const char *fileName = "level2";
+  const char *fileName = "level2.csv";
   SDL_RWops *file = SDL_RWFromFile(fileName, "rb");
   if (file == nullptr) {
     std::cout << "Error: " << SDL_GetError() << std::endl;
@@ -31,12 +31,16 @@ void Scene::update() {
   }
 
   for (int id : currentLevel.controlIds) {
-    controlSystem.update(transformSystem, *currentLevel.transformsComponents.at(id), id, selectedPlayerIndex,
-                         *currentLevel.controlComponents.at(id), *currentLevel.collisionComponents.at(id));
+    controlSystem.update(transformSystem, *currentLevel.transformsComponents.at(id), id,
+                         selectedPlayerIndex, *currentLevel.controlComponents.at(id),
+                         *currentLevel.collisionComponents.at(id));
   }
 
+  AISystem.update(currentLevel);
+
   for (int id : currentLevel.gravityIds) {
-    gravitySystem.update(*currentLevel.collisionComponents.at(id), *currentLevel.gravityComponents.at(id),
+    gravitySystem.update(*currentLevel.collisionComponents.at(id),
+                         *currentLevel.gravityComponents.at(id),
                          *currentLevel.transformsComponents.at(id));
   }
   collisionDetectionSystem.update(currentLevel);
@@ -48,9 +52,11 @@ void Scene::update() {
   }
 
   for (int id : currentLevel.animationIds) {
-    animationSystem.update(*currentLevel.controlComponents.at(id), *currentLevel.collisionComponents.at(id),
-                           currentLevel.gravityComponents.at(id)->gravityState, *currentLevel.transformsComponents.at(id),
-                           *currentLevel.renderComponents.at(id), *currentLevel.animationComponents.at(id));
+    animationSystem.update(
+        *currentLevel.controlComponents.at(id), *currentLevel.collisionComponents.at(id),
+        currentLevel.gravityComponents.at(id)->gravityState,
+        *currentLevel.transformsComponents.at(id), *currentLevel.renderComponents.at(id),
+        *currentLevel.animationComponents.at(id));
   }
 
   renderSystem.update(currentLevel);

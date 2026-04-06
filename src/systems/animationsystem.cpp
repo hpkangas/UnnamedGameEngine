@@ -2,6 +2,7 @@
 #include "../utilities/constants.hpp"
 #include <cstdio>
 
+using namespace Constants;
 void AnimationSystem::determineAnimationState(ControlComponent const &controlComponent,
                                               CollisionComponent const &collisionComponent,
                                               GRAVITY_STATE gravityState,

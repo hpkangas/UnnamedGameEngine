@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <iostream>
 
+using namespace Constants;
 void ControlSystem::update(TransformSystem const &transformSystem,
                            TransformComponent &transformComponent, int selectedPlayer,
                            int &selectedPlayerIndex, ControlComponent &controlComponent,

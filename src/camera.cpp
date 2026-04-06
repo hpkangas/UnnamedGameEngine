@@ -1,6 +1,7 @@
 #include "camera.hpp"
 #include "utilities/constants.hpp"
 
+using namespace Constants;
 Camera::Camera() {
   offset = {0, 0};
   focusArea = {SCREENWIDTH * 1 / 3, SCREENHEIGHT * 1 / 3, SCREENWIDTH * 2 / 3,

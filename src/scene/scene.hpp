@@ -3,6 +3,7 @@
 #define SCENE_HPP
 #include "../camera.hpp"
 #include "../components/transformcomponent.hpp"
+#include "../systems/aisystem.hpp"
 #include "../systems/animationsystem.hpp"
 #include "../systems/collisiondetectionsystem.hpp"
 #include "../systems/collisionsystem.hpp"
@@ -11,8 +12,8 @@
 #include "../systems/rendersystem.hpp"
 #include "../systems/transformsystem.hpp"
 #include "../utilities/constants.hpp"
-#include "scenecreator.hpp"
 
+using namespace Constants;
 struct Scene {
   bool init();
   void handleEvents();
@@ -32,6 +33,7 @@ struct Scene {
   [[no_unique_address]] TransformSystem transformSystem;
   [[no_unique_address]] AnimationSystem animationSystem;
   [[no_unique_address]] GravitySystem gravitySystem;
+  [[no_unique_address]] AISystem AISystem;
 
   void updateCamera(const TransformComponent &transformComponent) const;
   void centerCamera(const TransformComponent &transformComponent) const;

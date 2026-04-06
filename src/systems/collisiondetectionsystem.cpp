@@ -1,8 +1,15 @@
 #include "collisiondetectionsystem.hpp"
+#include "../utilities/constants.hpp"
 #include "../utilities/physics.hpp"
 #include <cstdio>
 
-void CollisionDetectionSystem::update(SceneInfo &currentLevel) const {
+using namespace Constants;
+
+void CollisionDetectionSystem::update(SceneInfo &currentLevel) {
+  // constructor?
+  levelHeight = currentLevel.levelHeight;
+  levelLength = currentLevel.levelLength;
+
   for (int id : currentLevel.collisionIds) {
     CollisionComponent &cc = *currentLevel.collisionComponents.at(id);
     resetCollisions(cc);
@@ -42,6 +49,13 @@ void CollisionDetectionSystem::checkPlayerLeftCollision(CollisionComponent &play
                                                         CollisionComponent const &block,
                                                         Velocity velocity,
                                                         TILE const &collisionTile) const {
+  if (player.collisionRect.x + velocity.x <= 0) {
+    player.xposDif = player.collisionRect.x;
+    player.collisionTileLeft = TILE::SOLID;
+    player.collisionLeft = true;
+    return;
+  }
+
   if (Physics::playerCollisionLeft(player.collisionRect, block.collisionRect, velocity)) {
     player.xposDif = player.collisionRect.x - (block.collisionRect.x + block.collisionRect.w);
     player.collisionTileLeft = collisionTile;
@@ -54,6 +68,13 @@ void CollisionDetectionSystem::checkPlayerRightCollision(CollisionComponent &pla
                                                          CollisionComponent const &block,
                                                          Velocity velocity,
                                                          TILE const &collisionTile) const {
+  if (player.collisionRect.x + player.collisionRect.w + velocity.x >= levelLength) {
+    player.xposDif = player.collisionRect.x + player.collisionRect.w - levelLength;
+    player.collisionTileRight = TILE::SOLID;
+    player.collisionRight = true;
+    return;
+  }
+
   if (Physics::playerCollisionRight(player.collisionRect, block.collisionRect, velocity)) {
     player.xposDif = (player.collisionRect.x + player.collisionRect.w) - block.collisionRect.x;
     player.collisionTileRight = collisionTile;
@@ -66,6 +87,14 @@ void CollisionDetectionSystem::checkPlayerUpCollision(CollisionComponent &player
                                                       CollisionComponent const &block,
                                                       Velocity velocity,
                                                       TILE const &collisionTile) const {
+  if (player.collisionRect.y + velocity.y <= 0) {
+    player.yposDif = player.collisionRect.y;
+    player.collisionTileUp = TILE::SOLID;
+    player.collidedUpTilePos = {0, 0};
+    player.collisionUp = true;
+    return;
+  }
+
   if (Physics::playerCollisionUp(player.collisionRect, block.collisionRect, velocity)) {
     player.yposDif = (player.collisionRect.y) - (block.collisionRect.y + block.collisionRect.h);
     player.collisionTileUp = collisionTile;
@@ -78,6 +107,13 @@ void CollisionDetectionSystem::checkPlayerDownCollision(CollisionComponent &play
                                                         CollisionComponent const &block,
                                                         Velocity velocity,
                                                         TILE const &collisionTile) const {
+  if (player.collisionRect.y + player.collisionRect.h + velocity.y >= levelHeight) {
+    player.yposDif = (player.collisionRect.y + player.collisionRect.h) - levelHeight;
+    player.collisionTileDown = TILE::SOLID;
+    player.collidedDownTilePos = {0, 0};
+    player.collisionDown = true;
+    return;
+  }
 
   if (Physics::playerCollisionDown(player.collisionRect, block.collisionRect, velocity)) {
     player.yposDif = (player.collisionRect.y + player.collisionRect.h) - block.collisionRect.y;

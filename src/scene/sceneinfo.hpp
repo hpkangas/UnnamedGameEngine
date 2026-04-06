@@ -22,6 +22,7 @@ struct SceneInfo {
   std::unordered_map<int, std::unique_ptr<TransformComponent>> transformsComponents;
 
   std::vector<int> animationIds;
+  std::vector<int> AIIds;
   std::vector<int> collisionIds;
   std::vector<int> controlIds;
   std::vector<int> gravityIds;
@@ -32,8 +33,11 @@ struct SceneInfo {
   std::vector<int> tileRenderIds;
   std::vector<int> transformIds;
   std::vector<int> UIRenderIds;
-  
+
   int ids = 0;
+
+  int levelLength = 0;
+  int levelHeight = 0;
 };
 
 #endif

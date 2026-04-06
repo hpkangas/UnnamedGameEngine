@@ -1,11 +1,11 @@
 
 #ifndef COLLISIONDETECTIONSYSTEM_HPP
 #define COLLISIONDETECTIONSYSTEM_HPP
-#include "../scene/scenecreator.hpp"
+#include "../scene/sceneinfo.hpp"
 
 class CollisionDetectionSystem {
 public:
-  void update(SceneInfo &currentLevel) const;
+  void update(SceneInfo &currentLevel);
   void checkCollision(int i, SceneInfo &currentLevel) const;
 
   void checkPlayerLeftCollision(CollisionComponent &playerC, CollisionComponent const &block,
@@ -21,6 +21,9 @@ public:
 
   void updateCollisionRect(CollisionComponent &playerCollisionComponent,
                            TransformComponent const &playerTransformComponent) const;
+
+  int levelLength = 0;
+  int levelHeight = 0;
 };
 
 #endif
