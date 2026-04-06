@@ -15,6 +15,8 @@
 
 using namespace Constants;
 struct Scene {
+  inline static bool isRunning = false;
+
   bool init();
   void handleEvents();
   void update();
@@ -28,7 +30,7 @@ struct Scene {
 
   [[no_unique_address]] RenderSystem renderSystem;
   [[no_unique_address]] ControlSystem controlSystem;
-  [[no_unique_address]] CollisionDetectionSystem collisionDetectionSystem;
+  CollisionDetectionSystem collisionDetectionSystem;
   [[no_unique_address]] CollisionSystem collisionSystem;
   [[no_unique_address]] TransformSystem transformSystem;
   [[no_unique_address]] AnimationSystem animationSystem;

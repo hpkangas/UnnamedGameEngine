@@ -1,7 +1,7 @@
 
 #ifndef COLLISIONSYSTEM_HPP
 #define COLLISIONSYSTEM_HPP
-#include "../scene/scenecreator.hpp"
+#include "../scene/sceneinfo.hpp"
 #include "transformsystem.hpp"
 
 class CollisionSystem {

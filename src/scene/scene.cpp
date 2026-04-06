@@ -16,10 +16,14 @@ bool Scene::init() {
   SDL_RWops *file = SDL_RWFromFile(fileName, "rb");
   if (file == nullptr) {
     std::cout << "Error: " << SDL_GetError() << std::endl;
+    Scene::isRunning = false;
     return false;
   } else {
     currentLevel = SceneCreator::createLevel(file);
     std::cout << "Scene init \n";
+
+    // collisionDetectionSystem.currentLevel = &currentLevel;
+    Scene::isRunning = true;
     return true;
   }
 }
@@ -43,7 +47,7 @@ void Scene::update() {
                          *currentLevel.gravityComponents.at(id),
                          *currentLevel.transformsComponents.at(id));
   }
-  collisionDetectionSystem.update(currentLevel);
+  collisionDetectionSystem.update();
 
   collisionSystem.update(currentLevel, transformSystem);
 

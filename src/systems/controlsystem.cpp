@@ -1,5 +1,6 @@
 #include "controlsystem.hpp"
 #include "../camera.hpp"
+#include "../scene/scene.hpp"
 #include "../system.hpp"
 #include "../utilities/constants.hpp"
 #include "SDL_events.h"
@@ -89,11 +90,16 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
 
   if (SDL_PollEvent(&event) != 0) {
     if (event.type == SDL_QUIT) {
+      Scene::isRunning = false;
       System::isRunning = false;
     }
   }
   const Uint8 *keyboardStateArray = SDL_GetKeyboardState(nullptr);
-  if (keyboardStateArray[SDL_SCANCODE_Q]) {
+  if (keyboardStateArray[SDL_SCANCODE_F1]) {
+    Scene::isRunning = false;
+  }
+  if (keyboardStateArray[SDL_SCANCODE_F2]) {
+    Scene::isRunning = false;
     System::isRunning = false;
   }
   if (keyboardStateArray[SDL_SCANCODE_RIGHT]) {
