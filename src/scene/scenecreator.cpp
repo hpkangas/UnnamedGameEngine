@@ -110,8 +110,8 @@ void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
 
   auto tileComponent = std::make_unique<TileComponent>(TILE::NONE);
 
-  level.tcs.emplace(id, (std::move(transformComponent)));
-  level.tiles.emplace(id, (std::move(tileComponent)));
+  level.transformsComponents.emplace(id, (std::move(transformComponent)));
+  level.tileComponents.emplace(id, (std::move(tileComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
   level.tileIds.emplace_back(id);
@@ -127,13 +127,13 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   auto collisionComponent = std::make_unique<CollisionComponent>(destinationRect, id);
   auto tileComponent = std::make_unique<TileComponent>(TILE::SOLID);
 
-  level.tcs.emplace(id, (std::move(transformComponent)));
-  level.rcs.emplace(id, (std::move(renderComponent)));
-  level.ccs.emplace(id, (std::move(collisionComponent)));
-  level.tiles.emplace(id, (std::move(tileComponent)));
+  level.transformsComponents.emplace(id, (std::move(transformComponent)));
+  level.renderComponents.emplace(id, (std::move(renderComponent)));
+  level.collisionComponents.emplace(id, (std::move(collisionComponent)));
+  level.tileComponents.emplace(id, (std::move(tileComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.TileRenderIds.emplace_back(id);
+  level.tileRenderIds.emplace_back(id);
   level.staticCollisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
@@ -148,13 +148,13 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   auto collisionComponent = std::make_unique<CollisionComponent>(sourceRect, id);
   auto tileComponent = std::make_unique<TileComponent>(TILE::SEMISOLID);
 
-  level.tcs.emplace(id, (std::move(transformComponent)));
-  level.rcs.emplace(id, (std::move(renderComponent)));
-  level.ccs.emplace(id, (std::move(collisionComponent)));
-  level.tiles.emplace(id, (std::move(tileComponent)));
+  level.transformsComponents.emplace(id, (std::move(transformComponent)));
+  level.renderComponents.emplace(id, (std::move(renderComponent)));
+  level.collisionComponents.emplace(id, (std::move(collisionComponent)));
+  level.tileComponents.emplace(id, (std::move(tileComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.TileRenderIds.emplace_back(id);
+  level.tileRenderIds.emplace_back(id);
   level.staticCollisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
@@ -190,12 +190,12 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
 
   animationComponent->parentID = id;
 
-  level.tcs.emplace(id, (std::move(transformComponent)));
-  level.rcs.emplace(id, (std::move(renderComponent)));
-  level.ccs.emplace(id, (std::move(collisionComponent)));
-  level.gcs.emplace(id, (std::move(gravityComponent)));
-  level.acs.emplace(id, (std::move(animationComponent)));
-  level.ctrlComponents.emplace(id, (std::move(controlComponent)));
+  level.transformsComponents.emplace(id, (std::move(transformComponent)));
+  level.renderComponents.emplace(id, (std::move(renderComponent)));
+  level.collisionComponents.emplace(id, (std::move(collisionComponent)));
+  level.gravityComponents.emplace(id, (std::move(gravityComponent)));
+  level.animationComponents.emplace(id, (std::move(animationComponent)));
+  level.controlComponents.emplace(id, (std::move(controlComponent)));
   level.healthComponents.emplace(id, (std::move(healthComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
@@ -211,7 +211,7 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   int id = getId();
 
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
-  SDL_Rect sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
+  SDL_Rect sourceRect = {0, 512, PLAYER_WIDTH, PLAYER_HEIGHT};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(0), id);
@@ -221,10 +221,10 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   auto gravityComponent = std::make_unique<GravityComponent>(GRAVITY_STATE::AIRBORNE, id);
   auto healthComponent = std::make_unique<HealthComponent>(3);
 
-  level.tcs.emplace(id, (std::move(transformComponent)));
-  level.rcs.emplace(id, (std::move(renderComponent)));
-  level.ccs.emplace(id, (std::move(collisionComponent)));
-  level.gcs.emplace(id, (std::move(gravityComponent)));
+  level.transformsComponents.emplace(id, (std::move(transformComponent)));
+  level.renderComponents.emplace(id, (std::move(renderComponent)));
+  level.collisionComponents.emplace(id, (std::move(collisionComponent)));
+  level.gravityComponents.emplace(id, (std::move(gravityComponent)));
   level.healthComponents.emplace(id, (std::move(healthComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
@@ -245,13 +245,13 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   SDL_Rect collisionRect = {x, y, 128, 128};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
 
-  level.tcs.emplace(id, (std::move(transformComponent)));
-  level.rcs.emplace(id, (std::move(renderComponent)));
-  level.ccs.emplace(id, (std::move(collisionComponent)));
-  level.tiles.emplace(id, (std::move(tileComponent)));
+  level.transformsComponents.emplace(id, (std::move(transformComponent)));
+  level.renderComponents.emplace(id, (std::move(renderComponent)));
+  level.collisionComponents.emplace(id, (std::move(collisionComponent)));
+  level.tileComponents.emplace(id, (std::move(tileComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.TileRenderIds.emplace_back(id);
+  level.tileRenderIds.emplace_back(id);
   level.staticCollisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
@@ -267,13 +267,13 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   SDL_Rect collisionRect = {x, y, 128, 64};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
 
-  level.tcs.emplace(id, (std::move(transformComponent)));
-  level.rcs.emplace(id, (std::move(renderComponent)));
-  level.ccs.emplace(id, (std::move(collisionComponent)));
-  level.tiles.emplace(id, (std::move(tileComponent)));
+  level.transformsComponents.emplace(id, (std::move(transformComponent)));
+  level.renderComponents.emplace(id, (std::move(renderComponent)));
+  level.collisionComponents.emplace(id, (std::move(collisionComponent)));
+  level.tileComponents.emplace(id, (std::move(tileComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
-  level.TileRenderIds.emplace_back(id);
+  level.tileRenderIds.emplace_back(id);
   level.staticCollisionIds.emplace_back(id);
   level.tileIds.emplace_back(id);
 }
@@ -285,8 +285,8 @@ void SceneCreator::createUI(int x, int y, SceneInfo &level) {
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(2), id);
-  level.tcs.emplace(id, (std::move(transformComponent)));
-  level.rcs.emplace(id, (std::move(renderComponent)));
+  level.transformsComponents.emplace(id, (std::move(transformComponent)));
+  level.renderComponents.emplace(id, (std::move(renderComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
   level.UIRenderIds.emplace_back(id);

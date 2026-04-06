@@ -27,35 +27,35 @@ bool Scene::init() {
 void Scene::update() {
   if (selectedPlayer != selectedPlayerIndex) {
     selectedPlayer = selectedPlayerIndex;
-    centerCamera(*currentLevel.tcs.at(selectedPlayer));
+    centerCamera(*currentLevel.transformsComponents.at(selectedPlayer));
   }
 
   for (int id : currentLevel.controlIds) {
-    controlSystem.update(transformSystem, *currentLevel.tcs.at(id), id, selectedPlayerIndex,
-                         *currentLevel.ctrlComponents.at(id), *currentLevel.ccs.at(id));
+    controlSystem.update(transformSystem, *currentLevel.transformsComponents.at(id), id, selectedPlayerIndex,
+                         *currentLevel.controlComponents.at(id), *currentLevel.collisionComponents.at(id));
   }
 
   for (int id : currentLevel.gravityIds) {
-    gravitySystem.update(*currentLevel.ccs.at(id), *currentLevel.gcs.at(id),
-                         *currentLevel.tcs.at(id));
+    gravitySystem.update(*currentLevel.collisionComponents.at(id), *currentLevel.gravityComponents.at(id),
+                         *currentLevel.transformsComponents.at(id));
   }
   collisionDetectionSystem.update(currentLevel);
 
   collisionSystem.update(currentLevel, transformSystem);
 
   for (int id : currentLevel.transformIds) {
-    transformSystem.update(*currentLevel.tcs.at(id));
+    transformSystem.update(*currentLevel.transformsComponents.at(id));
   }
 
   for (int id : currentLevel.animationIds) {
-    animationSystem.update(*currentLevel.ctrlComponents.at(id), *currentLevel.ccs.at(id),
-                           currentLevel.gcs.at(id)->gravityState, *currentLevel.tcs.at(id),
-                           *currentLevel.rcs.at(id), *currentLevel.acs.at(id));
+    animationSystem.update(*currentLevel.controlComponents.at(id), *currentLevel.collisionComponents.at(id),
+                           currentLevel.gravityComponents.at(id)->gravityState, *currentLevel.transformsComponents.at(id),
+                           *currentLevel.renderComponents.at(id), *currentLevel.animationComponents.at(id));
   }
 
   renderSystem.update(currentLevel);
 
-  updateCamera(*currentLevel.tcs.at(selectedPlayer));
+  updateCamera(*currentLevel.transformsComponents.at(selectedPlayer));
 }
 
 void Scene::render() { renderSystem.render(currentLevel); }

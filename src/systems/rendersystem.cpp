@@ -6,8 +6,8 @@
 
 void RenderSystem::update(SceneInfo &currentLevel) const {
   for (int id : currentLevel.objectRenderIds) {
-    RenderComponent &rc = *currentLevel.rcs.at(id);
-    TransformComponent const &tc = *currentLevel.tcs.at(id);
+    RenderComponent &rc = *currentLevel.renderComponents.at(id);
+    TransformComponent const &tc = *currentLevel.transformsComponents.at(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
@@ -21,17 +21,17 @@ void RenderSystem::update(SceneInfo &currentLevel) const {
     }
   }
 
-  for (int id : currentLevel.TileRenderIds) {
-    RenderComponent &rc = *currentLevel.rcs.at(id);
-    TransformComponent const &tc = *currentLevel.tcs.at(id);
+  for (int id : currentLevel.tileRenderIds) {
+    RenderComponent &rc = *currentLevel.renderComponents.at(id);
+    TransformComponent const &tc = *currentLevel.transformsComponents.at(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
   }
 
   for (int id : currentLevel.UIRenderIds) {
-    RenderComponent &rc = *currentLevel.rcs.at(id);
-    TransformComponent const &tc = *currentLevel.tcs.at(id);
+    RenderComponent &rc = *currentLevel.renderComponents.at(id);
+    TransformComponent const &tc = *currentLevel.transformsComponents.at(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
@@ -39,7 +39,8 @@ void RenderSystem::update(SceneInfo &currentLevel) const {
 }
 
 void RenderSystem::render(SceneInfo &currentLevel) const {
-  std::unordered_map<int, std::unique_ptr<RenderComponent>> &renderComponents = currentLevel.rcs;
+  std::unordered_map<int, std::unique_ptr<RenderComponent>> &renderComponents =
+      currentLevel.renderComponents;
 
   SDL_RenderClear(System::renderer);
 
@@ -47,7 +48,7 @@ void RenderSystem::render(SceneInfo &currentLevel) const {
     renderNonStatic(renderComponents.at(id).get()->render());
   }
 
-  for (int id : currentLevel.TileRenderIds) {
+  for (int id : currentLevel.tileRenderIds) {
     renderNonStatic(renderComponents.at(id).get()->render());
   }
 

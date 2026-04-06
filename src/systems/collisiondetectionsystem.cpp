@@ -4,21 +4,24 @@
 
 void CollisionDetectionSystem::update(SceneInfo &currentLevel) const {
   for (int id : currentLevel.collisionIds) {
-    CollisionComponent &cc = *currentLevel.ccs.at(id);
+    CollisionComponent &cc = *currentLevel.collisionComponents.at(id);
     resetCollisions(cc);
-    updateCollisionRect(cc, *currentLevel.tcs.at(id));
+    updateCollisionRect(cc, *currentLevel.transformsComponents.at(id));
     checkCollision(id, currentLevel);
   }
 }
 
 void CollisionDetectionSystem::checkCollision(int playerIndex, SceneInfo &currentLevel) const {
-  CollisionComponent &object = *currentLevel.ccs.at(playerIndex);
-  const Velocity velocity = currentLevel.tcs.at(playerIndex).get()->velocity;
+  CollisionComponent &object = *currentLevel.collisionComponents.at(playerIndex);
+  const Velocity velocity = currentLevel.transformsComponents.at(playerIndex).get()->velocity;
 
   for (int id : currentLevel.staticCollisionIds) {
 
-    auto const &tile = currentLevel.ccs.at(id);
-    TILE const &collisionTile = currentLevel.tiles.at(id)->tile;
+    auto const &tile = currentLevel.collisionComponents.at(id);
+    TILE const &collisionTile = currentLevel.tileComponents.at(id)->tile;
+
+    // jos kollisioi useamman tilen kanssa, niin kollisioi vaan listassa ensimmäisen kanssa
+    // onko kentällä reunat?
 
     if (!object.collisionLeft) {
       checkPlayerLeftCollision(object, *tile, velocity, collisionTile);
