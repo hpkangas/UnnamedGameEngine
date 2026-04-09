@@ -3,11 +3,28 @@
 #include <cstdio>
 
 using namespace Constants;
+void AnimationSystem::update() const {
+for (int id : currentLevel->animationIds) {    
+  ControlComponent const &controlComponent = *currentLevel->controlComponents.at(id);
+  CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(id);
+  GRAVITY_STATE const &gravityState = currentLevel->gravityComponents.at(id)->gravityState;
+  TransformComponent const &transformComponent = *currentLevel->transformsComponents.at(id);
+  RenderComponent &renderComponent =  *currentLevel->renderComponents.at(id);
+  AnimationComponent &animationComponent = *currentLevel->animationComponents.at(id);
+    
+  determineAnimationState(controlComponent, collisionComponent, gravityState, transformComponent,
+                          animationComponent);
+
+  animate(renderComponent, animationComponent, transformComponent);
+}
+}
+
 void AnimationSystem::determineAnimationState(ControlComponent const &controlComponent,
-                                              CollisionComponent const &collisionComponent,
-                                              GRAVITY_STATE gravityState,
-                                              TransformComponent const &transformComponent,
-                                              AnimationComponent &animationComponent) const {
+                               CollisionComponent const &collisionComponent,
+                               GRAVITY_STATE gravityState,
+                               TransformComponent const &transformComponent,
+                               AnimationComponent &animationComponent) const {
+
   switch (controlComponent.controlState) {
   case CONTROL_STATE::NORMAL:
     if (transformComponent.velocity.x != 0) {
@@ -30,17 +47,7 @@ void AnimationSystem::determineAnimationState(ControlComponent const &controlCom
   }
 }
 
-void AnimationSystem::update(ControlComponent const &controlComponent,
-                             CollisionComponent const &collisionComponent,
-                             GRAVITY_STATE gravityState,
-                             TransformComponent const &transformComponent,
-                             RenderComponent &renderComponent,
-                             AnimationComponent &animationComponent) const {
-
-  determineAnimationState(controlComponent, collisionComponent, gravityState, transformComponent,
-                          animationComponent);
-
-  // Magic numbers should eventually be switched to something like enums, class data or json
+void AnimationSystem::animate(RenderComponent &renderComponent, AnimationComponent &animationComponent, TransformComponent const &transformComponent) const{
   switch (animationComponent.animationState) {
   case ANIMATION_STATE::STILL:
     animationComponent.animationFrame = 0;

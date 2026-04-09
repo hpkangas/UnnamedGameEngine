@@ -1,6 +1,5 @@
 #include "scene.hpp"
 #include "../camera.hpp"
-#include "../components/gravitycomponent.hpp"
 #include "../components/transformcomponent.hpp"
 #include "../system.hpp"
 #include "../systems/transformsystem.hpp"
@@ -20,6 +19,7 @@ bool Scene::init() {
     return false;
   } else {
     currentLevel = SceneCreator::createLevel(file);
+    animationSystem.currentLevel = &currentLevel;
     std::cout << "Scene init \n";
 
     // collisionDetectionSystem.currentLevel = &currentLevel;
@@ -47,7 +47,7 @@ void Scene::update() {
                          *currentLevel.gravityComponents.at(id),
                          *currentLevel.transformsComponents.at(id));
   }
-  collisionDetectionSystem.update();
+  collisionDetectionSystem.update(currentLevel);
 
   collisionSystem.update(currentLevel, transformSystem);
 
@@ -55,13 +55,7 @@ void Scene::update() {
     transformSystem.update(*currentLevel.transformsComponents.at(id));
   }
 
-  for (int id : currentLevel.animationIds) {
-    animationSystem.update(
-        *currentLevel.controlComponents.at(id), *currentLevel.collisionComponents.at(id),
-        currentLevel.gravityComponents.at(id)->gravityState,
-        *currentLevel.transformsComponents.at(id), *currentLevel.renderComponents.at(id),
-        *currentLevel.animationComponents.at(id));
-  }
+  animationSystem.update();
 
   renderSystem.update(currentLevel);
 

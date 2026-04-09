@@ -33,7 +33,7 @@ struct Scene {
   CollisionDetectionSystem collisionDetectionSystem;
   [[no_unique_address]] CollisionSystem collisionSystem;
   [[no_unique_address]] TransformSystem transformSystem;
-  [[no_unique_address]] AnimationSystem animationSystem;
+  AnimationSystem animationSystem;
   [[no_unique_address]] GravitySystem gravitySystem;
   [[no_unique_address]] AISystem AISystem;
 
