@@ -9,9 +9,8 @@ SceneInfo *currentLevel = nullptr;
   void update() const;
 
 private:
-  void determineAnimationState(ControlComponent const &controlComponent,
-                               CollisionComponent const &collisionComponent,
-                               GRAVITY_STATE gravityState,
+  void determineAnimationState(CollisionComponent const &collisionComponent,
+                               GRAVITY_STATE const gravityState,
                                TransformComponent const &transformComponent,
                                AnimationComponent &animationComponent) const;
 

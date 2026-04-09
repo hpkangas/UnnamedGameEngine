@@ -5,46 +5,46 @@
 using namespace Constants;
 void AnimationSystem::update() const {
 for (int id : currentLevel->animationIds) {    
-  ControlComponent const &controlComponent = *currentLevel->controlComponents.at(id);
+  //what if these don't exist
   CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(id);
   GRAVITY_STATE const &gravityState = currentLevel->gravityComponents.at(id)->gravityState;
   TransformComponent const &transformComponent = *currentLevel->transformsComponents.at(id);
   RenderComponent &renderComponent =  *currentLevel->renderComponents.at(id);
   AnimationComponent &animationComponent = *currentLevel->animationComponents.at(id);
     
-  determineAnimationState(controlComponent, collisionComponent, gravityState, transformComponent,
+  determineAnimationState(collisionComponent, gravityState, transformComponent,
                           animationComponent);
 
   animate(renderComponent, animationComponent, transformComponent);
 }
 }
 
-void AnimationSystem::determineAnimationState(ControlComponent const &controlComponent,
+void AnimationSystem::determineAnimationState(
                                CollisionComponent const &collisionComponent,
-                               GRAVITY_STATE gravityState,
+                               GRAVITY_STATE const gravityState,
                                TransformComponent const &transformComponent,
                                AnimationComponent &animationComponent) const {
-
-  switch (controlComponent.controlState) {
-  case CONTROL_STATE::NORMAL:
-    if (transformComponent.velocity.x != 0) {
+  if (gravityState == GRAVITY_STATE::GROUNDED) {
+    if (transformComponent.velocity.x != 0 && transformComponent.velocity.y == 0) {
       animationComponent.animationState = ANIMATION_STATE::WALKING;
     } else {
       animationComponent.animationState = ANIMATION_STATE::STILL;
     }
+    
     if (collisionComponent.collisionLeft || collisionComponent.collisionRight) {
       animationComponent.animationState = ANIMATION_STATE::PUSHING;
     }
-    break;
-  case CONTROL_STATE::AIRBORNE:
-    animationComponent.animationState = ANIMATION_STATE::AIRBORNE;
-    break;
-  case CONTROL_STATE::FALLING:
-    break;
-  case CONTROL_STATE::CLIMBING:
-    animationComponent.animationState = ANIMATION_STATE::CLIMBING;
-    break;
+    
+    //doesn't work when you stop
+    //climbing needs a lot of rework
+    if (transformComponent.velocity.y != 0) {
+      animationComponent.animationState = ANIMATION_STATE::CLIMBING;
+    }
+
+  } else {
+      animationComponent.animationState = ANIMATION_STATE::AIRBORNE;    
   }
+  
 }
 
 void AnimationSystem::animate(RenderComponent &renderComponent, AnimationComponent &animationComponent, TransformComponent const &transformComponent) const{
@@ -56,7 +56,6 @@ void AnimationSystem::animate(RenderComponent &renderComponent, AnimationCompone
     break;
 
   case ANIMATION_STATE::WALKING:
-
     playFrame(renderComponent, 0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.WALKING_ANIMATION_FRAMES);
     animationComponent.animationFrame++;
@@ -66,7 +65,6 @@ void AnimationSystem::animate(RenderComponent &renderComponent, AnimationCompone
     break;
 
   case ANIMATION_STATE::PUSHING:
-
     playFrame(renderComponent, 0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     animationComponent.animationFrame++;
@@ -76,7 +74,6 @@ void AnimationSystem::animate(RenderComponent &renderComponent, AnimationCompone
     break;
 
   case ANIMATION_STATE::AIRBORNE:
-
     playFrame(renderComponent, 0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     animationComponent.animationFrame++;
@@ -86,7 +83,6 @@ void AnimationSystem::animate(RenderComponent &renderComponent, AnimationCompone
     break;
 
   case ANIMATION_STATE::CLIMBING:
-
     playFrame(renderComponent, 0, CLIMBING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     if (transformComponent.velocity.y < 0) {
