@@ -52,7 +52,7 @@ void Scene::update() {
                          *currentLevel.gravityComponents.at(id),
                          *currentLevel.transformComponents.at(id));
   }
-  collisionDetectionSystem.update(currentLevel);
+  collisionDetectionSystem.update();
 
   collisionSystem.update();
 

@@ -4,50 +4,50 @@
 
 using namespace Constants;
 void AnimationSystem::update() const {
-for (int id : currentLevel->animationIds) {    
-  //what if these don't exist
-  CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(id);
-  GRAVITY_STATE const &gravityState = currentLevel->gravityComponents.at(id)->gravityState;
-  TransformComponent const &transformComponent = *currentLevel->transformsComponents.at(id);
-  RenderComponent &renderComponent =  *currentLevel->renderComponents.at(id);
-  AnimationComponent &animationComponent = *currentLevel->animationComponents.at(id);
-    
-  determineAnimationState(collisionComponent, gravityState, transformComponent,
-                          animationComponent);
+  for (int id : currentLevel->animationIds) {
+    // what if these don't exist
+    CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(id);
+    GRAVITY_STATE const &gravityState = currentLevel->gravityComponents.at(id)->gravityState;
+    TransformComponent const &transformComponent = *currentLevel->transformComponents.at(id);
+    RenderComponent &renderComponent = *currentLevel->renderComponents.at(id);
+    AnimationComponent &animationComponent = *currentLevel->animationComponents.at(id);
 
-  animate(renderComponent, animationComponent, transformComponent);
-}
+    determineAnimationState(collisionComponent, gravityState, transformComponent,
+                            animationComponent);
+
+    animate(renderComponent, animationComponent, transformComponent);
+  }
 }
 
-void AnimationSystem::determineAnimationState(
-                               CollisionComponent const &collisionComponent,
-                               GRAVITY_STATE const gravityState,
-                               TransformComponent const &transformComponent,
-                               AnimationComponent &animationComponent) const {
+void AnimationSystem::determineAnimationState(CollisionComponent const &collisionComponent,
+                                              GRAVITY_STATE const gravityState,
+                                              TransformComponent const &transformComponent,
+                                              AnimationComponent &animationComponent) const {
   if (gravityState == GRAVITY_STATE::GROUNDED) {
     if (transformComponent.velocity.x != 0 && transformComponent.velocity.y == 0) {
       animationComponent.animationState = ANIMATION_STATE::WALKING;
     } else {
       animationComponent.animationState = ANIMATION_STATE::STILL;
     }
-    
+
     if (collisionComponent.collisionLeft || collisionComponent.collisionRight) {
       animationComponent.animationState = ANIMATION_STATE::PUSHING;
     }
-    
-    //doesn't work when you stop
-    //climbing needs a lot of rework
+
+    // doesn't work when you stop
+    // climbing needs a lot of rework
     if (transformComponent.velocity.y != 0) {
       animationComponent.animationState = ANIMATION_STATE::CLIMBING;
     }
 
   } else {
-      animationComponent.animationState = ANIMATION_STATE::AIRBORNE;    
+    animationComponent.animationState = ANIMATION_STATE::AIRBORNE;
   }
-  
 }
 
-void AnimationSystem::animate(RenderComponent &renderComponent, AnimationComponent &animationComponent, TransformComponent const &transformComponent) const{
+void AnimationSystem::animate(RenderComponent &renderComponent,
+                              AnimationComponent &animationComponent,
+                              TransformComponent const &transformComponent) const {
   switch (animationComponent.animationState) {
   case ANIMATION_STATE::STILL:
     animationComponent.animationFrame = 0;
