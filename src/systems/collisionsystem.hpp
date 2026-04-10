@@ -7,12 +7,13 @@
 class CollisionSystem {
 public:
   TransformSystem *transformSystem = nullptr;
+  SceneInfo *currentLevel = nullptr;
 
   TILE currentTile = TILE::NONE;
   Utils::Position collidedDownObjectPos = {0, 0};
   Utils::Position collidedUpObjectPos = {0, 0};
 
-  void update(SceneInfo &currentLevel, TransformSystem &transformSystem);
+  void update();
 
   void handleDownTileCollision(TransformComponent &tc, CollisionComponent const &cc,
                                GravityComponent const &ctrlc) const;

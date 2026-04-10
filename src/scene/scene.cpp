@@ -4,6 +4,7 @@
 #include "../system.hpp"
 #include "../systems/transformsystem.hpp"
 #include "../utilities/constants.hpp"
+#include "scenecreator.hpp"
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
@@ -22,7 +23,13 @@ bool Scene::init() {
     animationSystem.currentLevel = &currentLevel;
     std::cout << "Scene init \n";
 
-    // collisionDetectionSystem.currentLevel = &currentLevel;
+    collisionDetectionSystem.currentLevel = &currentLevel;
+    collisionSystem.currentLevel = &currentLevel;
+    collisionSystem.transformSystem = &transformSystem;
+    controlSystem.currentLevel = &currentLevel;
+    controlSystem.transformSystem = &transformSystem;
+    renderSystem.currentLevel = &currentLevel;
+
     Scene::isRunning = true;
     return true;
   }
@@ -31,13 +38,11 @@ bool Scene::init() {
 void Scene::update() {
   if (selectedPlayer != selectedPlayerIndex) {
     selectedPlayer = selectedPlayerIndex;
-    centerCamera(*currentLevel.transformsComponents.at(selectedPlayer));
+    centerCamera(*currentLevel.transformComponents.at(selectedPlayer));
   }
 
   for (int id : currentLevel.controlIds) {
-    controlSystem.update(transformSystem, *currentLevel.transformsComponents.at(id), id,
-                         selectedPlayerIndex, *currentLevel.controlComponents.at(id),
-                         *currentLevel.collisionComponents.at(id));
+    controlSystem.update(id, selectedPlayerIndex);
   }
 
   AISystem.update(currentLevel);
@@ -45,24 +50,24 @@ void Scene::update() {
   for (int id : currentLevel.gravityIds) {
     gravitySystem.update(*currentLevel.collisionComponents.at(id),
                          *currentLevel.gravityComponents.at(id),
-                         *currentLevel.transformsComponents.at(id));
+                         *currentLevel.transformComponents.at(id));
   }
   collisionDetectionSystem.update(currentLevel);
 
-  collisionSystem.update(currentLevel, transformSystem);
+  collisionSystem.update();
 
   for (int id : currentLevel.transformIds) {
-    transformSystem.update(*currentLevel.transformsComponents.at(id));
+    transformSystem.update(*currentLevel.transformComponents.at(id));
   }
 
   animationSystem.update();
 
-  renderSystem.update(currentLevel);
+  renderSystem.update();
 
-  updateCamera(*currentLevel.transformsComponents.at(selectedPlayer));
+  updateCamera(*currentLevel.transformComponents.at(selectedPlayer));
 }
 
-void Scene::render() { renderSystem.render(currentLevel); }
+void Scene::render() { renderSystem.render(); }
 
 void Scene::updateCamera(const TransformComponent &transformComponent) const {
   const int xpos = transformComponent.position.x;

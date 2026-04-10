@@ -12,10 +12,11 @@
 #include <iostream>
 
 using namespace Constants;
-void ControlSystem::update(TransformSystem const &transformSystem,
-                           TransformComponent &transformComponent, int selectedPlayer,
-                           int &selectedPlayerIndex, ControlComponent &controlComponent,
-                           CollisionComponent const &collisionComponent) {
+void ControlSystem::update(int selectedPlayer, int &selectedPlayerIndex) {
+
+  TransformComponent &transformComponent = *currentLevel->transformComponents.at(selectedPlayer);
+  ControlComponent &controlComponent = *currentLevel->controlComponents.at(selectedPlayer);
+  CollisionComponent &collisionComponent = *currentLevel->collisionComponents.at(selectedPlayer);
 
   inputR = false;
   inputL = false;
@@ -28,8 +29,7 @@ void ControlSystem::update(TransformSystem const &transformSystem,
 
   if (selectedPlayer == selectedPlayerIndex) {
     takeInput(transformComponent, selectedPlayerIndex);
-    handleInput(transformSystem, transformComponent, collisionComponent, controlComponent,
-                selectedPlayerIndex);
+    handleInput(transformComponent, collisionComponent, controlComponent, selectedPlayerIndex);
   }
 }
 
@@ -125,8 +125,7 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
   }
 }
 
-void ControlSystem::handleInput(TransformSystem const &transformSystem,
-                                TransformComponent &transformComponent,
+void ControlSystem::handleInput(TransformComponent &transformComponent,
                                 CollisionComponent const &collisionComponent,
                                 ControlComponent &controlComponent, int &selectedPlayerIndex) {
   // for debugging
@@ -156,17 +155,17 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
 
     if (inputR && !inputL) {
       if (transformComponent.velocity.x < 0) {
-        transformSystem.stopX(transformComponent);
+        transformSystem->stopX(transformComponent);
       }
-      transformSystem.moveRight(transformComponent);
+      transformSystem->moveRight(transformComponent);
       noInput = false;
     }
 
     if (inputL && !inputR) {
       if (transformComponent.velocity.y > 0) {
-        transformSystem.stopX(transformComponent);
+        transformSystem->stopX(transformComponent);
       }
-      transformSystem.moveLeft(transformComponent);
+      transformSystem->moveLeft(transformComponent);
       noInput = false;
     }
 
@@ -176,7 +175,7 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
 
         transformComponent.position.x = collisionComponent.collidedUpTilePos.x;
 
-        transformSystem.stopX(transformComponent);
+        transformSystem->stopX(transformComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
         return;
       }
@@ -188,8 +187,8 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
         // not sure I like this direct setting of xpos
         transformComponent.position.x = collisionComponent.collidedDownTilePos.x;
 
-        transformSystem.stopX(transformComponent);
-        transformSystem.stopY(transformComponent);
+        transformSystem->stopX(transformComponent);
+        transformSystem->stopY(transformComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
         return;
       }
@@ -197,13 +196,13 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
 
     if (inputJump && canJump) {
       noInput = false;
-      transformSystem.jump(transformComponent);
+      transformSystem->jump(transformComponent);
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
       canJump = false;
     }
 
     if (noInput) {
-      transformSystem.stopX(transformComponent);
+      transformSystem->stopX(transformComponent);
     }
 
     break;
@@ -213,17 +212,17 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
     if (inputR && !inputL) {
       noInput = false;
       if (transformComponent.velocity.x < 0) {
-        transformSystem.stopX(transformComponent);
+        transformSystem->stopX(transformComponent);
       }
-      transformSystem.moveRight(transformComponent);
+      transformSystem->moveRight(transformComponent);
     }
 
     if (inputL && !inputR) {
       noInput = false;
       if (transformComponent.velocity.x > 0) {
-        transformSystem.stopX(transformComponent);
+        transformSystem->stopX(transformComponent);
       }
-      transformSystem.moveLeft(transformComponent);
+      transformSystem->moveLeft(transformComponent);
     }
 
     if (inputU) {
@@ -236,8 +235,8 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
         // SHould systems call other systems?
         // maybe but I think they should be put on the systems "list of things to do" rather than do
         // it immediately (which is not possible at the moment)
-        transformSystem.stopX(transformComponent);
-        transformSystem.stopY(transformComponent);
+        transformSystem->stopX(transformComponent);
+        transformSystem->stopY(transformComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
       }
     }
@@ -247,14 +246,14 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
       if (controlComponent.canClimb) {
         transformComponent.position.x = collisionComponent.collidedDownTilePos.x;
 
-        transformSystem.stopX(transformComponent);
-        transformSystem.stopY(transformComponent);
+        transformSystem->stopX(transformComponent);
+        transformSystem->stopY(transformComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
       }
     }
 
     if (noInput) {
-      transformSystem.stopX(transformComponent);
+      transformSystem->stopX(transformComponent);
     }
 
     break;
@@ -267,13 +266,13 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
 
     if (inputR && !inputL && !inputU && !inputD) {
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-      transformSystem.moveRight(transformComponent);
+      transformSystem->moveRight(transformComponent);
       return;
     }
 
     if (inputL && !inputR && !inputU && !inputD) {
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-      transformSystem.moveLeft(transformComponent);
+      transformSystem->moveLeft(transformComponent);
       return;
     }
 
@@ -283,8 +282,8 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
           collisionComponent.collisionTileDown != TILE::LADDER &&
           collisionComponent.collisionTileDown != TILE::LADDERSTART) {
       } else {
-        transformSystem.stopX(transformComponent);
-        transformSystem.moveUp(transformComponent);
+        transformSystem->stopX(transformComponent);
+        transformSystem->moveUp(transformComponent);
       }
 
       return;
@@ -295,16 +294,16 @@ void ControlSystem::handleInput(TransformSystem const &transformSystem,
       if (collisionComponent.collisionTileDown != TILE::LADDER &&
           collisionComponent.collisionTileDown != TILE::LADDERSTART) {
         controlComponent.controlState = CONTROL_STATE::NORMAL;
-        transformSystem.stopY(transformComponent);
+        transformSystem->stopY(transformComponent);
 
       } else {
-        transformSystem.stopX(transformComponent);
-        transformSystem.moveDown(transformComponent);
+        transformSystem->stopX(transformComponent);
+        transformSystem->moveDown(transformComponent);
       }
       return;
     }
 
-    transformSystem.stopY(transformComponent);
+    transformSystem->stopY(transformComponent);
     break;
 
   default:

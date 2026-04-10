@@ -5,8 +5,9 @@
 
 class CollisionDetectionSystem {
 public:
-  void update(SceneInfo &currentLevel);
-  void checkCollision(int i, SceneInfo &currentLevel) const;
+  SceneInfo *currentLevel = nullptr;
+  void update();
+  void checkCollision(int i) const;
 
   void checkPlayerLeftCollision(CollisionComponent &playerC, CollisionComponent const &block,
                                 Utils::Velocity velocity, TILE const &collisionTile) const;
@@ -21,9 +22,6 @@ public:
 
   void updateCollisionRect(CollisionComponent &playerCollisionComponent,
                            TransformComponent const &playerTransformComponent) const;
-
-  int levelLength = 0;
-  int levelHeight = 0;
 };
 
 #endif

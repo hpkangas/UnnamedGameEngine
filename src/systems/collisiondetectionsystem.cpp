@@ -1,34 +1,28 @@
 #include "collisiondetectionsystem.hpp"
-#include "../utilities/constants.hpp"
 #include "../utilities/physics.hpp"
 #include <cstdio>
 
-using namespace Constants;
-
-void CollisionDetectionSystem::update(SceneInfo &currentLevel) {
+void CollisionDetectionSystem::update() {
   // constructor?
-  levelHeight = currentLevel.levelHeight;
-  levelLength = currentLevel.levelLength;
 
-  for (int id : currentLevel.collisionIds) {
-    CollisionComponent &cc = *currentLevel.collisionComponents.at(id);
+  for (int id : currentLevel->collisionIds) {
+    CollisionComponent &cc = *currentLevel->collisionComponents.at(id);
     resetCollisions(cc);
-    updateCollisionRect(cc, *currentLevel.transformsComponents.at(id));
-    checkCollision(id, currentLevel);
+    updateCollisionRect(cc, *currentLevel->transformComponents.at(id));
+    checkCollision(id);
   }
 }
 
-void CollisionDetectionSystem::checkCollision(int playerIndex, SceneInfo &currentLevel) const {
-  CollisionComponent &object = *currentLevel.collisionComponents.at(playerIndex);
-  const Velocity velocity = currentLevel.transformsComponents.at(playerIndex).get()->velocity;
+void CollisionDetectionSystem::checkCollision(int playerIndex) const {
+  CollisionComponent &object = *currentLevel->collisionComponents.at(playerIndex);
+  const Velocity velocity = currentLevel->transformComponents.at(playerIndex).get()->velocity;
 
-  for (int id : currentLevel.staticCollisionIds) {
+  for (int id : currentLevel->staticCollisionIds) {
 
-    auto const &tile = currentLevel.collisionComponents.at(id);
-    TILE const &collisionTile = currentLevel.tileComponents.at(id)->tile;
+    auto const &tile = currentLevel->collisionComponents.at(id);
+    TILE const &collisionTile = currentLevel->tileComponents.at(id)->tile;
 
     // jos kollisioi useamman tilen kanssa, niin kollisioi vaan listassa ensimmäisen kanssa
-    // onko kentällä reunat?
 
     if (!object.collisionLeft) {
       checkPlayerLeftCollision(object, *tile, velocity, collisionTile);
@@ -68,8 +62,8 @@ void CollisionDetectionSystem::checkPlayerRightCollision(CollisionComponent &pla
                                                          CollisionComponent const &block,
                                                          Velocity velocity,
                                                          TILE const &collisionTile) const {
-  if (player.collisionRect.x + player.collisionRect.w + velocity.x >= levelLength) {
-    player.xposDif = player.collisionRect.x + player.collisionRect.w - levelLength;
+  if (player.collisionRect.x + player.collisionRect.w + velocity.x >= currentLevel->levelLength) {
+    player.xposDif = player.collisionRect.x + player.collisionRect.w - currentLevel->levelLength;
     player.collisionTileRight = TILE::SOLID;
     player.collisionRight = true;
     return;
@@ -107,8 +101,8 @@ void CollisionDetectionSystem::checkPlayerDownCollision(CollisionComponent &play
                                                         CollisionComponent const &block,
                                                         Velocity velocity,
                                                         TILE const &collisionTile) const {
-  if (player.collisionRect.y + player.collisionRect.h + velocity.y >= levelHeight) {
-    player.yposDif = (player.collisionRect.y + player.collisionRect.h) - levelHeight;
+  if (player.collisionRect.y + player.collisionRect.h + velocity.y >= currentLevel->levelHeight) {
+    player.yposDif = (player.collisionRect.y + player.collisionRect.h) - currentLevel->levelHeight;
     player.collisionTileDown = TILE::SOLID;
     player.collidedDownTilePos = {0, 0};
     player.collisionDown = true;

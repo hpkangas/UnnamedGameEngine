@@ -2,20 +2,21 @@
 #define CONTROLSYSTEM_HPP
 #include "../components/collisioncomponent.hpp"
 #include "../components/controlcomponent.hpp"
+#include "../scene/sceneinfo.hpp"
 #include "transformsystem.hpp"
 
 class ControlSystem {
 public:
-  void update(TransformSystem const &transformSystem, TransformComponent &transformComponent,
-              int selectedPlayer, int &selectedPlayerIndex, ControlComponent &controlcomponent,
-              CollisionComponent const &collisionComponent);
+  void update(int selectedPlayer, int &selectedPlayerIndex);
+  SceneInfo *currentLevel = nullptr;
+  TransformSystem *transformSystem = nullptr;
 
 private:
   void determineControlState(ControlComponent &controlComponent,
                              CollisionComponent const &collisionComponent,
                              TransformComponent const &transformComponent) const;
   void takeInput(TransformComponent &transformComponent, int &selectedPlayerIndex);
-  void handleInput(TransformSystem const &transformSystem, TransformComponent &transformComponent,
+  void handleInput(TransformComponent &transformComponent,
                    CollisionComponent const &collisionCOmponent, ControlComponent &controlComponent,
                    int &selectedPlayerIndex);
   void changePlayerCharacter(int &selectedPlayerIndex) const;

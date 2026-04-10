@@ -1,7 +1,7 @@
 #ifndef RENDERSYSTEM_HPP
 #define RENDERSYSTEM_HPP
 #include "../components/rendercomponent.hpp"
-#include "../scene/scenecreator.hpp"
+#include "../scene/sceneinfo.hpp"
 #include "SDL_rect.h"
 
 class RenderSystem {
@@ -10,8 +10,9 @@ class RenderSystem {
   bool inView(const SDL_Rect &destinationRect) const;
 
 public:
-  void update(SceneInfo &currentLevel) const;
-  void render(SceneInfo &currentLevel) const;
+  SceneInfo *currentLevel = nullptr;
+  void update() const;
+  void render() const;
 };
 
 #endif

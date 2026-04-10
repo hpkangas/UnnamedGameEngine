@@ -2,15 +2,13 @@
 #include "transformsystem.hpp"
 #include <cstdio>
 
-void CollisionSystem::update(SceneInfo &currentLevel, TransformSystem &transformSystem) {
+void CollisionSystem::update() {
 
-  this->transformSystem = &transformSystem;
+  for (int id : currentLevel->collisionIds) {
 
-  for (int id : currentLevel.collisionIds) {
-
-    CollisionComponent const &cc = *currentLevel.collisionComponents.at(id);
-    TransformComponent &tc = *currentLevel.transformsComponents.at(id);
-    GravityComponent const &gc = *currentLevel.gravityComponents.at(id);
+    CollisionComponent const &cc = *currentLevel->collisionComponents.at(id);
+    TransformComponent &tc = *currentLevel->transformComponents.at(id);
+    GravityComponent const &gc = *currentLevel->gravityComponents.at(id);
 
     handleDownTileCollision(tc, cc, gc);
     handleUpTileCollision(tc, cc, gc);

@@ -19,7 +19,7 @@ struct SceneInfo {
   std::unordered_map<int, std::unique_ptr<GravityComponent>> gravityComponents;
   std::unordered_map<int, std::unique_ptr<RenderComponent>> renderComponents;
   std::unordered_map<int, std::unique_ptr<TileComponent>> tileComponents;
-  std::unordered_map<int, std::unique_ptr<TransformComponent>> transformsComponents;
+  std::unordered_map<int, std::unique_ptr<TransformComponent>> transformComponents;
 
   std::vector<int> animationIds;
   std::vector<int> AIIds;
