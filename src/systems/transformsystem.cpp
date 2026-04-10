@@ -1,4 +1,5 @@
 #include "transformsystem.hpp"
+#include <iostream>
 
 void TransformSystem::moveRight(TransformComponent &transformComponent) const {
   if (transformComponent.velocity.x + playerSpeed > playerSpeedMax) {
@@ -70,9 +71,21 @@ void TransformSystem::update(TransformComponent &transformComponent) const {
 
   if (!(xvel == 0)) {
     transformComponent.position.x = xpos + xvel;
+    if (transformComponent.tilePosition.x != xpos/128) {
+      transformComponent.tilePosition.x = xpos/128;
+      // std::cout<<"id: "<<transformComponent.parentID<<", "<<transformComponent.tilePosition.x<<","<<transformComponent.tilePosition.y<<std::endl;
+    }
   }
 
   if (!(yvel == 0)) {
     transformComponent.position.y = ypos + yvel;
+    if (transformComponent.tilePosition.y != ypos/128) {
+      transformComponent.tilePosition.y = ypos/128;
+    }
   }
+
+  
+
+  
+
 }
