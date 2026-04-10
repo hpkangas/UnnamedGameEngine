@@ -67,7 +67,7 @@ void Scene::update() {
   updateCamera(*currentLevel.transformComponents.at(selectedPlayer));
 }
 
-void Scene::render() { renderSystem.render(); }
+void Scene::render() const { renderSystem.render(); }
 
 void Scene::updateCamera(const TransformComponent &transformComponent) const {
   const int xpos = transformComponent.position.x;
@@ -76,12 +76,12 @@ void Scene::updateCamera(const TransformComponent &transformComponent) const {
   const float yvel = transformComponent.velocity.y;
 
   if ((xpos < Camera::focusArea.x && xvel < 0) ||
-      (xpos + PLAYER_WIDTH > Camera::focusArea.w && xvel > 0)) {
+      (xpos + Constants::PLAYER_WIDTH > Camera::focusArea.w && xvel > 0)) {
     Camera::offset.x += xvel;
   }
 
   if ((ypos < Camera::focusArea.y && yvel < 0) ||
-      (ypos + PLAYER_HEIGHT > Camera::focusArea.h && yvel > 0)) {
+      (ypos + Constants::PLAYER_HEIGHT > Camera::focusArea.h && yvel > 0)) {
     Camera::offset.y += yvel;
   }
   Camera::update();

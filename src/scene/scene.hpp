@@ -13,20 +13,19 @@
 #include "../systems/transformsystem.hpp"
 #include "../utilities/constants.hpp"
 
-using namespace Constants;
 struct Scene {
   inline static bool isRunning = false;
 
   bool init();
   void handleEvents();
   void update();
-  void render();
+  void render() const;
 
   SceneInfo currentLevel;
   [[no_unique_address]] Camera camera;
 
-  int selectedPlayerIndex = PLAYER_INDEX;
-  int selectedPlayer = PLAYER_INDEX;
+  int selectedPlayerIndex = Constants::PLAYER_INDEX;
+  int selectedPlayer = Constants::PLAYER_INDEX;
 
   [[no_unique_address]] RenderSystem renderSystem;
   [[no_unique_address]] ControlSystem controlSystem;

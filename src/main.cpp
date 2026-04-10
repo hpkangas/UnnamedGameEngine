@@ -9,7 +9,7 @@ int main(int argc, char const *argv[]) {
   System system;
 
   system.init("Totally not Lost Vikings", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-              SCREENWIDTH, SCREENHEIGHT, false);
+              Constants::SCREENWIDTH, Constants::SCREENHEIGHT, false);
 
   while (system.running()) {
 
@@ -28,8 +28,8 @@ int main(int argc, char const *argv[]) {
       scene.update();
       scene.render();
       Uint64 ticksEnd = SDL_GetTicks64() - ticksStart;
-      if (FRAMEDELAY > ticksEnd) {
-        SDL_Delay(FRAMEDELAY - ticksEnd);
+      if (Constants::FRAMEDELAY > ticksEnd) {
+        SDL_Delay(Constants::FRAMEDELAY - ticksEnd);
         continue;
       }
     }

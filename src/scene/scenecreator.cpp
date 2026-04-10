@@ -72,7 +72,7 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
       x++;
       if (x > maxX) {
         maxX = x;
-      };
+      }
 
       currentValue = "";
       continue;
@@ -116,7 +116,7 @@ void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
 
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   transformComponent->parentID = id;
-  auto tileComponent = std::make_unique<TileComponent>(TILE::NONE);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::NONE,x/128,y/128);
 
   level.transformComponents.emplace(id, (std::move(transformComponent)));
   level.tileComponents.emplace(id, (std::move(tileComponent)));
@@ -141,7 +141,7 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(1), id);
   auto collisionComponent = std::make_unique<CollisionComponent>(destinationRect, id);
-  auto tileComponent = std::make_unique<TileComponent>(TILE::SOLID);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::SOLID,x/128,y/128);
 
   level.transformComponents.emplace(id, (std::move(transformComponent)));
   level.renderComponents.emplace(id, (std::move(renderComponent)));
@@ -162,7 +162,7 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(1), id);
   auto collisionComponent = std::make_unique<CollisionComponent>(sourceRect, id);
-  auto tileComponent = std::make_unique<TileComponent>(TILE::SEMISOLID);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::SEMISOLID,x/128,y/128);
 
   level.transformComponents.emplace(id, (std::move(transformComponent)));
   level.renderComponents.emplace(id, (std::move(renderComponent)));
@@ -260,7 +260,7 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(1), id);
-  auto tileComponent = std::make_unique<TileComponent>(TILE::LADDER);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::LADDER,x/128,y/128);
   SDL_Rect collisionRect = {x, y, 128, 128};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
 
@@ -282,7 +282,7 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(1), id);
-  auto tileComponent = std::make_unique<TileComponent>(TILE::LADDERSTART);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::LADDERSTART,x/128,y/128);
   SDL_Rect collisionRect = {x, y, 128, 64};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
 
