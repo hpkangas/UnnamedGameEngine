@@ -116,7 +116,7 @@ void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
 
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   transformComponent->parentID = id;
-  auto tileComponent = std::make_unique<TileComponent>(TILE::NONE,x/128,y/128);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::NONE, x / 128, y / 128);
 
   level.transformComponents.emplace(id, (std::move(transformComponent)));
   level.tileComponents.emplace(id, (std::move(tileComponent)));
@@ -141,7 +141,7 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(1), id);
   auto collisionComponent = std::make_unique<CollisionComponent>(destinationRect, id);
-  auto tileComponent = std::make_unique<TileComponent>(TILE::SOLID,x/128,y/128);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::SOLID, x / 128, y / 128);
 
   level.transformComponents.emplace(id, (std::move(transformComponent)));
   level.renderComponents.emplace(id, (std::move(renderComponent)));
@@ -162,7 +162,7 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(1), id);
   auto collisionComponent = std::make_unique<CollisionComponent>(sourceRect, id);
-  auto tileComponent = std::make_unique<TileComponent>(TILE::SEMISOLID,x/128,y/128);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::SEMISOLID, x / 128, y / 128);
 
   level.transformComponents.emplace(id, (std::move(transformComponent)));
   level.renderComponents.emplace(id, (std::move(renderComponent)));
@@ -203,6 +203,7 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   auto animationComponent = std::make_unique<AnimationComponent>();
   auto controlComponent = std::make_unique<ControlComponent>(CONTROL_STATE::AIRBORNE, id);
   auto healthComponent = std::make_unique<HealthComponent>(3);
+  auto attackComponent = std::make_unique<AttackComponent>(36, 1);
 
   animationComponent->parentID = id;
 
@@ -213,6 +214,7 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   level.animationComponents.emplace(id, (std::move(animationComponent)));
   level.controlComponents.emplace(id, (std::move(controlComponent)));
   level.healthComponents.emplace(id, (std::move(healthComponent)));
+  level.attackComponents.emplace(id, (std::move(attackComponent)));
   level.ids++;
   level.transformIds.emplace_back(id);
   level.objectRenderIds.emplace_back(id);
@@ -221,6 +223,7 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   level.controlIds.emplace_back(id);
   level.animationIds.emplace_back(id);
   level.healthIds.emplace_back(id);
+  level.attackIds.emplace_back(id);
 }
 
 void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
@@ -260,7 +263,7 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(1), id);
-  auto tileComponent = std::make_unique<TileComponent>(TILE::LADDER,x/128,y/128);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::LADDER, x / 128, y / 128);
   SDL_Rect collisionRect = {x, y, 128, 128};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
 
@@ -282,7 +285,7 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(1), id);
-  auto tileComponent = std::make_unique<TileComponent>(TILE::LADDERSTART,x/128,y/128);
+  auto tileComponent = std::make_unique<TileComponent>(TILE::LADDERSTART, x / 128, y / 128);
   SDL_Rect collisionRect = {x, y, 128, 64};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
 

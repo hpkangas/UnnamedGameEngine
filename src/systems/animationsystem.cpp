@@ -12,8 +12,18 @@ void AnimationSystem::update() const {
     RenderComponent &renderComponent = *currentLevel->renderComponents.at(id);
     AnimationComponent &animationComponent = *currentLevel->animationComponents.at(id);
 
+    AttackComponent const *attackComponent = nullptr;
+    if (currentLevel->attackComponents.contains(id)) {
+      attackComponent = &*currentLevel->attackComponents.at(id);
+    }
+
+    ControlComponent const *controlComponent = nullptr;
+    if (currentLevel->controlComponents.contains(id)) {
+      controlComponent = &*currentLevel->controlComponents.at(id);
+    }
+
     determineAnimationState(collisionComponent, gravityState, transformComponent,
-                            animationComponent);
+                            animationComponent, attackComponent, controlComponent);
 
     animate(renderComponent, animationComponent, transformComponent);
   }
@@ -22,7 +32,9 @@ void AnimationSystem::update() const {
 void AnimationSystem::determineAnimationState(CollisionComponent const &collisionComponent,
                                               GRAVITY_STATE const gravityState,
                                               TransformComponent const &transformComponent,
-                                              AnimationComponent &animationComponent) const {
+                                              AnimationComponent &animationComponent,
+                                              AttackComponent const *attackComponent,
+                                              ControlComponent const *controlComponent) const {
   if (gravityState == GRAVITY_STATE::GROUNDED) {
     if (transformComponent.velocity.x != 0 && transformComponent.velocity.y == 0) {
       animationComponent.animationState = ANIMATION_STATE::WALKING;
@@ -42,6 +54,13 @@ void AnimationSystem::determineAnimationState(CollisionComponent const &collisio
 
   } else {
     animationComponent.animationState = ANIMATION_STATE::AIRBORNE;
+  }
+
+  if (controlComponent != nullptr) {
+
+    if (controlComponent->controlState == CONTROL_STATE::ATTACKING) {
+      animationComponent.animationState = ANIMATION_STATE::ATTACKING;
+    }
   }
 }
 

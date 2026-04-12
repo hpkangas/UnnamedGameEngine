@@ -16,26 +16,30 @@ void ControlSystem::update(int selectedPlayer, int &selectedPlayerIndex) {
 
   TransformComponent &transformComponent = *currentLevel->transformComponents.at(selectedPlayer);
   ControlComponent &controlComponent = *currentLevel->controlComponents.at(selectedPlayer);
-  CollisionComponent &collisionComponent = *currentLevel->collisionComponents.at(selectedPlayer);
+  CollisionComponent const &collisionComponent =
+      *currentLevel->collisionComponents.at(selectedPlayer);
+  AttackComponent &attackComponent = *currentLevel->attackComponents.at(selectedPlayer);
 
   inputR = false;
   inputL = false;
   inputD = false;
   inputU = false;
   inputJump = false;
+  inputAttack = false;
   inputResetCharacter = false;
 
-  determineControlState(controlComponent, collisionComponent, transformComponent);
+  determineControlState(controlComponent, collisionComponent, transformComponent, attackComponent);
 
   if (selectedPlayer == selectedPlayerIndex) {
-    takeInput(transformComponent, selectedPlayerIndex);
+    takeInput();
     handleInput(transformComponent, collisionComponent, controlComponent, selectedPlayerIndex);
   }
 }
 
 void ControlSystem::determineControlState(ControlComponent &controlComponent,
                                           CollisionComponent const &collisionComponent,
-                                          TransformComponent const &transformComponent) const {
+                                          TransformComponent const &transformComponent,
+                                          AttackComponent &attackComponent) {
 
   switch (collisionComponent.collisionTileDown) {
   case TILE::NONE:
@@ -54,7 +58,17 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
       }
       // transformSystem->stopY(transformComponent, collisionComponent.yposDif);
     }
-    break;
+
+    if (controlComponent.controlState == CONTROL_STATE::ATTACKING &&
+        attackComponent.currentAttackFrames == attackComponent.attackFrames) {
+      controlComponent.controlState = CONTROL_STATE::NORMAL;
+      canAttack = true;
+      attackComponent.currentAttackFrames = 0;
+      // control stae on yhen framen myöhässä animaatiosta
+    } else if (controlComponent.controlState == CONTROL_STATE::ATTACKING) {
+      attackComponent.currentAttackFrames++;
+      break;
+    }
 
   case TILE::SEMISOLID:
     break;
@@ -85,7 +99,7 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
   // }
 }
 
-void ControlSystem::takeInput(TransformComponent &transformComponent, int &selectedPlayerIndex) {
+void ControlSystem::takeInput() {
   SDL_Event event;
 
   if (SDL_PollEvent(&event) != 0) {
@@ -107,6 +121,12 @@ void ControlSystem::takeInput(TransformComponent &transformComponent, int &selec
   }
   if (keyboardStateArray[SDL_SCANCODE_LEFT]) {
     inputL = true;
+  }
+  if (keyboardStateArray[SDL_SCANCODE_A]) {
+    inputAttack = true;
+  }
+  if (!keyboardStateArray[SDL_SCANCODE_A]) {
+    canAttack = true;
   }
   if (keyboardStateArray[SDL_SCANCODE_D]) {
     inputJump = true;
@@ -199,6 +219,12 @@ void ControlSystem::handleInput(TransformComponent &transformComponent,
       transformSystem->jump(transformComponent);
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
       canJump = false;
+    }
+
+    if (inputAttack && canAttack) {
+      noInput = false;
+      controlComponent.controlState = CONTROL_STATE::ATTACKING;
+      canAttack = false;
     }
 
     if (noInput) {
@@ -304,6 +330,10 @@ void ControlSystem::handleInput(TransformComponent &transformComponent,
     }
 
     transformSystem->stopY(transformComponent);
+    break;
+
+  case CONTROL_STATE::ATTACKING:
+
     break;
 
   default:

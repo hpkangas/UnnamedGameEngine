@@ -6,16 +6,12 @@
 #include "transformsystem.hpp"
 
 class ControlSystem {
-public:
-  void update(int selectedPlayer, int &selectedPlayerIndex);
-  SceneInfo *currentLevel = nullptr;
-  TransformSystem *transformSystem = nullptr;
 
-private:
   void determineControlState(ControlComponent &controlComponent,
                              CollisionComponent const &collisionComponent,
-                             TransformComponent const &transformComponent) const;
-  void takeInput(TransformComponent &transformComponent, int &selectedPlayerIndex);
+                             TransformComponent const &transformComponent,
+                             AttackComponent &attackComponent);
+  void takeInput();
   void handleInput(TransformComponent &transformComponent,
                    CollisionComponent const &collisionCOmponent, ControlComponent &controlComponent,
                    int &selectedPlayerIndex);
@@ -29,6 +25,13 @@ private:
   bool inputResetCharacter = false;
   bool inputJump = false;
   bool canJump = true;
+  bool inputAttack = false;
+  bool canAttack = true;
+
+public:
+  SceneInfo *currentLevel = nullptr;
+  TransformSystem *transformSystem = nullptr;
+  void update(int selectedPlayer, int &selectedPlayerIndex);
 };
 
 #endif
