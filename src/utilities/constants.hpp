@@ -20,6 +20,7 @@ constexpr int WALK_FRAME = 0;
 constexpr int PUSH_FRAME = 640;
 constexpr int INAIR_FRAME = 384;
 constexpr int CLIMBING_FRAME = 128;
+constexpr int ATTACKING_FRAME = 512;
 
 } // namespace Constants
 

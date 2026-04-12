@@ -99,6 +99,15 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     }
     break;
 
+  case ANIMATION_STATE::ATTACKING:
+    playFrame(renderComponent, 0, ATTACKING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
+              animationComponent.animationFrame / 6);
+    animationComponent.animationFrame++;
+    if (animationComponent.animationFrame / 6 > 5) {
+      animationComponent.animationFrame = 0;
+    }
+    break;
+
   default:
     break;
   }

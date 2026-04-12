@@ -2,7 +2,14 @@
 #define ANIMATIONCOMPONENT_HPP
 #include "component.hpp"
 
-enum class ANIMATION_STATE { STILL = 0, WALKING = 1, PUSHING = 2, AIRBORNE = 3, CLIMBING = 4 };
+enum class ANIMATION_STATE {
+  STILL = 0,
+  WALKING = 1,
+  PUSHING = 2,
+  AIRBORNE = 3,
+  CLIMBING = 4,
+  ATTACKING = 5
+};
 
 struct AnimationComponent : public IComponent {
 
