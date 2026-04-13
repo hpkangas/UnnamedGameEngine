@@ -3,9 +3,7 @@
 #include "system.hpp"
 #include <iostream>
 
-namespace TextureManager {
-
-SDL_Texture *LoadTexture(const char *fileName) {
+SDL_Texture *TextureManager::loadTexture(const char *fileName) {
   SDL_Surface *tempSurface = IMG_Load(fileName);
   if (tempSurface != nullptr) {
     SDL_SetColorKey(tempSurface, SDL_TRUE, SDL_MapRGB(tempSurface->format, 220, 0, 212));
@@ -17,4 +15,9 @@ SDL_Texture *LoadTexture(const char *fileName) {
   return nullptr;
 }
 
-} // namespace TextureManager
+void TextureManager::loadTextures() {
+  std::cout << "Loading textures...\n";
+  textures.emplace_back(TextureManager::loadTexture("assets/baleog.png"));
+  textures.emplace_back(TextureManager::loadTexture("assets/tiles.png"));
+  textures.emplace_back(TextureManager::loadTexture("assets/UI.png"));
+}

@@ -1,7 +1,7 @@
 #include "rendercomponent.hpp"
 
-RenderInfo RenderComponent::render() {
-  RenderInfo const info = {objTexture, sourceRect, destinationRect, flip};
+RenderInfo RenderComponent::render() const {
+  RenderInfo const info = {objTextureIndex, sourceRect, destinationRect, flip};
   return info;
 }
 

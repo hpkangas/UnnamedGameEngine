@@ -1,7 +1,9 @@
 #include "rendersystem.hpp"
 #include "../camera.hpp"
 #include "../system.hpp"
+#include "../texturemanager.hpp"
 #include "SDL_rect.h"
+#include "SDL_render.h"
 #include <memory>
 
 void RenderSystem::update() const {
@@ -60,8 +62,9 @@ void RenderSystem::render() const {
 
 void RenderSystem::renderStatic(const RenderInfo &renderInfo) const {
 
-  SDL_RenderCopyEx(System::renderer, renderInfo.objTexture, &renderInfo.sourceRect,
-                   &renderInfo.destinationRect, 0, nullptr, renderInfo.flip);
+  SDL_RenderCopyEx(System::renderer, TextureManager::textures.at(renderInfo.objTexture),
+                   &renderInfo.sourceRect, &renderInfo.destinationRect, 0, nullptr,
+                   renderInfo.flip);
 }
 
 void RenderSystem::renderNonStatic(const RenderInfo &renderInfo) const {
@@ -70,8 +73,8 @@ void RenderSystem::renderNonStatic(const RenderInfo &renderInfo) const {
     newDestination.x -= Camera::offset.x;
     newDestination.y -= Camera::offset.y;
 
-    SDL_RenderCopyEx(System::renderer, renderInfo.objTexture, &renderInfo.sourceRect,
-                     &newDestination, 0, nullptr, renderInfo.flip);
+    SDL_RenderCopyEx(System::renderer, TextureManager::textures.at(renderInfo.objTexture),
+                     &renderInfo.sourceRect, &newDestination, 0, nullptr, renderInfo.flip);
   }
 }
 

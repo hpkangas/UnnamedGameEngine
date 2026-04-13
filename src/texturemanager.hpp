@@ -1,10 +1,13 @@
 #pragma once
+#include <vector>
 #ifndef TEXTUREMANAGER_HPP
 #define TEXTUREMANAGER_HPP
 #include <SDL2/SDL_image.h>
 
-namespace TextureManager {
-SDL_Texture *LoadTexture(const char *fileName);
+struct TextureManager {
+  inline static std::vector<SDL_Texture *> textures;
+  static void loadTextures();
+  static SDL_Texture *loadTexture(const char *fileName);
 };
 // namespace TextureManager
 

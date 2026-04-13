@@ -29,7 +29,6 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   char c = '0';
 
   std::cout << "Creating scene" << "\n";
-  loadTextures();
 
   int y = 0;
   int x = 0;
@@ -127,8 +126,8 @@ void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
   // render for testing
   SDL_Rect sourceRect = {128, 384, 128, 128};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
-                                                           SDL_FLIP_NONE, textures.at(1), id);
+  auto renderComponent =
+      std::make_unique<RenderComponent>(sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
   level.renderComponents.emplace(id, (std::move(renderComponent)));
   level.tileRenderIds.emplace_back(id);
 }
@@ -138,8 +137,8 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {sourceX, 0, 128, 128};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
-                                                           SDL_FLIP_NONE, textures.at(1), id);
+  auto renderComponent =
+      std::make_unique<RenderComponent>(sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
   auto collisionComponent = std::make_unique<CollisionComponent>(destinationRect, id);
   auto tileComponent = std::make_unique<TileComponent>(TILE::SOLID, x / 128, y / 128);
 
@@ -159,8 +158,8 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {sourceX, 0, 128, 128};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
-                                                           SDL_FLIP_NONE, textures.at(1), id);
+  auto renderComponent =
+      std::make_unique<RenderComponent>(sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
   auto collisionComponent = std::make_unique<CollisionComponent>(sourceRect, id);
   auto tileComponent = std::make_unique<TileComponent>(TILE::SEMISOLID, x / 128, y / 128);
 
@@ -175,27 +174,14 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   level.tileIds.emplace_back(id);
 }
 
-void SceneCreator::loadTextures() {
-  std::cout << "Loading textures...\n";
-  textures.emplace_back(TextureManager::LoadTexture("assets/baleog.png"));
-  textures.emplace_back(TextureManager::LoadTexture("assets/tiles.png"));
-  textures.emplace_back(TextureManager::LoadTexture("assets/UI.png"));
-}
-
-void SceneCreator::destroyTextures() const {
-  for (auto &tex : textures) {
-    SDL_DestroyTexture(tex);
-  }
-}
-
 void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   int id = 1;
 
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
-                                                           SDL_FLIP_NONE, textures.at(0), id);
+  auto renderComponent =
+      std::make_unique<RenderComponent>(sourceRect, destinationRect, SDL_FLIP_NONE, 0, id);
   SDL_Rect collisionRect = {transformComponent->position.x, transformComponent->position.y,
                             PLAYER_WIDTH, PLAYER_HEIGHT};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
@@ -237,8 +223,8 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   transformComponent->velocity.x = 4;
   SDL_Rect sourceRect = {0, 512, PLAYER_WIDTH, PLAYER_HEIGHT};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
-                                                           SDL_FLIP_NONE, textures.at(0), id);
+  auto renderComponent =
+      std::make_unique<RenderComponent>(sourceRect, destinationRect, SDL_FLIP_NONE, 0, id);
   SDL_Rect collisionRect = {transformComponent->position.x, transformComponent->position.y,
                             PLAYER_WIDTH, PLAYER_HEIGHT};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
@@ -265,8 +251,8 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {0, 192, 128, 128};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
-                                                           SDL_FLIP_NONE, textures.at(1), id);
+  auto renderComponent =
+      std::make_unique<RenderComponent>(sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
   auto tileComponent = std::make_unique<TileComponent>(TILE::LADDER, x / 128, y / 128);
   SDL_Rect collisionRect = {x, y, 128, 128};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
@@ -287,8 +273,8 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {0, 192, 128, 64};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
-                                                           SDL_FLIP_NONE, textures.at(1), id);
+  auto renderComponent =
+      std::make_unique<RenderComponent>(sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
   auto tileComponent = std::make_unique<TileComponent>(TILE::LADDERSTART, x / 128, y / 128);
   SDL_Rect collisionRect = {x, y, 128, 64};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
@@ -309,8 +295,8 @@ void SceneCreator::createUI(int x, int y, SceneInfo &level) {
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {0, 0, 31, 31};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
-                                                           SDL_FLIP_NONE, textures.at(2), id);
+  auto renderComponent =
+      std::make_unique<RenderComponent>(sourceRect, destinationRect, SDL_FLIP_NONE, 2, id);
   level.transformComponents.emplace(id, (std::move(transformComponent)));
   level.renderComponents.emplace(id, (std::move(renderComponent)));
   level.ids++;

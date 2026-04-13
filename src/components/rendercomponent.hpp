@@ -8,25 +8,24 @@
 using json = nlohmann::json;
 
 struct RenderInfo {
-  SDL_Texture *objTexture{};
+  int objTexture;
   SDL_Rect sourceRect{};
   SDL_Rect destinationRect{};
   SDL_RendererFlip flip = SDL_FLIP_NONE;
 };
 
 struct RenderComponent : public IComponent {
-  RenderComponent(SDL_Rect source, SDL_Rect destination, SDL_RendererFlip flip,
-                  SDL_Texture *texture, int id)
-      : sourceRect(source), destinationRect(destination), objTexture(texture), flip(flip) {
+  RenderComponent(SDL_Rect source, SDL_Rect destination, SDL_RendererFlip flip, int texture, int id)
+      : sourceRect(source), destinationRect(destination), objTextureIndex(texture), flip(flip) {
     parentID = id;
   }
 
   SDL_Rect sourceRect{};
   SDL_Rect destinationRect{};
-  SDL_Texture *objTexture{};
+  int objTextureIndex;
   SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-  RenderInfo render();
+  RenderInfo render() const;
 
   void to_json(json &j, const RenderComponent &rc);
   void from_json(const json &j, RenderComponent &rc);

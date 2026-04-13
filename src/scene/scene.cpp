@@ -3,6 +3,7 @@
 #include "../components/transformcomponent.hpp"
 #include "../system.hpp"
 #include "../systems/transformsystem.hpp"
+#include "../texturemanager.hpp"
 #include "../utilities/constants.hpp"
 #include "scenecreator.hpp"
 #include <SDL2/SDL_error.h>
@@ -12,6 +13,7 @@
 #include <iostream>
 
 bool Scene::init() {
+  TextureManager::loadTextures();
   const char *fileName = "level2.csv";
   SDL_RWops *file = SDL_RWFromFile(fileName, "rb");
   if (file == nullptr) {
