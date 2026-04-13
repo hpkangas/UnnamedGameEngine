@@ -4,7 +4,8 @@
 
 struct HealthComponent {
   explicit HealthComponent(int health) : health(health) {}
-  int health;
+  int health = 0;
+  int damageTaken = 0;
 };
 
 #endif

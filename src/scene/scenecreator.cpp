@@ -203,7 +203,11 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   auto animationComponent = std::make_unique<AnimationComponent>();
   auto controlComponent = std::make_unique<ControlComponent>(CONTROL_STATE::AIRBORNE, id);
   auto healthComponent = std::make_unique<HealthComponent>(3);
-  auto attackComponent = std::make_unique<AttackComponent>(36, 1);
+
+  SDL_Rect attackCollisionRect = {transformComponent->position.x + PLAYER_WIDTH,
+                                  transformComponent->position.y + PLAYER_HEIGHT, 64,
+                                  PLAYER_HEIGHT};
+  auto attackComponent = std::make_unique<AttackComponent>(36, 1, attackCollisionRect);
 
   animationComponent->parentID = id;
 
@@ -235,8 +239,8 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent = std::make_unique<RenderComponent>(sourceRect, destinationRect,
                                                            SDL_FLIP_NONE, textures.at(0), id);
-  SDL_Rect collisionRect = {transformComponent->position.x + 4, transformComponent->position.y,
-                            PLAYER_WIDTH - 4, PLAYER_HEIGHT};
+  SDL_Rect collisionRect = {transformComponent->position.x, transformComponent->position.y,
+                            PLAYER_WIDTH, PLAYER_HEIGHT};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
   auto gravityComponent = std::make_unique<GravityComponent>(GRAVITY_STATE::AIRBORNE, id);
   auto healthComponent = std::make_unique<HealthComponent>(3);

@@ -9,7 +9,6 @@ public:
   TransformSystem *transformSystem = nullptr;
   SceneInfo *currentLevel = nullptr;
 
-  TILE currentTile = TILE::NONE;
   Utils::Position collidedDownObjectPos = {0, 0};
   Utils::Position collidedUpObjectPos = {0, 0};
 

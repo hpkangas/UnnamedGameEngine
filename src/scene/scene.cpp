@@ -29,6 +29,7 @@ bool Scene::init() {
     controlSystem.currentLevel = &currentLevel;
     controlSystem.transformSystem = &transformSystem;
     renderSystem.currentLevel = &currentLevel;
+    attackSystem.currentLevel = &currentLevel;
 
     Scene::isRunning = true;
     return true;
@@ -60,6 +61,7 @@ void Scene::update() {
     transformSystem.update(*currentLevel.transformComponents.at(id));
   }
 
+  attackSystem.update();
   animationSystem.update();
 
   renderSystem.update();

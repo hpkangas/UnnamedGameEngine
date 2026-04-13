@@ -12,6 +12,7 @@ class ControlSystem {
                              TransformComponent const &transformComponent,
                              AttackComponent &attackComponent);
   void takeInput();
+  void resetInput();
   void handleInput(TransformComponent &transformComponent,
                    CollisionComponent const &collisionCOmponent, ControlComponent &controlComponent,
                    int &selectedPlayerIndex);

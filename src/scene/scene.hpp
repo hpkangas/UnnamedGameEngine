@@ -5,6 +5,7 @@
 #include "../components/transformcomponent.hpp"
 #include "../systems/aisystem.hpp"
 #include "../systems/animationsystem.hpp"
+#include "../systems/attacksystem.hpp"
 #include "../systems/collisiondetectionsystem.hpp"
 #include "../systems/collisionsystem.hpp"
 #include "../systems/controlsystem.hpp"
@@ -35,6 +36,7 @@ struct Scene {
   AnimationSystem animationSystem;
   [[no_unique_address]] GravitySystem gravitySystem;
   [[no_unique_address]] AISystem AISystem;
+  [[no_unique_address]] AttackSystem attackSystem;
 
   void updateCamera(const TransformComponent &transformComponent) const;
   void centerCamera(const TransformComponent &transformComponent) const;

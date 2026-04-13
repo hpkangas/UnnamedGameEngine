@@ -20,13 +20,7 @@ void ControlSystem::update(int selectedPlayer, int &selectedPlayerIndex) {
       *currentLevel->collisionComponents.at(selectedPlayer);
   AttackComponent &attackComponent = *currentLevel->attackComponents.at(selectedPlayer);
 
-  inputR = false;
-  inputL = false;
-  inputD = false;
-  inputU = false;
-  inputJump = false;
-  inputAttack = false;
-  inputResetCharacter = false;
+  resetInput();
 
   determineControlState(controlComponent, collisionComponent, transformComponent, attackComponent);
 
@@ -53,19 +47,20 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
   case TILE::SOLID:
     if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
       if (transformComponent.velocity.y == 0) {
-
         controlComponent.controlState = CONTROL_STATE::NORMAL;
       }
-      // transformSystem->stopY(transformComponent, collisionComponent.yposDif);
     }
 
     if (controlComponent.controlState == CONTROL_STATE::ATTACKING &&
-        attackComponent.currentAttackFrames == attackComponent.attackFrames) {
+        attackComponent.currentAttackFrames == attackComponent.attackFrames - 1) {
       controlComponent.controlState = CONTROL_STATE::NORMAL;
       canAttack = true;
       attackComponent.currentAttackFrames = 0;
+      attackComponent.attacking = false;
+
       // control stae on yhen framen myöhässä animaatiosta
     } else if (controlComponent.controlState == CONTROL_STATE::ATTACKING) {
+      attackComponent.attacking = true;
       attackComponent.currentAttackFrames++;
       break;
     }
@@ -80,7 +75,6 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
   case TILE::LADDERSTART:
     if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
       if (transformComponent.velocity.y == 0) {
-
         controlComponent.controlState = CONTROL_STATE::NORMAL;
       }
       // transformSystem->stopY(transformComponent, collisionComponent.yposDif);
@@ -106,15 +100,19 @@ void ControlSystem::takeInput() {
     if (event.type == SDL_QUIT) {
       Scene::isRunning = false;
       System::isRunning = false;
+      return;
     }
   }
+
   const Uint8 *keyboardStateArray = SDL_GetKeyboardState(nullptr);
   if (keyboardStateArray[SDL_SCANCODE_F1]) {
     Scene::isRunning = false;
+    return;
   }
   if (keyboardStateArray[SDL_SCANCODE_F2]) {
     Scene::isRunning = false;
     System::isRunning = false;
+    return;
   }
   if (keyboardStateArray[SDL_SCANCODE_RIGHT]) {
     inputR = true;
@@ -339,6 +337,16 @@ void ControlSystem::handleInput(TransformComponent &transformComponent,
   default:
     break;
   }
+}
+
+void ControlSystem::resetInput() {
+  inputR = false;
+  inputL = false;
+  inputD = false;
+  inputU = false;
+  inputJump = false;
+  inputAttack = false;
+  inputResetCharacter = false;
 }
 
 void ControlSystem::changePlayerCharacter(int &selectedPlayerIndex) const {

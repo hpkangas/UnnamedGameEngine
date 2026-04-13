@@ -1,7 +1,7 @@
 #include "physics.hpp"
 #include <cstdio>
 namespace Physics {
-bool checkCollision(SDL_Rect &a, SDL_Rect b) {
+bool checkCollision(SDL_Rect const &a, SDL_Rect const &b) {
   // The sides of the rectangles
   int leftA, leftB;
   int rightA, rightB;
@@ -22,7 +22,6 @@ bool checkCollision(SDL_Rect &a, SDL_Rect b) {
 
   // If any of the sides from A are outside of B
   if (bottomA <= topB) {
-    a.y = topB;
     return false;
   }
 

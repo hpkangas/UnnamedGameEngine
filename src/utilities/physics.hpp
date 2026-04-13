@@ -6,7 +6,7 @@
 using namespace Utils;
 namespace Physics {
 
-bool checkCollision(SDL_Rect &a, SDL_Rect b);
+bool checkCollision(SDL_Rect const &a, SDL_Rect const &b);
 
 bool checkLeft(SDL_Rect a, SDL_Rect b);
 
