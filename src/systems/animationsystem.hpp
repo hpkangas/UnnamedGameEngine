@@ -5,16 +5,20 @@
 
 class AnimationSystem {
 public:
+  void update();
   SceneInfo *currentLevel = nullptr;
-  void update() const;
 
 private:
+  ANIMATION_STATE previousAnimationState = ANIMATION_STATE::STILL;
+  void resetAnimation(AnimationComponent &animationComponent) const;
+
   void determineAnimationState(CollisionComponent const &collisionComponent,
                                GRAVITY_STATE const gravityState,
                                TransformComponent const &transformComponent,
                                AnimationComponent &animationComponent,
                                AttackComponent const *attackComponent,
-                               ControlComponent const *controlComponent) const;
+                               ControlComponent const *controlComponent,
+                               HealthComponent const *healthComponent);
 
   void playFrame(RenderComponent &renderComponent, int const x, int const y, int const w,
                  int const h, int const frame) const;

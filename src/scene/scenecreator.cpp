@@ -233,14 +233,18 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
                             PLAYER_WIDTH, PLAYER_HEIGHT};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
   auto gravityComponent = std::make_unique<GravityComponent>(GRAVITY_STATE::AIRBORNE, id);
-  auto healthComponent = std::make_unique<HealthComponent>(3);
+  auto healthComponent = std::make_unique<HealthComponent>(1);
   auto aiComponent = std::make_unique<AIComponent>();
+  auto animationComponent = std::make_unique<AnimationComponent>();
+  animationComponent->parentID = id;
 
   level.transformComponents.emplace(id, (std::move(transformComponent)));
   level.renderComponents.emplace(id, (std::move(renderComponent)));
   level.collisionComponents.emplace(id, (std::move(collisionComponent)));
   level.gravityComponents.emplace(id, (std::move(gravityComponent)));
   level.healthComponents.emplace(id, (std::move(healthComponent)));
+  level.animationComponents.emplace(id, (std::move(animationComponent)));
+
   level.ids++;
   level.transformIds.emplace_back(id);
   level.objectRenderIds.emplace_back(id);
@@ -248,6 +252,7 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   level.gravityIds.emplace_back(id);
   level.healthIds.emplace_back(id);
   level.AIIds.emplace_back(id);
+  level.animationIds.emplace_back(id);
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {

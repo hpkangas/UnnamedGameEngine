@@ -2,6 +2,8 @@
 #define AICOMPONENT_HPP
 #include "component.hpp"
 
-struct AIComponent : public IComponent {};
+struct AIComponent : public IComponent {
+  bool on = true;
+};
 
 #endif

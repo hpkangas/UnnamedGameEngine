@@ -3,7 +3,7 @@
 #include <cstdio>
 
 using namespace Constants;
-void AnimationSystem::update() const {
+void AnimationSystem::update() {
   for (int id : currentLevel->animationIds) {
     // what if these don't exist
     CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(id);
@@ -22,10 +22,23 @@ void AnimationSystem::update() const {
       controlComponent = &*currentLevel->controlComponents.at(id);
     }
 
+    HealthComponent const *healthComponent = nullptr;
+    if (currentLevel->healthComponents.contains(id)) {
+      healthComponent = &*currentLevel->healthComponents.at(id);
+    }
+
     determineAnimationState(collisionComponent, gravityState, transformComponent,
-                            animationComponent, attackComponent, controlComponent);
+                            animationComponent, attackComponent, controlComponent, healthComponent);
+
+    resetAnimation(animationComponent);
 
     animate(renderComponent, animationComponent, transformComponent);
+  }
+}
+
+void AnimationSystem::resetAnimation(AnimationComponent &animationComponent) const {
+  if (previousAnimationState != animationComponent.animationState) {
+    animationComponent.animationFrame = 0;
   }
 }
 
@@ -34,7 +47,30 @@ void AnimationSystem::determineAnimationState(CollisionComponent const &collisio
                                               TransformComponent const &transformComponent,
                                               AnimationComponent &animationComponent,
                                               AttackComponent const *attackComponent,
-                                              ControlComponent const *controlComponent) const {
+                                              ControlComponent const *controlComponent,
+                                              HealthComponent const *healthComponent) {
+
+  previousAnimationState = animationComponent.animationState;
+
+  if (controlComponent != nullptr) {
+
+    if (controlComponent->controlState == CONTROL_STATE::ATTACKING) {
+      animationComponent.animationState = ANIMATION_STATE::ATTACKING;
+      return;
+    }
+  }
+
+  if (healthComponent != nullptr) {
+    if (healthComponent->healthState == HEALTH_STATE::DYING) {
+      animationComponent.animationState = ANIMATION_STATE::DYING;
+      return;
+    }
+    if (healthComponent->healthState == HEALTH_STATE::DEAD) {
+      animationComponent.animationState = ANIMATION_STATE::DEAD;
+      previousAnimationState = animationComponent.animationState;
+      return;
+    }
+  }
   if (gravityState == GRAVITY_STATE::GROUNDED) {
     if (transformComponent.velocity.x != 0 && transformComponent.velocity.y == 0) {
       animationComponent.animationState = ANIMATION_STATE::WALKING;
@@ -54,13 +90,6 @@ void AnimationSystem::determineAnimationState(CollisionComponent const &collisio
 
   } else {
     animationComponent.animationState = ANIMATION_STATE::AIRBORNE;
-  }
-
-  if (controlComponent != nullptr) {
-
-    if (controlComponent->controlState == CONTROL_STATE::ATTACKING) {
-      animationComponent.animationState = ANIMATION_STATE::ATTACKING;
-    }
   }
 }
 
@@ -125,6 +154,15 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     if (animationComponent.animationFrame / 6 > 5) {
       animationComponent.animationFrame = 0;
     }
+    break;
+
+  case ANIMATION_STATE::DYING:
+    playFrame(renderComponent, 0, DYING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
+              animationComponent.animationFrame / 8);
+    animationComponent.animationFrame++;
+    break;
+
+  case ANIMATION_STATE::DEAD:
     break;
 
   default:
