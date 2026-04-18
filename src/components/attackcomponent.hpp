@@ -4,12 +4,15 @@
 #define ATTACKCOMPONENT_HPP
 
 struct AttackComponent {
-  explicit AttackComponent(int attackFrame, int damage, SDL_Rect collisionRect)
-      : attackFrames(attackFrame), damage(damage), collisionRect(collisionRect) {}
+  explicit AttackComponent(int attackFrame, int damage, SDL_Rect rightCollisionRect,
+                           SDL_Rect leftCollisionRect)
+      : attackFrames(attackFrame), damage(damage), rightCollisionRect(rightCollisionRect),
+        leftCollisionRect(leftCollisionRect) {}
   int attackFrames;
   int damage;
   int currentAttackFrames = 0;
-  SDL_Rect collisionRect = {0, 0, 0, 0};
+  SDL_Rect rightCollisionRect = {0, 0, 0, 0};
+  SDL_Rect leftCollisionRect = {0, 0, 0, 0};
 
   bool attacking = false;
 };

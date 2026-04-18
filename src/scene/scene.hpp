@@ -10,6 +10,7 @@
 #include "../systems/collisionsystem.hpp"
 #include "../systems/controlsystem.hpp"
 #include "../systems/gravitysystem.hpp"
+#include "../systems/healthsystem.hpp"
 #include "../systems/rendersystem.hpp"
 #include "../systems/transformsystem.hpp"
 #include "../utilities/constants.hpp"
@@ -37,6 +38,7 @@ struct Scene {
   [[no_unique_address]] GravitySystem gravitySystem;
   [[no_unique_address]] AISystem AISystem;
   [[no_unique_address]] AttackSystem attackSystem;
+  [[no_unique_address]] HealthSystem healthSystem;
 
   void updateCamera(const TransformComponent &transformComponent) const;
   void centerCamera(const TransformComponent &transformComponent) const;

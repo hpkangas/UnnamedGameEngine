@@ -51,8 +51,7 @@ bool checkLeft(SDL_Rect a, SDL_Rect b) {
   return true;
 }
 
-bool playerCollisionDown(SDL_Rect const &player, SDL_Rect const &obj,
-                         Velocity const playerVelocity) {
+bool collisionDown(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
 
   if (player.y + player.h <= obj.y + obj.h) {
     return player.y + player.h + playerVelocity.y >= obj.y && player.x < obj.x + obj.w &&
@@ -61,7 +60,7 @@ bool playerCollisionDown(SDL_Rect const &player, SDL_Rect const &obj,
   return false;
 }
 
-bool playerCollisionUp(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
+bool collisionUp(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
 
   if (player.y >= obj.y) {
     return player.y + playerVelocity.y <= obj.y + obj.h && player.x < obj.x + obj.w &&
@@ -70,8 +69,7 @@ bool playerCollisionUp(SDL_Rect const &player, SDL_Rect const &obj, Velocity con
   return false;
 }
 
-bool playerCollisionLeft(SDL_Rect const &player, SDL_Rect const &obj,
-                         Velocity const playerVelocity) {
+bool collisionLeft(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
 
   if (player.x >= obj.x + obj.w) {
     return player.x + playerVelocity.x < obj.x + obj.w && player.y < obj.y + obj.h &&
@@ -80,13 +78,17 @@ bool playerCollisionLeft(SDL_Rect const &player, SDL_Rect const &obj,
   return false;
 }
 
-bool playerCollisionRight(SDL_Rect const &player, SDL_Rect const &obj,
-                          Velocity const playerVelocity) {
+bool collisionRight(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
 
   if (player.x + player.w <= obj.x) {
     return player.x + player.w + playerVelocity.x > obj.x && player.y < obj.y + obj.h &&
            player.y + player.h > obj.y;
   }
   return false;
+}
+
+bool attackCollision(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
+  return collisionDown(player, obj, playerVelocity) || collisionUp(player, obj, playerVelocity) ||
+         collisionLeft(player, obj, playerVelocity) || collisionRight(player, obj, playerVelocity);
 }
 } // namespace Physics

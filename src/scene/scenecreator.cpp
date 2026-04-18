@@ -190,10 +190,14 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   auto controlComponent = std::make_unique<ControlComponent>(CONTROL_STATE::AIRBORNE, id);
   auto healthComponent = std::make_unique<HealthComponent>(3);
 
-  SDL_Rect attackCollisionRect = {transformComponent->position.x + PLAYER_WIDTH,
-                                  transformComponent->position.y + PLAYER_HEIGHT, 64,
-                                  PLAYER_HEIGHT};
-  auto attackComponent = std::make_unique<AttackComponent>(36, 1, attackCollisionRect);
+  SDL_Rect rightAttackCollisionRect = {transformComponent->position.x + PLAYER_WIDTH,
+                                       transformComponent->position.y, 64, PLAYER_HEIGHT};
+  SDL_Rect leftAttackCollisionRect = {transformComponent->position.x - PLAYER_WIDTH / 2,
+                                      transformComponent->position.y - PLAYER_HEIGHT / 2, 64,
+                                      PLAYER_HEIGHT};
+
+  auto attackComponent =
+      std::make_unique<AttackComponent>(36, 1, rightAttackCollisionRect, leftAttackCollisionRect);
 
   animationComponent->parentID = id;
 
