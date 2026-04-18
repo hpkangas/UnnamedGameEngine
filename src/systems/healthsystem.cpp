@@ -10,7 +10,7 @@ void HealthSystem::update() {
               << ", damage taken " << healthComponent.damageTaken << std::endl;
     if (healthComponent.currentHealth <= 0) {
       std::cout << "id " << id << " died\n";
-      healthComponent.healthState = HEALTH_STATE::DYING;
+      healthComponent.healthState = HEALTH_STATE::DEAD;
     }
   }
 }

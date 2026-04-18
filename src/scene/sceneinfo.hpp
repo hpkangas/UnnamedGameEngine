@@ -1,6 +1,7 @@
 #ifndef SCENEINFO_HPP
 #define SCENEINFO_HPP
 
+#include "../components/aicomponent.hpp"
 #include "../components/animationcomponent.hpp"
 #include "../components/attackcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
@@ -13,6 +14,7 @@
 #include <unordered_map>
 
 struct SceneInfo {
+  std::unordered_map<int, std::unique_ptr<AIComponent>> aiComponents;
   std::unordered_map<int, std::unique_ptr<AnimationComponent>> animationComponents;
   std::unordered_map<int, std::unique_ptr<AttackComponent>> attackComponents;
   std::unordered_map<int, std::unique_ptr<CollisionComponent>> collisionComponents;
@@ -25,7 +27,7 @@ struct SceneInfo {
 
   std::vector<int> animationIds;
   std::vector<int> attackIds;
-  std::vector<int> AIIds;
+  std::vector<int> aiIds;
   std::vector<int> collisionIds;
   std::vector<int> controlIds;
   std::vector<int> gravityIds;

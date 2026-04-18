@@ -20,4 +20,5 @@ void TextureManager::loadTextures() {
   textures.emplace_back(TextureManager::loadTexture("assets/baleog.png"));
   textures.emplace_back(TextureManager::loadTexture("assets/tiles.png"));
   textures.emplace_back(TextureManager::loadTexture("assets/UI.png"));
+  textures.emplace_back(TextureManager::loadTexture("assets/enemy.png"));
 }

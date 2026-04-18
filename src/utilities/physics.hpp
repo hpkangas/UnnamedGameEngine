@@ -18,7 +18,7 @@ bool collisionLeft(SDL_Rect const &player, SDL_Rect const &obj, Velocity const p
 
 bool collisionRight(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity);
 
-bool attackCollision(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity);
+bool attackCollision(SDL_Rect const &player, SDL_Rect const &obj);
 
 }; // namespace Physics
 #endif

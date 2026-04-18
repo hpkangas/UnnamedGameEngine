@@ -14,12 +14,10 @@ void RenderSystem::update() const {
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
 
-    if (tc.velocity.x < 0) {
-      rc.flip = SDL_FLIP_HORIZONTAL;
-    }
-
-    else if (tc.velocity.x > 0) {
+    if (tc.facingRight) {
       rc.flip = SDL_FLIP_NONE;
+    } else {
+      rc.flip = SDL_FLIP_HORIZONTAL;
     }
   }
 

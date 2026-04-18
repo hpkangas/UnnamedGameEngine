@@ -60,17 +60,11 @@ void AnimationSystem::determineAnimationState(CollisionComponent const &collisio
     }
   }
 
-  if (healthComponent != nullptr) {
-    if (healthComponent->healthState == HEALTH_STATE::DYING) {
-      animationComponent.animationState = ANIMATION_STATE::DYING;
-      return;
-    }
-    if (healthComponent->healthState == HEALTH_STATE::DEAD) {
-      animationComponent.animationState = ANIMATION_STATE::DEAD;
-      previousAnimationState = animationComponent.animationState;
-      return;
-    }
+  if (healthComponent != nullptr && healthComponent->healthState == HEALTH_STATE::DEAD) {
+    animationComponent.animationState = ANIMATION_STATE::DEATH;
+    return;
   }
+
   if (gravityState == GRAVITY_STATE::GROUNDED) {
     if (transformComponent.velocity.x != 0 && transformComponent.velocity.y == 0) {
       animationComponent.animationState = ANIMATION_STATE::WALKING;
@@ -156,13 +150,13 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     }
     break;
 
-  case ANIMATION_STATE::DYING:
+  case ANIMATION_STATE::DEATH:
     playFrame(renderComponent, 0, DYING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
-              animationComponent.animationFrame / 8);
-    animationComponent.animationFrame++;
-    break;
+              animationComponent.animationFrame / 12);
 
-  case ANIMATION_STATE::DEAD:
+    if (animationComponent.animationFrame / 12 < 3) {
+      animationComponent.animationFrame++;
+    }
     break;
 
   default:

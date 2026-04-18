@@ -5,9 +5,9 @@
 struct AttackSystem {
   void update();
   void updateAttackComponents(AttackComponent &attackComponent,
-                              TransformComponent &transformComponent);
+                              TransformComponent const &transformComponent) const;
   void checkAttackCollisions(AttackComponent const &attackComponent, int attackerId,
-                             Utils::Velocity vel);
+                             bool facingRight);
   SceneInfo *currentLevel = nullptr;
 };
 

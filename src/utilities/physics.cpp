@@ -1,4 +1,5 @@
 #include "physics.hpp"
+#include "utils.hpp"
 #include <cstdio>
 namespace Physics {
 bool checkCollision(SDL_Rect const &a, SDL_Rect const &b) {
@@ -87,7 +88,8 @@ bool collisionRight(SDL_Rect const &player, SDL_Rect const &obj, Velocity const 
   return false;
 }
 
-bool attackCollision(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
+bool attackCollision(SDL_Rect const &player, SDL_Rect const &obj) {
+  Velocity playerVelocity = {0, 0};
   return collisionDown(player, obj, playerVelocity) || collisionUp(player, obj, playerVelocity) ||
          collisionLeft(player, obj, playerVelocity) || collisionRight(player, obj, playerVelocity);
 }

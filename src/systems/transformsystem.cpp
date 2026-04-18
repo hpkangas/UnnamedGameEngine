@@ -69,23 +69,23 @@ void TransformSystem::update(TransformComponent &transformComponent) const {
   const int xpos = transformComponent.position.x;
   const int ypos = transformComponent.position.y;
 
+  if (xvel > 0) {
+    transformComponent.facingRight = true;
+  } else if (xvel < 0) {
+    transformComponent.facingRight = false;
+  }
+
   if (!(xvel == 0)) {
     transformComponent.position.x = xpos + xvel;
-    if (transformComponent.tilePosition.x != xpos/128) {
-      transformComponent.tilePosition.x = xpos/128;
-      // std::cout<<"id: "<<transformComponent.parentID<<", "<<transformComponent.tilePosition.x<<","<<transformComponent.tilePosition.y<<std::endl;
+    if (transformComponent.tilePosition.x != xpos / 128) {
+      transformComponent.tilePosition.x = xpos / 128;
     }
   }
 
   if (!(yvel == 0)) {
     transformComponent.position.y = ypos + yvel;
-    if (transformComponent.tilePosition.y != ypos/128) {
-      transformComponent.tilePosition.y = ypos/128;
+    if (transformComponent.tilePosition.y != ypos / 128) {
+      transformComponent.tilePosition.y = ypos / 128;
     }
   }
-
-  
-
-  
-
 }

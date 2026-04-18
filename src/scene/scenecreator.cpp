@@ -228,7 +228,7 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   SDL_Rect sourceRect = {0, 512, PLAYER_WIDTH, PLAYER_HEIGHT};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent =
-      std::make_unique<RenderComponent>(sourceRect, destinationRect, SDL_FLIP_NONE, 0, id);
+      std::make_unique<RenderComponent>(sourceRect, destinationRect, SDL_FLIP_NONE, 3, id);
   SDL_Rect collisionRect = {transformComponent->position.x, transformComponent->position.y,
                             PLAYER_WIDTH, PLAYER_HEIGHT};
   auto collisionComponent = std::make_unique<CollisionComponent>(collisionRect, id);
@@ -244,6 +244,7 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   level.gravityComponents.emplace(id, (std::move(gravityComponent)));
   level.healthComponents.emplace(id, (std::move(healthComponent)));
   level.animationComponents.emplace(id, (std::move(animationComponent)));
+  level.aiComponents.emplace(id, (std::move(aiComponent)));
 
   level.ids++;
   level.transformIds.emplace_back(id);
@@ -251,7 +252,7 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   level.collisionIds.emplace_back(id);
   level.gravityIds.emplace_back(id);
   level.healthIds.emplace_back(id);
-  level.AIIds.emplace_back(id);
+  level.aiIds.emplace_back(id);
   level.animationIds.emplace_back(id);
 }
 

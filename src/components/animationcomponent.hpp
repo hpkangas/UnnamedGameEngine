@@ -9,8 +9,7 @@ enum class ANIMATION_STATE {
   AIRBORNE = 3,
   CLIMBING = 4,
   ATTACKING = 5,
-  DYING = 6,
-  DEAD = 7
+  DEATH = 6
 };
 
 struct AnimationComponent : public IComponent {
