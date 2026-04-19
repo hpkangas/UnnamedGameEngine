@@ -1,7 +1,6 @@
 #include "attacksystem.hpp"
 #include "../utilities/constants.hpp"
 #include "../utilities/physics.hpp"
-#include <iostream>
 
 void AttackSystem::update() {
   for (int id : currentLevel->attackIds) {
@@ -12,7 +11,6 @@ void AttackSystem::update() {
 
     if (attackComponent.attacking && attackComponent.currentAttackFrames == 24) {
       checkAttackCollisions(attackComponent, id, transformComponent.facingRight);
-      std::cout << "---stop attacking---\n";
     }
   }
 }
@@ -29,29 +27,44 @@ void AttackSystem::updateAttackComponents(AttackComponent &attackComponent,
 
 void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent, int attackerId,
                                          bool facingRight) {
-  for (int id : currentLevel->healthIds) {
-    if (id != attackerId) {
+  if (attackerId == 1) {
 
-      HealthComponent &healthComponent = *currentLevel->healthComponents.at(id);
-      CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(id);
-      std::cout << "attack component: " << attackComponent.rightCollisionRect.x << ", "
-                << attackComponent.rightCollisionRect.y << std::endl;
+    for (int id : currentLevel->healthIds) {
+      if (id != attackerId) {
 
-      std::cout << "enemy: " << collisionComponent.collisionRect.x << ", "
-                << collisionComponent.collisionRect.y << std::endl;
+        HealthComponent &healthComponent = *currentLevel->healthComponents.at(id);
+        CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(id);
 
-      if (facingRight) {
-        if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
-            Physics::attackCollision(collisionComponent.collisionRect,
-                                     attackComponent.rightCollisionRect)) {
-          healthComponent.damageTaken += attackComponent.damage;
+        if (facingRight) {
+          if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
+              Physics::attackCollision(collisionComponent.collisionRect,
+                                       attackComponent.rightCollisionRect)) {
+            healthComponent.damageTaken += attackComponent.damage;
+          }
+        } else {
+          if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
+              Physics::attackCollision(collisionComponent.collisionRect,
+                                       attackComponent.leftCollisionRect)) {
+            healthComponent.damageTaken += attackComponent.damage;
+          }
         }
-      } else {
-        if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
-            Physics::attackCollision(collisionComponent.collisionRect,
-                                     attackComponent.leftCollisionRect)) {
-          healthComponent.damageTaken += attackComponent.damage;
-        }
+      }
+    }
+  } else {
+    HealthComponent &healthComponent = *currentLevel->healthComponents.at(1);
+    CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(1);
+
+    if (facingRight) {
+      if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
+          Physics::attackCollision(collisionComponent.collisionRect,
+                                   attackComponent.rightCollisionRect)) {
+        healthComponent.damageTaken += attackComponent.damage;
+      }
+    } else {
+      if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
+          Physics::attackCollision(collisionComponent.collisionRect,
+                                   attackComponent.leftCollisionRect)) {
+        healthComponent.damageTaken += attackComponent.damage;
       }
     }
   }

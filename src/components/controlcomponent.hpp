@@ -2,7 +2,14 @@
 #define CONTROLCOMPONENT_HPP
 #include "component.hpp"
 
-enum class CONTROL_STATE { NORMAL = 0, AIRBORNE = 1, FALLING = 2, CLIMBING = 3, ATTACKING = 4 };
+enum class CONTROL_STATE {
+  DEAD = 0,
+  NORMAL = 1,
+  AIRBORNE = 2,
+  FALLING = 3,
+  CLIMBING = 4,
+  ATTACKING = 5
+};
 struct ControlComponent : public IComponent {
   ControlComponent(CONTROL_STATE state, int id) : controlState(state) { parentID = id; }
 

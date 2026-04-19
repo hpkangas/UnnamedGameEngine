@@ -238,6 +238,15 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   auto animationComponent = std::make_unique<AnimationComponent>();
   animationComponent->parentID = id;
 
+  SDL_Rect rightAttackCollisionRect = {transformComponent->position.x + PLAYER_WIDTH,
+                                       transformComponent->position.y, 64, PLAYER_HEIGHT};
+  SDL_Rect leftAttackCollisionRect = {transformComponent->position.x - PLAYER_WIDTH / 2,
+                                      transformComponent->position.y - PLAYER_HEIGHT / 2, 64,
+                                      PLAYER_HEIGHT};
+
+  auto attackComponent =
+      std::make_unique<AttackComponent>(36, 1, rightAttackCollisionRect, leftAttackCollisionRect);
+
   level.transformComponents.emplace(id, (std::move(transformComponent)));
   level.renderComponents.emplace(id, (std::move(renderComponent)));
   level.collisionComponents.emplace(id, (std::move(collisionComponent)));
@@ -245,6 +254,7 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   level.healthComponents.emplace(id, (std::move(healthComponent)));
   level.animationComponents.emplace(id, (std::move(animationComponent)));
   level.aiComponents.emplace(id, (std::move(aiComponent)));
+  level.attackComponents.emplace(id, (std::move(attackComponent)));
 
   level.ids++;
   level.transformIds.emplace_back(id);
@@ -254,6 +264,7 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   level.healthIds.emplace_back(id);
   level.aiIds.emplace_back(id);
   level.animationIds.emplace_back(id);
+  level.attackIds.emplace_back(id);
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {

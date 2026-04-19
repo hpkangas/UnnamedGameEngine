@@ -10,7 +10,8 @@ class ControlSystem {
   void determineControlState(ControlComponent &controlComponent,
                              CollisionComponent const &collisionComponent,
                              TransformComponent const &transformComponent,
-                             AttackComponent &attackComponent);
+                             AttackComponent &attackComponent,
+                             HealthComponent const &healthComponent);
   void takeInput();
   void resetInput();
   void handleInput(TransformComponent &transformComponent,

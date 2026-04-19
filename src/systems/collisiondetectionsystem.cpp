@@ -3,14 +3,11 @@
 #include <cstdio>
 
 void CollisionDetectionSystem::update() {
-  // constructor?
 
   for (int id : currentLevel->collisionIds) {
     CollisionComponent &cc = *currentLevel->collisionComponents.at(id);
     resetCollisions(cc);
     updateCollisionRect(cc, *currentLevel->transformComponents.at(id));
-    // printf("%d, %d\n", currentLevel->transformComponents.at(id)->position.y,
-    //        currentLevel->transformComponents.at(id)->position.x);
 
     checkCollision(id);
   }

@@ -19,10 +19,12 @@ void ControlSystem::update(int selectedPlayer, int &selectedPlayerIndex) {
   CollisionComponent const &collisionComponent =
       *currentLevel->collisionComponents.at(selectedPlayer);
   AttackComponent &attackComponent = *currentLevel->attackComponents.at(selectedPlayer);
+  HealthComponent const &healthComponent = *currentLevel->healthComponents.at(selectedPlayer);
 
   resetInput();
 
-  determineControlState(controlComponent, collisionComponent, transformComponent, attackComponent);
+  determineControlState(controlComponent, collisionComponent, transformComponent, attackComponent,
+                        healthComponent);
 
   if (selectedPlayer == selectedPlayerIndex) {
     takeInput();
@@ -33,22 +35,25 @@ void ControlSystem::update(int selectedPlayer, int &selectedPlayerIndex) {
 void ControlSystem::determineControlState(ControlComponent &controlComponent,
                                           CollisionComponent const &collisionComponent,
                                           TransformComponent const &transformComponent,
-                                          AttackComponent &attackComponent) {
+                                          AttackComponent &attackComponent,
+                                          HealthComponent const &healthComponent) {
+
+  if (healthComponent.healthState == HEALTH_STATE::DEAD) {
+    controlComponent.controlState = CONTROL_STATE::DEAD;
+    return;
+  }
 
   switch (collisionComponent.collisionTileDown) {
   case TILE::NONE:
     if (controlComponent.controlState != CONTROL_STATE::AIRBORNE) {
-
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     }
-
     break;
 
   case TILE::SOLID:
-    if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
-      if (transformComponent.velocity.y == 0) {
-        controlComponent.controlState = CONTROL_STATE::NORMAL;
-      }
+    if (controlComponent.controlState == CONTROL_STATE::AIRBORNE &&
+        transformComponent.velocity.y == 0) {
+      controlComponent.controlState = CONTROL_STATE::NORMAL;
     }
 
     if (controlComponent.controlState == CONTROL_STATE::ATTACKING &&
@@ -58,7 +63,6 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
       attackComponent.currentAttackFrames = 0;
       attackComponent.attacking = false;
 
-      // control stae on yhen framen myöhässä animaatiosta
     } else if (controlComponent.controlState == CONTROL_STATE::ATTACKING) {
       attackComponent.attacking = true;
       attackComponent.currentAttackFrames++;
@@ -96,12 +100,10 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
 void ControlSystem::takeInput() {
   SDL_Event event;
 
-  if (SDL_PollEvent(&event) != 0) {
-    if (event.type == SDL_QUIT) {
-      Scene::isRunning = false;
-      System::isRunning = false;
-      return;
-    }
+  if (SDL_PollEvent(&event) != 0 && event.type == SDL_QUIT) {
+    Scene::isRunning = false;
+    System::isRunning = false;
+    return;
   }
 
   const Uint8 *keyboardStateArray = SDL_GetKeyboardState(nullptr);

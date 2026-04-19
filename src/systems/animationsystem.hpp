@@ -20,6 +20,12 @@ private:
                                ControlComponent const *controlComponent,
                                HealthComponent const *healthComponent);
 
+  void determineAIAnimationState(CollisionComponent const &collisionComponent,
+                                 GRAVITY_STATE const gravityState,
+                                 TransformComponent const &transformComponent,
+                                 AnimationComponent &animationComponent,
+                                 AIComponent const *aiComponent);
+
   void playFrame(RenderComponent &renderComponent, int const x, int const y, int const w,
                  int const h, int const frame) const;
 

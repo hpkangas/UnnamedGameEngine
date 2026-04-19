@@ -27,8 +27,19 @@ void AnimationSystem::update() {
       healthComponent = &*currentLevel->healthComponents.at(id);
     }
 
-    determineAnimationState(collisionComponent, gravityState, transformComponent,
-                            animationComponent, attackComponent, controlComponent, healthComponent);
+    AIComponent const *aiComponent = nullptr;
+    if (currentLevel->aiComponents.contains(id)) {
+      aiComponent = &*currentLevel->aiComponents.at(id);
+    }
+
+    if (!aiComponent) {
+      determineAnimationState(collisionComponent, gravityState, transformComponent,
+                              animationComponent, attackComponent, controlComponent,
+                              healthComponent);
+    } else {
+      determineAIAnimationState(collisionComponent, gravityState, transformComponent,
+                                animationComponent, aiComponent);
+    }
 
     resetAnimation(animationComponent);
 
@@ -78,6 +89,43 @@ void AnimationSystem::determineAnimationState(CollisionComponent const &collisio
 
     // doesn't work when you stop
     // climbing needs a lot of rework
+    if (transformComponent.velocity.y != 0) {
+      animationComponent.animationState = ANIMATION_STATE::CLIMBING;
+    }
+
+  } else {
+    animationComponent.animationState = ANIMATION_STATE::AIRBORNE;
+  }
+}
+
+void AnimationSystem::determineAIAnimationState(CollisionComponent const &collisionComponent,
+                                                GRAVITY_STATE const gravityState,
+                                                TransformComponent const &transformComponent,
+                                                AnimationComponent &animationComponent,
+                                                AIComponent const *aiComponent) {
+  previousAnimationState = animationComponent.animationState;
+
+  if (aiComponent->state == AI_STATE::ATTACKING) {
+    animationComponent.animationState = ANIMATION_STATE::ATTACKING;
+    return;
+  }
+
+  if (aiComponent->state == AI_STATE::DEAD) {
+    animationComponent.animationState = ANIMATION_STATE::DEATH;
+    return;
+  }
+
+  if (gravityState == GRAVITY_STATE::GROUNDED) {
+    if (transformComponent.velocity.x != 0 && transformComponent.velocity.y == 0) {
+      animationComponent.animationState = ANIMATION_STATE::WALKING;
+    } else {
+      animationComponent.animationState = ANIMATION_STATE::STILL;
+    }
+
+    if (collisionComponent.collisionLeft || collisionComponent.collisionRight) {
+      animationComponent.animationState = ANIMATION_STATE::PUSHING;
+    }
+
     if (transformComponent.velocity.y != 0) {
       animationComponent.animationState = ANIMATION_STATE::CLIMBING;
     }
