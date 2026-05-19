@@ -22,3 +22,12 @@ void TextureManager::loadTextures() {
   textures.emplace_back(TextureManager::loadTexture("assets/UI.png"));
   textures.emplace_back(TextureManager::loadTexture("assets/enemy.png"));
 }
+
+void TextureManager::clean() {
+  for (SDL_Texture *texture : textures) {
+      if (texture != nullptr) {
+        SDL_DestroyTexture(texture);
+      }
+    }
+    textures.clear();
+}

@@ -2,6 +2,7 @@
 #include "utilities/constants.hpp"
 
 using namespace Constants;
+
 Camera::Camera() {
   offset = {0, 0};
   focusArea = {SCREENWIDTH * 1 / 3, SCREENHEIGHT * 1 / 3, SCREENWIDTH * 2 / 3,
@@ -10,15 +11,15 @@ Camera::Camera() {
 }
 
 void Camera::update() {
-  focusArea.x = SCREENWIDTH * 1 / 3 + offset.x;
-  focusArea.y = SCREENHEIGHT * 1 / 3 + offset.y;
-  focusArea.w = SCREENWIDTH * 2 / 3 + offset.x;
-  focusArea.h = SCREENHEIGHT * 2 / 3 + offset.y;
+  focusArea.left = SCREENWIDTH * 1 / 3 + offset.x;
+  focusArea.top = SCREENHEIGHT * 1 / 3 + offset.y;
+  focusArea.right = SCREENWIDTH * 2 / 3 + offset.x;
+  focusArea.bottom = SCREENHEIGHT * 2 / 3 + offset.y;
 
-  viewPort = {offset.x, offset.y, SCREENWIDTH + offset.x, SCREENHEIGHT + offset.y};
+  viewPort = {offset.y, SCREENHEIGHT + offset.y, offset.x, SCREENWIDTH + offset.x};
 }
 
-void Camera::updateOffsetRelativeToScreen(const int offsetx, const int offsety) {
-  offset.x = offsetx - SCREENWIDTH * 1 / 2;
-  offset.y = offsety - SCREENHEIGHT * 1 / 2;
+void Camera::updateOffsetRelativeToScreen(const int x, const int y) {
+  offset.x = x - SCREENWIDTH * 1 / 2;
+  offset.y = y - SCREENHEIGHT * 1 / 2;
 }

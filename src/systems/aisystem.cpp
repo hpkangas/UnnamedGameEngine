@@ -1,5 +1,6 @@
 #include "aisystem.hpp"
 #include "../utilities/physics.hpp"
+#include "SDL_rect.h"
 
 void AISystem::update(SceneInfo &currentLevel) const {
   for (int id : currentLevel.aiIds) {
@@ -23,24 +24,26 @@ void AISystem::update(SceneInfo &currentLevel) const {
       break;
 
     case AI_STATE::WALKING:
+      SDL_Rect const *attackRect;
+
       if (facingRight) {
         velx = 4;
+        attackRect = &attackComponent.rightCollisionRect;
       } else {
         velx = -4;
+        attackRect = &attackComponent.leftCollisionRect;
       }
 
       if (collisionComponent.collisionTileRight == TILE::SOLID ||
           collisionComponent.collisionTileDown == TILE::NONE) {
         velx = -4;
-      }
-
-      else if (collisionComponent.collisionTileLeft == TILE::SOLID ||
-               collisionComponent.collisionTileDown == TILE::NONE) {
+      } else if (collisionComponent.collisionTileLeft == TILE::SOLID ||
+                 collisionComponent.collisionTileDown == TILE::NONE) {
         velx = 4;
       }
 
       if (playerHealthState == HEALTH_STATE::ALIVE &&
-          Physics::attackCollision(collisionComponent.collisionRect, player.collisionRect)) {
+          Physics::attackCollision(*attackRect, player.collisionRect)) {
         aiComponent.state = AI_STATE::ATTACKING;
         attackComponent.attacking = true;
       }

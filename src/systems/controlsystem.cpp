@@ -69,6 +69,8 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
       break;
     }
 
+    break;
+
   case TILE::SEMISOLID:
     break;
 
@@ -100,10 +102,12 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
 void ControlSystem::takeInput() {
   SDL_Event event;
 
-  if (SDL_PollEvent(&event) != 0 && event.type == SDL_QUIT) {
-    Scene::isRunning = false;
-    System::isRunning = false;
-    return;
+  while (SDL_PollEvent(&event)) {
+    if (event.type == SDL_QUIT) {
+      Scene::isRunning = false;
+      System::isRunning = false;
+      return;
+    }
   }
 
   const Uint8 *keyboardStateArray = SDL_GetKeyboardState(nullptr);
@@ -182,7 +186,7 @@ void ControlSystem::handleInput(TransformComponent &transformComponent,
     }
 
     if (inputL && !inputR) {
-      if (transformComponent.velocity.y > 0) {
+      if (transformComponent.velocity.x > 0) {
         transformSystem->stopX(transformComponent);
       }
       transformSystem->moveLeft(transformComponent);
@@ -259,8 +263,8 @@ void ControlSystem::handleInput(TransformComponent &transformComponent,
         transformComponent.position.x = collisionComponent.collidedUpTilePos.x;
 
         // SHould systems call other systems?
-        // maybe but I think they should be put on the systems "list of things to do" rather than do
-        // it immediately (which is not possible at the moment)
+        // maybe but I think they should be put on the systems "list of things to do" rather than
+        // do it immediately (which is not possible at the moment)
         transformSystem->stopX(transformComponent);
         transformSystem->stopY(transformComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;

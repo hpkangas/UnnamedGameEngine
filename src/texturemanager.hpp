@@ -7,6 +7,7 @@
 struct TextureManager {
   inline static std::vector<SDL_Texture *> textures;
   static void loadTextures();
+  static void clean();
   static SDL_Texture *loadTexture(const char *fileName);
 };
 // namespace TextureManager

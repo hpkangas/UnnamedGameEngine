@@ -1,5 +1,6 @@
 #include "scene/scene.hpp"
 #include "system.hpp"
+#include "texturemanager.hpp"
 #include "utilities/constants.hpp"
 #include <SDL2/SDL_main.h>
 #include <SDL2/SDL_timer.h>
@@ -14,6 +15,7 @@ int main(int argc, char const *argv[]) {
   while (system.running()) {
 
     Scene scene;
+    TextureManager::loadTextures();
     if (!scene.init()) {
       std::cout << "Error iniatializing scene. Abort. \n";
       system.clean();
@@ -33,6 +35,7 @@ int main(int argc, char const *argv[]) {
         continue;
       }
     }
+    TextureManager::clean();
   }
 
   std::cout << "End after " << SDL_GetTicks64() / 1000.0 << " seconds" << std::endl;

@@ -89,8 +89,10 @@ bool collisionRight(SDL_Rect const &player, SDL_Rect const &obj, Velocity const 
 }
 
 bool attackCollision(SDL_Rect const &player, SDL_Rect const &obj) {
-  Velocity playerVelocity = {0, 0};
-  return collisionDown(player, obj, playerVelocity) || collisionUp(player, obj, playerVelocity) ||
-         collisionLeft(player, obj, playerVelocity) || collisionRight(player, obj, playerVelocity);
+  return checkCollision(player, obj);
+  // Velocity playerVelocity = {0, 0};
+  // return collisionDown(player, obj, playerVelocity) || collisionUp(player, obj, playerVelocity)
+  // ||
+  //  collisionLeft(player, obj, playerVelocity) || collisionRight(player, obj, playerVelocity);
 }
 } // namespace Physics

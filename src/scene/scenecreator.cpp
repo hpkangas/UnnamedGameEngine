@@ -8,7 +8,6 @@
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
 #include "../gamedata.hpp"
-#include "../texturemanager.hpp"
 #include "../utilities/constants.hpp"
 #include "SDL_rect.h"
 #include "SDL_render.h"
@@ -85,7 +84,7 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
 
   level.levelLength = maxX * 128;
   level.levelHeight = y * 128;
-
+  level.resetId();
   return level;
 }
 
@@ -111,7 +110,7 @@ void SceneCreator::createBlock3(int x, int y, SceneInfo &level) {
   createBlockEntity(x, y, 256, level);
 }
 void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
-  int id = getId();
+  int id = level.getId();
 
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   transformComponent->parentID = id;
@@ -133,7 +132,8 @@ void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
-  int id = getId();
+  int id = level.getId();
+
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {sourceX, 0, 128, 128};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -154,7 +154,8 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
 }
 
 void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
-  int id = getId();
+  int id = level.getId();
+
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {sourceX, 0, 128, 128};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -221,10 +222,10 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
-  int id = getId();
+  int id = level.getId();
 
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
-  transformComponent->velocity.x = 4;
+  transformComponent->velocity.x = -4;
   SDL_Rect sourceRect = {0, 512, PLAYER_WIDTH, PLAYER_HEIGHT};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
   auto renderComponent =
@@ -268,7 +269,8 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
-  int id = getId();
+  int id = level.getId();
+
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {0, 192, 128, 128};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -290,7 +292,8 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
-  int id = getId();
+  int id = level.getId();
+
   auto transformComponent = std::make_unique<TransformComponent>(x, y, id);
   SDL_Rect sourceRect = {0, 192, 128, 64};
   SDL_Rect destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -323,12 +326,6 @@ void SceneCreator::createUI(int x, int y, SceneInfo &level) {
   level.ids++;
   level.transformIds.emplace_back(id);
   level.UIRenderIds.emplace_back(id);
-}
-
-int SceneCreator::getId() {
-  static int id = 2;
-  id++;
-  return id;
 }
 
 json SceneCreator::getGameData() { return GameData::init(); }

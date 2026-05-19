@@ -14,6 +14,7 @@
 #include <unordered_map>
 
 struct SceneInfo {
+  int id = 2;
   std::unordered_map<int, std::unique_ptr<AIComponent>> aiComponents;
   std::unordered_map<int, std::unique_ptr<AnimationComponent>> animationComponents;
   std::unordered_map<int, std::unique_ptr<AttackComponent>> attackComponents;
@@ -43,6 +44,13 @@ struct SceneInfo {
 
   int levelLength = 0;
   int levelHeight = 0;
+
+  int getId() {
+    id++;
+    return id;
+  }
+
+  void resetId() { id = 2; }
 };
 
 #endif

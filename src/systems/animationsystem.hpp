@@ -9,7 +9,6 @@ public:
   SceneInfo *currentLevel = nullptr;
 
 private:
-  ANIMATION_STATE previousAnimationState = ANIMATION_STATE::STILL;
   void resetAnimation(AnimationComponent &animationComponent) const;
 
   void determineAnimationState(CollisionComponent const &collisionComponent,

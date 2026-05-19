@@ -77,7 +77,8 @@ void RenderSystem::renderNonStatic(const RenderInfo &renderInfo) const {
 }
 
 bool RenderSystem::inView(const SDL_Rect &destinationRect) const {
-  return destinationRect.x + destinationRect.w >= Camera::viewPort.x &&
-         destinationRect.y + destinationRect.h >= Camera::viewPort.y &&
-         destinationRect.x <= Camera::viewPort.w && destinationRect.y <= Camera::viewPort.h;
+  return destinationRect.x + destinationRect.w >= Camera::viewPort.left &&
+         destinationRect.y + destinationRect.h >= Camera::viewPort.top &&
+         destinationRect.x <= Camera::viewPort.right &&
+         destinationRect.y <= Camera::viewPort.bottom;
 }

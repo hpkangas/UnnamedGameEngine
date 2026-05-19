@@ -26,8 +26,6 @@ private:
   static void createEnemy(int x, int y, SceneInfo &level);
   static void createUI(int x, int y, SceneInfo &level);
 
-  static int getId();
-
 }; // namespace Level
 
 #endif

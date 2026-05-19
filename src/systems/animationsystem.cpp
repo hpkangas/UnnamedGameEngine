@@ -48,7 +48,7 @@ void AnimationSystem::update() {
 }
 
 void AnimationSystem::resetAnimation(AnimationComponent &animationComponent) const {
-  if (previousAnimationState != animationComponent.animationState) {
+  if (animationComponent.previousAnimationState != animationComponent.animationState) {
     animationComponent.animationFrame = 0;
   }
 }
@@ -61,7 +61,7 @@ void AnimationSystem::determineAnimationState(CollisionComponent const &collisio
                                               ControlComponent const *controlComponent,
                                               HealthComponent const *healthComponent) {
 
-  previousAnimationState = animationComponent.animationState;
+  animationComponent.previousAnimationState = animationComponent.animationState;
 
   if (controlComponent != nullptr) {
 
@@ -103,7 +103,7 @@ void AnimationSystem::determineAIAnimationState(CollisionComponent const &collis
                                                 TransformComponent const &transformComponent,
                                                 AnimationComponent &animationComponent,
                                                 AIComponent const *aiComponent) {
-  previousAnimationState = animationComponent.animationState;
+  animationComponent.previousAnimationState = animationComponent.animationState;
 
   if (aiComponent->state == AI_STATE::ATTACKING) {
     animationComponent.animationState = ANIMATION_STATE::ATTACKING;

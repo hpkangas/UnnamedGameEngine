@@ -28,7 +28,6 @@ void AttackSystem::updateAttackComponents(AttackComponent &attackComponent,
 void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent, int attackerId,
                                          bool facingRight) {
   if (attackerId == 1) {
-
     for (int id : currentLevel->healthIds) {
       if (id != attackerId) {
 
@@ -50,6 +49,7 @@ void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent,
         }
       }
     }
+
   } else {
     HealthComponent &healthComponent = *currentLevel->healthComponents.at(1);
     CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(1);

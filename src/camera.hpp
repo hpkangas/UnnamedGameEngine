@@ -5,15 +5,22 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+struct Bounds {
+  int top;
+  int bottom;
+  int left;
+  int right;
+};
+
 class Camera {
 public:
   Camera();
-  inline static SDL_Rect focusArea{};
-  inline static SDL_Rect viewPort{};
+  inline static Bounds focusArea{};
+  inline static Bounds viewPort{};
   inline static Utils::Position offset{};
 
   static void update();
-  static void updateOffsetRelativeToScreen(int offsetx, int offsety);
+  static void updateOffsetRelativeToScreen(int x, int y);
 };
 
 #endif

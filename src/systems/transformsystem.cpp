@@ -5,15 +5,15 @@ void TransformSystem::moveRight(TransformComponent &transformComponent) const {
   if (transformComponent.velocity.x + playerSpeed > playerSpeedMax) {
     transformComponent.velocity.x = playerSpeedMax;
   } else {
-    transformComponent.velocity.x = transformComponent.velocity.x + playerSpeed;
+    transformComponent.velocity.x += playerSpeed;
   }
 }
 
 void TransformSystem::moveLeft(TransformComponent &transformComponent) const {
-  if (transformComponent.velocity.x < -playerSpeedMax) {
+  if (transformComponent.velocity.x - playerSpeed < -playerSpeedMax) {
     transformComponent.velocity.x = -playerSpeedMax;
   } else {
-    transformComponent.velocity.x = transformComponent.velocity.x - playerSpeed;
+    transformComponent.velocity.x -= playerSpeed;
   }
 }
 
@@ -77,15 +77,11 @@ void TransformSystem::update(TransformComponent &transformComponent) const {
 
   if (!(xvel == 0)) {
     transformComponent.position.x = xpos + xvel;
-    if (transformComponent.tilePosition.x != xpos / 128) {
-      transformComponent.tilePosition.x = xpos / 128;
-    }
+    transformComponent.tilePosition.x = transformComponent.position.x / 128;
   }
 
   if (!(yvel == 0)) {
     transformComponent.position.y = ypos + yvel;
-    if (transformComponent.tilePosition.y != ypos / 128) {
-      transformComponent.tilePosition.y = ypos / 128;
-    }
+    transformComponent.tilePosition.x = transformComponent.position.y / 128;
   }
 }

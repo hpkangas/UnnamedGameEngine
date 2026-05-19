@@ -3,7 +3,6 @@
 #include "../components/transformcomponent.hpp"
 #include "../system.hpp"
 #include "../systems/transformsystem.hpp"
-#include "../texturemanager.hpp"
 #include "../utilities/constants.hpp"
 #include "scenecreator.hpp"
 #include <SDL2/SDL_error.h>
@@ -13,7 +12,6 @@
 #include <iostream>
 
 bool Scene::init() {
-  TextureManager::loadTextures();
   const char *fileName = "level2.csv";
   SDL_RWops *file = SDL_RWFromFile(fileName, "rb");
   if (file == nullptr) {
@@ -82,13 +80,13 @@ void Scene::updateCamera(const TransformComponent &transformComponent) const {
   const float xvel = transformComponent.velocity.x;
   const float yvel = transformComponent.velocity.y;
 
-  if ((xpos < Camera::focusArea.x && xvel < 0) ||
-      (xpos + Constants::PLAYER_WIDTH > Camera::focusArea.w && xvel > 0)) {
+  if ((xpos < Camera::focusArea.left && xvel < 0) ||
+      (xpos + Constants::PLAYER_WIDTH > Camera::focusArea.right && xvel > 0)) {
     Camera::offset.x += xvel;
   }
 
-  if ((ypos < Camera::focusArea.y && yvel < 0) ||
-      (ypos + Constants::PLAYER_HEIGHT > Camera::focusArea.h && yvel > 0)) {
+  if ((ypos < Camera::focusArea.top && yvel < 0) ||
+      (ypos + Constants::PLAYER_HEIGHT > Camera::focusArea.bottom && yvel > 0)) {
     Camera::offset.y += yvel;
   }
   Camera::update();
