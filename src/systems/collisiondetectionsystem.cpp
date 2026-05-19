@@ -31,11 +31,15 @@ void CollisionDetectionSystem::checkCollision(int playerIndex) const {
   for (int ty = minTy; ty <= maxTy; ++ty) {
     for (int tx = minTx; tx <= maxTx; ++tx) {
       int id = grid.at(tx, ty);
-      if (id == TileGrid::EMPTY) continue;
+      if (id == TileGrid::EMPTY) {
+        continue;
+      }
 
       CollisionComponent const *tileColl = currentLevel->collisionComponents.get(id);
-      TileComponent      const *tileTile = currentLevel->tileComponents.get(id);
-      if (!tileColl || !tileTile) continue;
+      TileComponent const *tileTile = currentLevel->tileComponents.get(id);
+      if (!tileColl || !tileTile) {
+        continue;
+      }
       TILE const &collisionTile = tileTile->tile;
 
       if (!object.collisionLeft || velocity.x > 0) {
@@ -58,12 +62,6 @@ void CollisionDetectionSystem::checkPlayerLeftCollision(CollisionComponent &play
                                                         CollisionComponent const &block,
                                                         Velocity velocity,
                                                         TILE const &collisionTile) const {
-  if (player.collisionRect.x + velocity.x <= 0) {
-    player.xposDif = player.collisionRect.x;
-    player.collisionTileLeft = TILE::SOLID;
-    player.collisionLeft = true;
-    return;
-  }
 
   if (Physics::collisionLeft(player.collisionRect, block.collisionRect, velocity)) {
     player.xposDif = player.collisionRect.x - (block.collisionRect.x + block.collisionRect.w);
@@ -77,13 +75,6 @@ void CollisionDetectionSystem::checkPlayerRightCollision(CollisionComponent &pla
                                                          CollisionComponent const &block,
                                                          Velocity velocity,
                                                          TILE const &collisionTile) const {
-  if (player.collisionRect.x + player.collisionRect.w + velocity.x >= currentLevel->levelLength) {
-    player.xposDif = player.collisionRect.x + player.collisionRect.w - currentLevel->levelLength;
-    player.collisionTileRight = TILE::SOLID;
-    player.collisionRight = true;
-    return;
-  }
-
   if (Physics::collisionRight(player.collisionRect, block.collisionRect, velocity)) {
     player.xposDif = (player.collisionRect.x + player.collisionRect.w) - block.collisionRect.x;
     player.collisionTileRight = collisionTile;
@@ -96,14 +87,6 @@ void CollisionDetectionSystem::checkPlayerUpCollision(CollisionComponent &player
                                                       CollisionComponent const &block,
                                                       Velocity velocity,
                                                       TILE const &collisionTile) const {
-  if (player.collisionRect.y + velocity.y <= 0) {
-    player.yposDif = player.collisionRect.y;
-    player.collisionTileUp = TILE::SOLID;
-    player.collidedUpTilePos = {0, 0};
-    player.collisionUp = true;
-    return;
-  }
-
   if (Physics::collisionUp(player.collisionRect, block.collisionRect, velocity)) {
     player.yposDif = (player.collisionRect.y) - (block.collisionRect.y + block.collisionRect.h);
     player.collisionTileUp = collisionTile;
@@ -116,14 +99,6 @@ void CollisionDetectionSystem::checkPlayerDownCollision(CollisionComponent &play
                                                         CollisionComponent const &block,
                                                         Velocity velocity,
                                                         TILE const &collisionTile) const {
-  if (player.collisionRect.y + player.collisionRect.h + velocity.y >= currentLevel->levelHeight) {
-    player.yposDif = (player.collisionRect.y + player.collisionRect.h) - currentLevel->levelHeight;
-    player.collisionTileDown = TILE::SOLID;
-    player.collidedDownTilePos = {0, 0};
-    player.collisionDown = true;
-    return;
-  }
-
   if (Physics::collisionDown(player.collisionRect, block.collisionRect, velocity)) {
     player.yposDif = (player.collisionRect.y + player.collisionRect.h) - block.collisionRect.y;
     player.collisionTileDown = collisionTile;

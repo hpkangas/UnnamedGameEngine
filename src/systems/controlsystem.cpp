@@ -12,23 +12,24 @@
 #include <iostream>
 
 using namespace Constants;
-void ControlSystem::update(int selectedPlayer, int &selectedPlayerIndex) {
+void ControlSystem::update(int &selectedPlayerIndex) {
 
-  TransformComponent &transformComponent = currentLevel->transformComponents.at(selectedPlayer);
-  ControlComponent &controlComponent = currentLevel->controlComponents.at(selectedPlayer);
-  CollisionComponent const &collisionComponent =
-      currentLevel->collisionComponents.at(selectedPlayer);
-  AttackComponent &attackComponent = currentLevel->attackComponents.at(selectedPlayer);
-  HealthComponent const &healthComponent = currentLevel->healthComponents.at(selectedPlayer);
+  for (int id : currentLevel->controlIds) {
+    TransformComponent &transformComponent = currentLevel->transformComponents.at(id);
+    ControlComponent &controlComponent = currentLevel->controlComponents.at(id);
+    CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(id);
+    AttackComponent &attackComponent = currentLevel->attackComponents.at(id);
+    HealthComponent const &healthComponent = currentLevel->healthComponents.at(id);
 
-  resetInput();
+    resetInput();
 
-  determineControlState(controlComponent, collisionComponent, transformComponent, attackComponent,
-                        healthComponent);
+    determineControlState(controlComponent, collisionComponent, transformComponent, attackComponent,
+                          healthComponent);
 
-  if (selectedPlayer == selectedPlayerIndex) {
-    takeInput();
-    handleInput(transformComponent, collisionComponent, controlComponent, selectedPlayerIndex);
+    if (id == selectedPlayerIndex) {
+      takeInput();
+      handleInput(transformComponent, collisionComponent, controlComponent, selectedPlayerIndex);
+    }
   }
 }
 

@@ -33,7 +33,7 @@ class ControlSystem {
 public:
   SceneInfo *currentLevel = nullptr;
   TransformSystem *transformSystem = nullptr;
-  void update(int selectedPlayer, int &selectedPlayerIndex);
+  void update(int &selectedPlayerIndex);
 };
 
 #endif

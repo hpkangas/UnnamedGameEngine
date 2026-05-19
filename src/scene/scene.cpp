@@ -43,9 +43,7 @@ void Scene::update() {
     centerCamera(currentLevel.transformComponents.at(selectedPlayer));
   }
 
-  for (int id : currentLevel.controlIds) {
-    controlSystem.update(id, selectedPlayerIndex);
-  }
+  controlSystem.update(selectedPlayerIndex);
 
   AISystem.update(currentLevel);
 
