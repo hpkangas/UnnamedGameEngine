@@ -25,14 +25,20 @@ int main(int argc, char const *argv[]) {
     std::cout << "Initialization complete at " << SDL_GetTicks64() / 1000.0 << " seconds"
               << std::endl;
 
+    double nextFrame = static_cast<double>(SDL_GetTicks64());
+
     while (Scene::isRunning) {
-      Uint64 ticksStart = SDL_GetTicks64();
       scene.update();
       scene.render();
-      Uint64 ticksEnd = SDL_GetTicks64() - ticksStart;
-      if (Constants::FRAMEDELAY > ticksEnd) {
-        SDL_Delay(Constants::FRAMEDELAY - ticksEnd);
-        continue;
+
+      nextFrame += Constants::FRAME_MS;
+      const double now = static_cast<double>(SDL_GetTicks64());
+
+      if (now < nextFrame) {
+        SDL_Delay(static_cast<Uint32>(nextFrame - now));
+      } else if (now - nextFrame > Constants::MAX_LAG_MS) {
+
+        nextFrame = now;
       }
     }
     TextureManager::clean();

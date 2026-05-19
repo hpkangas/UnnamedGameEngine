@@ -8,8 +8,9 @@ namespace Constants {
 // TODO should be editable
 constexpr int SCREENWIDTH = 1920;
 constexpr int SCREENHEIGHT = 1080;
-constexpr int FRAMERATE = 60;
-constexpr int FRAMEDELAY = 1000 / FRAMERATE;
+constexpr int    FRAMERATE    = 60;
+constexpr double FRAME_MS     = 1000.0 / FRAMERATE;
+constexpr double MAX_LAG_MS   = 250.0;
 
 // TODO player character specific, not global constants
 constexpr int PLAYER_INDEX = 1;
