@@ -3,14 +3,17 @@
 #include "../utilities/physics.hpp"
 
 void AttackSystem::update() {
-  for (int id : currentLevel->attackIds) {
-
-    AttackComponent &attackComponent = currentLevel->attackComponents.at(id);
-    TransformComponent const &transformComponent = currentLevel->transformComponents.at(id);
+  // Driver loop iterates the attack pool directly; entityAt(i) recovers
+  // the entity id we need for the player-vs-enemy branching below.
+  auto &pool = currentLevel->attackComponents;
+  for (std::size_t i = 0; i < pool.size(); ++i) {
+    AttackComponent &attackComponent = pool[i];
+    const int eid = pool.entityAt(i);
+    TransformComponent const &transformComponent = currentLevel->transformComponents.at(eid);
     updateAttackComponents(attackComponent, transformComponent);
 
     if (attackComponent.attacking && attackComponent.currentAttackFrames == 24) {
-      checkAttackCollisions(attackComponent, id, transformComponent.facingRight);
+      checkAttackCollisions(attackComponent, eid, transformComponent.facingRight);
     }
   }
 }
@@ -28,24 +31,27 @@ void AttackSystem::updateAttackComponents(AttackComponent &attackComponent,
 void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent, int attackerId,
                                          bool facingRight) {
   if (attackerId == 1) {
-    for (int id : currentLevel->healthIds) {
-      if (id != attackerId) {
+    // Player attacks any enemy with a health component. Iterate the
+    // pool directly and skip the attacker by id.
+    auto &healths = currentLevel->healthComponents;
+    for (std::size_t i = 0; i < healths.size(); ++i) {
+      const int eid = healths.entityAt(i);
+      if (eid == attackerId) continue;
 
-        HealthComponent &healthComponent = currentLevel->healthComponents.at(id);
-        CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(id);
+      HealthComponent &healthComponent = healths[i];
+      CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(eid);
 
-        if (facingRight) {
-          if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
-              Physics::attackCollision(collisionComponent.collisionRect,
-                                       attackComponent.rightCollisionRect)) {
-            healthComponent.damageTaken += attackComponent.damage;
-          }
-        } else {
-          if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
-              Physics::attackCollision(collisionComponent.collisionRect,
-                                       attackComponent.leftCollisionRect)) {
-            healthComponent.damageTaken += attackComponent.damage;
-          }
+      if (facingRight) {
+        if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
+            Physics::attackCollision(collisionComponent.collisionRect,
+                                     attackComponent.rightCollisionRect)) {
+          healthComponent.damageTaken += attackComponent.damage;
+        }
+      } else {
+        if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
+            Physics::attackCollision(collisionComponent.collisionRect,
+                                     attackComponent.leftCollisionRect)) {
+          healthComponent.damageTaken += attackComponent.damage;
         }
       }
     }

@@ -3,8 +3,13 @@
 #include <cstdio>
 
 void CollisionDetectionSystem::update() {
-
-  for (int id : currentLevel->collisionIds) {
+  // "Dynamic collider" = entity with gravity, in this codebase. Static
+  // tiles also have CollisionComponent but never need per-frame
+  // resolution against the world, so we drive iteration off the
+  // smaller gravity pool and skip the static tiles for free.
+  auto &gravityPool = currentLevel->gravityComponents;
+  for (std::size_t i = 0; i < gravityPool.size(); ++i) {
+    const int id = gravityPool.entityAt(i);
     CollisionComponent &cc = currentLevel->collisionComponents.at(id);
     resetCollisions(cc);
     updateCollisionRect(cc, currentLevel->transformComponents.at(id));

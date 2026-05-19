@@ -147,8 +147,6 @@ void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
   level.renderComponents.emplace(id, sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
 
   level.ids++;
-  level.transformIds.emplace_back(id);
-  level.tileIds.emplace_back(id);
   level.tileRenderIds.emplace_back(id);
 }
 
@@ -164,10 +162,8 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   level.tileComponents.emplace(id, TILE::SOLID, x / 128, y / 128);
 
   level.ids++;
-  level.transformIds.emplace_back(id);
   level.tileRenderIds.emplace_back(id);
   level.staticCollisionIds.emplace_back(id);
-  level.tileIds.emplace_back(id);
 }
 
 void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
@@ -184,10 +180,8 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   level.tileComponents.emplace(id, TILE::SEMISOLID, x / 128, y / 128);
 
   level.ids++;
-  level.transformIds.emplace_back(id);
   level.tileRenderIds.emplace_back(id);
   level.staticCollisionIds.emplace_back(id);
-  level.tileIds.emplace_back(id);
 }
 
 void SceneCreator::createPC(int x, int y, SceneInfo &level) {
@@ -211,14 +205,7 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   level.attackComponents.emplace(id, 36, 1, rightAttackCollisionRect, leftAttackCollisionRect);
 
   level.ids++;
-  level.transformIds.emplace_back(id);
   level.objectRenderIds.emplace_back(id);
-  level.collisionIds.emplace_back(id);
-  level.gravityIds.emplace_back(id);
-  level.controlIds.emplace_back(id);
-  level.animationIds.emplace_back(id);
-  level.healthIds.emplace_back(id);
-  level.attackIds.emplace_back(id);
 }
 
 void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
@@ -243,14 +230,7 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   level.attackComponents.emplace(id, 36, 1, rightAttackCollisionRect, leftAttackCollisionRect);
 
   level.ids++;
-  level.transformIds.emplace_back(id);
   level.objectRenderIds.emplace_back(id);
-  level.collisionIds.emplace_back(id);
-  level.gravityIds.emplace_back(id);
-  level.healthIds.emplace_back(id);
-  level.aiIds.emplace_back(id);
-  level.animationIds.emplace_back(id);
-  level.attackIds.emplace_back(id);
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
@@ -266,10 +246,8 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   level.tileComponents.emplace(id, TILE::LADDER, x / 128, y / 128);
 
   level.ids++;
-  level.transformIds.emplace_back(id);
   level.tileRenderIds.emplace_back(id);
   level.staticCollisionIds.emplace_back(id);
-  level.tileIds.emplace_back(id);
 }
 
 void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
@@ -285,10 +263,8 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   level.tileComponents.emplace(id, TILE::LADDERSTART, x / 128, y / 128);
 
   level.ids++;
-  level.transformIds.emplace_back(id);
   level.tileRenderIds.emplace_back(id);
   level.staticCollisionIds.emplace_back(id);
-  level.tileIds.emplace_back(id);
 }
 
 void SceneCreator::createUI(int x, int y, SceneInfo &level) {
@@ -300,7 +276,6 @@ void SceneCreator::createUI(int x, int y, SceneInfo &level) {
   level.renderComponents.emplace(id, sourceRect, destinationRect, SDL_FLIP_NONE, 2, id);
 
   level.ids++;
-  level.transformIds.emplace_back(id);
   level.UIRenderIds.emplace_back(id);
 }
 

@@ -11,41 +11,38 @@
 #include "../components/rendercomponent.hpp"
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
-#include "componentmap.hpp"
+#include "componentpool.hpp"
 #include "tilegrid.hpp"
 #include <vector>
 
 struct SceneInfo {
   int id = 2;
 
-  ComponentMap<AIComponent> aiComponents;
-  ComponentMap<AnimationComponent> animationComponents;
-  ComponentMap<AttackComponent> attackComponents;
-  ComponentMap<CollisionComponent> collisionComponents;
-  ComponentMap<ControlComponent> controlComponents;
-  ComponentMap<HealthComponent> healthComponents;
-  ComponentMap<GravityComponent> gravityComponents;
-  ComponentMap<RenderComponent> renderComponents;
-  ComponentMap<TileComponent> tileComponents;
-  ComponentMap<TransformComponent> transformComponents;
+  // Section 4 (sparse-set) storage. Iteration is intrinsic to each pool
+  // via begin()/end() over the dense T array, so the parallel id lists
+  // that used to mirror each pool ("entities with X") are gone.
+  ComponentPool<AIComponent>        aiComponents;
+  ComponentPool<AnimationComponent> animationComponents;
+  ComponentPool<AttackComponent>    attackComponents;
+  ComponentPool<CollisionComponent> collisionComponents;
+  ComponentPool<ControlComponent>   controlComponents;
+  ComponentPool<HealthComponent>    healthComponents;
+  ComponentPool<GravityComponent>   gravityComponents;
+  ComponentPool<RenderComponent>    renderComponents;
+  ComponentPool<TileComponent>      tileComponents;
+  ComponentPool<TransformComponent> transformComponents;
 
   // O(1) spatial lookup of static-collision tiles by tile coordinate.
   // Populated by SceneCreator after the level CSV has been parsed.
   TileGrid staticTileGrid;
 
-  std::vector<int> animationIds;
-  std::vector<int> attackIds;
-  std::vector<int> aiIds;
-  std::vector<int> collisionIds;
-  std::vector<int> controlIds;
-  std::vector<int> gravityIds;
-  std::vector<int> healthIds;
-  std::vector<int> objectRenderIds;
-  std::vector<int> staticCollisionIds;
-  std::vector<int> tileIds;
+  // The id lists that survive encode meaning the pools alone cannot:
+  //   * render order (back-to-front layering by RenderSystem)
+  //   * the one-shot list SceneCreator uses to bake staticTileGrid
   std::vector<int> tileRenderIds;
-  std::vector<int> transformIds;
+  std::vector<int> objectRenderIds;
   std::vector<int> UIRenderIds;
+  std::vector<int> staticCollisionIds;
 
   int ids = 0;
 

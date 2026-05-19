@@ -28,6 +28,8 @@ bool Scene::init() {
     collisionSystem.transformSystem = &transformSystem;
     controlSystem.currentLevel = &currentLevel;
     controlSystem.transformSystem = &transformSystem;
+    gravitySystem.currentLevel = &currentLevel;
+    transformSystem.currentLevel = &currentLevel;
     renderSystem.currentLevel = &currentLevel;
     attackSystem.currentLevel = &currentLevel;
     healthSystem.currentLevel = &currentLevel;
@@ -47,18 +49,13 @@ void Scene::update() {
 
   AISystem.update(currentLevel);
 
-  for (int id : currentLevel.gravityIds) {
-    gravitySystem.update(currentLevel.collisionComponents.at(id),
-                         currentLevel.gravityComponents.at(id),
-                         currentLevel.transformComponents.at(id));
-  }
+  gravitySystem.update();
+
   collisionDetectionSystem.update();
 
   collisionSystem.update();
 
-  for (int id : currentLevel.transformIds) {
-    transformSystem.update(currentLevel.transformComponents.at(id));
-  }
+  transformSystem.updateAll();
 
   attackSystem.update();
   healthSystem.update();

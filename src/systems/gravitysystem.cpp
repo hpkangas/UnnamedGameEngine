@@ -9,9 +9,22 @@ void GravitySystem::gravity(TransformComponent &transformComponent) const {
   }
 }
 
-void GravitySystem::update(CollisionComponent const &collisionComponent,
-                           GravityComponent &gravityComponent,
-                           TransformComponent &transformComponent) const {
+void GravitySystem::update() const {
+  // Iterate the gravity pool directly; for every entity with gravity,
+  // its collision + transform are mandatory siblings (set up by
+  // SceneCreator), so .at() is the right accessor here.
+  auto &pool = currentLevel->gravityComponents;
+  for (std::size_t i = 0; i < pool.size(); ++i) {
+    const int eid = pool.entityAt(i);
+    updateOne(currentLevel->collisionComponents.at(eid),
+              pool[i],
+              currentLevel->transformComponents.at(eid));
+  }
+}
+
+void GravitySystem::updateOne(CollisionComponent const &collisionComponent,
+                              GravityComponent &gravityComponent,
+                              TransformComponent &transformComponent) const {
 
   if (collisionComponent.collisionTileDown == TILE::LADDERSTART ||
       collisionComponent.collisionTileDown == TILE::SOLID) {

@@ -1,6 +1,13 @@
 #include "transformsystem.hpp"
 #include <iostream>
 
+void TransformSystem::updateAll() const {
+  // Linear walk over the dense transform array.
+  for (TransformComponent &tc : currentLevel->transformComponents) {
+    update(tc);
+  }
+}
+
 void TransformSystem::moveRight(TransformComponent &transformComponent) const {
   if (transformComponent.velocity.x + playerSpeed > playerSpeedMax) {
     transformComponent.velocity.x = playerSpeedMax;

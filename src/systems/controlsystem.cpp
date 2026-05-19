@@ -14,9 +14,12 @@
 using namespace Constants;
 void ControlSystem::update(int &selectedPlayerIndex) {
 
-  for (int id : currentLevel->controlIds) {
+  auto &pool = currentLevel->controlComponents;
+  for (std::size_t i = 0; i < pool.size(); ++i) {
+    const int id = pool.entityAt(i);
+
     TransformComponent &transformComponent = currentLevel->transformComponents.at(id);
-    ControlComponent &controlComponent = currentLevel->controlComponents.at(id);
+    ControlComponent &controlComponent = pool[i];
     CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(id);
     AttackComponent &attackComponent = currentLevel->attackComponents.at(id);
     HealthComponent const &healthComponent = currentLevel->healthComponents.at(id);

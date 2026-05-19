@@ -1,12 +1,12 @@
 #include "healthsystem.hpp"
 
 void HealthSystem::update() {
-  for (int id : currentLevel->healthIds) {
-    HealthComponent &healthComponent = currentLevel->healthComponents.at(id);
-    healthComponent.currentHealth -= healthComponent.damageTaken;
-    healthComponent.damageTaken = 0;
-    if (healthComponent.currentHealth <= 0) {
-      healthComponent.healthState = HEALTH_STATE::DEAD;
+  // Pool iteration — no id list, no hashing, cache-friendly linear walk.
+  for (HealthComponent &h : currentLevel->healthComponents) {
+    h.currentHealth -= h.damageTaken;
+    h.damageTaken = 0;
+    if (h.currentHealth <= 0) {
+      h.healthState = HEALTH_STATE::DEAD;
     }
   }
 }

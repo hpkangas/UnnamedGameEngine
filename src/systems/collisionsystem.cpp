@@ -3,12 +3,17 @@
 #include <cstdio>
 
 void CollisionSystem::update() {
-
-  for (int id : currentLevel->collisionIds) {
+  // Iterate the gravity pool: every entity that needs per-frame
+  // collision *response* is gravity-affected in this codebase. Static
+  // tiles are never resolved against the world, so we skip them
+  // implicitly by driving off the smaller pool.
+  auto &gravityPool = currentLevel->gravityComponents;
+  for (std::size_t i = 0; i < gravityPool.size(); ++i) {
+    const int id = gravityPool.entityAt(i);
 
     CollisionComponent const &cc = currentLevel->collisionComponents.at(id);
     TransformComponent &tc = currentLevel->transformComponents.at(id);
-    GravityComponent const &gc = currentLevel->gravityComponents.at(id);
+    GravityComponent const &gc = gravityPool[i];
 
     handleDownTileCollision(tc, cc, gc);
     handleUpTileCollision(tc, cc, gc);

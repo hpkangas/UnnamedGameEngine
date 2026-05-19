@@ -3,9 +3,11 @@
 #include "SDL_rect.h"
 
 void AISystem::update(SceneInfo &currentLevel) const {
-  for (int id : currentLevel.aiIds) {
+  auto &pool = currentLevel.aiComponents;
+  for (std::size_t i = 0; i < pool.size(); ++i) {
+    const int id = pool.entityAt(i);
 
-    AIComponent &aiComponent = currentLevel.aiComponents.at(id);
+    AIComponent &aiComponent = pool[i];
     HealthComponent const &healthComponent = currentLevel.healthComponents.at(id);
     AttackComponent &attackComponent = currentLevel.attackComponents.at(id);
     CollisionComponent const &collisionComponent = currentLevel.collisionComponents.at(id);

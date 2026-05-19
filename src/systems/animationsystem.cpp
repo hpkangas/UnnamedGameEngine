@@ -4,14 +4,19 @@
 
 using namespace Constants;
 void AnimationSystem::update() {
-  for (int id : currentLevel->animationIds) {
+  // Drive from the animation pool's dense array; entityAt(i) recovers
+  // the entity id for sibling component lookups.
+  auto &pool = currentLevel->animationComponents;
+  for (std::size_t i = 0; i < pool.size(); ++i) {
+    AnimationComponent &animationComponent = pool[i];
+    const int id = pool.entityAt(i);
+
     CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(id);
     GRAVITY_STATE const &gravityState = currentLevel->gravityComponents.at(id).gravityState;
     TransformComponent const &transformComponent = currentLevel->transformComponents.at(id);
     RenderComponent &renderComponent = currentLevel->renderComponents.at(id);
-    AnimationComponent &animationComponent = currentLevel->animationComponents.at(id);
 
-    // Section 2.1: single hash lookup via get() instead of contains()+at().
+    // Section 2.1: single hash-free lookup via get() instead of contains()+at().
     AttackComponent const *attackComponent = currentLevel->attackComponents.get(id);
     ControlComponent const *controlComponent = currentLevel->controlComponents.get(id);
     HealthComponent const *healthComponent = currentLevel->healthComponents.get(id);
