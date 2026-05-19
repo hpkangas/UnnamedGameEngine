@@ -11,20 +11,27 @@
 #include "../components/rendercomponent.hpp"
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
-#include <unordered_map>
+#include "componentmap.hpp"
+#include "tilegrid.hpp"
+#include <vector>
 
 struct SceneInfo {
   int id = 2;
-  std::unordered_map<int, std::unique_ptr<AIComponent>> aiComponents;
-  std::unordered_map<int, std::unique_ptr<AnimationComponent>> animationComponents;
-  std::unordered_map<int, std::unique_ptr<AttackComponent>> attackComponents;
-  std::unordered_map<int, std::unique_ptr<CollisionComponent>> collisionComponents;
-  std::unordered_map<int, std::unique_ptr<ControlComponent>> controlComponents;
-  std::unordered_map<int, std::unique_ptr<HealthComponent>> healthComponents;
-  std::unordered_map<int, std::unique_ptr<GravityComponent>> gravityComponents;
-  std::unordered_map<int, std::unique_ptr<RenderComponent>> renderComponents;
-  std::unordered_map<int, std::unique_ptr<TileComponent>> tileComponents;
-  std::unordered_map<int, std::unique_ptr<TransformComponent>> transformComponents;
+
+  ComponentMap<AIComponent> aiComponents;
+  ComponentMap<AnimationComponent> animationComponents;
+  ComponentMap<AttackComponent> attackComponents;
+  ComponentMap<CollisionComponent> collisionComponents;
+  ComponentMap<ControlComponent> controlComponents;
+  ComponentMap<HealthComponent> healthComponents;
+  ComponentMap<GravityComponent> gravityComponents;
+  ComponentMap<RenderComponent> renderComponents;
+  ComponentMap<TileComponent> tileComponents;
+  ComponentMap<TransformComponent> transformComponents;
+
+  // O(1) spatial lookup of static-collision tiles by tile coordinate.
+  // Populated by SceneCreator after the level CSV has been parsed.
+  TileGrid staticTileGrid;
 
   std::vector<int> animationIds;
   std::vector<int> attackIds;
@@ -44,7 +51,6 @@ struct SceneInfo {
 
   int levelLength = 0;
   int levelHeight = 0;
-
   int getId() {
     id++;
     return id;

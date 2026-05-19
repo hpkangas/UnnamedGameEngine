@@ -40,7 +40,7 @@ bool Scene::init() {
 void Scene::update() {
   if (selectedPlayer != selectedPlayerIndex) {
     selectedPlayer = selectedPlayerIndex;
-    centerCamera(*currentLevel.transformComponents.at(selectedPlayer));
+    centerCamera(currentLevel.transformComponents.at(selectedPlayer));
   }
 
   for (int id : currentLevel.controlIds) {
@@ -50,16 +50,16 @@ void Scene::update() {
   AISystem.update(currentLevel);
 
   for (int id : currentLevel.gravityIds) {
-    gravitySystem.update(*currentLevel.collisionComponents.at(id),
-                         *currentLevel.gravityComponents.at(id),
-                         *currentLevel.transformComponents.at(id));
+    gravitySystem.update(currentLevel.collisionComponents.at(id),
+                         currentLevel.gravityComponents.at(id),
+                         currentLevel.transformComponents.at(id));
   }
   collisionDetectionSystem.update();
 
   collisionSystem.update();
 
   for (int id : currentLevel.transformIds) {
-    transformSystem.update(*currentLevel.transformComponents.at(id));
+    transformSystem.update(currentLevel.transformComponents.at(id));
   }
 
   attackSystem.update();
@@ -69,7 +69,7 @@ void Scene::update() {
 
   renderSystem.update();
 
-  updateCamera(*currentLevel.transformComponents.at(selectedPlayer));
+  updateCamera(currentLevel.transformComponents.at(selectedPlayer));
 }
 
 void Scene::render() const { renderSystem.render(); }

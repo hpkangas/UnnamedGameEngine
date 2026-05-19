@@ -5,8 +5,8 @@
 void AttackSystem::update() {
   for (int id : currentLevel->attackIds) {
 
-    AttackComponent &attackComponent = *currentLevel->attackComponents.at(id);
-    TransformComponent const &transformComponent = *currentLevel->transformComponents.at(id);
+    AttackComponent &attackComponent = currentLevel->attackComponents.at(id);
+    TransformComponent const &transformComponent = currentLevel->transformComponents.at(id);
     updateAttackComponents(attackComponent, transformComponent);
 
     if (attackComponent.attacking && attackComponent.currentAttackFrames == 24) {
@@ -31,8 +31,8 @@ void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent,
     for (int id : currentLevel->healthIds) {
       if (id != attackerId) {
 
-        HealthComponent &healthComponent = *currentLevel->healthComponents.at(id);
-        CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(id);
+        HealthComponent &healthComponent = currentLevel->healthComponents.at(id);
+        CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(id);
 
         if (facingRight) {
           if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
@@ -51,8 +51,8 @@ void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent,
     }
 
   } else {
-    HealthComponent &healthComponent = *currentLevel->healthComponents.at(1);
-    CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(1);
+    HealthComponent &healthComponent = currentLevel->healthComponents.at(1);
+    CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(1);
 
     if (facingRight) {
       if (healthComponent.healthState == HEALTH_STATE::ALIVE &&

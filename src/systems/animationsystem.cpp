@@ -5,32 +5,17 @@
 using namespace Constants;
 void AnimationSystem::update() {
   for (int id : currentLevel->animationIds) {
-    // what if these don't exist
-    CollisionComponent const &collisionComponent = *currentLevel->collisionComponents.at(id);
-    GRAVITY_STATE const &gravityState = currentLevel->gravityComponents.at(id)->gravityState;
-    TransformComponent const &transformComponent = *currentLevel->transformComponents.at(id);
-    RenderComponent &renderComponent = *currentLevel->renderComponents.at(id);
-    AnimationComponent &animationComponent = *currentLevel->animationComponents.at(id);
+    CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(id);
+    GRAVITY_STATE const &gravityState = currentLevel->gravityComponents.at(id).gravityState;
+    TransformComponent const &transformComponent = currentLevel->transformComponents.at(id);
+    RenderComponent &renderComponent = currentLevel->renderComponents.at(id);
+    AnimationComponent &animationComponent = currentLevel->animationComponents.at(id);
 
-    AttackComponent const *attackComponent = nullptr;
-    if (currentLevel->attackComponents.contains(id)) {
-      attackComponent = &*currentLevel->attackComponents.at(id);
-    }
-
-    ControlComponent const *controlComponent = nullptr;
-    if (currentLevel->controlComponents.contains(id)) {
-      controlComponent = &*currentLevel->controlComponents.at(id);
-    }
-
-    HealthComponent const *healthComponent = nullptr;
-    if (currentLevel->healthComponents.contains(id)) {
-      healthComponent = &*currentLevel->healthComponents.at(id);
-    }
-
-    AIComponent const *aiComponent = nullptr;
-    if (currentLevel->aiComponents.contains(id)) {
-      aiComponent = &*currentLevel->aiComponents.at(id);
-    }
+    // Section 2.1: single hash lookup via get() instead of contains()+at().
+    AttackComponent const *attackComponent = currentLevel->attackComponents.get(id);
+    ControlComponent const *controlComponent = currentLevel->controlComponents.get(id);
+    HealthComponent const *healthComponent = currentLevel->healthComponents.get(id);
+    AIComponent const *aiComponent = currentLevel->aiComponents.get(id);
 
     if (!aiComponent) {
       determineAnimationState(collisionComponent, gravityState, transformComponent,
@@ -59,7 +44,7 @@ void AnimationSystem::determineAnimationState(CollisionComponent const &collisio
                                               AnimationComponent &animationComponent,
                                               AttackComponent const *attackComponent,
                                               ControlComponent const *controlComponent,
-                                              HealthComponent const *healthComponent) {
+                                              HealthComponent const *healthComponent) const {
 
   animationComponent.previousAnimationState = animationComponent.animationState;
 

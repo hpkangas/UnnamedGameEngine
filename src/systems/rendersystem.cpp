@@ -4,12 +4,11 @@
 #include "../texturemanager.hpp"
 #include "SDL_rect.h"
 #include "SDL_render.h"
-#include <memory>
 
 void RenderSystem::update() const {
   for (int id : currentLevel->objectRenderIds) {
-    RenderComponent &rc = *currentLevel->renderComponents.at(id);
-    TransformComponent const &tc = *currentLevel->transformComponents.at(id);
+    RenderComponent &rc = currentLevel->renderComponents.at(id);
+    TransformComponent const &tc = currentLevel->transformComponents.at(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
@@ -22,16 +21,16 @@ void RenderSystem::update() const {
   }
 
   for (int id : currentLevel->tileRenderIds) {
-    RenderComponent &rc = *currentLevel->renderComponents.at(id);
-    TransformComponent const &tc = *currentLevel->transformComponents.at(id);
+    RenderComponent &rc = currentLevel->renderComponents.at(id);
+    TransformComponent const &tc = currentLevel->transformComponents.at(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
   }
 
   for (int id : currentLevel->UIRenderIds) {
-    RenderComponent &rc = *currentLevel->renderComponents.at(id);
-    TransformComponent const &tc = *currentLevel->transformComponents.at(id);
+    RenderComponent &rc = currentLevel->renderComponents.at(id);
+    TransformComponent const &tc = currentLevel->transformComponents.at(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
@@ -39,20 +38,19 @@ void RenderSystem::update() const {
 }
 
 void RenderSystem::render() const {
-  std::unordered_map<int, std::unique_ptr<RenderComponent>> &renderComponents =
-      currentLevel->renderComponents;
+  auto &renderComponents = currentLevel->renderComponents;
 
   SDL_RenderClear(System::renderer);
 
   for (int id : currentLevel->tileRenderIds) {
-    renderNonStatic(renderComponents.at(id).get()->render());
+    renderNonStatic(renderComponents.at(id).render());
   }
   for (int id : currentLevel->objectRenderIds) {
-    renderNonStatic(renderComponents.at(id).get()->render());
+    renderNonStatic(renderComponents.at(id).render());
   }
 
   for (int id : currentLevel->UIRenderIds) {
-    renderStatic(renderComponents.at(id)->render());
+    renderStatic(renderComponents.at(id).render());
   }
 
   SDL_RenderPresent(System::renderer);

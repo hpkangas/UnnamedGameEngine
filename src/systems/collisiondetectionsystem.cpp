@@ -5,36 +5,51 @@
 void CollisionDetectionSystem::update() {
 
   for (int id : currentLevel->collisionIds) {
-    CollisionComponent &cc = *currentLevel->collisionComponents.at(id);
+    CollisionComponent &cc = currentLevel->collisionComponents.at(id);
     resetCollisions(cc);
-    updateCollisionRect(cc, *currentLevel->transformComponents.at(id));
+    updateCollisionRect(cc, currentLevel->transformComponents.at(id));
 
     checkCollision(id);
   }
 }
 
 void CollisionDetectionSystem::checkCollision(int playerIndex) const {
-  CollisionComponent &object = *currentLevel->collisionComponents.at(playerIndex);
-  const Velocity velocity = currentLevel->transformComponents.at(playerIndex).get()->velocity;
+  CollisionComponent &object = currentLevel->collisionComponents.at(playerIndex);
+  const Velocity velocity = currentLevel->transformComponents.at(playerIndex).velocity;
 
-  for (int id : currentLevel->staticCollisionIds) {
+  // Section 2.5: instead of scanning every static collider in the level,
+  // visit only the tile-grid cells overlapping a small padded bounding
+  // box around the entity. With 128px tiles and per-frame speeds well
+  // under 32px, a one-tile padding either side is plenty.
+  TileGrid const &grid = currentLevel->staticTileGrid;
+  constexpr int pad = 32;
+  const int minTx = (object.collisionRect.x - pad) / 128;
+  const int maxTx = (object.collisionRect.x + object.collisionRect.w + pad) / 128;
+  const int minTy = (object.collisionRect.y - pad) / 128;
+  const int maxTy = (object.collisionRect.y + object.collisionRect.h + pad) / 128;
 
-    auto const &tile = currentLevel->collisionComponents.at(id);
-    TILE const &collisionTile = currentLevel->tileComponents.at(id)->tile;
+  for (int ty = minTy; ty <= maxTy; ++ty) {
+    for (int tx = minTx; tx <= maxTx; ++tx) {
+      int id = grid.at(tx, ty);
+      if (id == TileGrid::EMPTY) continue;
 
-    // jos kollisioi useamman tilen kanssa, niin kollisioi vaan listassa ensimmäisen kanssa
+      CollisionComponent const *tileColl = currentLevel->collisionComponents.get(id);
+      TileComponent      const *tileTile = currentLevel->tileComponents.get(id);
+      if (!tileColl || !tileTile) continue;
+      TILE const &collisionTile = tileTile->tile;
 
-    if (!object.collisionLeft || velocity.x > 0) {
-      checkPlayerLeftCollision(object, *tile, velocity, collisionTile);
-    }
-    if (!object.collisionRight || velocity.x < 0) {
-      checkPlayerRightCollision(object, *tile, velocity, collisionTile);
-    }
-    if (!object.collisionDown || velocity.y > 0) {
-      checkPlayerDownCollision(object, *tile, velocity, collisionTile);
-    }
-    if (!object.collisionUp || velocity.y < 0) {
-      checkPlayerUpCollision(object, *tile, velocity, collisionTile);
+      if (!object.collisionLeft || velocity.x > 0) {
+        checkPlayerLeftCollision(object, *tileColl, velocity, collisionTile);
+      }
+      if (!object.collisionRight || velocity.x < 0) {
+        checkPlayerRightCollision(object, *tileColl, velocity, collisionTile);
+      }
+      if (!object.collisionDown || velocity.y > 0) {
+        checkPlayerDownCollision(object, *tileColl, velocity, collisionTile);
+      }
+      if (!object.collisionUp || velocity.y < 0) {
+        checkPlayerUpCollision(object, *tileColl, velocity, collisionTile);
+      }
     }
   }
 }

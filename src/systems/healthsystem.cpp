@@ -2,7 +2,7 @@
 
 void HealthSystem::update() {
   for (int id : currentLevel->healthIds) {
-    HealthComponent &healthComponent = *currentLevel->healthComponents.at(id);
+    HealthComponent &healthComponent = currentLevel->healthComponents.at(id);
     healthComponent.currentHealth -= healthComponent.damageTaken;
     healthComponent.damageTaken = 0;
     if (healthComponent.currentHealth <= 0) {

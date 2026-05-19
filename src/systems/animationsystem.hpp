@@ -17,7 +17,7 @@ private:
                                AnimationComponent &animationComponent,
                                AttackComponent const *attackComponent,
                                ControlComponent const *controlComponent,
-                               HealthComponent const *healthComponent);
+                               HealthComponent const *healthComponent) const;
 
   void determineAIAnimationState(CollisionComponent const &collisionComponent,
                                  GRAVITY_STATE const gravityState,

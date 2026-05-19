@@ -5,14 +5,17 @@
 void AISystem::update(SceneInfo &currentLevel) const {
   for (int id : currentLevel.aiIds) {
 
-    AIComponent &aiComponent = *currentLevel.aiComponents.at(id);
-    HealthComponent const &healthComponent = *currentLevel.healthComponents.at(id);
-    AttackComponent &attackComponent = *currentLevel.attackComponents.at(id);
-    CollisionComponent const &collisionComponent = *currentLevel.collisionComponents.at(id);
-    float &velx = currentLevel.transformComponents.at(id)->velocity.x;
-    bool facingRight = currentLevel.transformComponents.at(id)->facingRight;
-    CollisionComponent const &player = *currentLevel.collisionComponents.at(1);
-    HEALTH_STATE playerHealthState = currentLevel.healthComponents.at(1)->healthState;
+    AIComponent &aiComponent = currentLevel.aiComponents.at(id);
+    HealthComponent const &healthComponent = currentLevel.healthComponents.at(id);
+    AttackComponent &attackComponent = currentLevel.attackComponents.at(id);
+    CollisionComponent const &collisionComponent = currentLevel.collisionComponents.at(id);
+    // Section 2.2: cache the transform reference once instead of looking
+    // it up twice for velocity and facingRight.
+    TransformComponent &transformComponent = currentLevel.transformComponents.at(id);
+    float &velx = transformComponent.velocity.x;
+    bool facingRight = transformComponent.facingRight;
+    CollisionComponent const &player = currentLevel.collisionComponents.at(1);
+    HEALTH_STATE playerHealthState = currentLevel.healthComponents.at(1).healthState;
 
     determineAIState(aiComponent, attackComponent, healthComponent);
 

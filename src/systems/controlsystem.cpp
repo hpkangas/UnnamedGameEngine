@@ -14,12 +14,12 @@
 using namespace Constants;
 void ControlSystem::update(int selectedPlayer, int &selectedPlayerIndex) {
 
-  TransformComponent &transformComponent = *currentLevel->transformComponents.at(selectedPlayer);
-  ControlComponent &controlComponent = *currentLevel->controlComponents.at(selectedPlayer);
+  TransformComponent &transformComponent = currentLevel->transformComponents.at(selectedPlayer);
+  ControlComponent &controlComponent = currentLevel->controlComponents.at(selectedPlayer);
   CollisionComponent const &collisionComponent =
-      *currentLevel->collisionComponents.at(selectedPlayer);
-  AttackComponent &attackComponent = *currentLevel->attackComponents.at(selectedPlayer);
-  HealthComponent const &healthComponent = *currentLevel->healthComponents.at(selectedPlayer);
+      currentLevel->collisionComponents.at(selectedPlayer);
+  AttackComponent &attackComponent = currentLevel->attackComponents.at(selectedPlayer);
+  HealthComponent const &healthComponent = currentLevel->healthComponents.at(selectedPlayer);
 
   resetInput();
 
