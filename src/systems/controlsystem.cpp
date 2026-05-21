@@ -12,26 +12,25 @@
 #include <iostream>
 
 using namespace Constants;
-void ControlSystem::update(int &selectedPlayerIndex) {
+void ControlSystem::update(entt::entity &selectedPlayer) {
+  auto &reg = currentLevel->registry;
 
-  auto &pool = currentLevel->controlComponents;
-  for (std::size_t i = 0; i < pool.size(); ++i) {
-    const int id = pool.entityAt(i);
-
-    TransformComponent &transformComponent = currentLevel->transformComponents.at(id);
-    ControlComponent &controlComponent = pool[i];
-    CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(id);
-    AttackComponent &attackComponent = currentLevel->attackComponents.at(id);
-    HealthComponent const &healthComponent = currentLevel->healthComponents.at(id);
+  auto view = reg.view<ControlComponent, TransformComponent, CollisionComponent, AttackComponent, HealthComponent>();
+  for (auto entity : view) {
+    TransformComponent &transformComponent = view.get<TransformComponent>(entity);
+    ControlComponent &controlComponent = view.get<ControlComponent>(entity);
+    CollisionComponent const &collisionComponent = view.get<CollisionComponent>(entity);
+    AttackComponent &attackComponent = view.get<AttackComponent>(entity);
+    HealthComponent const &healthComponent = view.get<HealthComponent>(entity);
 
     resetInput();
 
     determineControlState(controlComponent, collisionComponent, transformComponent, attackComponent,
                           healthComponent);
 
-    if (id == selectedPlayerIndex) {
+    if (entity == selectedPlayer) {
       takeInput();
-      handleInput(transformComponent, collisionComponent, controlComponent, selectedPlayerIndex);
+      handleInput(transformComponent, collisionComponent, controlComponent);
     }
   }
 }
@@ -87,8 +86,6 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
       if (transformComponent.velocity.y == 0) {
         controlComponent.controlState = CONTROL_STATE::NORMAL;
       }
-      // transformSystem->stopY(transformComponent, collisionComponent.yposDif);
-      // controlComponent.controlState = CONTROL_STATE::NORMAL);
     }
 
     break;
@@ -96,11 +93,6 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
   default:
     break;
   }
-
-  // if (collisionComponent.collisionTileLeft == TILE::SOLID ||
-  //     collisionComponent.collisionTileRight == TILE::SOLID) {
-  //   transformSystem->stopX(transformComponent, collisionComponent.xposDif);
-  // }
 }
 
 void ControlSystem::takeInput() {
@@ -155,7 +147,7 @@ void ControlSystem::takeInput() {
 
 void ControlSystem::handleInput(TransformComponent &transformComponent,
                                 CollisionComponent const &collisionComponent,
-                                ControlComponent &controlComponent, int &selectedPlayerIndex) {
+                                ControlComponent &controlComponent) {
   // for debugging
   if (inputResetCharacter) {
     transformComponent.velocity.x = 0;
@@ -165,14 +157,6 @@ void ControlSystem::handleInput(TransformComponent &transformComponent,
     controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     Camera::focusArea = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
     Camera::offset = {0, -200};
-    return;
-  }
-
-  if (inputChangeCharacter) {
-    changePlayerCharacter(selectedPlayerIndex);
-    transformComponent.velocity.x = 0;
-    transformComponent.velocity.y = 0;
-    inputChangeCharacter = false;
     return;
   }
 
@@ -212,7 +196,6 @@ void ControlSystem::handleInput(TransformComponent &transformComponent,
     if (inputD) {
       noInput = false;
       if (controlComponent.canClimb) {
-        // not sure I like this direct setting of xpos
         transformComponent.position.x = collisionComponent.collidedDownTilePos.x;
 
         transformSystem->stopX(transformComponent);
@@ -263,12 +246,8 @@ void ControlSystem::handleInput(TransformComponent &transformComponent,
 
       if (controlComponent.canClimb) {
         std::cout << "can climb from air \n";
-        // not sure I like this direct setting of xpos
         transformComponent.position.x = collisionComponent.collidedUpTilePos.x;
 
-        // SHould systems call other systems?
-        // maybe but I think they should be put on the systems "list of things to do" rather than
-        // do it immediately (which is not possible at the moment)
         transformSystem->stopX(transformComponent);
         transformSystem->stopY(transformComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
@@ -359,9 +338,3 @@ void ControlSystem::resetInput() {
   inputResetCharacter = false;
 }
 
-void ControlSystem::changePlayerCharacter(int &selectedPlayerIndex) const {
-  selectedPlayerIndex++;
-  if (selectedPlayerIndex == 3) {
-    selectedPlayerIndex = 0;
-  }
-}

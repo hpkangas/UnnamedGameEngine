@@ -3,17 +3,12 @@
 #include <cstdio>
 
 void CollisionSystem::update() {
-  // Iterate the gravity pool: every entity that needs per-frame
-  // collision *response* is gravity-affected in this codebase. Static
-  // tiles are never resolved against the world, so we skip them
-  // implicitly by driving off the smaller pool.
-  auto &gravityPool = currentLevel->gravityComponents;
-  for (std::size_t i = 0; i < gravityPool.size(); ++i) {
-    const int id = gravityPool.entityAt(i);
-
-    CollisionComponent const &cc = currentLevel->collisionComponents.at(id);
-    TransformComponent &tc = currentLevel->transformComponents.at(id);
-    GravityComponent const &gc = gravityPool[i];
+  auto &reg = currentLevel->registry;
+  auto view = reg.view<GravityComponent, CollisionComponent, TransformComponent>();
+  for (auto entity : view) {
+    CollisionComponent const &cc = view.get<CollisionComponent>(entity);
+    TransformComponent &tc = view.get<TransformComponent>(entity);
+    GravityComponent const &gc = view.get<GravityComponent>(entity);
 
     handleDownTileCollision(tc, cc, gc);
     handleUpTileCollision(tc, cc, gc);
@@ -27,8 +22,6 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
   switch (cc.collisionTileDown) {
 
   case TILE::NONE:
-    // ctrlc.setControlState(CONTROL_STATE::AIRBORNE);
-
     break;
 
   case TILE::SOLID:
@@ -41,16 +34,12 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
     break;
 
   case TILE::LADDER:
-    // gc.canClimb = true;
-
     break;
 
   case TILE::LADDERSTART:
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
       transformSystem->stopY(tc, cc.yposDif);
     }
-    // gc.canClimb = true;
-
     break;
 
   default:
@@ -79,12 +68,9 @@ void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionCom
     break;
 
   case TILE::LADDER:
-    // gc.canClimb = true;
-
     break;
 
   case TILE::LADDERSTART:
-    // gc.canClimb = true;
 
     break;
   }

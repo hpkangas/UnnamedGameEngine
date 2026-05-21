@@ -2,9 +2,9 @@
 #include <iostream>
 
 void TransformSystem::updateAll() const {
-  // Linear walk over the dense transform array.
-  for (TransformComponent &tc : currentLevel->transformComponents) {
-    update(tc);
+  auto view = currentLevel->registry.view<TransformComponent>();
+  for (auto entity : view) {
+    update(view.get<TransformComponent>(entity));
   }
 }
 

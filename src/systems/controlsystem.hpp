@@ -1,7 +1,10 @@
 #ifndef CONTROLSYSTEM_HPP
 #define CONTROLSYSTEM_HPP
+#include "../components/attackcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/controlcomponent.hpp"
+#include "../components/healthcomponent.hpp"
+#include "../components/transformcomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 #include "transformsystem.hpp"
 
@@ -15,9 +18,8 @@ class ControlSystem {
   void takeInput();
   void resetInput();
   void handleInput(TransformComponent &transformComponent,
-                   CollisionComponent const &collisionCOmponent, ControlComponent &controlComponent,
-                   int &selectedPlayerIndex);
-  void changePlayerCharacter(int &selectedPlayerIndex) const;
+                   CollisionComponent const &collisionComponent,
+                   ControlComponent &controlComponent);
 
   bool inputR = false;
   bool inputL = false;
@@ -33,7 +35,7 @@ class ControlSystem {
 public:
   SceneInfo *currentLevel = nullptr;
   TransformSystem *transformSystem = nullptr;
-  void update(int &selectedPlayerIndex);
+  void update(entt::entity &selectedPlayer);
 };
 
 #endif

@@ -4,23 +4,20 @@
 
 using namespace Constants;
 void AnimationSystem::update() {
-  // Drive from the animation pool's dense array; entityAt(i) recovers
-  // the entity id for sibling component lookups.
-  auto &pool = currentLevel->animationComponents;
-  for (std::size_t i = 0; i < pool.size(); ++i) {
-    AnimationComponent &animationComponent = pool[i];
-    const int id = pool.entityAt(i);
+  auto &reg = currentLevel->registry;
+  auto view = reg.view<AnimationComponent, CollisionComponent, GravityComponent, TransformComponent,
+                       RenderComponent>();
+  for (auto entity : view) {
+    AnimationComponent &animationComponent = view.get<AnimationComponent>(entity);
+    CollisionComponent const &collisionComponent = view.get<CollisionComponent>(entity);
+    GRAVITY_STATE const &gravityState = view.get<GravityComponent>(entity).gravityState;
+    TransformComponent const &transformComponent = view.get<TransformComponent>(entity);
+    RenderComponent &renderComponent = view.get<RenderComponent>(entity);
 
-    CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(id);
-    GRAVITY_STATE const &gravityState = currentLevel->gravityComponents.at(id).gravityState;
-    TransformComponent const &transformComponent = currentLevel->transformComponents.at(id);
-    RenderComponent &renderComponent = currentLevel->renderComponents.at(id);
-
-    // Section 2.1: single hash-free lookup via get() instead of contains()+at().
-    AttackComponent const *attackComponent = currentLevel->attackComponents.get(id);
-    ControlComponent const *controlComponent = currentLevel->controlComponents.get(id);
-    HealthComponent const *healthComponent = currentLevel->healthComponents.get(id);
-    AIComponent const *aiComponent = currentLevel->aiComponents.get(id);
+    AttackComponent const *attackComponent = reg.try_get<AttackComponent>(entity);
+    ControlComponent const *controlComponent = reg.try_get<ControlComponent>(entity);
+    HealthComponent const *healthComponent = reg.try_get<HealthComponent>(entity);
+    AIComponent const *aiComponent = reg.try_get<AIComponent>(entity);
 
     if (!aiComponent) {
       determineAnimationState(collisionComponent, gravityState, transformComponent,

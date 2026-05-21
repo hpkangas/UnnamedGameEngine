@@ -1,6 +1,9 @@
 
 #ifndef COLLISIONSYSTEM_HPP
 #define COLLISIONSYSTEM_HPP
+#include "../components/collisioncomponent.hpp"
+#include "../components/gravitycomponent.hpp"
+#include "../components/transformcomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 #include "transformsystem.hpp"
 
@@ -8,9 +11,6 @@ class CollisionSystem {
 public:
   TransformSystem *transformSystem = nullptr;
   SceneInfo *currentLevel = nullptr;
-
-  Utils::Position collidedDownObjectPos = {0, 0};
-  Utils::Position collidedUpObjectPos = {0, 0};
 
   void update();
 

@@ -1,14 +1,18 @@
 #include "rendersystem.hpp"
 #include "../camera.hpp"
+#include "../components/rendercomponent.hpp"
+#include "../components/transformcomponent.hpp"
 #include "../system.hpp"
 #include "../texturemanager.hpp"
 #include "SDL_rect.h"
 #include "SDL_render.h"
 
 void RenderSystem::update() const {
-  for (int id : currentLevel->objectRenderIds) {
-    RenderComponent &rc = currentLevel->renderComponents.at(id);
-    TransformComponent const &tc = currentLevel->transformComponents.at(id);
+  auto &reg = currentLevel->registry;
+
+  for (entt::entity id : currentLevel->objectRenderIds) {
+    RenderComponent &rc = reg.get<RenderComponent>(id);
+    TransformComponent const &tc = reg.get<TransformComponent>(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
@@ -20,17 +24,17 @@ void RenderSystem::update() const {
     }
   }
 
-  for (int id : currentLevel->tileRenderIds) {
-    RenderComponent &rc = currentLevel->renderComponents.at(id);
-    TransformComponent const &tc = currentLevel->transformComponents.at(id);
+  for (entt::entity id : currentLevel->tileRenderIds) {
+    RenderComponent &rc = reg.get<RenderComponent>(id);
+    TransformComponent const &tc = reg.get<TransformComponent>(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
   }
 
-  for (int id : currentLevel->UIRenderIds) {
-    RenderComponent &rc = currentLevel->renderComponents.at(id);
-    TransformComponent const &tc = currentLevel->transformComponents.at(id);
+  for (entt::entity id : currentLevel->UIRenderIds) {
+    RenderComponent &rc = reg.get<RenderComponent>(id);
+    TransformComponent const &tc = reg.get<TransformComponent>(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
@@ -38,19 +42,19 @@ void RenderSystem::update() const {
 }
 
 void RenderSystem::render() const {
-  auto &renderComponents = currentLevel->renderComponents;
+  auto &reg = currentLevel->registry;
 
   SDL_RenderClear(System::renderer);
 
-  for (int id : currentLevel->tileRenderIds) {
-    renderNonStatic(renderComponents.at(id).render());
+  for (entt::entity id : currentLevel->tileRenderIds) {
+    renderNonStatic(reg.get<RenderComponent>(id).render());
   }
-  for (int id : currentLevel->objectRenderIds) {
-    renderNonStatic(renderComponents.at(id).render());
+  for (entt::entity id : currentLevel->objectRenderIds) {
+    renderNonStatic(reg.get<RenderComponent>(id).render());
   }
 
-  for (int id : currentLevel->UIRenderIds) {
-    renderStatic(renderComponents.at(id).render());
+  for (entt::entity id : currentLevel->UIRenderIds) {
+    renderStatic(reg.get<RenderComponent>(id).render());
   }
 
   SDL_RenderPresent(System::renderer);

@@ -10,7 +10,6 @@
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
 #include "../gamedata.hpp"
-#include "../texturemanager.hpp"
 #include "../utilities/constants.hpp"
 #include "SDL_rect.h"
 #include "SDL_render.h"
@@ -24,20 +23,6 @@ using namespace Constants;
 
 SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   SceneInfo level;
-
-  // Section 2.4: pre-size hot pools so the bulk of the level load does
-  // not trigger rehashes. Sizes are generous upper bounds for the kind
-  // of level shipped with the project.
-  level.aiComponents.reserve(64);
-  level.animationComponents.reserve(64);
-  level.attackComponents.reserve(64);
-  level.collisionComponents.reserve(2048);
-  level.controlComponents.reserve(8);
-  level.healthComponents.reserve(64);
-  level.gravityComponents.reserve(64);
-  level.renderComponents.reserve(2048);
-  level.tileComponents.reserve(2048);
-  level.transformComponents.reserve(2048);
 
   std::string currentValue;
   char c = '0';
@@ -100,14 +85,11 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   level.levelLength = maxX * 128;
   level.levelHeight = y * 128;
 
-  // Section 2.5: bake the static-collider tile grid for O(1) neighbour
-  // queries in CollisionDetectionSystem. Cells without a static collider
-  // remain TileGrid::EMPTY.
+  // Bake the static-collider tile grid for O(1) neighbour queries.
   level.staticTileGrid.resize(maxX, y + 1);
-  for (int sid : level.staticCollisionIds) {
-    if (TileComponent const *tile = level.tileComponents.get(sid)) {
-      level.staticTileGrid.set(tile->tilePosition.x, tile->tilePosition.y, sid);
-    }
+  for (entt::entity sid : level.staticCollisionIds) {
+    TileComponent const &tile = level.registry.get<TileComponent>(sid);
+    level.staticTileGrid.set(tile.tilePosition.x, tile.tilePosition.y, sid);
   }
 
   return level;
@@ -136,56 +118,51 @@ void SceneCreator::createBlock3(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
-  int id = level.getId();
+  auto entity = level.createEntity();
 
-  level.transformComponents.emplace(id, x, y, id);
-  level.tileComponents.emplace(id, TILE::NONE, x / 128, y / 128);
+  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<TileComponent>(entity, TILE::NONE, x / 128, y / 128);
 
-  // render for testing
   SDL_Rect const sourceRect = {128, 384, 128, 128};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  level.renderComponents.emplace(id, sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
+  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
 
-  level.ids++;
-  level.tileRenderIds.emplace_back(id);
+  level.tileRenderIds.emplace_back(entity);
 }
 
 void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
-  int id = level.getId();
+  auto entity = level.createEntity();
 
   SDL_Rect const sourceRect = {sourceX, 0, 128, 128};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
 
-  level.transformComponents.emplace(id, x, y, id);
-  level.renderComponents.emplace(id, sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
-  level.collisionComponents.emplace(id, destinationRect, id);
-  level.tileComponents.emplace(id, TILE::SOLID, x / 128, y / 128);
+  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
+  level.registry.emplace<CollisionComponent>(entity, destinationRect);
+  level.registry.emplace<TileComponent>(entity, TILE::SOLID, x / 128, y / 128);
 
-  level.ids++;
-  level.tileRenderIds.emplace_back(id);
-  level.staticCollisionIds.emplace_back(id);
+  level.tileRenderIds.emplace_back(entity);
+  level.staticCollisionIds.emplace_back(entity);
 }
 
 void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
-  int id = level.getId();
+  auto entity = level.createEntity();
 
   SDL_Rect const sourceRect = {sourceX, 0, 128, 128};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
 
-  level.transformComponents.emplace(id, x, y, id);
-  level.renderComponents.emplace(id, sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
-  // NOTE: pre-existing behaviour — uses sourceRect (not destinationRect) for
-  // collision. Preserved here to keep this refactor purely about storage.
-  level.collisionComponents.emplace(id, sourceRect, id);
-  level.tileComponents.emplace(id, TILE::SEMISOLID, x / 128, y / 128);
+  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
+  level.registry.emplace<CollisionComponent>(entity, sourceRect);
+  level.registry.emplace<TileComponent>(entity, TILE::SEMISOLID, x / 128, y / 128);
 
-  level.ids++;
-  level.tileRenderIds.emplace_back(id);
-  level.staticCollisionIds.emplace_back(id);
+  level.tileRenderIds.emplace_back(entity);
+  level.staticCollisionIds.emplace_back(entity);
 }
 
 void SceneCreator::createPC(int x, int y, SceneInfo &level) {
-  int id = 1;
+  auto entity = level.createEntity();
+  level.playerEntity = entity;
 
   SDL_Rect const sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -194,22 +171,21 @@ void SceneCreator::createPC(int x, int y, SceneInfo &level) {
   SDL_Rect const leftAttackCollisionRect = {x - PLAYER_WIDTH / 2, y - PLAYER_HEIGHT / 2, 64,
                                             PLAYER_HEIGHT};
 
-  level.transformComponents.emplace(id, x, y, id);
-  level.renderComponents.emplace(id, sourceRect, destinationRect, SDL_FLIP_NONE, 0, id);
-  level.collisionComponents.emplace(id, collisionRect, id);
-  level.gravityComponents.emplace(id, GRAVITY_STATE::AIRBORNE, id);
-  AnimationComponent &animationComponent = level.animationComponents.emplace(id);
-  animationComponent.parentID = id;
-  level.controlComponents.emplace(id, CONTROL_STATE::AIRBORNE, id);
-  level.healthComponents.emplace(id, 3);
-  level.attackComponents.emplace(id, 36, 1, rightAttackCollisionRect, leftAttackCollisionRect);
+  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 0);
+  level.registry.emplace<CollisionComponent>(entity, collisionRect);
+  level.registry.emplace<GravityComponent>(entity, GRAVITY_STATE::AIRBORNE);
+  level.registry.emplace<AnimationComponent>(entity);
+  level.registry.emplace<ControlComponent>(entity, CONTROL_STATE::AIRBORNE);
+  level.registry.emplace<HealthComponent>(entity, 3);
+  level.registry.emplace<AttackComponent>(entity, 36, 1, rightAttackCollisionRect,
+                                          leftAttackCollisionRect);
 
-  level.ids++;
-  level.objectRenderIds.emplace_back(id);
+  level.objectRenderIds.emplace_back(entity);
 }
 
 void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
-  int id = level.getId();
+  auto entity = level.createEntity();
 
   SDL_Rect const sourceRect = {0, 512, PLAYER_WIDTH, PLAYER_HEIGHT};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -218,65 +194,62 @@ void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
   SDL_Rect const leftAttackCollisionRect = {x - PLAYER_WIDTH / 2, y - PLAYER_HEIGHT / 2, 64,
                                             PLAYER_HEIGHT};
 
-  TransformComponent &transformComponent = level.transformComponents.emplace(id, x, y, id);
+  level.registry.emplace<TransformComponent>(entity, x, y);
+  auto &transformComponent = level.registry.get<TransformComponent>(entity);
   transformComponent.velocity.x = 4;
-  level.renderComponents.emplace(id, sourceRect, destinationRect, SDL_FLIP_NONE, 3, id);
-  level.collisionComponents.emplace(id, collisionRect, id);
-  level.gravityComponents.emplace(id, GRAVITY_STATE::AIRBORNE, id);
-  level.healthComponents.emplace(id, 1);
-  level.aiComponents.emplace(id);
-  AnimationComponent &animationComponent = level.animationComponents.emplace(id);
-  animationComponent.parentID = id;
-  level.attackComponents.emplace(id, 36, 1, rightAttackCollisionRect, leftAttackCollisionRect);
+  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 3);
+  level.registry.emplace<CollisionComponent>(entity, collisionRect);
+  level.registry.emplace<GravityComponent>(entity, GRAVITY_STATE::AIRBORNE);
+  level.registry.emplace<HealthComponent>(entity, 1);
+  level.registry.emplace<AIComponent>(entity);
+  level.registry.emplace<AnimationComponent>(entity);
+  level.registry.emplace<AttackComponent>(entity, 36, 1, rightAttackCollisionRect,
+                                          leftAttackCollisionRect);
 
-  level.ids++;
-  level.objectRenderIds.emplace_back(id);
+  level.objectRenderIds.emplace_back(entity);
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
-  int id = level.getId();
+  auto entity = level.createEntity();
 
   SDL_Rect const sourceRect = {0, 192, 128, 128};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
   SDL_Rect const collisionRect = {x, y, 128, 128};
 
-  level.transformComponents.emplace(id, x, y, id);
-  level.renderComponents.emplace(id, sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
-  level.collisionComponents.emplace(id, collisionRect, id);
-  level.tileComponents.emplace(id, TILE::LADDER, x / 128, y / 128);
+  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
+  level.registry.emplace<CollisionComponent>(entity, collisionRect);
+  level.registry.emplace<TileComponent>(entity, TILE::LADDER, x / 128, y / 128);
 
-  level.ids++;
-  level.tileRenderIds.emplace_back(id);
-  level.staticCollisionIds.emplace_back(id);
+  level.tileRenderIds.emplace_back(entity);
+  level.staticCollisionIds.emplace_back(entity);
 }
 
 void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
-  int id = level.getId();
+  auto entity = level.createEntity();
 
   SDL_Rect const sourceRect = {0, 192, 128, 64};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
   SDL_Rect const collisionRect = {x, y, 128, 64};
 
-  level.transformComponents.emplace(id, x, y, id);
-  level.renderComponents.emplace(id, sourceRect, destinationRect, SDL_FLIP_NONE, 1, id);
-  level.collisionComponents.emplace(id, collisionRect, id);
-  level.tileComponents.emplace(id, TILE::LADDERSTART, x / 128, y / 128);
+  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
+  level.registry.emplace<CollisionComponent>(entity, collisionRect);
+  level.registry.emplace<TileComponent>(entity, TILE::LADDERSTART, x / 128, y / 128);
 
-  level.ids++;
-  level.tileRenderIds.emplace_back(id);
-  level.staticCollisionIds.emplace_back(id);
+  level.tileRenderIds.emplace_back(entity);
+  level.staticCollisionIds.emplace_back(entity);
 }
 
 void SceneCreator::createUI(int x, int y, SceneInfo &level) {
-  int id = 0;
+  auto entity = level.createEntity();
   SDL_Rect const sourceRect = {0, 0, 31, 31};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
 
-  level.transformComponents.emplace(id, x, y, id);
-  level.renderComponents.emplace(id, sourceRect, destinationRect, SDL_FLIP_NONE, 2, id);
+  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 2);
 
-  level.ids++;
-  level.UIRenderIds.emplace_back(id);
+  level.UIRenderIds.emplace_back(entity);
 }
 
 json SceneCreator::getGameData() { return GameData::init(); }

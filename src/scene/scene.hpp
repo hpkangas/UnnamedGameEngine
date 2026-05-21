@@ -13,7 +13,6 @@
 #include "../systems/healthsystem.hpp"
 #include "../systems/rendersystem.hpp"
 #include "../systems/transformsystem.hpp"
-#include "../utilities/constants.hpp"
 
 struct Scene {
   inline static bool isRunning = false;
@@ -24,21 +23,20 @@ struct Scene {
   void render() const;
 
   SceneInfo currentLevel;
-  [[no_unique_address]] Camera camera;
+  Camera camera;
 
-  int selectedPlayerIndex = Constants::PLAYER_INDEX;
-  int selectedPlayer = Constants::PLAYER_INDEX;
+  entt::entity selectedPlayer = entt::null;
 
-  [[no_unique_address]] RenderSystem renderSystem;
-  [[no_unique_address]] ControlSystem controlSystem;
+  RenderSystem renderSystem;
+  ControlSystem controlSystem;
   CollisionDetectionSystem collisionDetectionSystem;
-  [[no_unique_address]] CollisionSystem collisionSystem;
-  [[no_unique_address]] TransformSystem transformSystem;
+  CollisionSystem collisionSystem;
+  TransformSystem transformSystem;
   AnimationSystem animationSystem;
-  [[no_unique_address]] GravitySystem gravitySystem;
-  [[no_unique_address]] AISystem AISystem;
-  [[no_unique_address]] AttackSystem attackSystem;
-  [[no_unique_address]] HealthSystem healthSystem;
+  GravitySystem gravitySystem;
+  AISystem AISystem;
+  AttackSystem attackSystem;
+  HealthSystem healthSystem;
 
   void updateCamera(const TransformComponent &transformComponent) const;
   void centerCamera(const TransformComponent &transformComponent) const;

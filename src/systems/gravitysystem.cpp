@@ -10,15 +10,12 @@ void GravitySystem::gravity(TransformComponent &transformComponent) const {
 }
 
 void GravitySystem::update() const {
-  // Iterate the gravity pool directly; for every entity with gravity,
-  // its collision + transform are mandatory siblings (set up by
-  // SceneCreator), so .at() is the right accessor here.
-  auto &pool = currentLevel->gravityComponents;
-  for (std::size_t i = 0; i < pool.size(); ++i) {
-    const int eid = pool.entityAt(i);
-    updateOne(currentLevel->collisionComponents.at(eid),
-              pool[i],
-              currentLevel->transformComponents.at(eid));
+  auto view = currentLevel->registry.view<GravityComponent, CollisionComponent, TransformComponent>();
+  for (auto entity : view) {
+    auto &gc = view.get<GravityComponent>(entity);
+    auto const &cc = view.get<CollisionComponent>(entity);
+    auto &tc = view.get<TransformComponent>(entity);
+    updateOne(cc, gc, tc);
   }
 }
 

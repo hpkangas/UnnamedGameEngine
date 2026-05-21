@@ -1,23 +1,27 @@
 #include "aisystem.hpp"
+#include "../components/aicomponent.hpp"
+#include "../components/attackcomponent.hpp"
+#include "../components/collisioncomponent.hpp"
+#include "../components/healthcomponent.hpp"
+#include "../components/transformcomponent.hpp"
 #include "../utilities/physics.hpp"
-#include "SDL_rect.h"
 
 void AISystem::update(SceneInfo &currentLevel) const {
-  auto &pool = currentLevel.aiComponents;
-  for (std::size_t i = 0; i < pool.size(); ++i) {
-    const int id = pool.entityAt(i);
+  auto &reg = currentLevel.registry;
+  entt::entity playerEntity = currentLevel.playerEntity;
 
-    AIComponent &aiComponent = pool[i];
-    HealthComponent const &healthComponent = currentLevel.healthComponents.at(id);
-    AttackComponent &attackComponent = currentLevel.attackComponents.at(id);
-    CollisionComponent const &collisionComponent = currentLevel.collisionComponents.at(id);
-    // Section 2.2: cache the transform reference once instead of looking
-    // it up twice for velocity and facingRight.
-    TransformComponent &transformComponent = currentLevel.transformComponents.at(id);
+  auto view = reg.view<AIComponent, HealthComponent, AttackComponent, CollisionComponent,
+                       TransformComponent>();
+  for (auto entity : view) {
+    AIComponent &aiComponent = view.get<AIComponent>(entity);
+    HealthComponent const &healthComponent = view.get<HealthComponent>(entity);
+    AttackComponent &attackComponent = view.get<AttackComponent>(entity);
+    CollisionComponent const &collisionComponent = view.get<CollisionComponent>(entity);
+    TransformComponent &transformComponent = view.get<TransformComponent>(entity);
     float &velx = transformComponent.velocity.x;
     bool facingRight = transformComponent.facingRight;
-    CollisionComponent const &player = currentLevel.collisionComponents.at(1);
-    HEALTH_STATE playerHealthState = currentLevel.healthComponents.at(1).healthState;
+    CollisionComponent const &player = reg.get<CollisionComponent>(playerEntity);
+    HEALTH_STATE playerHealthState = reg.get<HealthComponent>(playerEntity).healthState;
 
     determineAIState(aiComponent, attackComponent, healthComponent);
 

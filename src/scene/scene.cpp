@@ -20,6 +20,8 @@ bool Scene::init() {
     return false;
   } else {
     currentLevel = SceneCreator::createLevel(file);
+    selectedPlayer = currentLevel.playerEntity;
+
     animationSystem.currentLevel = &currentLevel;
     std::cout << "Scene init \n";
 
@@ -40,12 +42,7 @@ bool Scene::init() {
 }
 
 void Scene::update() {
-  if (selectedPlayer != selectedPlayerIndex) {
-    selectedPlayer = selectedPlayerIndex;
-    centerCamera(currentLevel.transformComponents.at(selectedPlayer));
-  }
-
-  controlSystem.update(selectedPlayerIndex);
+  controlSystem.update(selectedPlayer);
 
   AISystem.update(currentLevel);
 
@@ -64,7 +61,7 @@ void Scene::update() {
 
   renderSystem.update();
 
-  updateCamera(currentLevel.transformComponents.at(selectedPlayer));
+  updateCamera(currentLevel.registry.get<TransformComponent>(selectedPlayer));
 }
 
 void Scene::render() const { renderSystem.render(); }

@@ -3,7 +3,6 @@
 #define RENDERCOMPONENT_HPP
 
 #include "SDL_render.h"
-#include "component.hpp"
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -14,11 +13,9 @@ struct RenderInfo {
   SDL_RendererFlip flip = SDL_FLIP_NONE;
 };
 
-struct RenderComponent : public IComponent {
-  RenderComponent(SDL_Rect source, SDL_Rect destination, SDL_RendererFlip flip, int texture, int id)
-      : sourceRect(source), destinationRect(destination), objTextureIndex(texture), flip(flip) {
-    parentID = id;
-  }
+struct RenderComponent {
+  RenderComponent(SDL_Rect source, SDL_Rect destination, SDL_RendererFlip flip, int texture)
+      : sourceRect(source), destinationRect(destination), objTextureIndex(texture), flip(flip) {}
 
   SDL_Rect sourceRect{};
   SDL_Rect destinationRect{};

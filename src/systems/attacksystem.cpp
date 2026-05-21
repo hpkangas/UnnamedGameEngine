@@ -3,17 +3,17 @@
 #include "../utilities/physics.hpp"
 
 void AttackSystem::update() {
-  // Driver loop iterates the attack pool directly; entityAt(i) recovers
-  // the entity id we need for the player-vs-enemy branching below.
-  auto &pool = currentLevel->attackComponents;
-  for (std::size_t i = 0; i < pool.size(); ++i) {
-    AttackComponent &attackComponent = pool[i];
-    const int eid = pool.entityAt(i);
-    TransformComponent const &transformComponent = currentLevel->transformComponents.at(eid);
+  auto &reg = currentLevel->registry;
+  entt::entity playerEntity = currentLevel->playerEntity;
+
+  auto view = reg.view<AttackComponent, TransformComponent>();
+  for (auto entity : view) {
+    AttackComponent &attackComponent = view.get<AttackComponent>(entity);
+    TransformComponent const &transformComponent = view.get<TransformComponent>(entity);
     updateAttackComponents(attackComponent, transformComponent);
 
     if (attackComponent.attacking && attackComponent.currentAttackFrames == 24) {
-      checkAttackCollisions(attackComponent, eid, transformComponent.facingRight);
+      checkAttackCollisions(attackComponent, entity, transformComponent.facingRight);
     }
   }
 }
@@ -28,18 +28,19 @@ void AttackSystem::updateAttackComponents(AttackComponent &attackComponent,
       transformComponent.position.y - Constants::PLAYER_HEIGHT / 2;
 }
 
-void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent, int attackerId,
+void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent, entt::entity attackerEntity,
                                          bool facingRight) {
-  if (attackerId == 1) {
-    // Player attacks any enemy with a health component. Iterate the
-    // pool directly and skip the attacker by id.
-    auto &healths = currentLevel->healthComponents;
-    for (std::size_t i = 0; i < healths.size(); ++i) {
-      const int eid = healths.entityAt(i);
-      if (eid == attackerId) continue;
+  auto &reg = currentLevel->registry;
+  entt::entity playerEntity = currentLevel->playerEntity;
 
-      HealthComponent &healthComponent = healths[i];
-      CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(eid);
+  if (attackerEntity == playerEntity) {
+    // Player attacks any enemy with a health component.
+    auto view = reg.view<HealthComponent, CollisionComponent>();
+    for (auto entity : view) {
+      if (entity == attackerEntity) continue;
+
+      HealthComponent &healthComponent = view.get<HealthComponent>(entity);
+      CollisionComponent const &collisionComponent = view.get<CollisionComponent>(entity);
 
       if (facingRight) {
         if (healthComponent.healthState == HEALTH_STATE::ALIVE &&
@@ -57,8 +58,8 @@ void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent,
     }
 
   } else {
-    HealthComponent &healthComponent = currentLevel->healthComponents.at(1);
-    CollisionComponent const &collisionComponent = currentLevel->collisionComponents.at(1);
+    HealthComponent &healthComponent = reg.get<HealthComponent>(playerEntity);
+    CollisionComponent const &collisionComponent = reg.get<CollisionComponent>(playerEntity);
 
     if (facingRight) {
       if (healthComponent.healthState == HEALTH_STATE::ALIVE &&

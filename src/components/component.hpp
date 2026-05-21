@@ -1,12 +1,8 @@
 #ifndef ICOMPONENT_HPP
 #define ICOMPONENT_HPP
 
-enum class ComponentId { TCID = 0, RCID = 1, CCID = 2, GCID = 3, ACID = 4 };
-
-class IComponent {
-public:
-  int ID = -1;
-  int parentID = -1;
-};
+// Legacy header — kept so existing #includes don't break.
+// Components no longer inherit from IComponent; EnTT manages
+// entity–component relationships via entt::registry.
 
 #endif

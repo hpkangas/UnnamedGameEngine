@@ -1,8 +1,10 @@
 #include "healthsystem.hpp"
+#include "../components/healthcomponent.hpp"
 
 void HealthSystem::update() {
-  // Pool iteration — no id list, no hashing, cache-friendly linear walk.
-  for (HealthComponent &h : currentLevel->healthComponents) {
+  auto view = currentLevel->registry.view<HealthComponent>();
+  for (auto entity : view) {
+    HealthComponent &h = view.get<HealthComponent>(entity);
     h.currentHealth -= h.damageTaken;
     h.damageTaken = 0;
     if (h.currentHealth <= 0) {

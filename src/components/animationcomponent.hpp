@@ -1,6 +1,5 @@
 #ifndef ANIMATIONCOMPONENT_HPP
 #define ANIMATIONCOMPONENT_HPP
-#include "component.hpp"
 
 enum class ANIMATION_STATE {
   STILL = 0,
@@ -12,8 +11,7 @@ enum class ANIMATION_STATE {
   DEATH = 6
 };
 
-struct AnimationComponent : public IComponent {
-
+struct AnimationComponent {
   ANIMATION_STATE animationState = ANIMATION_STATE::STILL;
   ANIMATION_STATE previousAnimationState = ANIMATION_STATE::STILL;
 

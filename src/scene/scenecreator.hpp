@@ -1,6 +1,7 @@
 #pragma once
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
+#include "SDL_rwops.h"
 #include "sceneinfo.hpp"
 #include <nlohmann/json.hpp>
 
@@ -25,7 +26,6 @@ private:
   static void createPC(int x, int y, SceneInfo &level);
   static void createEnemy(int x, int y, SceneInfo &level);
   static void createUI(int x, int y, SceneInfo &level);
-
-}; // namespace Level
+};
 
 #endif

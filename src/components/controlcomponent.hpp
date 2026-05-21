@@ -1,6 +1,5 @@
 #ifndef CONTROLCOMPONENT_HPP
 #define CONTROLCOMPONENT_HPP
-#include "component.hpp"
 
 enum class CONTROL_STATE {
   DEAD = 0,
@@ -10,8 +9,8 @@ enum class CONTROL_STATE {
   CLIMBING = 4,
   ATTACKING = 5
 };
-struct ControlComponent : public IComponent {
-  ControlComponent(CONTROL_STATE state, int id) : controlState(state) { parentID = id; }
+struct ControlComponent {
+  ControlComponent(CONTROL_STATE state) : controlState(state) {}
 
   bool canClimb = false;
   CONTROL_STATE controlState = CONTROL_STATE::NORMAL;

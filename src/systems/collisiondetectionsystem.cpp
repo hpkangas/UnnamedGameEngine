@@ -3,29 +3,21 @@
 #include <cstdio>
 
 void CollisionDetectionSystem::update() {
-  // "Dynamic collider" = entity with gravity, in this codebase. Static
-  // tiles also have CollisionComponent but never need per-frame
-  // resolution against the world, so we drive iteration off the
-  // smaller gravity pool and skip the static tiles for free.
-  auto &gravityPool = currentLevel->gravityComponents;
-  for (std::size_t i = 0; i < gravityPool.size(); ++i) {
-    const int id = gravityPool.entityAt(i);
-    CollisionComponent &cc = currentLevel->collisionComponents.at(id);
+  auto &reg = currentLevel->registry;
+  auto view = reg.view<GravityComponent, CollisionComponent, TransformComponent>();
+  for (auto entity : view) {
+    CollisionComponent &cc = view.get<CollisionComponent>(entity);
     resetCollisions(cc);
-    updateCollisionRect(cc, currentLevel->transformComponents.at(id));
-
-    checkCollision(id);
+    updateCollisionRect(cc, view.get<TransformComponent>(entity));
+    checkCollision(entity);
   }
 }
 
-void CollisionDetectionSystem::checkCollision(int playerIndex) const {
-  CollisionComponent &object = currentLevel->collisionComponents.at(playerIndex);
-  const Velocity velocity = currentLevel->transformComponents.at(playerIndex).velocity;
+void CollisionDetectionSystem::checkCollision(entt::entity playerEntity) const {
+  auto &reg = currentLevel->registry;
+  CollisionComponent &object = reg.get<CollisionComponent>(playerEntity);
+  const Velocity velocity = reg.get<TransformComponent>(playerEntity).velocity;
 
-  // Section 2.5: instead of scanning every static collider in the level,
-  // visit only the tile-grid cells overlapping a small padded bounding
-  // box around the entity. With 128px tiles and per-frame speeds well
-  // under 32px, a one-tile padding either side is plenty.
   TileGrid const &grid = currentLevel->staticTileGrid;
   constexpr int pad = 32;
   const int minTx = (object.collisionRect.x - pad) / 128;
@@ -35,13 +27,13 @@ void CollisionDetectionSystem::checkCollision(int playerIndex) const {
 
   for (int ty = minTy; ty <= maxTy; ++ty) {
     for (int tx = minTx; tx <= maxTx; ++tx) {
-      int id = grid.at(tx, ty);
-      if (id == TileGrid::EMPTY) {
+      entt::entity id = grid.at(tx, ty);
+      if (id == entt::null) {
         continue;
       }
 
-      CollisionComponent const *tileColl = currentLevel->collisionComponents.get(id);
-      TileComponent const *tileTile = currentLevel->tileComponents.get(id);
+      CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(id);
+      TileComponent const *tileTile = reg.try_get<TileComponent>(id);
       if (!tileColl || !tileTile) {
         continue;
       }
