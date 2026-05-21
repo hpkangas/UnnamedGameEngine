@@ -1,4 +1,6 @@
 #include "attacksystem.hpp"
+#include "../components/collisioncomponent.hpp"
+#include "../components/healthcomponent.hpp"
 #include "../utilities/constants.hpp"
 #include "../utilities/physics.hpp"
 
@@ -28,8 +30,8 @@ void AttackSystem::updateAttackComponents(AttackComponent &attackComponent,
       transformComponent.position.y - Constants::PLAYER_HEIGHT / 2;
 }
 
-void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent, entt::entity attackerEntity,
-                                         bool facingRight) {
+void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent,
+                                         entt::entity attackerEntity, bool facingRight) {
   auto &reg = currentLevel->registry;
   entt::entity playerEntity = currentLevel->playerEntity;
 
@@ -37,7 +39,9 @@ void AttackSystem::checkAttackCollisions(AttackComponent const &attackComponent,
     // Player attacks any enemy with a health component.
     auto view = reg.view<HealthComponent, CollisionComponent>();
     for (auto entity : view) {
-      if (entity == attackerEntity) continue;
+      if (entity == attackerEntity) {
+        continue;
+      }
 
       HealthComponent &healthComponent = view.get<HealthComponent>(entity);
       CollisionComponent const &collisionComponent = view.get<CollisionComponent>(entity);

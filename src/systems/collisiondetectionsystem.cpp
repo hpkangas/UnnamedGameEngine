@@ -1,4 +1,7 @@
 #include "collisiondetectionsystem.hpp"
+#include "../components/collisioncomponent.hpp"
+#include "../components/gravitycomponent.hpp"
+#include "../components/transformcomponent.hpp"
 #include "../utilities/physics.hpp"
 #include <cstdio>
 
