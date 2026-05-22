@@ -13,8 +13,8 @@ public:
   void update() const;
 
 private:
-  void updateOne(CollisionComponent const &collisionComponent,
-                 GravityComponent &gravityComponent,
-                 TransformComponent &transformComponent) const;
+  void updateGravity(CollisionComponent const &collisionComponent,
+                     GravityComponent &gravityComponent,
+                     TransformComponent &transformComponent) const;
 };
 #endif

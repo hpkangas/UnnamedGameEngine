@@ -25,19 +25,18 @@ int main(int argc, char const *argv[]) {
     std::cout << "Initialization complete at " << SDL_GetTicks64() / 1000.0 << " seconds"
               << std::endl;
 
-    double nextFrame = static_cast<double>(SDL_GetTicks64());
+    auto nextFrame = static_cast<double>(SDL_GetTicks64());
 
     while (Scene::isRunning) {
       scene.update();
       scene.render();
 
       nextFrame += Constants::FRAME_MS;
-      const double now = static_cast<double>(SDL_GetTicks64());
+      const auto now = static_cast<double>(SDL_GetTicks64());
 
       if (now < nextFrame) {
         SDL_Delay(static_cast<Uint32>(nextFrame - now));
       } else if (now - nextFrame > Constants::MAX_LAG_MS) {
-
         nextFrame = now;
       }
     }

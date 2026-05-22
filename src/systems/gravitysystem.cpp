@@ -10,18 +10,19 @@ void GravitySystem::gravity(TransformComponent &transformComponent) const {
 }
 
 void GravitySystem::update() const {
-  auto view = currentLevel->registry.view<GravityComponent, CollisionComponent, TransformComponent>();
+  auto view =
+      currentLevel->registry.view<GravityComponent, CollisionComponent, TransformComponent>();
   for (auto entity : view) {
     auto &gc = view.get<GravityComponent>(entity);
     auto const &cc = view.get<CollisionComponent>(entity);
     auto &tc = view.get<TransformComponent>(entity);
-    updateOne(cc, gc, tc);
+    updateGravity(cc, gc, tc);
   }
 }
 
-void GravitySystem::updateOne(CollisionComponent const &collisionComponent,
-                              GravityComponent &gravityComponent,
-                              TransformComponent &transformComponent) const {
+void GravitySystem::updateGravity(CollisionComponent const &collisionComponent,
+                                  GravityComponent &gravityComponent,
+                                  TransformComponent &transformComponent) const {
 
   if (collisionComponent.collisionTileDown == TILE::LADDERSTART ||
       collisionComponent.collisionTileDown == TILE::SOLID) {
