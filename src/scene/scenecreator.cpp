@@ -9,7 +9,6 @@
 #include "../components/rendercomponent.hpp"
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
-#include "../gamedata.hpp"
 #include "../utilities/constants.hpp"
 #include "SDL_rect.h"
 #include "SDL_render.h"
@@ -252,4 +251,3 @@ void SceneCreator::createUI(int x, int y, SceneInfo &level) {
   level.UIRenderIds.emplace_back(entity);
 }
 
-json SceneCreator::getGameData() { return GameData::init(); }

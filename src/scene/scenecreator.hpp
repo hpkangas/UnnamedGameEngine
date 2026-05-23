@@ -3,14 +3,9 @@
 #define LEVEL_HPP
 #include "SDL_rwops.h"
 #include "sceneinfo.hpp"
-#include <nlohmann/json.hpp>
-
-using json = nlohmann::basic_json<>;
 
 class SceneCreator {
 public:
-  static json getGameData();
-  static json data;
   static SceneInfo createLevel(SDL_RWops *Handle);
 
 private:

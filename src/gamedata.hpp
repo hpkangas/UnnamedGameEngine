@@ -2,7 +2,7 @@
 #define GAMEDATA_HPP
 #include <fstream>
 #include <iostream>
-#include <nlohmann/json.hpp>
+#include "include/json/json.hpp"
 
 struct GameData {
   static nlohmann::json init();

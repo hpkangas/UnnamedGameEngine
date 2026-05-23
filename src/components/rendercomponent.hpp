@@ -3,8 +3,6 @@
 #define RENDERCOMPONENT_HPP
 
 #include "SDL_render.h"
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
 
 struct RenderInfo {
   int objTexture;
@@ -24,7 +22,5 @@ struct RenderComponent {
 
   RenderInfo render() const;
 
-  void to_json(json &j, const RenderComponent &rc);
-  void from_json(const json &j, RenderComponent &rc);
 };
 #endif
