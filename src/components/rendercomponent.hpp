@@ -20,7 +20,10 @@ struct RenderComponent {
   int objTextureIndex;
   SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-  RenderInfo render() const;
+  RenderInfo render() const {
+  RenderInfo const info = {objTextureIndex, sourceRect, destinationRect, flip};
+  return info;
+}
 
 };
 #endif
