@@ -8,21 +8,14 @@ namespace Constants {
 // TODO should be editable
 constexpr int SCREENWIDTH = 1920;
 constexpr int SCREENHEIGHT = 1080;
-constexpr int    FRAMERATE    = 60;
-constexpr double FRAME_MS     = 1000.0 / FRAMERATE;
-constexpr double MAX_LAG_MS   = 250.0;
+constexpr int FRAMERATE = 60;
+constexpr double FRAME_MS = 1000.0 / FRAMERATE;
+constexpr double MAX_LAG_MS = 250.0;
 
 // TODO player character specific, not global constants
 constexpr int PLAYER_INDEX = 1;
 constexpr int PLAYER_HEIGHT = 128;
 constexpr int PLAYER_WIDTH = 128;
-constexpr int STILL_FRAME = 256;
-constexpr int WALK_FRAME = 0;
-constexpr int PUSH_FRAME = 640;
-constexpr int INAIR_FRAME = 384;
-constexpr int CLIMBING_FRAME = 128;
-constexpr int ATTACKING_FRAME = 512;
-constexpr int DYING_FRAME = 2176;
 
 } // namespace Constants
 

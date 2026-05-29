@@ -128,12 +128,12 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
   switch (animationComponent.animationState) {
   case ANIMATION_STATE::STILL:
     animationComponent.animationFrame = 0;
-    playFrame(renderComponent, 0, STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.STILL_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame);
     break;
 
   case ANIMATION_STATE::WALKING:
-    playFrame(renderComponent, 0, WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.WALK_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.WALKING_ANIMATION_FRAMES);
     animationComponent.animationFrame++;
     if (animationComponent.animationFrame / animationComponent.WALKING_ANIMATION_FRAMES > 7) {
@@ -142,7 +142,7 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     break;
 
   case ANIMATION_STATE::PUSHING:
-    playFrame(renderComponent, 0, PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.PUSH_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     animationComponent.animationFrame++;
     if (animationComponent.animationFrame / 8 > 7) {
@@ -151,7 +151,7 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     break;
 
   case ANIMATION_STATE::AIRBORNE:
-    playFrame(renderComponent, 0, INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.INAIR_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     animationComponent.animationFrame++;
     if (animationComponent.animationFrame / 8 > 1) {
@@ -160,7 +160,7 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     break;
 
   case ANIMATION_STATE::CLIMBING:
-    playFrame(renderComponent, 0, CLIMBING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.CLIMBING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 8);
     if (transformComponent.velocity.y < 0) {
       animationComponent.animationFrame++;
@@ -177,7 +177,7 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     break;
 
   case ANIMATION_STATE::ATTACKING:
-    playFrame(renderComponent, 0, ATTACKING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.ATTACKING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 6);
     animationComponent.animationFrame++;
     if (animationComponent.animationFrame / 6 > 5) {
@@ -186,7 +186,7 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     break;
 
   case ANIMATION_STATE::DEATH:
-    playFrame(renderComponent, 0, DYING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.DYING_FRAME, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / 12);
 
     if (animationComponent.animationFrame / 12 < 3) {

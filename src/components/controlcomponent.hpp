@@ -10,7 +10,7 @@ enum class CONTROL_STATE {
   ATTACKING = 5
 };
 struct ControlComponent {
-  ControlComponent(CONTROL_STATE state) : controlState(state) {}
+  explicit ControlComponent(CONTROL_STATE state) : controlState(state) {}
 
   bool canClimb = false;
   CONTROL_STATE controlState = CONTROL_STATE::NORMAL;

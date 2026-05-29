@@ -72,13 +72,11 @@ void Scene::updateCamera(const TransformComponent &transformComponent) const {
   const float xvel = transformComponent.velocity.x;
   const float yvel = transformComponent.velocity.y;
 
-  if ((xpos < Camera::focusArea.left && xvel < 0) ||
-      (xpos + Constants::PLAYER_WIDTH > Camera::focusArea.right && xvel > 0)) {
+  if ((xpos < Camera::focusArea.left && xvel < 0) || (xpos > Camera::focusArea.right && xvel > 0)) {
     Camera::offset.x += xvel;
   }
 
-  if ((ypos < Camera::focusArea.top && yvel < 0) ||
-      (ypos + Constants::PLAYER_HEIGHT > Camera::focusArea.bottom && yvel > 0)) {
+  if ((ypos < Camera::focusArea.top && yvel < 0) || (ypos > Camera::focusArea.bottom && yvel > 0)) {
     Camera::offset.y += yvel;
   }
   Camera::update();

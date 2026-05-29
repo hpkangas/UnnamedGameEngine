@@ -9,16 +9,217 @@
 #include "../components/rendercomponent.hpp"
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
+#include "../include/json/json.hpp"
 #include "../utilities/constants.hpp"
 #include "SDL_rect.h"
 #include "SDL_render.h"
 #include <SDL2/SDL_rwops.h>
 #include <cstdio>
+#include <fstream>
 #include <iostream>
 #include <ostream>
 #include <string>
 
 using namespace Constants;
+// --- Begin: JSON template helpers and template-driven entity creation ---
+
+struct SpriteDef {
+  std::string texture;
+  SDL_Rect sourceRect;
+  int layer;
+};
+
+static SpriteDef parseSpriteFromJSON(const nlohmann::json &entityDef) {
+  SpriteDef def;
+  if (entityDef.contains("sprite")) {
+    auto &s = entityDef["sprite"];
+    def.texture = s.value("texture", "error.png");
+
+    auto &r = s["sourceRect"];
+    def.sourceRect = {r.value("x", 0), r.value("y", 0), r.value("w", 128), r.value("h", 128)};
+
+    def.layer = s["layer"];
+  }
+  return def;
+}
+// cached templates from data/data.json
+static nlohmann::json g_entityTemplates;
+static bool loadEntityTemplatesOnce() {
+  if (!g_entityTemplates.is_null()) {
+    return true;
+  }
+  std::ifstream ifs("data/data.json");
+  if (!ifs.is_open()) {
+    std::cout << "SceneCreator: failed to open data/data.json\n";
+    return false;
+  }
+  try {
+    ifs >> g_entityTemplates;
+  } catch (const std::exception &e) {
+    std::cout << "SceneCreator: json parse error: " << e.what() << std::endl;
+    g_entityTemplates = nlohmann::json(); // empty
+    return false;
+  }
+  return true;
+}
+
+static nlohmann::json findTemplateByType(const std::string_view &type,
+                                         const std::string_view &variant = "") {
+  if (!loadEntityTemplatesOnce()) {
+    return nlohmann::json();
+  }
+  if (!g_entityTemplates.contains("entities")) {
+    return nlohmann::json();
+  }
+  for (auto const &entDef : g_entityTemplates["entities"]) {
+    if (entDef.value("type", "") == type) {
+      if (variant.empty()) {
+        return entDef;
+      }
+      if (entDef.value("variant", "") == variant) {
+        return entDef;
+      }
+    }
+  }
+  return nlohmann::json();
+}
+
+// Map texture filename (from the JSON) to TextureManager index.
+// The game loads textures in a fixed order in TextureManager::loadTextures().
+// Adjust mapping if you change load order or add more textures.
+static int textureIndexFromName(const std::string &textureName) {
+  auto basename = textureName;
+  auto pos = basename.find_last_of("/\\");
+  if (pos != std::string::npos) {
+    basename = basename.substr(pos + 1);
+  }
+
+  if (basename == "baleog.png") {
+    return 0; // matches loadTextures order
+  }
+  if (basename == "tiles.png") {
+    return 1;
+  }
+  if (basename == "UI.png") {
+    return 2;
+  }
+  if (basename == "enemy.png") {
+    return 3;
+  }
+  // fallback: 0 if unknown
+  return 0;
+}
+
+static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, SceneInfo &level) {
+  if (def.is_null()) {
+    return;
+  }
+
+  auto entity = level.createEntity();
+
+  // Transform
+  level.registry.emplace<TransformComponent>(entity, x, y);
+  if (def.contains("transform")) {
+    // Optionally set velocity if present
+    auto &t = level.registry.get<TransformComponent>(entity);
+    t.velocity = Utils::Velocity{static_cast<float>(def["transform"].value("velx", 0.0)),
+                                 static_cast<float>(def["transform"].value("vely", 0.0))};
+  }
+
+  // Sprite/render (if present)
+  SpriteDef sprite = parseSpriteFromJSON(def);
+  if (!sprite.texture.empty()) {
+    int texIndex = textureIndexFromName(sprite.texture);
+    SDL_Rect src = sprite.sourceRect;
+    SDL_Rect dst = {x, y, src.w, src.h};
+    level.registry.emplace<RenderComponent>(entity, src, dst, SDL_FLIP_NONE, texIndex);
+    if (def.contains("animation")) {
+      auto &ac = level.registry.emplace<AnimationComponent>(entity);
+      auto key = def["animation"];
+      ac.ATTACKING_FRAME = key["ATTACKING_FRAME"];
+      ac.CLIMBING_FRAME = key["CLIMBING_FRAME"];
+      ac.DYING_FRAME = key["DYING_FRAME"];
+      ac.INAIR_FRAME = key["INAIR_FRAME"];
+      ac.PUSH_FRAME = key["PUSH_FRAME"];
+      ac.STILL_FRAME = key["STILL_FRAME"];
+      ac.WALK_FRAME = key["WALK_FRAME"];
+    }
+
+    // Decide render list placement by type or optional "renderLayer" in JSON
+    std::string t = def.value("type", "");
+    if (t == "player" || t == "enemy" || t == "object") {
+      level.objectRenderIds.emplace_back(entity);
+    } else if (t == "ui") {
+      level.UIRenderIds.emplace_back(entity);
+    } else {
+      // tiles and others -> tileRenderIds
+      level.tileRenderIds.emplace_back(entity);
+    }
+  }
+
+  // Health
+  if (def.contains("health")) {
+    level.registry.emplace<HealthComponent>(entity, def.value("health", 1));
+    // set currentHealth to same value after construction: HealthComponent ctor sets max only
+    auto &hc = level.registry.get<HealthComponent>(entity);
+    hc.currentHealth = def.value("health", hc.maxHealth);
+  }
+
+  // Attack (player/enemy): emulate existing attack collision setup
+  if (def.contains("attack")) {
+    // compute attack collision rectangles similar to SceneCreator::createPC / createEnemy
+    const int px = x;
+    const int py = y;
+    const SDL_Rect rightAttackCollisionRect = {px + Constants::PLAYER_WIDTH, py, 64,
+                                               Constants::PLAYER_HEIGHT};
+    const SDL_Rect leftAttackCollisionRect = {px - Constants::PLAYER_WIDTH / 2,
+                                              py - Constants::PLAYER_HEIGHT / 2, 64,
+                                              Constants::PLAYER_HEIGHT};
+    int attackFrames = def.value("attackFrames", 36);
+    int damage = def.value("damage", 1);
+    level.registry.emplace<AttackComponent>(entity, attackFrames, damage, rightAttackCollisionRect,
+                                            leftAttackCollisionRect);
+  }
+
+  // Gravity
+  if (def.contains("gravity")) {
+    level.registry.emplace<GravityComponent>(entity, GRAVITY_STATE::GROUNDED);
+  }
+
+  // Control (for player)
+  if (def.contains("control")) {
+    level.registry.emplace<ControlComponent>(entity, CONTROL_STATE::NORMAL);
+  }
+
+  // AI (for enemy)
+  if (def.contains("ai")) {
+    level.registry.emplace<AIComponent>(entity);
+  }
+
+  if (def.contains("collision")) {
+    SDL_Rect collisionRect = {x, y, sprite.sourceRect.w, sprite.sourceRect.h};
+    level.registry.emplace<CollisionComponent>(entity, collisionRect);
+    auto &layer = def["collision"]["layer"];
+    if (layer == 1) {
+    }
+    if (layer == 3) {
+      level.staticCollisionIds.emplace_back(entity);
+    }
+  }
+
+  if (def.contains("tile")) {
+    auto tile = static_cast<TILE>(def.value("tile", 1));
+    level.registry.emplace<TileComponent>(entity, tile, x / 128, y / 128);
+    level.tileRenderIds.emplace_back(entity);
+  }
+
+  // Player entity pointer
+  if (def.value("type", "") == "player") {
+    level.playerEntity = entity;
+  }
+}
+
+// --- End: JSON template helpers and template-driven entity creation ---
 
 SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   SceneInfo level;
@@ -94,18 +295,6 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
   return level;
 }
 
-void SceneCreator::createBlock(std::string const &gameObjectType, int x, int y, SceneInfo &level) {
-  if (gameObjectType == "B1") {
-    createBlock1(x, y, level);
-  } else if (gameObjectType == "B2") {
-    createBlock2(x, y, level);
-  } else if (gameObjectType == "B3") {
-    createBlock3(x, y, level);
-  } else {
-    std::cout << "Scene creator: couldn't create block " << gameObjectType << std::endl;
-  }
-}
-
 void SceneCreator::createBlock1(int x, int y, SceneInfo &level) {
   createBlockEntity(x, y, 0, level);
 }
@@ -159,55 +348,6 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   level.staticCollisionIds.emplace_back(entity);
 }
 
-void SceneCreator::createPC(int x, int y, SceneInfo &level) {
-  auto entity = level.createEntity();
-  level.playerEntity = entity;
-
-  SDL_Rect const sourceRect = {0, 0, PLAYER_WIDTH, PLAYER_HEIGHT};
-  SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  SDL_Rect const collisionRect = {x, y, PLAYER_WIDTH, PLAYER_HEIGHT};
-  SDL_Rect const rightAttackCollisionRect = {x + PLAYER_WIDTH, y, 64, PLAYER_HEIGHT};
-  SDL_Rect const leftAttackCollisionRect = {x - PLAYER_WIDTH / 2, y - PLAYER_HEIGHT / 2, 64,
-                                            PLAYER_HEIGHT};
-
-  level.registry.emplace<TransformComponent>(entity, x, y);
-  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 0);
-  level.registry.emplace<CollisionComponent>(entity, collisionRect);
-  level.registry.emplace<GravityComponent>(entity, GRAVITY_STATE::AIRBORNE);
-  level.registry.emplace<AnimationComponent>(entity);
-  level.registry.emplace<ControlComponent>(entity, CONTROL_STATE::AIRBORNE);
-  level.registry.emplace<HealthComponent>(entity, 3);
-  level.registry.emplace<AttackComponent>(entity, 36, 1, rightAttackCollisionRect,
-                                          leftAttackCollisionRect);
-
-  level.objectRenderIds.emplace_back(entity);
-}
-
-void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
-  auto entity = level.createEntity();
-
-  SDL_Rect const sourceRect = {0, 512, PLAYER_WIDTH, PLAYER_HEIGHT};
-  SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
-  SDL_Rect const collisionRect = {x, y, PLAYER_WIDTH, PLAYER_HEIGHT};
-  SDL_Rect const rightAttackCollisionRect = {x + PLAYER_WIDTH, y, 64, PLAYER_HEIGHT};
-  SDL_Rect const leftAttackCollisionRect = {x - PLAYER_WIDTH / 2, y - PLAYER_HEIGHT / 2, 64,
-                                            PLAYER_HEIGHT};
-
-  level.registry.emplace<TransformComponent>(entity, x, y);
-  auto &transformComponent = level.registry.get<TransformComponent>(entity);
-  transformComponent.velocity.x = 4;
-  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 3);
-  level.registry.emplace<CollisionComponent>(entity, collisionRect);
-  level.registry.emplace<GravityComponent>(entity, GRAVITY_STATE::AIRBORNE);
-  level.registry.emplace<HealthComponent>(entity, 1);
-  level.registry.emplace<AIComponent>(entity);
-  level.registry.emplace<AnimationComponent>(entity);
-  level.registry.emplace<AttackComponent>(entity, 36, 1, rightAttackCollisionRect,
-                                          leftAttackCollisionRect);
-
-  level.objectRenderIds.emplace_back(entity);
-}
-
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   auto entity = level.createEntity();
 
@@ -251,3 +391,38 @@ void SceneCreator::createUI(int x, int y, SceneInfo &level) {
   level.UIRenderIds.emplace_back(entity);
 }
 
+void SceneCreator::createPC(int x, int y, SceneInfo &level) {
+  auto tpl = findTemplateByType("player");
+  if (!tpl.is_null()) {
+    createEntityFromTemplate(tpl, x, y, level);
+    return;
+  }
+}
+
+void SceneCreator::createEnemy(int x, int y, SceneInfo &level) {
+  auto tpl = findTemplateByType("enemy");
+  if (!tpl.is_null()) {
+    createEntityFromTemplate(tpl, x, y, level);
+    return;
+  }
+}
+
+void SceneCreator::createBlock(std::string const &gameObjectType, int x, int y, SceneInfo &level) {
+  // If a JSON block template exists with variant gameObjectType use it.
+  auto tpl = findTemplateByType(gameObjectType);
+  if (!tpl.is_null()) {
+    createEntityFromTemplate(tpl, x, y, level);
+    return;
+  }
+
+  // fallback to existing logic: B1/B2/B3
+  if (gameObjectType == "B1") {
+    createBlock1(x, y, level);
+  } else if (gameObjectType == "B2") {
+    createBlock2(x, y, level);
+  } else if (gameObjectType == "B3") {
+    createBlock3(x, y, level);
+  } else {
+    std::cout << "Scene creator: couldn't create block " << gameObjectType << std::endl;
+  }
+}
