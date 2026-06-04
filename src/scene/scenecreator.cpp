@@ -10,6 +10,7 @@
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
 #include "../include/json/json.hpp"
+#include "../texturemanager.hpp"
 #include "../utilities/constants.hpp"
 #include "SDL_rect.h"
 #include "SDL_render.h"
@@ -88,26 +89,7 @@ static nlohmann::json findTemplateByType(const std::string_view &type,
 // The game loads textures in a fixed order in TextureManager::loadTextures().
 // Adjust mapping if you change load order or add more textures.
 static int textureIndexFromName(const std::string &textureName) {
-  auto basename = textureName;
-  auto pos = basename.find_last_of("/\\");
-  if (pos != std::string::npos) {
-    basename = basename.substr(pos + 1);
-  }
-
-  if (basename == "baleog.png") {
-    return 0; // matches loadTextures order
-  }
-  if (basename == "tiles.png") {
-    return 1;
-  }
-  if (basename == "UI.png") {
-    return 2;
-  }
-  if (basename == "enemy.png") {
-    return 3;
-  }
-  // fallback: 0 if unknown
-  return 0;
+  return TextureManager::getTextureIndex(textureName);
 }
 
 static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, SceneInfo &level) {
