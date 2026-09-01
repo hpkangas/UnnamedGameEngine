@@ -88,8 +88,8 @@ bool collisionRight(SDL_Rect const &player, SDL_Rect const &obj, Velocity const 
   return false;
 }
 
-bool attackCollision(SDL_Rect const &player, SDL_Rect const &obj) {
-  return checkCollision(player, obj);
+bool attackCollision(SDL_Rect const &a, SDL_Rect const &b) {
+  return checkCollision(a, b);
   // Velocity playerVelocity = {0, 0};
   // return collisionDown(player, obj, playerVelocity) || collisionUp(player, obj, playerVelocity)
   // ||

@@ -14,6 +14,7 @@ void AttackSystem::update() {
 
     updateAttackComponents(attackComponent, transformComponent);
 
+    //TODO magic number
     if (attackComponent.attacking && attackComponent.currentAttackFrames == 24) {
       handleAttacks(attackComponent, entity, transformComponent.facingRight);
     }
@@ -22,12 +23,12 @@ void AttackSystem::update() {
 
 void AttackSystem::updateAttackComponents(AttackComponent &attackComponent,
                                           TransformComponent const &transformComponent) const {
-  attackComponent.rightCollisionRect.x = transformComponent.position.x + Constants::PLAYER_WIDTH;
+  attackComponent.rightCollisionRect.x = transformComponent.position.x;
   attackComponent.rightCollisionRect.y = transformComponent.position.y;
 
-  attackComponent.leftCollisionRect.x = transformComponent.position.x - Constants::PLAYER_WIDTH / 2;
+  attackComponent.leftCollisionRect.x = transformComponent.position.x;
   attackComponent.leftCollisionRect.y =
-      transformComponent.position.y - Constants::PLAYER_HEIGHT / 2;
+      transformComponent.position.y;
 }
 
 void AttackSystem::handleAttacks(AttackComponent const &attackComponent,
@@ -49,8 +50,8 @@ void AttackSystem::handleAttacks(AttackComponent const &attackComponent,
 
   else {
     HealthComponent &healthComponent = view.get<HealthComponent>(playerEntity);
-    CollisionComponent const &collisionComponent = view.get<CollisionComponent>(playerEntity);
-    attack(attackComponent, facingRight, healthComponent, collisionComponent);
+    CollisionComponent const &playerCollisionComponent = view.get<CollisionComponent>(playerEntity);
+    attack(attackComponent, facingRight, healthComponent, playerCollisionComponent);
   }
 }
 

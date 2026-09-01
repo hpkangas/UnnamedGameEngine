@@ -8,8 +8,8 @@ struct AttackComponent {
                            SDL_Rect leftCollisionRect)
       : attackFrames(attackFrame), damage(damage), rightCollisionRect(rightCollisionRect),
         leftCollisionRect(leftCollisionRect) {}
-  int attackFrames;
-  int damage;
+  int attackFrames = 0;
+  int damage = 0;
   int currentAttackFrames = 0;
   SDL_Rect rightCollisionRect = {0, 0, 0, 0};
   SDL_Rect leftCollisionRect = {0, 0, 0, 0};

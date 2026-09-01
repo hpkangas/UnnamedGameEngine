@@ -147,15 +147,14 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
     hc.currentHealth = def.value("health", hc.maxHealth);
   }
 
-  // Attack (player/enemy): emulate existing attack collision setup
+//TODO should come fron json
   if (def.contains("attack")) {
-    // compute attack collision rectangles similar to SceneCreator::createPC / createEnemy
     const int px = x;
     const int py = y;
-    const SDL_Rect rightAttackCollisionRect = {px + Constants::PLAYER_WIDTH, py, 64,
+    const SDL_Rect rightAttackCollisionRect = {px + Constants::PLAYER_WIDTH, py, Constants::PLAYER_WIDTH,
                                                Constants::PLAYER_HEIGHT};
-    const SDL_Rect leftAttackCollisionRect = {px - Constants::PLAYER_WIDTH / 2,
-                                              py - Constants::PLAYER_HEIGHT / 2, 64,
+    const SDL_Rect leftAttackCollisionRect = {px - Constants::PLAYER_WIDTH,
+                                              py - Constants::PLAYER_HEIGHT, Constants::PLAYER_WIDTH,
                                               Constants::PLAYER_HEIGHT};
     int attackFrames = def.value("attackFrames", 36);
     int damage = def.value("damage", 1);
