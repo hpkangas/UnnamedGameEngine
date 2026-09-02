@@ -151,15 +151,12 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
   if (def.contains("attack")) {
     const int px = x;
     const int py = y;
-    const SDL_Rect rightAttackCollisionRect = {px + Constants::PLAYER_WIDTH, py, Constants::PLAYER_WIDTH,
+    const SDL_Rect collisionRect = {px + Constants::PLAYER_WIDTH, py, Constants::PLAYER_WIDTH,
                                                Constants::PLAYER_HEIGHT};
-    const SDL_Rect leftAttackCollisionRect = {px - Constants::PLAYER_WIDTH,
-                                              py - Constants::PLAYER_HEIGHT, Constants::PLAYER_WIDTH,
-                                              Constants::PLAYER_HEIGHT};
     int attackFrames = def.value("attackFrames", 36);
+    int attackHitDetectionFrame = def.value("attackFrames", 24);
     int damage = def.value("damage", 1);
-    level.registry.emplace<AttackComponent>(entity, attackFrames, damage, rightAttackCollisionRect,
-                                            leftAttackCollisionRect);
+    level.registry.emplace<AttackComponent>(entity, attackFrames, attackHitDetectionFrame, damage, collisionRect);
   }
 
   // Gravity

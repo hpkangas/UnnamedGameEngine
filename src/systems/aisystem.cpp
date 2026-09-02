@@ -37,11 +37,10 @@ void AISystem::update(SceneInfo &currentLevel) const {
 
       if (facingRight) {
         velx = 4;
-        attackRect = &attackComponent.rightCollisionRect;
       } else {
         velx = -4;
-        attackRect = &attackComponent.leftCollisionRect;
       }
+      attackRect = &attackComponent.collisionRect;
 
       if (collisionComponent.collisionTileRight == TILE::SOLID ||
           collisionComponent.collisionTileDown == TILE::NONE) {

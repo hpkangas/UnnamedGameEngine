@@ -10,9 +10,8 @@ struct AttackSystem {
   void update();
   void updateAttackComponents(AttackComponent &attackComponent,
                               TransformComponent const &transformComponent) const;
-  void handleAttacks(AttackComponent const &attackComponent, entt::entity attackerEntity,
-                     bool facingRight);
-  void attack(AttackComponent const &attackComponent, bool facing, HealthComponent &healthComponent,
+  void handleAttacks(AttackComponent const &attackComponent, entt::entity attackerEntity);
+  void attack(AttackComponent const &attackComponent, HealthComponent &healthComponent,
               CollisionComponent const &collisionComponent) const;
   SceneInfo *currentLevel = nullptr;
 };
