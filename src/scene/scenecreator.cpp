@@ -2,6 +2,7 @@
 #include "../components/aicomponent.hpp"
 #include "../components/animationcomponent.hpp"
 #include "../components/attackcomponent.hpp"
+#include "../components/shootcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/controlcomponent.hpp"
 #include "../components/gravitycomponent.hpp"
@@ -157,6 +158,13 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
     int attackHitDetectionFrame = def.value("attackFrames", 24);
     int damage = def.value("damage", 1);
     level.registry.emplace<AttackComponent>(entity, attackFrames, attackHitDetectionFrame, damage, collisionRect);
+  }
+
+  if(def.contains("shoot")) {
+    int attackFrames = def.value("attackFrames", 36);
+    int launchFrame = def.value("launchFrame", 36);
+    int damage = def.value("damage", 1);
+    level.registry.emplace<ShootComponent>(entity, attackFrames, launchFrame, damage);
   }
 
   // Gravity

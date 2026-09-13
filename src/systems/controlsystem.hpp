@@ -5,6 +5,7 @@
 #include "../components/controlcomponent.hpp"
 #include "../components/healthcomponent.hpp"
 #include "../components/transformcomponent.hpp"
+#include "../components/shootcomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 #include "transformsystem.hpp"
 
@@ -14,7 +15,8 @@ class ControlSystem {
                              CollisionComponent const &collisionComponent,
                              TransformComponent const &transformComponent,
                              AttackComponent &attackComponent,
-                             HealthComponent const &healthComponent);
+                             HealthComponent const &healthComponent,
+                             ShootComponent &shootComponent);
   void takeInput();
   void resetInput();
   void handleInput(TransformComponent &transformComponent,
@@ -30,7 +32,9 @@ class ControlSystem {
   bool inputJump = false;
   bool canJump = true;
   bool inputAttack = false;
-  bool canAttack = true;
+  bool inputShoot = false;
+  bool canAttack = false;
+  bool canShoot = false;
 
 public:
   SceneInfo *currentLevel = nullptr;

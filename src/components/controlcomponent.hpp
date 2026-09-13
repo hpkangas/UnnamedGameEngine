@@ -7,7 +7,8 @@ enum class CONTROL_STATE {
   AIRBORNE = 2,
   FALLING = 3,
   CLIMBING = 4,
-  ATTACKING = 5
+  ATTACKING = 5,
+  SHOOTING = 6
 };
 struct ControlComponent {
   explicit ControlComponent(CONTROL_STATE state) : controlState(state) {}

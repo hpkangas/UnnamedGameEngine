@@ -15,18 +15,19 @@ using namespace Constants;
 void ControlSystem::update(entt::entity &selectedPlayer) {
   auto &reg = currentLevel->registry;
 
-  auto view = reg.view<ControlComponent, TransformComponent, CollisionComponent, AttackComponent, HealthComponent>();
+  auto view = reg.view<ControlComponent, TransformComponent, CollisionComponent, AttackComponent, HealthComponent, ShootComponent>();
   for (auto entity : view) {
     TransformComponent &transformComponent = view.get<TransformComponent>(entity);
     ControlComponent &controlComponent = view.get<ControlComponent>(entity);
     CollisionComponent const &collisionComponent = view.get<CollisionComponent>(entity);
     AttackComponent &attackComponent = view.get<AttackComponent>(entity);
     HealthComponent const &healthComponent = view.get<HealthComponent>(entity);
+    ShootComponent &shootComponent = view.get<ShootComponent>(entity);
 
     resetInput();
 
     determineControlState(controlComponent, collisionComponent, transformComponent, attackComponent,
-                          healthComponent);
+                          healthComponent,shootComponent);
 
     if (entity == selectedPlayer) {
       takeInput();
@@ -39,7 +40,8 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
                                           CollisionComponent const &collisionComponent,
                                           TransformComponent const &transformComponent,
                                           AttackComponent &attackComponent,
-                                          HealthComponent const &healthComponent) {
+                                          HealthComponent const &healthComponent,
+                                          ShootComponent &shootComponent) {
 
   if (healthComponent.healthState == HEALTH_STATE::DEAD) {
     controlComponent.controlState = CONTROL_STATE::DEAD;
@@ -70,6 +72,20 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
       attackComponent.attacking = true;
       attackComponent.currentAttackFrames++;
       break;
+    }
+
+    if (controlComponent.controlState == CONTROL_STATE::SHOOTING) {
+      if (shootComponent.currentShootingFrames == shootComponent.shootingFrames - 1) {
+        controlComponent.controlState = CONTROL_STATE::NORMAL;
+        canShoot = true;
+        shootComponent.currentShootingFrames = 0;
+        shootComponent.shooting = false;
+
+      } else if (controlComponent.controlState == CONTROL_STATE::SHOOTING) {
+        shootComponent.shooting = true;
+        shootComponent.currentShootingFrames++;
+        break;
+      }
     }
 
     break;
@@ -128,6 +144,12 @@ void ControlSystem::takeInput() {
   if (!keyboardStateArray[SDL_SCANCODE_A]) {
     canAttack = true;
   }
+  if(keyboardStateArray[SDL_SCANCODE_S]) {
+    inputShoot = true;
+  }
+  if(!keyboardStateArray[SDL_SCANCODE_S]) {
+    canShoot = true;
+  }
   if (keyboardStateArray[SDL_SCANCODE_D]) {
     inputJump = true;
   }
@@ -155,8 +177,8 @@ void ControlSystem::handleInput(TransformComponent &transformComponent,
     transformComponent.position.x = 0;
     transformComponent.position.y = 0;
     controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-    Camera::focusArea = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
-    Camera::offset = {0, -200};
+    // Camera::focusArea = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
+    // Camera::offset = {0, -200};
     return;
   }
 
@@ -216,6 +238,13 @@ void ControlSystem::handleInput(TransformComponent &transformComponent,
       noInput = false;
       controlComponent.controlState = CONTROL_STATE::ATTACKING;
       canAttack = false;
+    }
+
+    if (inputShoot && canShoot) {
+      noInput = false;
+      controlComponent.controlState = CONTROL_STATE::SHOOTING;
+      std::cout << "shooting \n";
+      canShoot = false;
     }
 
     if (noInput) {
@@ -335,6 +364,7 @@ void ControlSystem::resetInput() {
   inputU = false;
   inputJump = false;
   inputAttack = false;
+  inputShoot = false;
   inputResetCharacter = false;
 }
 
