@@ -75,15 +75,15 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
     }
 
     if (controlComponent.controlState == CONTROL_STATE::SHOOTING) {
-      if (shootComponent.currentShootingFrames == shootComponent.shootingFrames - 1) {
+      if (shootComponent.currentShootingFrame == shootComponent.shootingFrames - 1) {
         controlComponent.controlState = CONTROL_STATE::NORMAL;
         canShoot = true;
-        shootComponent.currentShootingFrames = 0;
+        shootComponent.currentShootingFrame = 0;
         shootComponent.shooting = false;
 
       } else if (controlComponent.controlState == CONTROL_STATE::SHOOTING) {
         shootComponent.shooting = true;
-        shootComponent.currentShootingFrames++;
+        shootComponent.currentShootingFrame++;
         break;
       }
     }

@@ -160,7 +160,7 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
     level.registry.emplace<AttackComponent>(entity, attackFrames, attackHitDetectionFrame, damage, collisionRect);
   }
 
-  if(def.contains("shoot")) {
+  if (def.contains("shoot")) {
     int attackFrames = def.value("attackFrames", 36);
     int launchFrame = def.value("launchFrame", 36);
     int damage = def.value("damage", 1);
