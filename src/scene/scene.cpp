@@ -34,6 +34,7 @@ bool Scene::init() {
     transformSystem.currentLevel = &currentLevel;
     renderSystem.currentLevel = &currentLevel;
     attackSystem.currentLevel = &currentLevel;
+    shootSystem.currentLevel = &currentLevel;
     healthSystem.currentLevel = &currentLevel;
 
     Scene::isRunning = true;
@@ -55,6 +56,7 @@ void Scene::update() {
   transformSystem.updateAll();
 
   attackSystem.update();
+  shootSystem.update();
   healthSystem.update();
 
   animationSystem.update();

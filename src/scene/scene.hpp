@@ -12,6 +12,7 @@
 #include "../systems/gravitysystem.hpp"
 #include "../systems/healthsystem.hpp"
 #include "../systems/rendersystem.hpp"
+#include "../systems/shootsystem.hpp"
 #include "../systems/transformsystem.hpp"
 
 struct Scene {
@@ -36,6 +37,7 @@ struct Scene {
   GravitySystem gravitySystem;
   AISystem AISystem;
   AttackSystem attackSystem;
+  ShootSystem shootSystem;
   HealthSystem healthSystem;
 
   void updateCamera(const TransformComponent &transformComponent) const;
