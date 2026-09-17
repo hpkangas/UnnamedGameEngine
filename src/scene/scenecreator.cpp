@@ -119,13 +119,24 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
     if (def.contains("animation")) {
       auto &ac = level.registry.emplace<AnimationComponent>(entity);
       auto key = def["animation"];
-      ac.ATTACKING_FRAME = key["ATTACKING_FRAME"];
-      ac.CLIMBING_FRAME = key["CLIMBING_FRAME"];
-      ac.DYING_FRAME = key["DYING_FRAME"];
-      ac.INAIR_FRAME = key["INAIR_FRAME"];
-      ac.PUSH_FRAME = key["PUSH_FRAME"];
-      ac.STILL_FRAME = key["STILL_FRAME"];
-      ac.WALK_FRAME = key["WALK_FRAME"];
+      ac.walkingFrame.spriteSheetX = key["WALK_FRAME"]["spriteSheetX"];
+      ac.walkingFrame.maxFrames = key["WALK_FRAME"]["maxFrames"];
+      ac.attackingFrame.spriteSheetX = key["ATTACKING_FRAME"]["spriteSheetX"];
+      ac.attackingFrame.maxFrames = key["ATTACKING_FRAME"]["maxFrames"];
+      ac.climbingFrame.spriteSheetX = key["CLIMBING_FRAME"]["spriteSheetX"];
+      ac.climbingFrame.maxFrames = key["CLIMBING_FRAME"]["maxFrames"];
+      ac.dyingFrame.spriteSheetX = key["DYING_FRAME"]["spriteSheetX"];
+      ac.dyingFrame.maxFrames = key["DYING_FRAME"]["maxFrames"];
+      ac.inAirFrame.spriteSheetX = key["INAIR_FRAME"]["spriteSheetX"];
+      ac.inAirFrame.maxFrames = key["INAIR_FRAME"]["maxFrames"];
+      ac.pushingFrame.spriteSheetX = key["PUSH_FRAME"]["spriteSheetX"];
+      ac.pushingFrame.maxFrames = key["PUSH_FRAME"]["maxFrames"];
+      ac.stillFrame.spriteSheetX = key["STILL_FRAME"]["spriteSheetX"];
+      ac.stillFrame.maxFrames = key["STILL_FRAME"]["maxFrames"];
+      ac.walkingFrame.spriteSheetX = key["WALK_FRAME"]["spriteSheetX"];
+      ac.walkingFrame.maxFrames = key["WALK_FRAME"]["maxFrames"];
+      ac.shootingFrame.spriteSheetX = key["SHOOTING_FRAME"]["spriteSheetX"];
+      ac.shootingFrame.maxFrames = key["SHOOTING_FRAME"]["maxFrames"];
     }
 
     // Decide render list placement by type or optional "renderLayer" in JSON

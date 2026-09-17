@@ -1,6 +1,11 @@
 #ifndef ANIMATIONCOMPONENT_HPP
 #define ANIMATIONCOMPONENT_HPP
 
+struct AnimationFrame {
+  int spriteSheetX = 0;
+  int maxFrames = 0;
+};
+
 enum class ANIMATION_STATE {
   STILL = 0,
   WALKING = 1,
@@ -8,7 +13,8 @@ enum class ANIMATION_STATE {
   AIRBORNE = 3,
   CLIMBING = 4,
   ATTACKING = 5,
-  DEATH = 6
+  SHOOTING = 6,
+  DEATH = 7
 };
 
 struct AnimationComponent {
@@ -16,15 +22,15 @@ struct AnimationComponent {
   ANIMATION_STATE previousAnimationState = ANIMATION_STATE::STILL;
 
   int animationFrame = 0;
-  const int WALKING_ANIMATION_FRAMES = 8;
 
-  int STILL_FRAME = 0;
-  int WALK_FRAME = 0;
-  int PUSH_FRAME = 0;
-  int INAIR_FRAME = 0;
-  int CLIMBING_FRAME = 0;
-  int ATTACKING_FRAME = 0;
-  int DYING_FRAME = 0;
+  AnimationFrame stillFrame {0,0};
+  AnimationFrame walkingFrame {0,0};
+  AnimationFrame pushingFrame {0,0};
+  AnimationFrame inAirFrame {0,0};
+  AnimationFrame climbingFrame {0,0};
+  AnimationFrame attackingFrame {0,0};
+  AnimationFrame shootingFrame {0,0};
+  AnimationFrame dyingFrame {0,0};
 };
 
 #endif
