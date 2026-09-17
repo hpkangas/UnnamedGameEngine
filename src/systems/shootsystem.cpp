@@ -23,7 +23,15 @@ void ShootSystem::update() {
 
 void ShootSystem::updateShootComponents(ShootComponent &shootComponent,
                                         TransformComponent const &transformComponent) const {
-  shootComponent.launchStartPosition = transformComponent.position;
+  if (transformComponent.facingRight) {
+    shootComponent.launchVelocity = {5.0f, transformComponent.velocity.y};
+    shootComponent.launchStartPosition = {transformComponent.position.x,
+                                          transformComponent.position.y};
+  } else {
+    shootComponent.launchStartPosition = {transformComponent.position.x,
+                                          transformComponent.position.y};
+    shootComponent.launchVelocity = {-5.0f, transformComponent.velocity.y};
+  }
 }
 
 void ShootSystem::createProjectile(ShootComponent const &shootComponent) const {
@@ -31,16 +39,16 @@ void ShootSystem::createProjectile(ShootComponent const &shootComponent) const {
   auto &reg = currentLevel->registry;
 
   reg.emplace<TransformComponent>(entity, shootComponent.launchStartPosition.x,
-                                  shootComponent.launchStartPosition.y, 12,
+                                  shootComponent.launchStartPosition.y, shootComponent.launchVelocity.x,
                                   shootComponent.launchVelocity.y);
   reg.emplace<CollisionComponent>(entity, SDL_Rect{shootComponent.launchStartPosition.x,
-                                                   shootComponent.launchStartPosition.y, 16, 16});
+                                                   shootComponent.launchStartPosition.y, 128, 128});
   reg.emplace<ProjectileComponent>(
       entity, ProjectileComponent{shootComponent.damage, shootComponent.shooterEntity});
-  reg.emplace<RenderComponent>(
-      entity, SDL_Rect{0, 0, 16, 16},
-      SDL_Rect{shootComponent.launchStartPosition.x, shootComponent.launchStartPosition.y, 16, 16},
-      SDL_FLIP_NONE, 1);
+  reg.emplace<RenderComponent>(entity, SDL_Rect{0, 0, 128, 128},
+                               SDL_Rect{shootComponent.launchStartPosition.x,
+                                        shootComponent.launchStartPosition.y, 128, 128},
+                               SDL_FLIP_NONE, 2);
   currentLevel->objectRenderIds.emplace_back(entity);
   std::cout << "Creating projectile at position (" << shootComponent.launchStartPosition.x << ", "
             << shootComponent.launchStartPosition.y << ") with velocity (" << 5 << ", "

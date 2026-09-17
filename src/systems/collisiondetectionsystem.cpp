@@ -2,16 +2,25 @@
 #include "../components/collisioncomponent.hpp"
 #include "../components/gravitycomponent.hpp"
 #include "../components/transformcomponent.hpp"
+#include "../components/projectilecomponent.hpp"
 #include "../utilities/physics.hpp"
 #include <cstdio>
 
 void CollisionDetectionSystem::update() {
   auto &reg = currentLevel->registry;
+  //pitääkö olla erillinen view jossa on projectile component? koska projectile ei ole gravity component
   auto view = reg.view<GravityComponent, CollisionComponent, TransformComponent>();
+  auto view2 = reg.view<CollisionComponent, TransformComponent, ProjectileComponent>();
   for (auto entity : view) {
     CollisionComponent &cc = view.get<CollisionComponent>(entity);
     resetCollisions(cc);
     updateCollisionRect(cc, view.get<TransformComponent>(entity));
+    checkCollision(entity);
+  }
+  for (auto entity : view2) {
+    CollisionComponent &cc = view2.get<CollisionComponent>(entity);
+    resetCollisions(cc);
+    updateCollisionRect(cc, view2.get<TransformComponent>(entity));
     checkCollision(entity);
   }
 }

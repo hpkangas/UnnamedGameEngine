@@ -1,5 +1,6 @@
 #include "collisionsystem.hpp"
 #include "transformsystem.hpp"
+#include "../components/projectilecomponent.hpp"
 #include <cstdio>
 
 void CollisionSystem::update() {
@@ -12,6 +13,16 @@ void CollisionSystem::update() {
 
     handleDownTileCollision(tc, cc, gc);
     handleUpTileCollision(tc, cc, gc);
+
+    handleHorizontalBlockCollision(tc, cc);
+  }
+
+  auto view2 = reg.view<CollisionComponent, TransformComponent, ProjectileComponent>();
+
+   for (auto entity : view2) {
+    CollisionComponent const &cc = view2.get<CollisionComponent>(entity);
+    TransformComponent &tc = view2.get<TransformComponent>(entity);
+    ProjectileComponent const &pc = view2.get<ProjectileComponent>(entity);
 
     handleHorizontalBlockCollision(tc, cc);
   }
