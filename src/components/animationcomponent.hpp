@@ -23,14 +23,14 @@ struct AnimationComponent {
 
   int animationFrame = 0;
 
-  AnimationFrame stillFrame {0,0};
-  AnimationFrame walkingFrame {0,0};
-  AnimationFrame pushingFrame {0,0};
-  AnimationFrame inAirFrame {0,0};
-  AnimationFrame climbingFrame {0,0};
-  AnimationFrame attackingFrame {0,0};
-  AnimationFrame shootingFrame {0,0};
-  AnimationFrame dyingFrame {0,0};
+  AnimationFrame still {0,0};
+  AnimationFrame walking {0,0};
+  AnimationFrame pushing {0,0};
+  AnimationFrame airborne {0,0};
+  AnimationFrame climbing {0,0};
+  AnimationFrame attacking {0,0};
+  AnimationFrame shooting {0,0};
+  AnimationFrame dying {0,0};
 };
 
 #endif

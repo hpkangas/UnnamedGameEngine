@@ -118,25 +118,51 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
     level.registry.emplace<RenderComponent>(entity, src, dst, SDL_FLIP_NONE, texIndex);
     if (def.contains("animation")) {
       auto &ac = level.registry.emplace<AnimationComponent>(entity);
-      auto key = def["animation"];
-      ac.walkingFrame.spriteSheetX = key["WALK_FRAME"]["spriteSheetX"];
-      ac.walkingFrame.maxFrames = key["WALK_FRAME"]["maxFrames"];
-      ac.attackingFrame.spriteSheetX = key["ATTACKING_FRAME"]["spriteSheetX"];
-      ac.attackingFrame.maxFrames = key["ATTACKING_FRAME"]["maxFrames"];
-      ac.climbingFrame.spriteSheetX = key["CLIMBING_FRAME"]["spriteSheetX"];
-      ac.climbingFrame.maxFrames = key["CLIMBING_FRAME"]["maxFrames"];
-      ac.dyingFrame.spriteSheetX = key["DYING_FRAME"]["spriteSheetX"];
-      ac.dyingFrame.maxFrames = key["DYING_FRAME"]["maxFrames"];
-      ac.inAirFrame.spriteSheetX = key["INAIR_FRAME"]["spriteSheetX"];
-      ac.inAirFrame.maxFrames = key["INAIR_FRAME"]["maxFrames"];
-      ac.pushingFrame.spriteSheetX = key["PUSH_FRAME"]["spriteSheetX"];
-      ac.pushingFrame.maxFrames = key["PUSH_FRAME"]["maxFrames"];
-      ac.stillFrame.spriteSheetX = key["STILL_FRAME"]["spriteSheetX"];
-      ac.stillFrame.maxFrames = key["STILL_FRAME"]["maxFrames"];
-      ac.walkingFrame.spriteSheetX = key["WALK_FRAME"]["spriteSheetX"];
-      ac.walkingFrame.maxFrames = key["WALK_FRAME"]["maxFrames"];
-      ac.shootingFrame.spriteSheetX = key["SHOOTING_FRAME"]["spriteSheetX"];
-      ac.shootingFrame.maxFrames = key["SHOOTING_FRAME"]["maxFrames"];
+      auto animationKey = def["animation"];
+
+      if(animationKey.contains("WALK")) {
+        ac.walking.spriteSheetX = animationKey["WALK"]["spriteSheetX"];
+        ac.walking.maxFrames = animationKey["WALK"]["maxFrames"];
+      }
+      if(animationKey.contains("ATTACKING")) {
+        ac.attacking.spriteSheetX = animationKey["ATTACKING"]["spriteSheetX"];
+        ac.attacking.maxFrames = animationKey["ATTACKING"]["maxFrames"];
+      }
+
+      if(animationKey.contains("CLIMBING")) {
+        ac.climbing.spriteSheetX = animationKey["CLIMBING"]["spriteSheetX"];
+        ac.climbing.maxFrames = animationKey["CLIMBING"]["maxFrames"];
+      }
+
+      if(animationKey.contains("DYING")) {
+        ac.dying.spriteSheetX = animationKey["DYING"]["spriteSheetX"];
+        ac.dying.maxFrames = animationKey["DYING"]["maxFrames"];
+      }
+
+      if(animationKey.contains("AIRBORNE")) {
+        ac.airborne.spriteSheetX = animationKey["AIRBORNE"]["spriteSheetX"];
+        ac.airborne.maxFrames = animationKey["AIRBORNE"]["maxFrames"];
+      }
+
+      if(animationKey.contains("PUSH")) {
+        ac.pushing.spriteSheetX = animationKey["PUSH"]["spriteSheetX"];
+        ac.pushing.maxFrames = animationKey["PUSH"]["maxFrames"];
+      }
+
+      if(animationKey.contains("STILL")) {
+        ac.still.spriteSheetX = animationKey["STILL"]["spriteSheetX"];
+        ac.still.maxFrames = animationKey["STILL"]["maxFrames"];
+      }
+
+      if(animationKey.contains("WALK")) {
+        ac.walking.spriteSheetX = animationKey["WALK"]["spriteSheetX"];
+        ac.walking.maxFrames = animationKey["WALK"]["maxFrames"];
+      }
+
+      if(animationKey.contains("SHOOTING")) {
+        ac.shooting.spriteSheetX = animationKey["SHOOTING"]["spriteSheetX"];
+        ac.shooting.maxFrames = animationKey["SHOOTING"]["maxFrames"];
+      }
     }
 
     // Decide render list placement by type or optional "renderLayer" in JSON
