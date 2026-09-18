@@ -121,46 +121,46 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
       auto animationKey = def["animation"];
 
       if(animationKey.contains("WALK")) {
-        ac.walking.spriteSheetX = animationKey["WALK"]["spriteSheetX"];
+        ac.walking.spriteSheetY = animationKey["WALK"]["spriteSheetY"];
         ac.walking.maxFrames = animationKey["WALK"]["maxFrames"];
       }
       if(animationKey.contains("ATTACKING")) {
-        ac.attacking.spriteSheetX = animationKey["ATTACKING"]["spriteSheetX"];
+        ac.attacking.spriteSheetY = animationKey["ATTACKING"]["spriteSheetY"];
         ac.attacking.maxFrames = animationKey["ATTACKING"]["maxFrames"];
       }
 
       if(animationKey.contains("CLIMBING")) {
-        ac.climbing.spriteSheetX = animationKey["CLIMBING"]["spriteSheetX"];
+        ac.climbing.spriteSheetY = animationKey["CLIMBING"]["spriteSheetY"];
         ac.climbing.maxFrames = animationKey["CLIMBING"]["maxFrames"];
       }
 
       if(animationKey.contains("DYING")) {
-        ac.dying.spriteSheetX = animationKey["DYING"]["spriteSheetX"];
+        ac.dying.spriteSheetY = animationKey["DYING"]["spriteSheetY"];
         ac.dying.maxFrames = animationKey["DYING"]["maxFrames"];
       }
 
       if(animationKey.contains("AIRBORNE")) {
-        ac.airborne.spriteSheetX = animationKey["AIRBORNE"]["spriteSheetX"];
+        ac.airborne.spriteSheetY = animationKey["AIRBORNE"]["spriteSheetY"];
         ac.airborne.maxFrames = animationKey["AIRBORNE"]["maxFrames"];
       }
 
       if(animationKey.contains("PUSH")) {
-        ac.pushing.spriteSheetX = animationKey["PUSH"]["spriteSheetX"];
+        ac.pushing.spriteSheetY = animationKey["PUSH"]["spriteSheetY"];
         ac.pushing.maxFrames = animationKey["PUSH"]["maxFrames"];
       }
 
       if(animationKey.contains("STILL")) {
-        ac.still.spriteSheetX = animationKey["STILL"]["spriteSheetX"];
+        ac.still.spriteSheetY = animationKey["STILL"]["spriteSheetY"];
         ac.still.maxFrames = animationKey["STILL"]["maxFrames"];
       }
 
       if(animationKey.contains("WALK")) {
-        ac.walking.spriteSheetX = animationKey["WALK"]["spriteSheetX"];
+        ac.walking.spriteSheetY = animationKey["WALK"]["spriteSheetY"];
         ac.walking.maxFrames = animationKey["WALK"]["maxFrames"];
       }
 
       if(animationKey.contains("SHOOTING")) {
-        ac.shooting.spriteSheetX = animationKey["SHOOTING"]["spriteSheetX"];
+        ac.shooting.spriteSheetY = animationKey["SHOOTING"]["spriteSheetY"];
         ac.shooting.maxFrames = animationKey["SHOOTING"]["maxFrames"];
       }
     }
@@ -198,11 +198,11 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
   }
 
   if (def.contains("shoot")) {
-    int attackFrames = def.value("attackFrames", 36);
+    int shootFrames = def.value("shootFrames", 36);
     int launchFrame = def.value("launchFrame", 24);
     int damage = def.value("damage", 1);
     entt::entity shooterEntity = entity;
-    level.registry.emplace<ShootComponent>(entity, attackFrames, launchFrame, damage, shooterEntity);
+    level.registry.emplace<ShootComponent>(entity, shootFrames, launchFrame, damage, shooterEntity);
   }
 
   // Gravity

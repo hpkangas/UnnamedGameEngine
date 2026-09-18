@@ -2,7 +2,7 @@
 #define ANIMATIONCOMPONENT_HPP
 
 struct AnimationFrame {
-  int spriteSheetX = 0;
+  int spriteSheetY = 0;
   int maxFrames = 0;
 };
 

@@ -132,12 +132,12 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
   switch (animationComponent.animationState) {
   case ANIMATION_STATE::STILL:
     animationComponent.animationFrame = 0;
-    playFrame(renderComponent, 0, animationComponent.still.spriteSheetX, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.still.spriteSheetY, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame);
     break;
 
   case ANIMATION_STATE::WALKING:
-    playFrame(renderComponent, 0, animationComponent.walking.spriteSheetX, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.walking.spriteSheetY, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.walking.maxFrames);
     animationComponent.animationFrame++;
     if (animationComponent.animationFrame / animationComponent.walking.maxFrames > animationComponent.walking.maxFrames - 1) {
@@ -146,7 +146,7 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     break;
 
   case ANIMATION_STATE::PUSHING:
-    playFrame(renderComponent, 0, animationComponent.pushing.spriteSheetX, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.pushing.spriteSheetY, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.pushing.maxFrames);
     animationComponent.animationFrame++;
     if (animationComponent.animationFrame / animationComponent.pushing.maxFrames > animationComponent.pushing.maxFrames - 1) {
@@ -155,7 +155,7 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     break;
 
   case ANIMATION_STATE::AIRBORNE:
-    playFrame(renderComponent, 0, animationComponent.airborne.spriteSheetX, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.airborne.spriteSheetY, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.airborne.maxFrames);
     animationComponent.animationFrame++;
     //TODO fix magic number
@@ -165,7 +165,7 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     break;
 
   case ANIMATION_STATE::CLIMBING:
-    playFrame(renderComponent, 0, animationComponent.climbing.spriteSheetX, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.climbing.spriteSheetY, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.climbing.maxFrames);
     if (transformComponent.velocity.y < 0) {
       animationComponent.animationFrame++;
@@ -182,16 +182,16 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     break;
 
   case ANIMATION_STATE::ATTACKING:
-    playFrame(renderComponent, 0, animationComponent.attacking.spriteSheetX, PLAYER_WIDTH, PLAYER_HEIGHT,
-              animationComponent.animationFrame / 6);
+    playFrame(renderComponent, 0, animationComponent.attacking.spriteSheetY, PLAYER_WIDTH, PLAYER_HEIGHT,
+              animationComponent.animationFrame / animationComponent.attacking.maxFrames);
     animationComponent.animationFrame++;
-    if (animationComponent.animationFrame / 6 > 5) {
+    if (animationComponent.animationFrame / animationComponent.attacking.maxFrames > animationComponent.attacking.maxFrames - 1) {
       animationComponent.animationFrame = 0;
     }
     break;
 
   case ANIMATION_STATE::SHOOTING:
-    playFrame(renderComponent, 0, animationComponent.shooting.spriteSheetX, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.shooting.spriteSheetY, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.shooting.maxFrames);
     animationComponent.animationFrame++;
     if (animationComponent.animationFrame / animationComponent.shooting.maxFrames > animationComponent.shooting.maxFrames - 1) {
@@ -200,7 +200,7 @@ void AnimationSystem::animate(RenderComponent &renderComponent,
     break;
 
   case ANIMATION_STATE::DEATH:
-    playFrame(renderComponent, 0, animationComponent.dying.spriteSheetX, PLAYER_WIDTH, PLAYER_HEIGHT,
+    playFrame(renderComponent, 0, animationComponent.dying.spriteSheetY, PLAYER_WIDTH, PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.dying.maxFrames);
 
     if (animationComponent.animationFrame / animationComponent.dying.maxFrames < animationComponent.dying.maxFrames / 4) {
