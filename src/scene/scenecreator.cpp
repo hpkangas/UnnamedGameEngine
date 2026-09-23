@@ -198,8 +198,8 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
   }
 
   if (def.contains("shoot")) {
-    int shootFrames = def.value("shootFrames", 36);
-    int launchFrame = def.value("launchFrame", 24);
+    int shootFrames = def.value("shootFrames", 64);
+    int launchFrame = def.value("launchFrame", 56);
     int damage = def.value("damage", 1);
     entt::entity shooterEntity = entity;
     level.registry.emplace<ShootComponent>(entity, shootFrames, launchFrame, damage, shooterEntity);

@@ -13,7 +13,6 @@ void AttackSystem::update() {
 
     updateAttackComponents(attackComponent, transformComponent);
 
-    //TODO magic number
     if (attackComponent.attacking && attackComponent.currentAttackFrames == attackComponent.attackHitDetectionFrame) {
       handleAttacks(attackComponent, entity);
     }
