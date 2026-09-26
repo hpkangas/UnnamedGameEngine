@@ -11,11 +11,11 @@ void CollisionDetectionSystem::update() {
   auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
   for (auto entity : view) {
     CollisionComponent &cc = view.get<CollisionComponent>(entity);
-    PositionComponent const &tc = view.get<PositionComponent>(entity);
+    PositionComponent const &pc = view.get<PositionComponent>(entity);
     VelocityComponent const &vc = view.get<VelocityComponent>(entity);
     resetCollisions(cc);
-    updateCollisionRect(cc, tc);
-    checkTileCollision(entity);
+    updateCollisionRect(cc, pc);
+    checkTileCollision(cc, pc, vc);
 
     if (reg.any_of<ProjectileComponent>(entity)) {
       ProjectileComponent &pc = reg.get<ProjectileComponent>(entity);
@@ -25,43 +25,42 @@ void CollisionDetectionSystem::update() {
   }
 }
 
-void CollisionDetectionSystem::checkTileCollision(entt::entity entity) const {
+void CollisionDetectionSystem::checkTileCollision(CollisionComponent &cc, PositionComponent const &position, VelocityComponent const &velocity) const {
   auto &reg = currentLevel->registry;
-  CollisionComponent &object = reg.get<CollisionComponent>(entity);
-  const Velocity velocity = reg.get<VelocityComponent>(entity).velocity;
+  const Velocity &vel = velocity.velocity;
 
   TileGrid const &grid = currentLevel->staticTileGrid;
   constexpr int pad = 32;
-  const int minTx = (object.collisionRect.x - pad) / 128;
-  const int maxTx = (object.collisionRect.x + object.collisionRect.w + pad) / 128;
-  const int minTy = (object.collisionRect.y - pad) / 128;
-  const int maxTy = (object.collisionRect.y + object.collisionRect.h + pad) / 128;
+  const int minTx = (cc.collisionRect.x - pad) / 128;
+  const int maxTx = (cc.collisionRect.x + cc.collisionRect.w + pad) / 128;
+  const int minTy = (cc.collisionRect.y - pad) / 128;
+  const int maxTy = (cc.collisionRect.y + cc.collisionRect.h + pad) / 128;
 
   for (int ty = minTy; ty <= maxTy; ++ty) {
     for (int tx = minTx; tx <= maxTx; ++tx) {
-      entt::entity entityAtCoordinate = grid.at(tx, ty);
-      if (entityAtCoordinate == entt::null) {
+      entt::entity tileAtCoordinate = grid.at(tx, ty);
+      if (tileAtCoordinate == entt::null) {
         continue;
       }
 
-      CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(entityAtCoordinate);
-      TileComponent const *tileTile = reg.try_get<TileComponent>(entityAtCoordinate);
+      CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(tileAtCoordinate);
+      TileComponent const *tileTile = reg.try_get<TileComponent>(tileAtCoordinate);
       if (!tileColl || !tileTile) {
         continue;
       }
       TILE const &collisionTile = tileTile->tile;
 
-      if (!object.collisionLeft || velocity.x > 0) {
-        checkPlayerLeftCollision(object, *tileColl, velocity, collisionTile);
+      if (!cc.collisionLeft || vel.x > 0) {
+        checkPlayerLeftCollision(cc, *tileColl, vel, collisionTile);
       }
-      if (!object.collisionRight || velocity.x < 0) {
-        checkPlayerRightCollision(object, *tileColl, velocity, collisionTile);
+      if (!cc.collisionRight || vel.x < 0) {
+        checkPlayerRightCollision(cc, *tileColl, vel, collisionTile);
       }
-      if (!object.collisionDown || velocity.y > 0) {
-        checkPlayerDownCollision(object, *tileColl, velocity, collisionTile);
+      if (!cc.collisionDown || vel.y > 0) {
+        checkPlayerDownCollision(cc, *tileColl, vel, collisionTile);
       }
-      if (!object.collisionUp || velocity.y < 0) {
-        checkPlayerUpCollision(object, *tileColl, velocity, collisionTile);
+      if (!cc.collisionUp || vel.y < 0) {
+        checkPlayerUpCollision(cc, *tileColl, vel, collisionTile);
       }
     }
   }

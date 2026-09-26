@@ -3,13 +3,14 @@
 #include "../components/collisioncomponent.hpp"
 #include "../components/projectilecomponent.hpp"
 #include "../components/positioncomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 
 class CollisionDetectionSystem {
 public:
   SceneInfo *currentLevel = nullptr;
   void update();
-  void checkTileCollision(entt::entity entity) const;
+  void checkTileCollision(CollisionComponent &object, PositionComponent const &position, VelocityComponent const &velocity) const;
 
   void checkPlayerLeftCollision(CollisionComponent &playerC, CollisionComponent const &block,
                                 Utils::Velocity velocity, TILE const &collisionTile) const;
