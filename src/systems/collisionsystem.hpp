@@ -3,6 +3,7 @@
 #define COLLISIONSYSTEM_HPP
 #include "../components/collisioncomponent.hpp"
 #include "../components/gravitycomponent.hpp"
+#include "../components/projectilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 #include "transformsystem.hpp"
@@ -20,6 +21,8 @@ public:
   void handleUpTileCollision(TransformComponent &tc, CollisionComponent const &cc,
                              GravityComponent const &ctrlc) const;
   void handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent const &cc) const;
+
+  void handleProjectileCollision(ProjectileComponent const &pc, entt::entity entity) const;
 };
 
 #endif

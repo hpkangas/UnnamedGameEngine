@@ -25,9 +25,8 @@ public:
   void updateCollisionRect(CollisionComponent &playerCollisionComponent,
                            TransformComponent const &playerTransformComponent) const;
 
-  void checkProjectileCollision(CollisionComponent &cc, entt::entity entity) const;
-  void checkProjectileCollisionWithTile(ProjectileComponent &projectile,
-                           CollisionComponent &projectileCollision) const;
+  void checkProjectileCollision(ProjectileComponent &projectile,
+                           CollisionComponent const &projectileCollision) const;
 };
 
 #endif

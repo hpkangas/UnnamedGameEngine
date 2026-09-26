@@ -16,14 +16,18 @@ void CollisionDetectionSystem::update() {
     updateCollisionRect(cc, tc);
     checkTileCollision(entity);
 
-    checkProjectileCollision(cc, entity);
+    if (reg.any_of<ProjectileComponent>(entity)) {
+      ProjectileComponent &pc = reg.get<ProjectileComponent>(entity);
+      checkProjectileCollision(pc, cc);
+    }
+
   }
 }
 
-void CollisionDetectionSystem::checkTileCollision(entt::entity playerEntity) const {
+void CollisionDetectionSystem::checkTileCollision(entt::entity entity) const {
   auto &reg = currentLevel->registry;
-  CollisionComponent &object = reg.get<CollisionComponent>(playerEntity);
-  const Velocity velocity = reg.get<TransformComponent>(playerEntity).velocity;
+  CollisionComponent &object = reg.get<CollisionComponent>(entity);
+  const Velocity velocity = reg.get<TransformComponent>(entity).velocity;
 
   TileGrid const &grid = currentLevel->staticTileGrid;
   constexpr int pad = 32;
@@ -34,13 +38,13 @@ void CollisionDetectionSystem::checkTileCollision(entt::entity playerEntity) con
 
   for (int ty = minTy; ty <= maxTy; ++ty) {
     for (int tx = minTx; tx <= maxTx; ++tx) {
-      entt::entity id = grid.at(tx, ty);
-      if (id == entt::null) {
+      entt::entity entityAtCoordinate = grid.at(tx, ty);
+      if (entityAtCoordinate == entt::null) {
         continue;
       }
 
-      CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(id);
-      TileComponent const *tileTile = reg.try_get<TileComponent>(id);
+      CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(entityAtCoordinate);
+      TileComponent const *tileTile = reg.try_get<TileComponent>(entityAtCoordinate);
       if (!tileColl || !tileTile) {
         continue;
       }
@@ -137,20 +141,9 @@ void CollisionDetectionSystem::updateCollisionRect(
           2};
 }
 
-void CollisionDetectionSystem::checkProjectileCollision(CollisionComponent &cc, entt::entity entity) const {
-  auto &reg = currentLevel->registry;
-  if (reg.any_of<ProjectileComponent>(entity)) {
-      ProjectileComponent &pc = reg.get<ProjectileComponent>(entity);
-      checkProjectileCollisionWithTile(pc, cc);
-      if (pc.collided) {
-        reg.destroy(entity);
-        std::cout << "Destroyed projectile entity: " << static_cast<uint32_t>(entity) << std::endl;
-      }
-    }
-}
 
-void CollisionDetectionSystem::checkProjectileCollisionWithTile(ProjectileComponent &projectile,
-                                                   CollisionComponent &projectileCollision) const {
+void CollisionDetectionSystem::checkProjectileCollision(ProjectileComponent &projectile,
+                                                   CollisionComponent const &projectileCollision) const {
   projectile.collided = projectileCollision.collisionDown || projectileCollision.collisionUp ||
                         projectileCollision.collisionLeft || projectileCollision.collisionRight;
 }

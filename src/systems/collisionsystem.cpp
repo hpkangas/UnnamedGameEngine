@@ -1,7 +1,7 @@
 #include "collisionsystem.hpp"
 #include "transformsystem.hpp"
-#include "../components/projectilecomponent.hpp"
 #include <cstdio>
+#include <iostream>
 
 void CollisionSystem::update() {
   auto &reg = currentLevel->registry;
@@ -19,12 +19,13 @@ void CollisionSystem::update() {
 
   auto projectiles = reg.view<ProjectileComponent>();
 
-   for (auto entity : projectiles) {
+  for (auto entity : projectiles) {
     ProjectileComponent const &pc = projectiles.get<ProjectileComponent>(entity);
     CollisionComponent const &cc = reg.get<CollisionComponent>(entity);
     TransformComponent &tc = reg.get<TransformComponent>(entity);
 
     handleHorizontalBlockCollision(tc, cc);
+    handleProjectileCollision(pc, entity);
   }
 }
 
@@ -91,5 +92,13 @@ void CollisionSystem::handleHorizontalBlockCollision(TransformComponent &tc,
                                                      CollisionComponent const &cc) const {
   if (cc.collisionTileLeft == TILE::SOLID || cc.collisionTileRight == TILE::SOLID) {
     transformSystem->stopX(tc, cc.xposDif);
+  }
+}
+
+void CollisionSystem::handleProjectileCollision(ProjectileComponent const &pc,
+                                                entt::entity entity) const {
+  if (pc.collided) {
+    currentLevel->registry.destroy(entity);
+    std::cout << "Destroyed projectile entity: " << static_cast<uint32_t>(entity) << std::endl;
   }
 }
