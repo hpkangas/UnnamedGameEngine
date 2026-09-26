@@ -6,10 +6,10 @@
 #include "../components/controlcomponent.hpp"
 #include "../components/gravitycomponent.hpp"
 #include "../components/healthcomponent.hpp"
+#include "../components/positioncomponent.hpp"
 #include "../components/rendercomponent.hpp"
 #include "../components/shootcomponent.hpp"
 #include "../components/tilecomponent.hpp"
-#include "../components/positioncomponent.hpp"
 #include "../components/velocitycomponent.hpp"
 #include "../include/json/json.hpp"
 #include "../texturemanager.hpp"
@@ -107,8 +107,9 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
   level.registry.emplace<PositionComponent>(entity, x, y);
   if (def.contains("velocity")) {
     // Optionally set velocity if present
-    level.registry.emplace<VelocityComponent>(entity, static_cast<float>(def["velocity"].value("x", 0.0)),
-                                             static_cast<float>(def["velocity"].value("y", 0.0)));
+    level.registry.emplace<VelocityComponent>(entity,
+                                              static_cast<float>(def["velocity"].value("x", 0.0)),
+                                              static_cast<float>(def["velocity"].value("y", 0.0)));
   }
 
   // Sprite/render (if present)
@@ -440,16 +441,5 @@ void SceneCreator::createBlock(std::string const &gameObjectType, int x, int y, 
   if (!tpl.is_null()) {
     createEntityFromTemplate(tpl, x, y, level);
     return;
-  }
-
-  // fallback to existing logic: B1/B2/B3
-  if (gameObjectType == "B1") {
-    createBlock1(x, y, level);
-  } else if (gameObjectType == "B2") {
-    createBlock2(x, y, level);
-  } else if (gameObjectType == "B3") {
-    createBlock3(x, y, level);
-  } else {
-    std::cout << "Scene creator: couldn't create block " << gameObjectType << std::endl;
   }
 }
