@@ -3,13 +3,14 @@
 #include "../components/shootcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/healthcomponent.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/positioncomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 
 struct ShootSystem {
   void update();
   void updateShootComponents(ShootComponent &shootComponent,
-                             TransformComponent const &transformComponent) const;
+                             PositionComponent const &positionComponent, VelocityComponent const &velocityComponent) const;
   void handleShots(ShootComponent const &shootComponent, entt::entity shooterEntity);
   void shoot(ShootComponent const &shootComponent, HealthComponent &healthComponent,
               CollisionComponent const &collisionComponent) const;

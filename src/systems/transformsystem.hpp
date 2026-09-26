@@ -1,6 +1,7 @@
 #ifndef TRANSFORMSYSTEM_HPP
 #define TRANSFORMSYSTEM_HPP
-#include "../components/transformcomponent.hpp"
+#include "../components/positioncomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 
 class TransformSystem {
@@ -13,16 +14,16 @@ public:
   SceneInfo *currentLevel = nullptr;
 
   void updateAll() const;
-  void update(TransformComponent &transformComponent) const;
-  void moveRight(TransformComponent &transformComponent) const;
-  void moveLeft(TransformComponent &transformComponent) const;
-  void moveUp(TransformComponent &transformComponent) const;
-  void moveDown(TransformComponent &transformComponent) const;
-  void stopX(TransformComponent &transformComponent) const;
-  void stopX(TransformComponent &transformComponent, int xposDif) const;
-  void stopY(TransformComponent &transformComponent) const;
-  void stopY(TransformComponent &transformComponent, int yposDif) const;
-  void jump(TransformComponent &transformComponent) const;
-  void resetJump(TransformComponent &transformComponent) const;
+  void update(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
+  void moveRight(VelocityComponent &velocityComponent) const;
+  void moveLeft(VelocityComponent &velocityComponent) const;
+  void moveUp(VelocityComponent &velocityComponent) const;
+  void moveDown(VelocityComponent &velocityComponent) const;
+  void stopX(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
+  void stopX(VelocityComponent &velocityComponent, PositionComponent &positionComponent, int xposDif) const;
+  void stopY(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
+  void stopY(VelocityComponent &velocityComponent, PositionComponent &positionComponent, int yposDif) const;
+  void jump(VelocityComponent &velocityComponent) const;
+  void resetJump(VelocityComponent &velocityComponent) const;
 };
 #endif

@@ -9,7 +9,8 @@
 #include "../components/rendercomponent.hpp"
 #include "../components/shootcomponent.hpp"
 #include "../components/tilecomponent.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/positioncomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../include/json/json.hpp"
 #include "../texturemanager.hpp"
 #include "../utilities/constants.hpp"
@@ -103,12 +104,11 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
   auto entity = level.registry.create();
 
   // Transform
-  level.registry.emplace<TransformComponent>(entity, x, y);
-  if (def.contains("transform")) {
+  level.registry.emplace<PositionComponent>(entity, x, y);
+  if (def.contains("velocity")) {
     // Optionally set velocity if present
-    auto &t = level.registry.get<TransformComponent>(entity);
-    t.velocity = Utils::Velocity{static_cast<float>(def["transform"].value("velx", 0.0)),
-                                 static_cast<float>(def["transform"].value("vely", 0.0))};
+    level.registry.emplace<VelocityComponent>(entity, static_cast<float>(def["velocity"].value("x", 0.0)),
+                                             static_cast<float>(def["velocity"].value("y", 0.0)));
   }
 
   // Sprite/render (if present)
@@ -335,7 +335,7 @@ void SceneCreator::createBlock3(int x, int y, SceneInfo &level) {
 void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
   auto entity = level.registry.create();
 
-  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<PositionComponent>(entity, x, y);
   level.registry.emplace<TileComponent>(entity, TILE::NONE, x / 128, y / 128);
 
   SDL_Rect const sourceRect = {128, 384, 128, 128};
@@ -351,7 +351,7 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
   SDL_Rect const sourceRect = {sourceX, 0, 128, 128};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
 
-  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<PositionComponent>(entity, x, y);
   level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
   level.registry.emplace<CollisionComponent>(entity, destinationRect);
   level.registry.emplace<TileComponent>(entity, TILE::SOLID, x / 128, y / 128);
@@ -366,7 +366,7 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
   SDL_Rect const sourceRect = {sourceX, 0, 128, 128};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
 
-  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<PositionComponent>(entity, x, y);
   level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
   level.registry.emplace<CollisionComponent>(entity, sourceRect);
   level.registry.emplace<TileComponent>(entity, TILE::SEMISOLID, x / 128, y / 128);
@@ -382,7 +382,7 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
   SDL_Rect const collisionRect = {x, y, 128, 128};
 
-  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<PositionComponent>(entity, x, y);
   level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
   level.registry.emplace<CollisionComponent>(entity, collisionRect);
   level.registry.emplace<TileComponent>(entity, TILE::LADDER, x / 128, y / 128);
@@ -398,7 +398,7 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
   SDL_Rect const collisionRect = {x, y, 128, 64};
 
-  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<PositionComponent>(entity, x, y);
   level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
   level.registry.emplace<CollisionComponent>(entity, collisionRect);
   level.registry.emplace<TileComponent>(entity, TILE::LADDERSTART, x / 128, y / 128);
@@ -412,7 +412,7 @@ void SceneCreator::createUI(int x, int y, SceneInfo &level) {
   SDL_Rect const sourceRect = {0, 0, 31, 31};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
 
-  level.registry.emplace<TransformComponent>(entity, x, y);
+  level.registry.emplace<PositionComponent>(entity, x, y);
   level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 2);
 
   level.UIRenderIds.emplace_back(entity);

@@ -3,7 +3,8 @@
 #include "../components/collisioncomponent.hpp"
 #include "../components/gravitycomponent.hpp"
 #include "../components/healthcomponent.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/positioncomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../utilities/constants.hpp"
 #include <cstdio>
 
@@ -36,7 +37,8 @@ void AnimationSystem::determineAnimationState(AnimationComponent &animationCompo
   auto &reg = currentLevel->registry;
   CollisionComponent const *collisionComponent = reg.try_get<CollisionComponent>(entity);
   GRAVITY_STATE gravityState = reg.get<GravityComponent>(entity).gravityState;
-  TransformComponent const *transformComponent = reg.try_get<TransformComponent>(entity);
+  PositionComponent const *positionComponent = reg.try_get<PositionComponent>(entity);
+  VelocityComponent const *velocityComponent = reg.try_get<VelocityComponent>(entity);
   AttackComponent const *attackComponent = reg.try_get<AttackComponent>(entity);
   ShootComponent const *shootComponent = reg.try_get<ShootComponent>(entity);
   HealthComponent const *healthComponent = reg.try_get<HealthComponent>(entity);
@@ -61,7 +63,7 @@ void AnimationSystem::determineAnimationState(AnimationComponent &animationCompo
   }
 
   if (gravityState == GRAVITY_STATE::GROUNDED) {
-    if (transformComponent->velocity.x != 0 && transformComponent->velocity.y == 0) {
+    if (velocityComponent->velocity.x != 0 && velocityComponent->velocity.y == 0) {
       animationComponent.animationState = ANIMATION_STATE::WALKING;
     } else {
       animationComponent.animationState = ANIMATION_STATE::STILL;
@@ -74,7 +76,7 @@ void AnimationSystem::determineAnimationState(AnimationComponent &animationCompo
     // doesn't work when you stop
     // climbing needs a lot of rework
     // TODO triggers when airborne
-    if (transformComponent->velocity.y != 0) {
+    if (velocityComponent->velocity.y != 0) {
       animationComponent.animationState = ANIMATION_STATE::CLIMBING;
     }
 
@@ -86,7 +88,8 @@ void AnimationSystem::determineAnimationState(AnimationComponent &animationCompo
 void AnimationSystem::animate(AnimationComponent &animationComponent, entt::entity entity) const {
   auto &reg = currentLevel->registry;
   RenderComponent &renderComponent = reg.get<RenderComponent>(entity);
-  TransformComponent const &transformComponent = reg.get<TransformComponent>(entity);
+  PositionComponent const &positionComponent = reg.get<PositionComponent>(entity);
+  VelocityComponent const &velocityComponent = reg.get<VelocityComponent>(entity);
 
   switch (animationComponent.animationState) {
   case ANIMATION_STATE::STILL:
@@ -132,14 +135,14 @@ void AnimationSystem::animate(AnimationComponent &animationComponent, entt::enti
     playFrame(renderComponent, 0, animationComponent.climbing.spriteSheetY, PLAYER_WIDTH,
               PLAYER_HEIGHT,
               animationComponent.animationFrame / animationComponent.climbing.maxFrames);
-    if (transformComponent.velocity.y < 0) {
+    if (velocityComponent.velocity.y < 0) {
       animationComponent.animationFrame++;
       if (animationComponent.animationFrame / animationComponent.climbing.maxFrames >
           animationComponent.climbing.maxFrames - 1) {
         animationComponent.animationFrame = 0;
       }
     }
-    if (transformComponent.velocity.y > 0) {
+    if (velocityComponent.velocity.y > 0) {
       animationComponent.animationFrame--;
       if (animationComponent.animationFrame < 0) {
         animationComponent.animationFrame = 30;

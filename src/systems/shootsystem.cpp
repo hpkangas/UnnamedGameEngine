@@ -9,9 +9,10 @@ void ShootSystem::update() {
 
   for (auto entity : view) {
     ShootComponent &sc = view.get<ShootComponent>(entity);
-    TransformComponent const &tc = reg.get<TransformComponent>(entity);
+    PositionComponent const &tc = reg.get<PositionComponent>(entity);
+    VelocityComponent const &vc = reg.get<VelocityComponent>(entity);
 
-    updateShootComponents(sc, tc);
+    updateShootComponents(sc, tc, vc);
 
     if (sc.shooting) {
       if (sc.currentShootingFrame == sc.launchFrame) {
@@ -22,15 +23,15 @@ void ShootSystem::update() {
 }
 
 void ShootSystem::updateShootComponents(ShootComponent &shootComponent,
-                                        TransformComponent const &transformComponent) const {
-  if (transformComponent.facingRight) {
-    shootComponent.launchVelocity = {16.0f, transformComponent.velocity.y};
-    shootComponent.launchStartPosition = {transformComponent.position.x,
-                                          transformComponent.position.y};
+                                        PositionComponent const &positionComponent, VelocityComponent const &velocityComponent) const {
+  if (positionComponent.facingRight) {
+    shootComponent.launchVelocity = {16.0f, velocityComponent.velocity.y};
+    shootComponent.launchStartPosition = {positionComponent.position.x,
+                                          positionComponent.position.y};
   } else {
-    shootComponent.launchStartPosition = {transformComponent.position.x,
-                                          transformComponent.position.y};
-    shootComponent.launchVelocity = {-16.0f, transformComponent.velocity.y};
+    shootComponent.launchStartPosition = {positionComponent.position.x,
+                                          positionComponent.position.y};
+    shootComponent.launchVelocity = {-16.0f, velocityComponent.velocity.y};
   }
 }
 
@@ -38,9 +39,10 @@ void ShootSystem::createProjectile(ShootComponent const &shootComponent) const {
   auto &reg = currentLevel->registry;
   auto entity = reg.create();
 
-  reg.emplace<TransformComponent>(entity, shootComponent.launchStartPosition.x,
-                                  shootComponent.launchStartPosition.y,
-                                  shootComponent.launchVelocity.x, shootComponent.launchVelocity.y);
+  reg.emplace<PositionComponent>(entity, shootComponent.launchStartPosition.x,
+                                  shootComponent.launchStartPosition.y);
+  reg.emplace<VelocityComponent>(entity, shootComponent.launchVelocity.x,
+                                  shootComponent.launchVelocity.y);
   reg.emplace<CollisionComponent>(entity, SDL_Rect{shootComponent.launchStartPosition.x,
                                                    shootComponent.launchStartPosition.y, 32, 32});
   reg.emplace<ProjectileComponent>(

@@ -24,7 +24,8 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
 
   auto &reg = currentLevel->registry;
   ControlComponent &controlComponent = reg.get<ControlComponent>(selectedPlayer);
-  TransformComponent &transformComponent = reg.get<TransformComponent>(selectedPlayer);
+  PositionComponent &transformComponent = reg.get<PositionComponent>(selectedPlayer);
+  VelocityComponent &velocityComponent = reg.get<VelocityComponent>(selectedPlayer);
   CollisionComponent const &collisionComponent = reg.get<CollisionComponent>(selectedPlayer);
   AttackComponent &attackComponent = reg.get<AttackComponent>(selectedPlayer);
   HealthComponent const &healthComponent = reg.get<HealthComponent>(selectedPlayer);
@@ -44,7 +45,7 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
 
   case TILE::SOLID:
     if (controlComponent.controlState == CONTROL_STATE::AIRBORNE &&
-        transformComponent.velocity.y == 0) {
+        velocityComponent.velocity.y == 0) {
       controlComponent.controlState = CONTROL_STATE::NORMAL;
     }
 
@@ -85,7 +86,7 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
 
   case TILE::LADDERSTART:
     if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
-      if (transformComponent.velocity.y == 0) {
+      if (velocityComponent.velocity.y == 0) {
         controlComponent.controlState = CONTROL_STATE::NORMAL;
       }
     }
@@ -156,15 +157,16 @@ void ControlSystem::takeInput() {
 void ControlSystem::handleInput(entt::entity selectedPlayer) {
   auto &reg = currentLevel->registry;
   ControlComponent &controlComponent = reg.get<ControlComponent>(selectedPlayer);
-  TransformComponent &transformComponent = reg.get<TransformComponent>(selectedPlayer);
+  PositionComponent &positionComponent = reg.get<PositionComponent>(selectedPlayer);
+  VelocityComponent &velocityComponent = reg.get<VelocityComponent>(selectedPlayer);
   CollisionComponent const &collisionComponent = reg.get<CollisionComponent>(selectedPlayer);
 
   // for debugging
   if (inputResetCharacter) {
-    transformComponent.velocity.x = 0;
-    transformComponent.velocity.y = 0;
-    transformComponent.position.x = 0;
-    transformComponent.position.y = 0;
+    velocityComponent.velocity.x = 0;
+    velocityComponent.velocity.y = 0;
+    positionComponent.position.x = 0;
+    positionComponent.position.y = 0;
     controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     // Camera::focusArea = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
     // Camera::offset = {0, -200};
@@ -177,18 +179,18 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
   case CONTROL_STATE::NORMAL:
 
     if (inputR && !inputL) {
-      if (transformComponent.velocity.x < 0) {
-        transformSystem->stopX(transformComponent);
+      if (velocityComponent.velocity.x < 0) {
+        transformSystem->stopX(velocityComponent, positionComponent);
       }
-      transformSystem->moveRight(transformComponent);
+      transformSystem->moveRight(velocityComponent);
       noInput = false;
     }
 
     if (inputL && !inputR) {
-      if (transformComponent.velocity.x > 0) {
-        transformSystem->stopX(transformComponent);
+      if (velocityComponent.velocity.x > 0) {
+        transformSystem->stopX(velocityComponent, positionComponent);
       }
-      transformSystem->moveLeft(transformComponent);
+      transformSystem->moveLeft(velocityComponent);
       noInput = false;
     }
 
@@ -196,9 +198,9 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
       noInput = false;
       if (controlComponent.canClimb) {
 
-        transformComponent.position.x = collisionComponent.collidedUpTilePos.x;
+        positionComponent.position.x = collisionComponent.collidedUpTilePos.x;
 
-        transformSystem->stopX(transformComponent);
+        transformSystem->stopX(velocityComponent, positionComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
         return;
       }
@@ -207,10 +209,10 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
     if (inputD) {
       noInput = false;
       if (controlComponent.canClimb) {
-        transformComponent.position.x = collisionComponent.collidedDownTilePos.x;
+        positionComponent.position.x = collisionComponent.collidedDownTilePos.x;
 
-        transformSystem->stopX(transformComponent);
-        transformSystem->stopY(transformComponent);
+        transformSystem->stopX(velocityComponent, positionComponent);
+        transformSystem->stopY(velocityComponent, positionComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
         return;
       }
@@ -218,7 +220,7 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
 
     if (inputJump && canJump) {
       noInput = false;
-      transformSystem->jump(transformComponent);
+      transformSystem->jump(velocityComponent);
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
       canJump = false;
     }
@@ -237,7 +239,7 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
     }
 
     if (noInput) {
-      transformSystem->stopX(transformComponent);
+      transformSystem->stopX(velocityComponent, positionComponent);
     }
 
     break;
@@ -246,28 +248,28 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
 
     if (inputR && !inputL) {
       noInput = false;
-      if (transformComponent.velocity.x < 0) {
-        transformSystem->stopX(transformComponent);
+      if (velocityComponent.velocity.x < 0) {
+        transformSystem->stopX(velocityComponent, positionComponent);
       }
-      transformSystem->moveRight(transformComponent);
+      transformSystem->moveRight(velocityComponent);
     }
 
     if (inputL && !inputR) {
       noInput = false;
-      if (transformComponent.velocity.x > 0) {
-        transformSystem->stopX(transformComponent);
+      if (velocityComponent.velocity.x > 0) {
+        transformSystem->stopX(velocityComponent, positionComponent);
       }
-      transformSystem->moveLeft(transformComponent);
+      transformSystem->moveLeft(velocityComponent);
     }
 
     if (inputU) {
 
       if (controlComponent.canClimb) {
         std::cout << "can climb from air \n";
-        transformComponent.position.x = collisionComponent.collidedUpTilePos.x;
+        positionComponent.position.x = collisionComponent.collidedUpTilePos.x;
 
-        transformSystem->stopX(transformComponent);
-        transformSystem->stopY(transformComponent);
+        transformSystem->stopX(velocityComponent, positionComponent);
+        transformSystem->stopY(velocityComponent, positionComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
       }
     }
@@ -275,16 +277,16 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
     if (inputD) {
 
       if (controlComponent.canClimb) {
-        transformComponent.position.x = collisionComponent.collidedDownTilePos.x;
+        positionComponent.position.x = collisionComponent.collidedDownTilePos.x;
 
-        transformSystem->stopX(transformComponent);
-        transformSystem->stopY(transformComponent);
+        transformSystem->stopX(velocityComponent, positionComponent);
+        transformSystem->stopY(velocityComponent, positionComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
       }
     }
 
     if (noInput) {
-      transformSystem->stopX(transformComponent);
+      transformSystem->stopX(velocityComponent, positionComponent);
     }
 
     break;
@@ -297,13 +299,13 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
 
     if (inputR && !inputL && !inputU && !inputD) {
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-      transformSystem->moveRight(transformComponent);
+      transformSystem->moveRight(velocityComponent);
       return;
     }
 
     if (inputL && !inputR && !inputU && !inputD) {
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-      transformSystem->moveLeft(transformComponent);
+      transformSystem->moveLeft(velocityComponent);
       return;
     }
 
@@ -313,8 +315,8 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
           collisionComponent.collisionTileDown != TILE::LADDER &&
           collisionComponent.collisionTileDown != TILE::LADDERSTART) {
       } else {
-        transformSystem->stopX(transformComponent);
-        transformSystem->moveUp(transformComponent);
+        transformSystem->stopX(velocityComponent, positionComponent);
+        transformSystem->moveUp(velocityComponent);
       }
 
       return;
@@ -325,16 +327,16 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
       if (collisionComponent.collisionTileDown != TILE::LADDER &&
           collisionComponent.collisionTileDown != TILE::LADDERSTART) {
         controlComponent.controlState = CONTROL_STATE::NORMAL;
-        transformSystem->stopY(transformComponent);
+        transformSystem->stopY(velocityComponent, positionComponent);
 
       } else {
-        transformSystem->stopX(transformComponent);
-        transformSystem->moveDown(transformComponent);
+        transformSystem->stopX(velocityComponent, positionComponent);
+        transformSystem->moveDown(velocityComponent);
       }
       return;
     }
 
-    transformSystem->stopY(transformComponent);
+    transformSystem->stopY(velocityComponent, positionComponent);
     break;
 
   case CONTROL_STATE::ATTACKING:

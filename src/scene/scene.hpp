@@ -2,7 +2,8 @@
 #ifndef SCENE_HPP
 #define SCENE_HPP
 #include "../camera.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/positioncomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../systems/aisystem.hpp"
 #include "../systems/animationsystem.hpp"
 #include "../systems/attacksystem.hpp"
@@ -40,8 +41,9 @@ struct Scene {
   ShootSystem shootSystem;
   HealthSystem healthSystem;
 
-  void updateCamera(const TransformComponent &transformComponent) const;
-  void centerCamera(const TransformComponent &transformComponent) const;
+  void updateCamera(const PositionComponent &transformComponent,
+                   const VelocityComponent &velocityComponent) const;
+  void centerCamera(const PositionComponent &transformComponent) const;
 
   // template <typename T> T *GetComponent(int entity) {
   //   for (auto &c : currentLevel.components) {

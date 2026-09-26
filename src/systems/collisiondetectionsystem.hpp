@@ -2,7 +2,7 @@
 #define COLLISIONDETECTIONSYSTEM_HPP
 #include "../components/collisioncomponent.hpp"
 #include "../components/projectilecomponent.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/positioncomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 
 class CollisionDetectionSystem {
@@ -23,7 +23,7 @@ public:
   void resetCollisions(CollisionComponent &collisionComponent) const;
 
   void updateCollisionRect(CollisionComponent &playerCollisionComponent,
-                           TransformComponent const &playerTransformComponent) const;
+                           PositionComponent const &playerPositionComponent) const;
 
   void checkProjectileCollision(ProjectileComponent &projectile,
                            CollisionComponent const &projectileCollision) const;

@@ -1,20 +1,20 @@
 #include "collisionsystem.hpp"
-#include "transformsystem.hpp"
 #include <cstdio>
 #include <iostream>
 
 void CollisionSystem::update() {
   auto &reg = currentLevel->registry;
-  auto view = reg.view<GravityComponent, CollisionComponent, TransformComponent>();
+  auto view = reg.view<GravityComponent, CollisionComponent, PositionComponent>();
   for (auto entity : view) {
     CollisionComponent const &cc = view.get<CollisionComponent>(entity);
-    TransformComponent &tc = view.get<TransformComponent>(entity);
+    VelocityComponent &velocityComponent = reg.get<VelocityComponent>(entity);
+    PositionComponent &positionComponent = view.get<PositionComponent>(entity);
     GravityComponent const &gc = view.get<GravityComponent>(entity);
 
-    handleDownTileCollision(tc, cc, gc);
-    handleUpTileCollision(tc, cc, gc);
+    handleDownTileCollision(velocityComponent, positionComponent, cc, gc);
+    handleUpTileCollision(velocityComponent, positionComponent, cc, gc);
 
-    handleHorizontalBlockCollision(tc, cc);
+    handleHorizontalBlockCollision(velocityComponent, positionComponent, cc);
   }
 
   auto projectiles = reg.view<ProjectileComponent>();
@@ -22,14 +22,15 @@ void CollisionSystem::update() {
   for (auto entity : projectiles) {
     ProjectileComponent const &pc = projectiles.get<ProjectileComponent>(entity);
     CollisionComponent const &cc = reg.get<CollisionComponent>(entity);
-    TransformComponent &tc = reg.get<TransformComponent>(entity);
+    PositionComponent &positionComponent = reg.get<PositionComponent>(entity);
+    VelocityComponent &velocityComponent = reg.get<VelocityComponent>(entity);
 
-    handleHorizontalBlockCollision(tc, cc);
+    handleHorizontalBlockCollision(velocityComponent, positionComponent, cc);
     handleProjectileCollision(pc, entity);
   }
 }
 
-void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionComponent const &cc,
+void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc,
                                               GravityComponent const &gc) const {
   switch (cc.collisionTileDown) {
 
@@ -38,7 +39,7 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
 
   case TILE::SOLID:
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
-      transformSystem->stopY(tc, cc.yposDif);
+      transformSystem->stopY(velocityComponent, positionComponent, cc.yposDif);
     }
     break;
 
@@ -50,7 +51,7 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
 
   case TILE::LADDERSTART:
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
-      transformSystem->stopY(tc, cc.yposDif);
+      transformSystem->stopY(velocityComponent, positionComponent, cc.yposDif);
     }
     break;
 
@@ -59,7 +60,7 @@ void CollisionSystem::handleDownTileCollision(TransformComponent &tc, CollisionC
   }
 }
 
-void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionComponent const &cc,
+void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc,
                                             GravityComponent const &gc) const {
 
   switch (cc.collisionTileUp) {
@@ -70,8 +71,8 @@ void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionCom
   case TILE::SOLID:
 
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
-      if (tc.velocity.y < 0) {
-        transformSystem->stopY(tc, cc.yposDif);
+      if (velocityComponent.velocity.y < 0) {
+        transformSystem->stopY(velocityComponent, positionComponent, cc.yposDif);
       }
     }
     break;
@@ -88,10 +89,11 @@ void CollisionSystem::handleUpTileCollision(TransformComponent &tc, CollisionCom
   }
 }
 
-void CollisionSystem::handleHorizontalBlockCollision(TransformComponent &tc,
+void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocityComponent,
+                                                     PositionComponent &positionComponent,
                                                      CollisionComponent const &cc) const {
   if (cc.collisionTileLeft == TILE::SOLID || cc.collisionTileRight == TILE::SOLID) {
-    transformSystem->stopX(tc, cc.xposDif);
+    transformSystem->stopX(velocityComponent, positionComponent, cc.xposDif);
   }
 }
 

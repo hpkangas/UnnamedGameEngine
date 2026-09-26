@@ -9,7 +9,7 @@ void AttackSystem::update() {
 
   for (auto entity : view) {
     AttackComponent &attackComponent = view.get<AttackComponent>(entity);
-    TransformComponent const &transformComponent = reg.get<TransformComponent>(entity);
+    PositionComponent const &transformComponent = reg.get<PositionComponent>(entity);
 
     updateAttackComponents(attackComponent, transformComponent);
 
@@ -20,7 +20,7 @@ void AttackSystem::update() {
 }
 
 void AttackSystem::updateAttackComponents(AttackComponent &attackComponent,
-                                          TransformComponent const &transformComponent) const {
+                                          PositionComponent const &transformComponent) const {
   attackComponent.collisionRect.x = transformComponent.position.x;
   attackComponent.collisionRect.y = transformComponent.position.y;
 }

@@ -1,6 +1,5 @@
 #include "scene.hpp"
 #include "../camera.hpp"
-#include "../components/transformcomponent.hpp"
 #include "../system.hpp"
 #include "../systems/transformsystem.hpp"
 #include "../utilities/constants.hpp"
@@ -63,16 +62,18 @@ void Scene::update() {
 
   renderSystem.update();
 
-  updateCamera(currentLevel.registry.get<TransformComponent>(selectedPlayer));
+  updateCamera(currentLevel.registry.get<PositionComponent>(selectedPlayer),
+               currentLevel.registry.get<VelocityComponent>(selectedPlayer));
 }
 
 void Scene::render() const { renderSystem.render(); }
 
-void Scene::updateCamera(const TransformComponent &transformComponent) const {
-  const int xpos = transformComponent.position.x;
-  const int ypos = transformComponent.position.y;
-  const float xvel = transformComponent.velocity.x;
-  const float yvel = transformComponent.velocity.y;
+void Scene::updateCamera(const PositionComponent &positionComponent,
+                         const VelocityComponent &velocityComponent) const {
+  const int xpos = positionComponent.position.x;
+  const int ypos = positionComponent.position.y;
+  const float xvel = velocityComponent.velocity.x;
+  const float yvel = velocityComponent.velocity.y;
 
   if ((xpos < Camera::focusArea.left && xvel < 0) || (xpos > Camera::focusArea.right && xvel > 0)) {
     Camera::offset.x += xvel;
@@ -84,7 +85,7 @@ void Scene::updateCamera(const TransformComponent &transformComponent) const {
   Camera::update();
 }
 
-void Scene::centerCamera(const TransformComponent &transformComponent) const {
+void Scene::centerCamera(const PositionComponent &transformComponent) const {
   Camera::updateOffsetRelativeToScreen(transformComponent.position.x,
                                        transformComponent.position.y);
 }

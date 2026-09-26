@@ -1,7 +1,7 @@
 #include "rendersystem.hpp"
 #include "../camera.hpp"
 #include "../components/rendercomponent.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/positioncomponent.hpp"
 #include "../system.hpp"
 #include "../texturemanager.hpp"
 #include "SDL_rect.h"
@@ -9,11 +9,11 @@
 
 void RenderSystem::update() const {
   auto &reg = currentLevel->registry;
-  auto view = reg.view<RenderComponent, TransformComponent>();
+  auto view = reg.view<RenderComponent, PositionComponent>();
 
   for (entt::entity id : view) {
     RenderComponent &rc = reg.get<RenderComponent>(id);
-    TransformComponent const &tc = reg.get<TransformComponent>(id);
+    PositionComponent const &tc = reg.get<PositionComponent>(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
@@ -28,7 +28,7 @@ void RenderSystem::update() const {
 
 void RenderSystem::render() const {
   auto &reg = currentLevel->registry;
-  auto view = reg.view<RenderComponent, TransformComponent>();
+  auto view = reg.view<RenderComponent, PositionComponent>();
 
   SDL_RenderClear(System::renderer);
   for (entt::entity id : view) {

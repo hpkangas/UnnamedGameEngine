@@ -1,17 +1,18 @@
 #include "collisiondetectionsystem.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/projectilecomponent.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/positioncomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../utilities/physics.hpp"
 #include <cstdio>
-#include <iostream>
 
 void CollisionDetectionSystem::update() {
   auto &reg = currentLevel->registry;
-  auto view = reg.view<CollisionComponent, TransformComponent>();
+  auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
   for (auto entity : view) {
     CollisionComponent &cc = view.get<CollisionComponent>(entity);
-    TransformComponent const &tc = view.get<TransformComponent>(entity);
+    PositionComponent const &tc = view.get<PositionComponent>(entity);
+    VelocityComponent const &vc = view.get<VelocityComponent>(entity);
     resetCollisions(cc);
     updateCollisionRect(cc, tc);
     checkTileCollision(entity);
@@ -27,7 +28,7 @@ void CollisionDetectionSystem::update() {
 void CollisionDetectionSystem::checkTileCollision(entt::entity entity) const {
   auto &reg = currentLevel->registry;
   CollisionComponent &object = reg.get<CollisionComponent>(entity);
-  const Velocity velocity = reg.get<TransformComponent>(entity).velocity;
+  const Velocity velocity = reg.get<VelocityComponent>(entity).velocity;
 
   TileGrid const &grid = currentLevel->staticTileGrid;
   constexpr int pad = 32;
@@ -128,7 +129,7 @@ void CollisionDetectionSystem::resetCollisions(CollisionComponent &collisionComp
 }
 
 void CollisionDetectionSystem::updateCollisionRect(
-    CollisionComponent &collisionComponent, TransformComponent const &transformComponent) const {
+    CollisionComponent &collisionComponent, PositionComponent const &transformComponent) const {
   collisionComponent.collisionRect.x = transformComponent.position.x;
   collisionComponent.collisionRect.y = transformComponent.position.y;
 

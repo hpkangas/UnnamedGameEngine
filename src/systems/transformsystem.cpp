@@ -1,93 +1,96 @@
 #include "transformsystem.hpp"
 
 void TransformSystem::updateAll() const {
-  auto view = currentLevel->registry.view<TransformComponent>();
+  auto view = currentLevel->registry.view<PositionComponent, VelocityComponent>();
   for (auto entity : view) {
-    update(view.get<TransformComponent>(entity));
+    VelocityComponent &velocityComponent = view.get<VelocityComponent>(entity);
+    PositionComponent &positionComponent = view.get<PositionComponent>(entity);
+    update(velocityComponent, positionComponent);
   }
 }
 
-void TransformSystem::moveRight(TransformComponent &transformComponent) const {
-  if (transformComponent.velocity.x + playerSpeed > playerSpeedMax) {
-    transformComponent.velocity.x = playerSpeedMax;
+void TransformSystem::moveRight(VelocityComponent &velocityComponent) const {
+  if (velocityComponent.velocity.x + playerSpeed > playerSpeedMax) {
+    velocityComponent.velocity.x = playerSpeedMax;
   } else {
-    transformComponent.velocity.x += playerSpeed;
+    velocityComponent.velocity.x += playerSpeed;
   }
 }
 
-void TransformSystem::moveLeft(TransformComponent &transformComponent) const {
-  if (transformComponent.velocity.x - playerSpeed < -playerSpeedMax) {
-    transformComponent.velocity.x = -playerSpeedMax;
+void TransformSystem::moveLeft(VelocityComponent &velocityComponent) const {
+  if (velocityComponent.velocity.x - playerSpeed < -playerSpeedMax) {
+    velocityComponent.velocity.x = -playerSpeedMax;
   } else {
-    transformComponent.velocity.x -= playerSpeed;
+    velocityComponent.velocity.x -= playerSpeed;
   }
 }
 
-void TransformSystem::moveUp(TransformComponent &transformComponent) const {
-  transformComponent.velocity.y = transformComponent.velocity.y - 8;
-  if (transformComponent.velocity.y < -playerClimbingSpeedMax) {
-    transformComponent.velocity.y = -playerClimbingSpeedMax;
+void TransformSystem::moveUp(VelocityComponent &velocityComponent) const {
+  velocityComponent.velocity.y = velocityComponent.velocity.y - 8;
+  if (velocityComponent.velocity.y < -playerClimbingSpeedMax) {
+    velocityComponent.velocity.y = -playerClimbingSpeedMax;
   }
 }
 
-void TransformSystem::moveDown(TransformComponent &transformComponent) const {
-  transformComponent.velocity.y = transformComponent.velocity.y + 8;
-  if (transformComponent.velocity.y > playerClimbingSpeedMax) {
-    transformComponent.velocity.y = playerClimbingSpeedMax;
+void TransformSystem::moveDown(VelocityComponent &velocityComponent) const {
+  velocityComponent.velocity.y = velocityComponent.velocity.y + 8;
+  if (velocityComponent.velocity.y > playerClimbingSpeedMax) {
+    velocityComponent.velocity.y = playerClimbingSpeedMax;
   }
 }
 
-void TransformSystem::jump(TransformComponent &transformComponent) const {
-  transformComponent.velocity.y = playerJumpSpeed;
+void TransformSystem::jump(VelocityComponent &velocityComponent) const {
+  velocityComponent.velocity.y = playerJumpSpeed;
 }
 
-void TransformSystem::resetJump(TransformComponent &transformComponent) const {}
+void TransformSystem::resetJump(VelocityComponent &velocityComponent) const {}
 
-void TransformSystem::stopX(TransformComponent &transformComponent) const {
-  stopX(transformComponent, 0);
+void TransformSystem::stopX(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const {
+  stopX(velocityComponent, positionComponent, 0);
 }
 
-void TransformSystem::stopX(TransformComponent &transformComponent, int xposDif) const {
+void TransformSystem::stopX(VelocityComponent &velocityComponent, PositionComponent &positionComponent, int xposDif) const {
 
-  if (transformComponent.velocity.x != 0) {
+  if (velocityComponent.velocity.x != 0) {
     if (xposDif != 0) {
-      transformComponent.position.x = transformComponent.position.x - xposDif;
+      positionComponent.position.x = positionComponent.position.x - xposDif;
     }
-    transformComponent.velocity.x = 0;
+    velocityComponent.velocity.x = 0;
   }
 }
 
-void TransformSystem::stopY(TransformComponent &transformComponent) const {
-  stopY(transformComponent, 0);
+void TransformSystem::stopY(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const {
+  stopY(velocityComponent, positionComponent, 0);
 }
 
-void TransformSystem::stopY(TransformComponent &transformComponent, int yposDif) const {
+void TransformSystem::stopY(VelocityComponent &velocityComponent, PositionComponent &positionComponent, int yposDif) const {
   if (yposDif != 0) {
-    transformComponent.position.y = transformComponent.position.y - yposDif;
+    positionComponent.position.y = positionComponent.position.y - yposDif;
   }
-  transformComponent.velocity.y = 0;
+  velocityComponent.velocity.y = 0;
 }
 
-void TransformSystem::update(TransformComponent &transformComponent) const {
+void TransformSystem::update(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const {
 
-  const float xvel = transformComponent.velocity.x;
-  const float yvel = transformComponent.velocity.y;
-  const int xpos = transformComponent.position.x;
-  const int ypos = transformComponent.position.y;
+  const float xvel = velocityComponent.velocity.x;
+  const float yvel = velocityComponent.velocity.y;
+  const int xpos = positionComponent.position.x;
+  const int ypos = positionComponent.position.y;
 
   if (xvel > 0) {
-    transformComponent.facingRight = true;
+    positionComponent.facingRight = true;
   } else if (xvel < 0) {
-    transformComponent.facingRight = false;
+    positionComponent.facingRight = false;
   }
 
+  //TODO magic numbers
   if (!(xvel == 0)) {
-    transformComponent.position.x = xpos + xvel;
-    transformComponent.tilePosition.x = transformComponent.position.x / 128;
+    positionComponent.position.x = xpos + xvel;
+    positionComponent.tilePosition.x = positionComponent.position.x / 128;
   }
 
   if (!(yvel == 0)) {
-    transformComponent.position.y = ypos + yvel;
-    transformComponent.tilePosition.x = transformComponent.position.y / 128;
+    positionComponent.position.y = ypos + yvel;
+    positionComponent.tilePosition.y = positionComponent.position.y / 128;
   }
 }

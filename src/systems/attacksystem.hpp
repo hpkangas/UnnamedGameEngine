@@ -3,13 +3,13 @@
 #include "../components/attackcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/healthcomponent.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/positioncomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 
 struct AttackSystem {
   void update();
   void updateAttackComponents(AttackComponent &attackComponent,
-                              TransformComponent const &transformComponent) const;
+                              PositionComponent const &positionComponent) const;
   void handleAttacks(AttackComponent const &attackComponent, entt::entity attackerEntity);
   void attack(AttackComponent const &attackComponent, HealthComponent &healthComponent,
               CollisionComponent const &collisionComponent) const;

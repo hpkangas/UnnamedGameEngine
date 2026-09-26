@@ -4,7 +4,7 @@
 #include "../components/collisioncomponent.hpp"
 #include "../components/gravitycomponent.hpp"
 #include "../components/projectilecomponent.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 #include "transformsystem.hpp"
 
@@ -15,12 +15,12 @@ public:
 
   void update();
 
-  void handleDownTileCollision(TransformComponent &tc, CollisionComponent const &cc,
+  void handleDownTileCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc,
                                GravityComponent const &ctrlc) const;
 
-  void handleUpTileCollision(TransformComponent &tc, CollisionComponent const &cc,
+  void handleUpTileCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc,
                              GravityComponent const &ctrlc) const;
-  void handleHorizontalBlockCollision(TransformComponent &tc, CollisionComponent const &cc) const;
+  void handleHorizontalBlockCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc) const;
 
   void handleProjectileCollision(ProjectileComponent const &pc, entt::entity entity) const;
 };

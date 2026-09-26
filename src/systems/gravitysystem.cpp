@@ -9,14 +9,14 @@ void GravitySystem::update() const {
   for (auto entity : view) {
     auto &gc = view.get<GravityComponent>(entity);
     auto const &cc = reg.get<CollisionComponent>(entity);
-    auto &tc = reg.get<TransformComponent>(entity);
-    updateGravity(cc, gc, tc);
+    auto &velocityComponent = reg.get<VelocityComponent>(entity);
+    updateGravity(cc, gc, velocityComponent);
   }
 }
 
 void GravitySystem::updateGravity(CollisionComponent const &collisionComponent,
                                   GravityComponent &gravityComponent,
-                                  TransformComponent &transformComponent) const {
+                                  VelocityComponent &velocityComponent) const {
 
   if (collisionComponent.collisionTileDown == TILE::LADDERSTART ||
       collisionComponent.collisionTileDown == TILE::SOLID) {
@@ -30,7 +30,7 @@ void GravitySystem::updateGravity(CollisionComponent const &collisionComponent,
     break;
 
   case GRAVITY_STATE::AIRBORNE:
-    gravity(transformComponent);
+    gravity(velocityComponent);
     break;
 
   default:
@@ -38,8 +38,8 @@ void GravitySystem::updateGravity(CollisionComponent const &collisionComponent,
   }
 }
 
-void GravitySystem::gravity(TransformComponent &transformComponent) const {
-  if (transformComponent.velocity.y < MAX_GRAVITY) {
-    transformComponent.velocity.y = transformComponent.velocity.y + GRAVITY_UNIT;
+void GravitySystem::gravity(VelocityComponent &velocityComponent) const {
+  if (velocityComponent.velocity.y < MAX_GRAVITY) {
+    velocityComponent.velocity.y = velocityComponent.velocity.y + GRAVITY_UNIT;
   }
 }

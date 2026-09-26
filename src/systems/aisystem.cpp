@@ -3,7 +3,8 @@
 #include "../components/attackcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/healthcomponent.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/positioncomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../utilities/physics.hpp"
 
 void AISystem::update(SceneInfo &currentLevel) const {
@@ -16,10 +17,11 @@ void AISystem::update(SceneInfo &currentLevel) const {
     HealthComponent const &healthComponent = reg.get<HealthComponent>(entity);
     AttackComponent &attackComponent = reg.get<AttackComponent>(entity);
     CollisionComponent const &collisionComponent = reg.get<CollisionComponent>(entity);
-    TransformComponent &transformComponent = reg.get<TransformComponent>(entity);
-    
-    float &velx = transformComponent.velocity.x;
-    bool facingRight = transformComponent.facingRight;
+    PositionComponent &positionComponent = reg.get<PositionComponent>(entity);
+    VelocityComponent &velocityComponent = reg.get<VelocityComponent>(entity);
+
+    float &velx = velocityComponent.velocity.x;
+    bool facingRight = positionComponent.facingRight;
     CollisionComponent const &player = reg.get<CollisionComponent>(playerEntity);
     HEALTH_STATE playerHealthState = reg.get<HealthComponent>(playerEntity).healthState;
 

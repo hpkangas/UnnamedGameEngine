@@ -2,19 +2,19 @@
 #define GRAVITYSYSTEM_HPP
 #include "../components/collisioncomponent.hpp"
 #include "../components/gravitycomponent.hpp"
-#include "../components/transformcomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 
 class GravitySystem {
 public:
   SceneInfo *currentLevel = nullptr;
 
-  void gravity(TransformComponent &transformComponent) const;
+  void gravity(VelocityComponent &velocityComponent) const;
   void update() const;
 
 private:
   void updateGravity(CollisionComponent const &collisionComponent,
                      GravityComponent &gravityComponent,
-                     TransformComponent &transformComponent) const;
+                     VelocityComponent &velocityComponent) const;
 };
 #endif
