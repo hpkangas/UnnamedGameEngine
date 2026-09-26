@@ -14,6 +14,7 @@ struct ShootSystem {
   void shoot(ShootComponent const &shootComponent, HealthComponent &healthComponent,
               CollisionComponent const &collisionComponent) const;
   void createProjectile(ShootComponent const &shootComponent) const;
+
   SceneInfo *currentLevel = nullptr;
 };
 

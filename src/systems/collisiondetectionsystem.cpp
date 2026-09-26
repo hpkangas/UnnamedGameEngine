@@ -1,31 +1,27 @@
 #include "collisiondetectionsystem.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/gravitycomponent.hpp"
-#include "../components/transformcomponent.hpp"
 #include "../components/projectilecomponent.hpp"
+#include "../components/transformcomponent.hpp"
 #include "../utilities/physics.hpp"
 #include <cstdio>
+#include <iostream>
 
 void CollisionDetectionSystem::update() {
   auto &reg = currentLevel->registry;
-  //pitääkö olla erillinen view jossa on projectile component? koska projectile ei ole gravity component
-  auto view = reg.view<GravityComponent, CollisionComponent, TransformComponent>();
-  auto view2 = reg.view<CollisionComponent, TransformComponent, ProjectileComponent>();
+  auto view = reg.view<CollisionComponent, TransformComponent>();
   for (auto entity : view) {
     CollisionComponent &cc = view.get<CollisionComponent>(entity);
+    TransformComponent const &tc = view.get<TransformComponent>(entity);
     resetCollisions(cc);
-    updateCollisionRect(cc, view.get<TransformComponent>(entity));
-    checkCollision(entity);
-  }
-  for (auto entity : view2) {
-    CollisionComponent &cc = view2.get<CollisionComponent>(entity);
-    resetCollisions(cc);
-    updateCollisionRect(cc, view2.get<TransformComponent>(entity));
-    checkCollision(entity);
+    updateCollisionRect(cc, tc);
+    checkTileCollision(entity);
+
+    checkProjectileCollision(cc, entity);
   }
 }
 
-void CollisionDetectionSystem::checkCollision(entt::entity playerEntity) const {
+void CollisionDetectionSystem::checkTileCollision(entt::entity playerEntity) const {
   auto &reg = currentLevel->registry;
   CollisionComponent &object = reg.get<CollisionComponent>(playerEntity);
   const Velocity velocity = reg.get<TransformComponent>(playerEntity).velocity;
@@ -140,4 +136,22 @@ void CollisionDetectionSystem::updateCollisionRect(
       (collisionComponent.collisionRect.y + collisionComponent.collisionRect.h +
        collisionComponent.collisionRect.y) /
           2};
+}
+
+void CollisionDetectionSystem::checkProjectileCollision(CollisionComponent &cc, entt::entity entity) const {
+  auto &reg = currentLevel->registry;
+  if (reg.any_of<ProjectileComponent>(entity)) {
+      ProjectileComponent &pc = reg.get<ProjectileComponent>(entity);
+      checkProjectileCollisionWithTile(pc, cc);
+      if (pc.collided) {
+        reg.destroy(entity);
+        std::cout << "Destroyed projectile entity: " << static_cast<uint32_t>(entity) << std::endl;
+      }
+    }
+}
+
+void CollisionDetectionSystem::checkProjectileCollisionWithTile(ProjectileComponent &projectile,
+                                                   CollisionComponent &projectileCollision) const {
+  projectile.collided = projectileCollision.collisionDown || projectileCollision.collisionUp ||
+                        projectileCollision.collisionLeft || projectileCollision.collisionRight;
 }

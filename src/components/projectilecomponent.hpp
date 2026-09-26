@@ -7,6 +7,7 @@
 struct ProjectileComponent {
   int damage = 0;
   entt::entity shooterEntity = entt::null;
+  bool collided = false;
 };
 
 #endif
