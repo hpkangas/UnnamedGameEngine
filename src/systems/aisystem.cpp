@@ -10,14 +10,14 @@ void AISystem::update(SceneInfo &currentLevel) const {
   auto &reg = currentLevel.registry;
   entt::entity playerEntity = currentLevel.playerEntity;
 
-  auto view = reg.view<AIComponent, HealthComponent, AttackComponent, CollisionComponent,
-                       TransformComponent>();
+  auto view = reg.view<AIComponent>();
   for (auto entity : view) {
     AIComponent &aiComponent = view.get<AIComponent>(entity);
-    HealthComponent const &healthComponent = view.get<HealthComponent>(entity);
-    AttackComponent &attackComponent = view.get<AttackComponent>(entity);
-    CollisionComponent const &collisionComponent = view.get<CollisionComponent>(entity);
-    TransformComponent &transformComponent = view.get<TransformComponent>(entity);
+    HealthComponent const &healthComponent = reg.get<HealthComponent>(entity);
+    AttackComponent &attackComponent = reg.get<AttackComponent>(entity);
+    CollisionComponent const &collisionComponent = reg.get<CollisionComponent>(entity);
+    TransformComponent &transformComponent = reg.get<TransformComponent>(entity);
+    
     float &velx = transformComponent.velocity.x;
     bool facingRight = transformComponent.facingRight;
     CollisionComponent const &player = reg.get<CollisionComponent>(playerEntity);

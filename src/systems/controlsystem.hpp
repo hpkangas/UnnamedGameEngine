@@ -1,27 +1,14 @@
 #ifndef CONTROLSYSTEM_HPP
 #define CONTROLSYSTEM_HPP
-#include "../components/attackcomponent.hpp"
-#include "../components/collisioncomponent.hpp"
-#include "../components/controlcomponent.hpp"
-#include "../components/healthcomponent.hpp"
-#include "../components/transformcomponent.hpp"
-#include "../components/shootcomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 #include "transformsystem.hpp"
 
 class ControlSystem {
 
-  void determineControlState(ControlComponent &controlComponent,
-                             CollisionComponent const &collisionComponent,
-                             TransformComponent const &transformComponent,
-                             AttackComponent &attackComponent,
-                             HealthComponent const &healthComponent,
-                             ShootComponent &shootComponent);
+  void determineControlState(entt::entity selectedPlayer);
   void takeInput();
   void resetInput();
-  void handleInput(TransformComponent &transformComponent,
-                   CollisionComponent const &collisionComponent,
-                   ControlComponent &controlComponent);
+  void handleInput(entt::entity selectedPlayer);
 
   bool inputR = false;
   bool inputL = false;

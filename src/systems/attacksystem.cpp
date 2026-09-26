@@ -5,11 +5,11 @@
 
 void AttackSystem::update() {
   auto &reg = currentLevel->registry;
-  auto view = reg.view<AttackComponent, TransformComponent>();
+  auto view = reg.view<AttackComponent>();
 
   for (auto entity : view) {
     AttackComponent &attackComponent = view.get<AttackComponent>(entity);
-    TransformComponent const &transformComponent = view.get<TransformComponent>(entity);
+    TransformComponent const &transformComponent = reg.get<TransformComponent>(entity);
 
     updateAttackComponents(attackComponent, transformComponent);
 

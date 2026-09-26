@@ -5,11 +5,11 @@
 
 void ShootSystem::update() {
   auto &reg = currentLevel->registry;
-  auto view = reg.view<ShootComponent, TransformComponent>();
+  auto view = reg.view<ShootComponent>();
 
   for (auto entity : view) {
     ShootComponent &sc = view.get<ShootComponent>(entity);
-    TransformComponent const &tc = view.get<TransformComponent>(entity);
+    TransformComponent const &tc = reg.get<TransformComponent>(entity);
 
     updateShootComponents(sc, tc);
 
@@ -50,7 +50,7 @@ void ShootSystem::createProjectile(ShootComponent const &shootComponent) const {
       SDL_Rect{shootComponent.launchStartPosition.x, shootComponent.launchStartPosition.y, 32, 32},
       SDL_FLIP_NONE, 2);
   currentLevel->objectRenderIds.emplace_back(entity);
-  
+
   std::cout << "Creating projectile at position (" << shootComponent.launchStartPosition.x << ", "
             << shootComponent.launchStartPosition.y << ") with velocity ("
             << shootComponent.launchVelocity.x << ", " << shootComponent.launchVelocity.y << ")"

@@ -1,5 +1,4 @@
 #include "transformsystem.hpp"
-#include <iostream>
 
 void TransformSystem::updateAll() const {
   auto view = currentLevel->registry.view<TransformComponent>();

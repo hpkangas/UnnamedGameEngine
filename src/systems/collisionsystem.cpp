@@ -17,12 +17,12 @@ void CollisionSystem::update() {
     handleHorizontalBlockCollision(tc, cc);
   }
 
-  auto view2 = reg.view<CollisionComponent, TransformComponent, ProjectileComponent>();
+  auto projectiles = reg.view<ProjectileComponent>();
 
-   for (auto entity : view2) {
-    CollisionComponent const &cc = view2.get<CollisionComponent>(entity);
-    TransformComponent &tc = view2.get<TransformComponent>(entity);
-    ProjectileComponent const &pc = view2.get<ProjectileComponent>(entity);
+   for (auto entity : projectiles) {
+    ProjectileComponent const &pc = projectiles.get<ProjectileComponent>(entity);
+    CollisionComponent const &cc = reg.get<CollisionComponent>(entity);
+    TransformComponent &tc = reg.get<TransformComponent>(entity);
 
     handleHorizontalBlockCollision(tc, cc);
   }

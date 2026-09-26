@@ -1,8 +1,7 @@
 #include "controlsystem.hpp"
-#include "../camera.hpp"
+#include "../components/controlcomponent.hpp"
 #include "../scene/scene.hpp"
 #include "../system.hpp"
-#include "../utilities/constants.hpp"
 #include "SDL_events.h"
 #include "SDL_keyboard.h"
 #include "SDL_scancode.h"
@@ -11,37 +10,25 @@
 #include <cstdio>
 #include <iostream>
 
-using namespace Constants;
 void ControlSystem::update(entt::entity &selectedPlayer) {
-  auto &reg = currentLevel->registry;
 
-  auto view = reg.view<ControlComponent, TransformComponent, CollisionComponent, AttackComponent, HealthComponent, ShootComponent>();
-  for (auto entity : view) {
-    TransformComponent &transformComponent = view.get<TransformComponent>(entity);
-    ControlComponent &controlComponent = view.get<ControlComponent>(entity);
-    CollisionComponent const &collisionComponent = view.get<CollisionComponent>(entity);
-    AttackComponent &attackComponent = view.get<AttackComponent>(entity);
-    HealthComponent const &healthComponent = view.get<HealthComponent>(entity);
-    ShootComponent &shootComponent = view.get<ShootComponent>(entity);
+  resetInput();
 
-    resetInput();
+  determineControlState(selectedPlayer);
 
-    determineControlState(controlComponent, collisionComponent, transformComponent, attackComponent,
-                          healthComponent,shootComponent);
-
-    if (entity == selectedPlayer) {
-      takeInput();
-      handleInput(transformComponent, collisionComponent, controlComponent);
-    }
-  }
+  takeInput();
+  handleInput(selectedPlayer);
 }
 
-void ControlSystem::determineControlState(ControlComponent &controlComponent,
-                                          CollisionComponent const &collisionComponent,
-                                          TransformComponent const &transformComponent,
-                                          AttackComponent &attackComponent,
-                                          HealthComponent const &healthComponent,
-                                          ShootComponent &shootComponent) {
+void ControlSystem::determineControlState(entt::entity selectedPlayer) {
+
+  auto &reg = currentLevel->registry;
+  ControlComponent &controlComponent = reg.get<ControlComponent>(selectedPlayer);
+  TransformComponent &transformComponent = reg.get<TransformComponent>(selectedPlayer);
+  CollisionComponent const &collisionComponent = reg.get<CollisionComponent>(selectedPlayer);
+  AttackComponent &attackComponent = reg.get<AttackComponent>(selectedPlayer);
+  HealthComponent const &healthComponent = reg.get<HealthComponent>(selectedPlayer);
+  ShootComponent &shootComponent = reg.get<ShootComponent>(selectedPlayer);
 
   if (healthComponent.healthState == HEALTH_STATE::DEAD) {
     controlComponent.controlState = CONTROL_STATE::DEAD;
@@ -94,7 +81,6 @@ void ControlSystem::determineControlState(ControlComponent &controlComponent,
     break;
 
   case TILE::LADDER:
-
     break;
 
   case TILE::LADDERSTART:
@@ -144,10 +130,10 @@ void ControlSystem::takeInput() {
   if (!keyboardStateArray[SDL_SCANCODE_A]) {
     canAttack = true;
   }
-  if(keyboardStateArray[SDL_SCANCODE_S]) {
+  if (keyboardStateArray[SDL_SCANCODE_S]) {
     inputShoot = true;
   }
-  if(!keyboardStateArray[SDL_SCANCODE_S]) {
+  if (!keyboardStateArray[SDL_SCANCODE_S]) {
     canShoot = true;
   }
   if (keyboardStateArray[SDL_SCANCODE_D]) {
@@ -167,9 +153,12 @@ void ControlSystem::takeInput() {
   }
 }
 
-void ControlSystem::handleInput(TransformComponent &transformComponent,
-                                CollisionComponent const &collisionComponent,
-                                ControlComponent &controlComponent) {
+void ControlSystem::handleInput(entt::entity selectedPlayer) {
+  auto &reg = currentLevel->registry;
+  ControlComponent &controlComponent = reg.get<ControlComponent>(selectedPlayer);
+  TransformComponent &transformComponent = reg.get<TransformComponent>(selectedPlayer);
+  CollisionComponent const &collisionComponent = reg.get<CollisionComponent>(selectedPlayer);
+
   // for debugging
   if (inputResetCharacter) {
     transformComponent.velocity.x = 0;
@@ -367,4 +356,3 @@ void ControlSystem::resetInput() {
   inputShoot = false;
   inputResetCharacter = false;
 }
-
