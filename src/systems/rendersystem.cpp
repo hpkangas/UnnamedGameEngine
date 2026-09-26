@@ -9,8 +9,9 @@
 
 void RenderSystem::update() const {
   auto &reg = currentLevel->registry;
+  auto view = reg.view<RenderComponent, TransformComponent>();
 
-  for (entt::entity id : currentLevel->objectRenderIds) {
+  for (entt::entity id : view) {
     RenderComponent &rc = reg.get<RenderComponent>(id);
     TransformComponent const &tc = reg.get<TransformComponent>(id);
 
@@ -23,33 +24,14 @@ void RenderSystem::update() const {
       rc.flip = SDL_FLIP_HORIZONTAL;
     }
   }
-
-  for (entt::entity id : currentLevel->tileRenderIds) {
-    RenderComponent &rc = reg.get<RenderComponent>(id);
-    TransformComponent const &tc = reg.get<TransformComponent>(id);
-
-    rc.destinationRect.x = tc.position.x;
-    rc.destinationRect.y = tc.position.y;
-  }
-
-  for (entt::entity id : currentLevel->UIRenderIds) {
-    RenderComponent &rc = reg.get<RenderComponent>(id);
-    TransformComponent const &tc = reg.get<TransformComponent>(id);
-
-    rc.destinationRect.x = tc.position.x;
-    rc.destinationRect.y = tc.position.y;
-  }
 }
 
 void RenderSystem::render() const {
   auto &reg = currentLevel->registry;
+  auto view = reg.view<RenderComponent, TransformComponent>();
 
   SDL_RenderClear(System::renderer);
-
-  for (entt::entity id : currentLevel->tileRenderIds) {
-    renderNonStatic(reg.get<RenderComponent>(id).render());
-  }
-  for (entt::entity id : currentLevel->objectRenderIds) {
+  for (entt::entity id : view) {
     renderNonStatic(reg.get<RenderComponent>(id).render());
   }
 
