@@ -21,6 +21,7 @@ private:
   static void createPC(int x, int y, SceneInfo &level);
   static void createEnemy(int x, int y, SceneInfo &level);
   static void createUI(int x, int y, SceneInfo &level);
+
 };
 
 #endif

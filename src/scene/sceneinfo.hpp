@@ -22,7 +22,6 @@ struct SceneInfo {
   int levelLength = 0;
   int levelHeight = 0;
 
-  entt::entity createEntity() { return registry.create(); }
 };
 
 #endif

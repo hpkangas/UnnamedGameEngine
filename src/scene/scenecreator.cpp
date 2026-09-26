@@ -2,12 +2,12 @@
 #include "../components/aicomponent.hpp"
 #include "../components/animationcomponent.hpp"
 #include "../components/attackcomponent.hpp"
-#include "../components/shootcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
 #include "../components/controlcomponent.hpp"
 #include "../components/gravitycomponent.hpp"
 #include "../components/healthcomponent.hpp"
 #include "../components/rendercomponent.hpp"
+#include "../components/shootcomponent.hpp"
 #include "../components/tilecomponent.hpp"
 #include "../components/transformcomponent.hpp"
 #include "../include/json/json.hpp"
@@ -50,9 +50,11 @@ static bool loadEntityTemplatesOnce() {
   if (!g_entityTemplates.is_null()) {
     return true;
   }
-  std::ifstream ifs("data/data.json");
+
+  std::string dataFilePath = "data/data.json";
+  std::ifstream ifs(dataFilePath);
   if (!ifs.is_open()) {
-    std::cout << "SceneCreator: failed to open data/data.json\n";
+    std::cout << "SceneCreator: failed to open " << dataFilePath << "\n";
     return false;
   }
   try {
@@ -98,7 +100,7 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
     return;
   }
 
-  auto entity = level.createEntity();
+  auto entity = level.registry.create();
 
   // Transform
   level.registry.emplace<TransformComponent>(entity, x, y);
@@ -120,46 +122,46 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
       auto &ac = level.registry.emplace<AnimationComponent>(entity);
       auto animationKey = def["animation"];
 
-      if(animationKey.contains("WALK")) {
+      if (animationKey.contains("WALK")) {
         ac.walking.spriteSheetY = animationKey["WALK"]["spriteSheetY"];
         ac.walking.maxFrames = animationKey["WALK"]["maxFrames"];
       }
-      if(animationKey.contains("ATTACKING")) {
+      if (animationKey.contains("ATTACKING")) {
         ac.attacking.spriteSheetY = animationKey["ATTACKING"]["spriteSheetY"];
         ac.attacking.maxFrames = animationKey["ATTACKING"]["maxFrames"];
       }
 
-      if(animationKey.contains("CLIMBING")) {
+      if (animationKey.contains("CLIMBING")) {
         ac.climbing.spriteSheetY = animationKey["CLIMBING"]["spriteSheetY"];
         ac.climbing.maxFrames = animationKey["CLIMBING"]["maxFrames"];
       }
 
-      if(animationKey.contains("DYING")) {
+      if (animationKey.contains("DYING")) {
         ac.dying.spriteSheetY = animationKey["DYING"]["spriteSheetY"];
         ac.dying.maxFrames = animationKey["DYING"]["maxFrames"];
       }
 
-      if(animationKey.contains("AIRBORNE")) {
+      if (animationKey.contains("AIRBORNE")) {
         ac.airborne.spriteSheetY = animationKey["AIRBORNE"]["spriteSheetY"];
         ac.airborne.maxFrames = animationKey["AIRBORNE"]["maxFrames"];
       }
 
-      if(animationKey.contains("PUSH")) {
+      if (animationKey.contains("PUSH")) {
         ac.pushing.spriteSheetY = animationKey["PUSH"]["spriteSheetY"];
         ac.pushing.maxFrames = animationKey["PUSH"]["maxFrames"];
       }
 
-      if(animationKey.contains("STILL")) {
+      if (animationKey.contains("STILL")) {
         ac.still.spriteSheetY = animationKey["STILL"]["spriteSheetY"];
         ac.still.maxFrames = animationKey["STILL"]["maxFrames"];
       }
 
-      if(animationKey.contains("WALK")) {
+      if (animationKey.contains("WALK")) {
         ac.walking.spriteSheetY = animationKey["WALK"]["spriteSheetY"];
         ac.walking.maxFrames = animationKey["WALK"]["maxFrames"];
       }
 
-      if(animationKey.contains("SHOOTING")) {
+      if (animationKey.contains("SHOOTING")) {
         ac.shooting.spriteSheetY = animationKey["SHOOTING"]["spriteSheetY"];
         ac.shooting.maxFrames = animationKey["SHOOTING"]["maxFrames"];
       }
@@ -185,22 +187,25 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
     hc.currentHealth = def.value("health", hc.maxHealth);
   }
 
-//TODO should come fron json
+  // TODO should come fron json
   if (def.contains("attack")) {
+    auto attackDef = def["attack"];
     const int px = x;
     const int py = y;
     const SDL_Rect collisionRect = {px + Constants::PLAYER_WIDTH, py, Constants::PLAYER_WIDTH,
-                                               Constants::PLAYER_HEIGHT};
-    int attackFrames = def.value("attackFrames", 36);
-    int attackHitDetectionFrame = def.value("attackFrames", 24);
-    int damage = def.value("damage", 1);
-    level.registry.emplace<AttackComponent>(entity, attackFrames, attackHitDetectionFrame, damage, collisionRect);
+                                    Constants::PLAYER_HEIGHT};
+    int attackFrames = attackDef.value("attackFrames", 36);
+    int attackHitDetectionFrame = attackDef.value("attackHitDetectionFrame", 24);
+    int damage = attackDef.value("damage", 1);
+    level.registry.emplace<AttackComponent>(entity, attackFrames, attackHitDetectionFrame, damage,
+                                            collisionRect);
   }
 
   if (def.contains("shoot")) {
-    int shootFrames = def.value("shootFrames", 64);
-    int launchFrame = def.value("launchFrame", 56);
-    int damage = def.value("damage", 1);
+    auto shootDef = def["shoot"];
+    int shootFrames = shootDef.value("shootingFrames", 64);
+    int launchFrame = shootDef.value("launchFrame", 32);
+    int damage = shootDef.value("damage", 1);
     entt::entity shooterEntity = entity;
     level.registry.emplace<ShootComponent>(entity, shootFrames, launchFrame, damage, shooterEntity);
   }
@@ -298,9 +303,7 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
 
       currentValue = "";
       continue;
-    }
-
-    else {
+    } else {
       currentValue += c;
     }
   }
@@ -330,7 +333,7 @@ void SceneCreator::createBlock3(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
-  auto entity = level.createEntity();
+  auto entity = level.registry.create();
 
   level.registry.emplace<TransformComponent>(entity, x, y);
   level.registry.emplace<TileComponent>(entity, TILE::NONE, x / 128, y / 128);
@@ -343,7 +346,7 @@ void SceneCreator::createEmptyTile(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
-  auto entity = level.createEntity();
+  auto entity = level.registry.create();
 
   SDL_Rect const sourceRect = {sourceX, 0, 128, 128};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -358,7 +361,7 @@ void SceneCreator::createBlockEntity(int x, int y, int sourceX, SceneInfo &level
 }
 
 void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level) {
-  auto entity = level.createEntity();
+  auto entity = level.registry.create();
 
   SDL_Rect const sourceRect = {sourceX, 0, 128, 128};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -373,7 +376,7 @@ void SceneCreator::createSemiSolidBlockEntity(int x, int y, int sourceX, SceneIn
 }
 
 void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
-  auto entity = level.createEntity();
+  auto entity = level.registry.create();
 
   SDL_Rect const sourceRect = {0, 192, 128, 128};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -389,7 +392,7 @@ void SceneCreator::createLadder(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
-  auto entity = level.createEntity();
+  auto entity = level.registry.create();
 
   SDL_Rect const sourceRect = {0, 192, 128, 64};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
@@ -405,7 +408,7 @@ void SceneCreator::createLadderStart(int x, int y, SceneInfo &level) {
 }
 
 void SceneCreator::createUI(int x, int y, SceneInfo &level) {
-  auto entity = level.createEntity();
+  auto entity = level.registry.create();
   SDL_Rect const sourceRect = {0, 0, 31, 31};
   SDL_Rect const destinationRect = {x, y, sourceRect.w, sourceRect.h};
 
