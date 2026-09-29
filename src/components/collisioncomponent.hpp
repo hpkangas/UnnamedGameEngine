@@ -1,8 +1,10 @@
 #ifndef COLLISIONCOMPONENT_HPP
 #define COLLISIONCOMPONENT_HPP
+#include "../include/entt/entt.hpp"
 #include "../utilities/utils.hpp"
 #include "SDL_rect.h"
 #include "tilecomponent.hpp"
+#include <vector>
 
 struct CollisionComponent {
   explicit CollisionComponent(SDL_Rect collision) : collisionRect(collision) {}
@@ -10,15 +12,17 @@ struct CollisionComponent {
   Utils::Position center = {(collisionRect.x + collisionRect.w + collisionRect.w) / 2,
                             (collisionRect.y + collisionRect.h + collisionRect.h) / 2};
 
-  bool collisionUp = false;
-  bool collisionDown = false;
-  bool collisionLeft = false;
-  bool collisionRight = false;
+  std::vector<entt::entity> collisionIds;
 
-  TILE collisionTileLeft = TILE::NONE;
-  TILE collisionTileRight = TILE::NONE;
-  TILE collisionTileDown = TILE::NONE;
-  TILE collisionTileUp = TILE::NONE;
+  bool tileCollisionUp = false;
+  bool tileCollisionDown = false;
+  bool tileCollisionLeft = false;
+  bool tileCollisionRight = false;
+
+  TILE collisionTileTypeLeft = TILE::NONE;
+  TILE collisionTileTypeRight = TILE::NONE;
+  TILE collisionTileTypeDown = TILE::NONE;
+  TILE collisionTileTypeUp = TILE::NONE;
 
   Utils::Position collidedDownTilePos = {0, 0};
   Utils::Position collidedUpTilePos = {0, 0};

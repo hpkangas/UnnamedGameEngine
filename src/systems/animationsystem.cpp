@@ -63,7 +63,7 @@ void AnimationSystem::determineAnimationState(AnimationComponent &animationCompo
       animationComponent.animationState = ANIMATION_STATE::STILL;
     }
 
-    if (collisionComponent->collisionLeft || collisionComponent->collisionRight) {
+    if (collisionComponent->tileCollisionLeft || collisionComponent->tileCollisionRight) {
       animationComponent.animationState = ANIMATION_STATE::PUSHING;
     }
 

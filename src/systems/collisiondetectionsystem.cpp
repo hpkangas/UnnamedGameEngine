@@ -5,7 +5,6 @@
 #include "../components/velocitycomponent.hpp"
 #include "../utilities/physics.hpp"
 #include <cstdio>
-#include <iostream>
 
 void CollisionDetectionSystem::update() {
   auto &reg = currentLevel->registry;
@@ -16,11 +15,27 @@ void CollisionDetectionSystem::update() {
     VelocityComponent const &vc = view.get<VelocityComponent>(entity);
     resetCollisions(cc);
     updateCollisionRect(cc, pc);
+
     checkTileCollision(cc, pc, vc);
 
     if (reg.any_of<ProjectileComponent>(entity)) {
       ProjectileComponent &pc = reg.get<ProjectileComponent>(entity);
       checkProjectileCollision(pc, cc);
+    }
+
+    for(auto entity2 : view) {
+      if(entity == entity2) {
+        continue;
+      }
+      CollisionComponent &cc2 = view.get<CollisionComponent>(entity2);
+      PositionComponent const &pc2 = view.get<PositionComponent>(entity2);
+      VelocityComponent const &vc2 = view.get<VelocityComponent>(entity2);
+
+      if(Physics::checkCollision(cc.collisionRect, cc2.collisionRect)) {
+        // Handle collision
+        cc.collisionIds.emplace_back(entity2);
+      }
+
     }
   }
 }
@@ -52,89 +67,91 @@ void CollisionDetectionSystem::checkTileCollision(CollisionComponent &cc,
       }
       TILE const &collisionTile = tileTile->tile;
 
-      if (!cc.collisionLeft || vel.x > 0) {
+      if (!cc.tileCollisionLeft || vel.x > 0) {
         checkEntityLeftTileCollision(cc, *tileColl, vel, collisionTile);
       }
-      if (!cc.collisionRight || vel.x < 0) {
+      if (!cc.tileCollisionRight || vel.x < 0) {
         checkEntityRightTileCollision(cc, *tileColl, vel, collisionTile);
       }
-      if (!cc.collisionDown || vel.y > 0) {
+      if (!cc.tileCollisionDown || vel.y > 0) {
         checkEntityDownTileCollision(cc, *tileColl, vel, collisionTile);
       }
-      if (!cc.collisionUp || vel.y < 0) {
+      if (!cc.tileCollisionUp || vel.y < 0) {
         checkEntityUpTileCollision(cc, *tileColl, vel, collisionTile);
       }
     }
   }
 }
 
-void CollisionDetectionSystem::checkEntityLeftTileCollision(CollisionComponent &entityCollision,
+void CollisionDetectionSystem::checkEntityLeftTileCollision(CollisionComponent &objectCollision,
                                                             CollisionComponent const &tileCollision,
                                                             Velocity velocity,
                                                             TILE const &collisionTile) const {
 
-  if (Physics::collisionLeft(entityCollision.collisionRect, tileCollision.collisionRect,
+  if (Physics::collisionLeft(objectCollision.collisionRect, tileCollision.collisionRect,
                              velocity)) {
-    entityCollision.xposDif = entityCollision.collisionRect.x -
+    objectCollision.xposDif = objectCollision.collisionRect.x -
                               (tileCollision.collisionRect.x + tileCollision.collisionRect.w);
-    entityCollision.collisionLeft = true;
+    objectCollision.tileCollisionLeft = true;
 
-    entityCollision.collisionTileLeft = collisionTile;
+    objectCollision.collisionTileTypeLeft = collisionTile;
   }
 }
 
 void CollisionDetectionSystem::checkEntityRightTileCollision(
-    CollisionComponent &entityCollision, CollisionComponent const &tileCollision, Velocity velocity,
+    CollisionComponent &objectCollision, CollisionComponent const &tileCollision, Velocity velocity,
     TILE const &collisionTile) const {
-  if (Physics::collisionRight(entityCollision.collisionRect, tileCollision.collisionRect,
+  if (Physics::collisionRight(objectCollision.collisionRect, tileCollision.collisionRect,
                               velocity)) {
-    entityCollision.xposDif = (entityCollision.collisionRect.x + entityCollision.collisionRect.w) -
+    objectCollision.xposDif = (objectCollision.collisionRect.x + objectCollision.collisionRect.w) -
                               tileCollision.collisionRect.x;
-    entityCollision.collisionTileRight = collisionTile;
+    objectCollision.collisionTileTypeRight = collisionTile;
 
-    entityCollision.collisionRight = true;
+    objectCollision.tileCollisionRight = true;
   }
 }
 
-void CollisionDetectionSystem::checkEntityUpTileCollision(CollisionComponent &entityCollision,
+void CollisionDetectionSystem::checkEntityUpTileCollision(CollisionComponent &objectCollision,
                                                           CollisionComponent const &tileCollision,
                                                           Velocity velocity,
                                                           TILE const &collisionTile) const {
-  if (Physics::collisionUp(entityCollision.collisionRect, tileCollision.collisionRect, velocity)) {
-    entityCollision.yposDif = (entityCollision.collisionRect.y) -
+  if (Physics::collisionUp(objectCollision.collisionRect, tileCollision.collisionRect, velocity)) {
+    objectCollision.yposDif = (objectCollision.collisionRect.y) -
                               (tileCollision.collisionRect.y + tileCollision.collisionRect.h);
-    entityCollision.collisionTileUp = collisionTile;
-    entityCollision.collidedUpTilePos = {tileCollision.collisionRect.x,
+    objectCollision.collisionTileTypeUp = collisionTile;
+    objectCollision.collidedUpTilePos = {tileCollision.collisionRect.x,
                                          tileCollision.collisionRect.y};
-    entityCollision.collisionUp = true;
+    objectCollision.tileCollisionUp = true;
   }
 }
 
-void CollisionDetectionSystem::checkEntityDownTileCollision(CollisionComponent &entityCollision,
+void CollisionDetectionSystem::checkEntityDownTileCollision(CollisionComponent &objectCollision,
                                                             CollisionComponent const &tileCollision,
                                                             Velocity velocity,
                                                             TILE const &collisionTile) const {
-  if (Physics::collisionDown(entityCollision.collisionRect, tileCollision.collisionRect,
+  if (Physics::collisionDown(objectCollision.collisionRect, tileCollision.collisionRect,
                              velocity)) {
-    entityCollision.yposDif = (entityCollision.collisionRect.y + entityCollision.collisionRect.h) -
+    objectCollision.yposDif = (objectCollision.collisionRect.y + objectCollision.collisionRect.h) -
                               tileCollision.collisionRect.y;
-    entityCollision.collisionTileDown = collisionTile;
-    entityCollision.collidedDownTilePos = {tileCollision.collisionRect.x,
+    objectCollision.collisionTileTypeDown = collisionTile;
+    objectCollision.collidedDownTilePos = {tileCollision.collisionRect.x,
                                            tileCollision.collisionRect.y};
-    entityCollision.collisionDown = true;
+    objectCollision.tileCollisionDown = true;
   }
 }
 
 void CollisionDetectionSystem::resetCollisions(CollisionComponent &collisionComponent) const {
-  collisionComponent.collisionLeft = false;
-  collisionComponent.collisionRight = false;
-  collisionComponent.collisionUp = false;
-  collisionComponent.collisionDown = false;
+  collisionComponent.tileCollisionLeft = false;
+  collisionComponent.tileCollisionRight = false;
+  collisionComponent.tileCollisionUp = false;
+  collisionComponent.tileCollisionDown = false;
 
-  collisionComponent.collisionTileDown = TILE::NONE;
-  collisionComponent.collisionTileLeft = TILE::NONE;
-  collisionComponent.collisionTileRight = TILE::NONE;
-  collisionComponent.collisionTileUp = TILE::NONE;
+  collisionComponent.collisionTileTypeDown = TILE::NONE;
+  collisionComponent.collisionTileTypeLeft = TILE::NONE;
+  collisionComponent.collisionTileTypeRight = TILE::NONE;
+  collisionComponent.collisionTileTypeUp = TILE::NONE;
+
+  collisionComponent.collisionIds.clear();
 }
 
 void CollisionDetectionSystem::updateCollisionRect(
@@ -153,6 +170,6 @@ void CollisionDetectionSystem::updateCollisionRect(
 
 void CollisionDetectionSystem::checkProjectileCollision(
     ProjectileComponent &projectile, CollisionComponent const &projectileCollision) const {
-  projectile.collided = projectileCollision.collisionDown || projectileCollision.collisionUp ||
-                        projectileCollision.collisionLeft || projectileCollision.collisionRight;
+  projectile.collided = projectileCollision.tileCollisionDown || projectileCollision.tileCollisionUp ||
+                        projectileCollision.tileCollisionLeft || projectileCollision.tileCollisionRight;
 }

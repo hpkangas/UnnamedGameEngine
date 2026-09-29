@@ -18,8 +18,8 @@ void GravitySystem::updateGravity(CollisionComponent const &collisionComponent,
                                   GravityComponent &gravityComponent,
                                   VelocityComponent &velocityComponent) const {
 
-  if (collisionComponent.collisionTileDown == TILE::LADDERSTART ||
-      collisionComponent.collisionTileDown == TILE::SOLID) {
+  if (collisionComponent.collisionTileTypeDown == TILE::LADDERSTART ||
+      collisionComponent.collisionTileTypeDown == TILE::SOLID) {
     gravityComponent.gravityState = GRAVITY_STATE::GROUNDED;
   } else {
     gravityComponent.gravityState = GRAVITY_STATE::AIRBORNE;

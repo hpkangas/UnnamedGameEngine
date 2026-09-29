@@ -33,7 +33,7 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
     return;
   }
 
-  switch (collisionComponent.collisionTileDown) {
+  switch (collisionComponent.collisionTileTypeDown) {
   case TILE::NONE:
     if (controlComponent.controlState != CONTROL_STATE::AIRBORNE) {
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
@@ -332,10 +332,10 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
       }
 
       if (inputU) {
-        if (collisionComponent.collisionTileUp != TILE::LADDER &&
-            collisionComponent.collisionTileUp != TILE::LADDERSTART &&
-            collisionComponent.collisionTileDown != TILE::LADDER &&
-            collisionComponent.collisionTileDown != TILE::LADDERSTART) {
+        if (collisionComponent.collisionTileTypeUp != TILE::LADDER &&
+            collisionComponent.collisionTileTypeUp != TILE::LADDERSTART &&
+            collisionComponent.collisionTileTypeDown != TILE::LADDER &&
+            collisionComponent.collisionTileTypeDown != TILE::LADDERSTART) {
         } else {
           transformSystem->stopX(velocityComponent, positionComponent);
           transformSystem->moveUp(velocityComponent);
@@ -346,8 +346,8 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
 
       if (inputD) {
 
-        if (collisionComponent.collisionTileDown != TILE::LADDER &&
-            collisionComponent.collisionTileDown != TILE::LADDERSTART) {
+        if (collisionComponent.collisionTileTypeDown != TILE::LADDER &&
+            collisionComponent.collisionTileTypeDown != TILE::LADDERSTART) {
           controlComponent.controlState = CONTROL_STATE::NORMAL;
           transformSystem->stopY(velocityComponent, positionComponent);
 

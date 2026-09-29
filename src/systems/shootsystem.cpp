@@ -24,13 +24,15 @@ void ShootSystem::update() {
 
 void ShootSystem::updateShootComponents(ShootComponent &shootComponent,
                                         PositionComponent const &positionComponent, VelocityComponent const &velocityComponent) const {
+
+//TODO data from json
   if (positionComponent.facingRight) {
     shootComponent.launchVelocity = {16.0f, velocityComponent.velocity.y};
-    shootComponent.launchStartPosition = {positionComponent.position.x,
-                                          positionComponent.position.y};
+    shootComponent.launchStartPosition = {positionComponent.position.x + 128,
+                                          positionComponent.position.y+64};
   } else {
     shootComponent.launchStartPosition = {positionComponent.position.x,
-                                          positionComponent.position.y};
+                                          positionComponent.position.y+64};
     shootComponent.launchVelocity = {-16.0f, velocityComponent.velocity.y};
   }
 }

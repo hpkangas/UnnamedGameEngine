@@ -44,11 +44,11 @@ void AISystem::update(SceneInfo &currentLevel) const {
       }
       attackRect = &attackComponent.collisionRect;
 
-      if (collisionComponent.collisionTileRight == TILE::SOLID ||
-          collisionComponent.collisionTileDown == TILE::NONE) {
+      if (collisionComponent.collisionTileTypeRight == TILE::SOLID ||
+          collisionComponent.collisionTileTypeDown == TILE::NONE) {
         velx = -4;
-      } else if (collisionComponent.collisionTileLeft == TILE::SOLID ||
-                 collisionComponent.collisionTileDown == TILE::NONE) {
+      } else if (collisionComponent.collisionTileTypeLeft == TILE::SOLID ||
+                 collisionComponent.collisionTileTypeDown == TILE::NONE) {
         velx = 4;
       }
 

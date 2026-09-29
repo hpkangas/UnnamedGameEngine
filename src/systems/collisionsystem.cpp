@@ -1,6 +1,7 @@
 #include "collisionsystem.hpp"
 #include <cstdio>
 #include <iostream>
+#include "../components/healthcomponent.hpp"
 
 void CollisionSystem::update() {
   auto &reg = currentLevel->registry;
@@ -17,6 +18,29 @@ void CollisionSystem::update() {
     handleHorizontalBlockCollision(velocityComponent, positionComponent, cc);
   }
 
+  for (auto entity2 : reg.view<CollisionComponent>()) {
+    CollisionComponent &cc = reg.get<CollisionComponent>(entity2);
+    for (auto collisionId : cc.collisionIds) {
+      if (entity2 == collisionId) {
+        continue;
+      }
+      if (reg.any_of<ProjectileComponent>(collisionId)) {
+        auto &projectile = reg.get<ProjectileComponent>(collisionId);
+        if(projectile.shooterEntity == entity2){
+          continue;
+        }
+        if(reg.any_of<HealthComponent>(entity2)){
+          auto &health = reg.get<HealthComponent>(entity2);
+          if (health.healthState != HEALTH_STATE::DEAD) {
+          
+            health.damageTaken = projectile.damage;
+            projectile.collided = true;
+          }
+      }
+      }
+
+    }
+  }
   auto projectiles = reg.view<ProjectileComponent>();
 
   for (auto entity : projectiles) {
@@ -28,11 +52,14 @@ void CollisionSystem::update() {
     handleHorizontalBlockCollision(velocityComponent, positionComponent, cc);
     handleProjectileCollision(pc, entity);
   }
+
 }
 
-void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc,
+void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityComponent,
+                                              PositionComponent &positionComponent,
+                                              CollisionComponent const &cc,
                                               GravityComponent const &gc) const {
-  switch (cc.collisionTileDown) {
+  switch (cc.collisionTileTypeDown) {
 
   case TILE::NONE:
     break;
@@ -60,10 +87,12 @@ void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityCompone
   }
 }
 
-void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc,
+void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent,
+                                            PositionComponent &positionComponent,
+                                            CollisionComponent const &cc,
                                             GravityComponent const &gc) const {
 
-  switch (cc.collisionTileUp) {
+  switch (cc.collisionTileTypeUp) {
 
   case TILE::NONE:
     break;
@@ -92,7 +121,7 @@ void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent
 void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocityComponent,
                                                      PositionComponent &positionComponent,
                                                      CollisionComponent const &cc) const {
-  if (cc.collisionTileLeft == TILE::SOLID || cc.collisionTileRight == TILE::SOLID) {
+  if (cc.collisionTileTypeLeft == TILE::SOLID || cc.collisionTileTypeRight == TILE::SOLID) {
     transformSystem->stopX(velocityComponent, positionComponent, cc.xposDif);
   }
 }
