@@ -15,10 +15,14 @@ private:
 
   void determineAnimationState(AnimationComponent &animationComponent, entt::entity entity) const;
 
-  void playFrame(RenderComponent &renderComponent, int const x, int const y, int const w,
-                 int const h, int const frame) const;
+  void playFrame(RenderComponent &renderComponent, int const frame) const;
+  void playFrame(RenderComponent &renderComponent, int const y, int const frame) const;
+  void playFrame(RenderComponent &renderComponent, int const y, int const w, int const h,
+                 int const frame) const;
 
   void animate(AnimationComponent &animationComponent, entt::entity entity) const;
+
+  void resetAnimationFrame(AnimationComponent &animationComponent) const;
 };
 
 #endif
