@@ -27,13 +27,13 @@ void ShootSystem::updateShootComponents(ShootComponent &shootComponent,
 
 //TODO data from json
   if (positionComponent.facingRight) {
-    shootComponent.launchVelocity = {16.0f, velocityComponent.velocity.y};
-    shootComponent.launchStartPosition = {positionComponent.position.x + 128,
-                                          positionComponent.position.y+64};
+    shootComponent.launchVelocity = {20.0f, velocityComponent.velocity.y};
+    shootComponent.launchPosition = {positionComponent.position.x + 128,
+                                          positionComponent.position.y+57};
   } else {
-    shootComponent.launchStartPosition = {positionComponent.position.x,
-                                          positionComponent.position.y+64};
-    shootComponent.launchVelocity = {-16.0f, velocityComponent.velocity.y};
+    shootComponent.launchVelocity = {-20.0f, velocityComponent.velocity.y};
+    shootComponent.launchPosition = {positionComponent.position.x,
+                                          positionComponent.position.y+57};
   }
 }
 
@@ -41,22 +41,22 @@ void ShootSystem::createProjectile(ShootComponent const &shootComponent) const {
   auto &reg = currentLevel->registry;
   auto entity = reg.create();
 
-  reg.emplace<PositionComponent>(entity, shootComponent.launchStartPosition.x,
-                                  shootComponent.launchStartPosition.y);
+  reg.emplace<PositionComponent>(entity, shootComponent.launchPosition.x,
+                                  shootComponent.launchPosition.y);
   reg.emplace<VelocityComponent>(entity, shootComponent.launchVelocity.x,
                                   shootComponent.launchVelocity.y);
-  reg.emplace<CollisionComponent>(entity, SDL_Rect{shootComponent.launchStartPosition.x,
-                                                   shootComponent.launchStartPosition.y, 32, 32});
+  reg.emplace<CollisionComponent>(entity, SDL_Rect{shootComponent.launchPosition.x,
+                                                   shootComponent.launchPosition.y, 32, 32});
   reg.emplace<ProjectileComponent>(
-      entity, ProjectileComponent{shootComponent.damage, shootComponent.shooterEntity});
-  reg.emplace<RenderComponent>(
-      entity, SDL_Rect{0, 0, 32, 32},
-      SDL_Rect{shootComponent.launchStartPosition.x, shootComponent.launchStartPosition.y, 32, 32},
-      SDL_FLIP_NONE, 2);
+      entity, shootComponent.damage, shootComponent.shooterEntity);
+  reg.emplace<RenderComponent>(entity, shootComponent.projectileRender);
+      // entity, SDL_Rect{0, 0, 32, 32},
+      // SDL_Rect{shootComponent.launchStartPosition.x, shootComponent.launchStartPosition.y, 32, 32},
+      // SDL_FLIP_NONE, 2);
   currentLevel->objectRenderIds.emplace_back(entity);
 
-  std::cout << "Creating projectile at position (" << shootComponent.launchStartPosition.x << ", "
-            << shootComponent.launchStartPosition.y << ") with velocity ("
+  std::cout << "Creating projectile at position (" << shootComponent.launchPosition.x << ", "
+            << shootComponent.launchPosition.y << ") with velocity ("
             << shootComponent.launchVelocity.x << ", " << shootComponent.launchVelocity.y << ")"
             << "id " << static_cast<uint32_t>(entity) << std::endl;
 }

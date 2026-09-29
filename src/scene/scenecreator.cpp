@@ -207,8 +207,19 @@ static void createEntityFromTemplate(const nlohmann::json &def, int x, int y, Sc
     int shootFrames = shootDef.value("shootingFrames", 64);
     int launchFrame = shootDef.value("launchFrame", 32);
     int damage = shootDef.value("damage", 1);
+
+
+    //Should projectile be its own data entry that shootcomponent takes an argument
+    auto projectile = def["shoot"]["projectile"];
+    SpriteDef sprite = parseSpriteFromJSON(projectile);
+    int texIndex = textureIndexFromName(sprite.texture);
+    SDL_Rect src = sprite.sourceRect;
+    SDL_Rect dst = {x, y, src.w, src.h};
+    RenderInfo info = {texIndex, src, dst, SDL_FLIP_NONE};
+
+
     entt::entity shooterEntity = entity;
-    level.registry.emplace<ShootComponent>(entity, shootFrames, launchFrame, damage, shooterEntity);
+    level.registry.emplace<ShootComponent>(entity, shootFrames, launchFrame, damage, shooterEntity, info);
   }
 
   // Gravity

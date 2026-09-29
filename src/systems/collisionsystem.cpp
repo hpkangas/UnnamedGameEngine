@@ -14,7 +14,6 @@ void CollisionSystem::update() {
 
     handleDownTileCollision(velocityComponent, positionComponent, cc, gc);
     handleUpTileCollision(velocityComponent, positionComponent, cc, gc);
-
     handleHorizontalBlockCollision(velocityComponent, positionComponent, cc);
   }
 
