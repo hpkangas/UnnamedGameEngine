@@ -2,7 +2,6 @@
 #include "../camera.hpp"
 #include "../system.hpp"
 #include "../systems/transformsystem.hpp"
-#include "../utilities/constants.hpp"
 #include "scenecreator.hpp"
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_keycode.h>

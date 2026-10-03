@@ -35,10 +35,6 @@ void RenderSystem::render() const {
     renderNonStatic(reg.get<RenderComponent>(id).render());
   }
 
-  for (entt::entity id : currentLevel->UIRenderIds) {
-    renderStatic(reg.get<RenderComponent>(id).render());
-  }
-
   SDL_RenderPresent(System::renderer);
 }
 

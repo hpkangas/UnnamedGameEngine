@@ -1,23 +1,24 @@
 #pragma once
 #ifndef ENTITYCREATOR_HPP
 #define ENTITYCREATOR_HPP
-#include "SDL_rwops.h"
 #include "sceneinfo.hpp"
+#include "../utilities/utils.hpp"
+using namespace Utils;
 
-struct EntityCreator {
-  static void createBlock(std::string const &object, int const x, int const y, SceneInfo &level);
-  static void createBlock1(int x, int y, SceneInfo &level);
-  static void createBlock2(int x, int y, SceneInfo &level);
-  static void createBlock3(int x, int y, SceneInfo &level);
-  static void createEmptyTile(int x, int y, SceneInfo &level);
-  static void createBlockEntity(int x, int y, int sourceX, SceneInfo &level);
-  static void createSemiSolidBlockEntity(int x, int y, int sourceX, SceneInfo &level);
-  static void createLadder(int x, int y, SceneInfo &level);
-  static void createLadderStart(int x, int y, SceneInfo &level);
-  static void createPC(int x, int y, SceneInfo &level);
-  static void createEnemy(int x, int y, SceneInfo &level);
-  static void createUI(int x, int y, SceneInfo &level);
-  static void createProjectile(std::string templateName, int x, int y, SceneInfo &level);
+namespace EntityCreator {
+  void createBlock(std::string const &object, Position position, SceneInfo &level);
+  void createBlock1(Position position, SceneInfo &level);
+  void createBlock2(Position position, SceneInfo &level);
+  void createBlock3(Position position, SceneInfo &level);
+  void createEmptyTile(Position position, SceneInfo &level);
+  void createBlockEntity(Position position, int sourceX, SceneInfo &level);
+  void createSemiSolidBlockEntity(Position position, int sourceX, SceneInfo &level);
+  void createLadder(Position position, SceneInfo &level);
+  void createLadderStart(Position position, SceneInfo &level);
+  entt::entity createPC(Position position, SceneInfo &level);
+  entt::entity createEnemy(Position position, SceneInfo &level);
+  void createUI(Position position, SceneInfo &level);
+  entt::entity createProjectile(std::string templateName, Position position, Velocity velocity, SceneInfo &level);
 };
 
 #endif

@@ -1,8 +1,6 @@
 #include "shootsystem.hpp"
-#include "../scene/entitycreator.hpp"
 #include "../components/projectilecomponent.hpp"
-#include "../components/rendercomponent.hpp"
-#include <iostream>
+#include "../scene/entitycreator.hpp"
 
 void ShootSystem::update() {
   auto &reg = currentLevel->registry;
@@ -24,41 +22,26 @@ void ShootSystem::update() {
 }
 
 void ShootSystem::updateShootComponents(ShootComponent &shootComponent,
-                                        PositionComponent const &positionComponent, VelocityComponent const &velocityComponent) const {
+                                        PositionComponent const &positionComponent,
+                                        VelocityComponent const &velocityComponent) const {
 
-//TODO data from json
+  // TODO data from json
   if (positionComponent.facingRight) {
     shootComponent.launchVelocity = {20.0f, velocityComponent.velocity.y};
     shootComponent.launchPosition = {positionComponent.position.x + 128,
-                                          positionComponent.position.y+57};
+                                     positionComponent.position.y + 57};
   } else {
     shootComponent.launchVelocity = {-20.0f, velocityComponent.velocity.y};
     shootComponent.launchPosition = {positionComponent.position.x,
-                                          positionComponent.position.y+57};
+                                     positionComponent.position.y + 57};
   }
 }
 
 void ShootSystem::createProjectile(ShootComponent const &shootComponent) const {
-  EntityCreator creator;
-  creator.createProjectile("arrow", shootComponent.launchPosition.x,shootComponent.launchPosition.y, *currentLevel);
-  //TODO how to get shooter entity id on projectile??
-
-  
-  // auto &reg = currentLevel->registry;
-  // auto entity = reg.create();
-
-  // reg.emplace<PositionComponent>(entity, shootComponent.launchPosition.x,
-  //                                 shootComponent.launchPosition.y);
-  // reg.emplace<VelocityComponent>(entity, shootComponent.launchVelocity.x,
-  //                                 shootComponent.launchVelocity.y);
-  // reg.emplace<CollisionComponent>(entity, SDL_Rect{shootComponent.launchPosition.x,
-  //                                                  shootComponent.launchPosition.y, 32, 32});
-  // reg.emplace<ProjectileComponent>(
-  //     entity, shootComponent.damage, shootComponent.shooterEntity);
-  // reg.emplace<RenderComponent>(entity, shootComponent.projectileRender);
-  //     // entity, SDL_Rect{0, 0, 32, 32},
-  //     // SDL_Rect{shootComponent.launchStartPosition.x, shootComponent.launchStartPosition.y, 32, 32},
-  //     // SDL_FLIP_NONE, 2);
-  // currentLevel->objectRenderIds.emplace_back(entity);
-
+  // EntityCreator creator;
+  auto projectileEntity = EntityCreator::createProjectile(
+      "arrow", shootComponent.launchPosition, shootComponent.launchVelocity, *currentLevel);
+  auto &projectileComponent = currentLevel->registry.get<ProjectileComponent>(projectileEntity);
+  projectileComponent.shooterEntity = shootComponent.shooterEntity;
+  projectileComponent.damage = shootComponent.damage;
 }

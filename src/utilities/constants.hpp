@@ -16,7 +16,7 @@ constexpr double MAX_LAG_MS = 250.0;
 constexpr int PLAYER_INDEX = 1;
 constexpr int PLAYER_HEIGHT = 128;
 constexpr int PLAYER_WIDTH = 128;
-
+constexpr int TILE_SIZE = 128;
 } // namespace Constants
 
 #endif

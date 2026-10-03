@@ -1,7 +1,6 @@
 #include "collisionsystem.hpp"
-#include <cstdio>
-#include <iostream>
 #include "../components/healthcomponent.hpp"
+#include <cstdio>
 
 void CollisionSystem::update() {
   auto &reg = currentLevel->registry;
@@ -18,26 +17,25 @@ void CollisionSystem::update() {
   }
 
   for (auto entity2 : reg.view<CollisionComponent>()) {
-    CollisionComponent &cc = reg.get<CollisionComponent>(entity2);
-    for (auto collisionId : cc.collisionIds) {
+    CollisionComponent const &cc2 = reg.get<CollisionComponent>(entity2);
+    for (auto collisionId : cc2.collisionIds) {
       if (entity2 == collisionId) {
         continue;
       }
       if (reg.any_of<ProjectileComponent>(collisionId)) {
         auto &projectile = reg.get<ProjectileComponent>(collisionId);
-        if(projectile.shooterEntity == entity2){
+        if (projectile.shooterEntity == entity2) {
           continue;
         }
-        if(reg.any_of<HealthComponent>(entity2)){
+        if (reg.any_of<HealthComponent>(entity2)) {
           auto &health = reg.get<HealthComponent>(entity2);
           if (health.healthState != HEALTH_STATE::DEAD) {
-          
+
             health.damageTaken = projectile.damage;
             projectile.collided = true;
           }
+        }
       }
-      }
-
     }
   }
   auto projectiles = reg.view<ProjectileComponent>();
@@ -51,7 +49,6 @@ void CollisionSystem::update() {
     handleHorizontalBlockCollision(velocityComponent, positionComponent, cc);
     handleProjectileCollision(pc, entity);
   }
-
 }
 
 void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityComponent,
@@ -129,6 +126,5 @@ void CollisionSystem::handleProjectileCollision(ProjectileComponent const &pc,
                                                 entt::entity entity) const {
   if (pc.collided) {
     currentLevel->registry.destroy(entity);
-    std::cout << "Destroyed projectile entity: " << static_cast<uint32_t>(entity) << std::endl;
   }
 }
