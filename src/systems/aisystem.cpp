@@ -52,7 +52,7 @@ void AISystem::update(SceneInfo &currentLevel) const {
         velx = 4;
       }
 
-      if (playerHealthState == HEALTH_STATE::ALIVE &&
+      if (playerHealthState != HEALTH_STATE::DEAD &&
           Physics::attackCollision(*attackRect, player.collisionRect)) {
         aiComponent.state = AI_STATE::ATTACKING;
         attackComponent.attacking = true;

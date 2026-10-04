@@ -53,7 +53,7 @@ void AttackSystem::attack(AttackComponent const &attackComponent,
                           HealthComponent &healthComponent,
                           CollisionComponent const &collisionComponent) const {
 
-  if (healthComponent.healthState == HEALTH_STATE::ALIVE) {
+  if (healthComponent.healthState != HEALTH_STATE::DEAD) {
 
 
     if (Physics::attackCollision(collisionComponent.collisionRect,  attackComponent.collisionRect)) {

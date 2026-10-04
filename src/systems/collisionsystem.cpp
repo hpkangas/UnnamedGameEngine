@@ -3,51 +3,25 @@
 #include <cstdio>
 
 void CollisionSystem::update() {
+  handleTileCollisions();
+  handleProjectileCollisions();
+}
+
+void CollisionSystem::handleTileCollisions(){
   auto &reg = currentLevel->registry;
-  auto view = reg.view<GravityComponent, CollisionComponent, PositionComponent>();
+  auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
   for (auto entity : view) {
     CollisionComponent const &cc = view.get<CollisionComponent>(entity);
-    VelocityComponent &velocityComponent = reg.get<VelocityComponent>(entity);
+    VelocityComponent &velocityComponent = view.get<VelocityComponent>(entity);
     PositionComponent &positionComponent = view.get<PositionComponent>(entity);
-    GravityComponent const &gc = view.get<GravityComponent>(entity);
-
-    handleDownTileCollision(velocityComponent, positionComponent, cc, gc);
-    handleUpTileCollision(velocityComponent, positionComponent, cc, gc);
     handleHorizontalBlockCollision(velocityComponent, positionComponent, cc);
-  }
-
-  for (auto entity2 : reg.view<CollisionComponent>()) {
-    CollisionComponent const &cc2 = reg.get<CollisionComponent>(entity2);
-    for (auto collisionId : cc2.collisionIds) {
-      if (entity2 == collisionId) {
-        continue;
-      }
-      if (reg.any_of<ProjectileComponent>(collisionId)) {
-        auto &projectile = reg.get<ProjectileComponent>(collisionId);
-        if (projectile.shooterEntity == entity2) {
-          continue;
-        }
-        if (reg.any_of<HealthComponent>(entity2)) {
-          auto &health = reg.get<HealthComponent>(entity2);
-          if (health.healthState != HEALTH_STATE::DEAD) {
-
-            health.damageTaken = projectile.damage;
-            projectile.collided = true;
-          }
-        }
-      }
+    
+    
+    GravityComponent *gc = reg.try_get<GravityComponent>(entity);
+    if (gc) {
+    handleDownTileCollision(velocityComponent, positionComponent, cc, *gc);
+    handleUpTileCollision(velocityComponent, positionComponent, cc, *gc);
     }
-  }
-  auto projectiles = reg.view<ProjectileComponent>();
-
-  for (auto entity : projectiles) {
-    ProjectileComponent const &pc = projectiles.get<ProjectileComponent>(entity);
-    CollisionComponent const &cc = reg.get<CollisionComponent>(entity);
-    PositionComponent &positionComponent = reg.get<PositionComponent>(entity);
-    VelocityComponent &velocityComponent = reg.get<VelocityComponent>(entity);
-
-    handleHorizontalBlockCollision(velocityComponent, positionComponent, cc);
-    handleProjectileCollision(pc, entity);
   }
 }
 
@@ -122,7 +96,33 @@ void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocity
   }
 }
 
-void CollisionSystem::handleProjectileCollision(ProjectileComponent const &pc,
+void CollisionSystem::handleProjectileCollisions(){
+  auto &reg = currentLevel->registry;
+  auto view = reg.view<ProjectileComponent, CollisionComponent>();
+  for (auto projectile : reg.view<ProjectileComponent>()) {
+    ProjectileComponent &pc = reg.get<ProjectileComponent>(projectile);
+    CollisionComponent const &cc = reg.get<CollisionComponent>(projectile);
+
+    for (auto collidedEntity : cc.collisionIds) {
+      if (collidedEntity == pc.shooterEntity) {
+        continue;
+      }
+      if (reg.any_of<HealthComponent>(collidedEntity)) {
+        auto &health = reg.get<HealthComponent>(collidedEntity);
+        if (health.healthState != HEALTH_STATE::DEAD) {
+          health.damageTaken = pc.damage;
+          pc.collided = true;
+
+        }
+      }
+    }
+
+    destroyProjectileEntity(pc, projectile);
+
+  }
+}
+
+void CollisionSystem::destroyProjectileEntity(ProjectileComponent const &pc,
                                                 entt::entity entity) const {
   if (pc.collided) {
     currentLevel->registry.destroy(entity);

@@ -4,12 +4,12 @@
 
 void ShootSystem::update() {
   auto &reg = currentLevel->registry;
-  auto view = reg.view<ShootComponent>();
+  auto view = reg.view<ShootComponent, PositionComponent, VelocityComponent>();
 
   for (auto entity : view) {
     ShootComponent &sc = view.get<ShootComponent>(entity);
-    PositionComponent const &tc = reg.get<PositionComponent>(entity);
-    VelocityComponent const &vc = reg.get<VelocityComponent>(entity);
+    PositionComponent const &tc = view.get<PositionComponent>(entity);
+    VelocityComponent const &vc = view.get<VelocityComponent>(entity);
 
     updateShootComponents(sc, tc, vc);
 
@@ -27,8 +27,8 @@ void ShootSystem::updateShootComponents(ShootComponent &shootComponent,
 
   // TODO data from json
   if (positionComponent.facingRight) {
-    shootComponent.launchVelocity = {20.0f, velocityComponent.velocity.y};
-    shootComponent.launchPosition = {positionComponent.position.x + 128,
+    shootComponent.launchVelocity = {44.0f, velocityComponent.velocity.y};
+    shootComponent.launchPosition = {positionComponent.position.x + 61,
                                      positionComponent.position.y + 57};
   } else {
     shootComponent.launchVelocity = {-20.0f, velocityComponent.velocity.y};

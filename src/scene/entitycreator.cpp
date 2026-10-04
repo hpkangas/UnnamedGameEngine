@@ -105,13 +105,10 @@ entt::entity createEntityFromTemplate(const nlohmann::json &def, Position positi
 
   auto entity = level.registry.create();
 
-  // Transform
   level.registry.emplace<PositionComponent>(entity, position.x, position.y);
+
   if (def.contains("velocity")) {
-    // Optionally set velocity if present
-    level.registry.emplace<VelocityComponent>(entity,
-                                              static_cast<float>(def["velocity"].value("x", 0.0)),
-                                              static_cast<float>(def["velocity"].value("y", 0.0)));
+    level.registry.emplace<VelocityComponent>(entity, velocity.x, velocity.y);
   }
 
   // Sprite/render (if present)
@@ -120,7 +117,8 @@ entt::entity createEntityFromTemplate(const nlohmann::json &def, Position positi
     int texIndex = textureIndexFromName(sprite.texture);
     SDL_Rect src = sprite.sourceRect;
     SDL_Rect dst = {position.x, position.y, src.w, src.h};
-    level.registry.emplace<RenderComponent>(entity, src, dst, SDL_FLIP_NONE, texIndex);
+    int layer = sprite.layer;
+    level.registry.emplace<RenderComponent>(entity, src, dst, SDL_FLIP_NONE, texIndex, layer);
     if (def.contains("animation")) {
       auto &ac = level.registry.emplace<AnimationComponent>(entity);
       auto animationKey = def["animation"];

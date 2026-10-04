@@ -10,6 +10,13 @@ class CollisionDetectionSystem {
 public:
   SceneInfo *currentLevel = nullptr;
   void update();
+
+  void updateCollisionComponents();
+
+  void checkEntityCollisions();
+
+  void checkTileCollisions();
+
   void checkTileCollision(CollisionComponent &object, PositionComponent const &position,
                           VelocityComponent const &velocity) const;
 

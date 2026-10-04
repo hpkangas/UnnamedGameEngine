@@ -15,6 +15,8 @@ public:
 
   void update();
 
+  void handleTileCollisions();
+
   void handleDownTileCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc,
                                GravityComponent const &ctrlc) const;
 
@@ -22,7 +24,9 @@ public:
                              GravityComponent const &ctrlc) const;
   void handleHorizontalBlockCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc) const;
 
-  void handleProjectileCollision(ProjectileComponent const &pc, entt::entity entity) const;
+  void handleProjectileCollisions();
+
+  void destroyProjectileEntity(ProjectileComponent const &pc, entt::entity entity) const;
 };
 
 #endif

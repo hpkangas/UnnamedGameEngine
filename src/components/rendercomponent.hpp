@@ -12,14 +12,15 @@ struct RenderInfo {
 };
 
 struct RenderComponent {
-  RenderComponent(SDL_Rect source, SDL_Rect destination, SDL_RendererFlip flip, int texture)
-      : sourceRect(source), destinationRect(destination), objTextureIndex(texture), flip(flip) {}
+  RenderComponent(SDL_Rect source, SDL_Rect destination, SDL_RendererFlip flip, int texture, int layer = 0)
+      : sourceRect(source), destinationRect(destination), objTextureIndex(texture), flip(flip),layer(layer) {}
   RenderComponent(RenderInfo info) : sourceRect(info.sourceRect),destinationRect(info.destinationRect),objTextureIndex(info.objTexture),flip(info.flip) {}
 
   SDL_Rect sourceRect{};
   SDL_Rect destinationRect{};
   int objTextureIndex;
   SDL_RendererFlip flip = SDL_FLIP_NONE;
+  int layer = 0;
 
   RenderInfo render() const {
   RenderInfo const info = {objTextureIndex, sourceRect, destinationRect, flip};

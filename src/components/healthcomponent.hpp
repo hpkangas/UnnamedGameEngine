@@ -2,11 +2,11 @@
 #ifndef HEALTHCOMPONENT_HPP
 #define HEALTHCOMPONENT_HPP
 
-enum class HEALTH_STATE { DEAD = 0, ALIVE = 1 };
+enum class HEALTH_STATE { DEAD = 0, DAMAGED = 1, HEALTHY = 2 };
 
 struct HealthComponent {
   explicit HealthComponent(int maxHealth) : maxHealth(maxHealth) {}
-  HEALTH_STATE healthState = HEALTH_STATE::ALIVE;
+  HEALTH_STATE healthState = HEALTH_STATE::HEALTHY;
   int maxHealth = 0;
   int currentHealth = maxHealth;
   int damageTaken = 0;
