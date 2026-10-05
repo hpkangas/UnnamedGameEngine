@@ -41,11 +41,11 @@ SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
       } else if (currentValue.starts_with("B")) {
         EntityCreator::createBlock(currentValue, Position{x, y}, level);
 
-      } else if (currentValue.starts_with("LS")) {
-        EntityCreator::createLadderStart(Position{x, y}, level);
+      // } else if (currentValue.starts_with("LS")) {
+      //   EntityCreator::createLadderStart(Position{x, y}, level);
 
-      } else if (currentValue.starts_with("L")) {
-        EntityCreator::createLadder(Position{x, y}, level);
+      // } else if (currentValue.starts_with("L")) {
+      //   EntityCreator::createLadder(Position{x, y}, level);
 
       } else if (currentValue == "") {
         EntityCreator::createEmptyTile(Position{x, y}, level);

@@ -6,14 +6,16 @@
 #include "../texturemanager.hpp"
 #include "SDL_rect.h"
 #include "SDL_render.h"
+#include <algorithm>
+#include <vector>
 
 void RenderSystem::update() const {
   auto &reg = currentLevel->registry;
   auto view = reg.view<RenderComponent, PositionComponent>();
 
   for (entt::entity id : view) {
-    RenderComponent &rc = reg.get<RenderComponent>(id);
-    PositionComponent const &tc = reg.get<PositionComponent>(id);
+    RenderComponent &rc = view.get<RenderComponent>(id);
+    PositionComponent const &tc = view.get<PositionComponent>(id);
 
     rc.destinationRect.x = tc.position.x;
     rc.destinationRect.y = tc.position.y;
@@ -31,8 +33,15 @@ void RenderSystem::render() const {
   auto view = reg.view<RenderComponent, PositionComponent>();
 
   SDL_RenderClear(System::renderer);
-  for (entt::entity id : view) {
-    renderNonStatic(reg.get<RenderComponent>(id).render());
+
+  //Sort entities by render layer to ensure correct rendering order
+  std::vector<entt::entity> entities(view.begin(), view.end());
+  std::stable_sort(entities.begin(), entities.end(), [&view](entt::entity lhs, entt::entity rhs) {
+    return view.get<RenderComponent>(lhs).renderLayer > view.get<RenderComponent>(rhs).renderLayer;
+  });
+
+  for (entt::entity id : entities) {
+    renderNonStatic(view.get<RenderComponent>(id).render());
   }
 
   SDL_RenderPresent(System::renderer);
