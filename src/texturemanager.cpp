@@ -56,7 +56,6 @@ void TextureManager::loadTextures() {
     const std::string fileName = path.filename().generic_string();
 
     Texture tex = TextureManager::loadTexture(fullPath);
-    tex.id = i;
 
     textures.emplace_back(tex);
     textureIndexes[fileName] = i;

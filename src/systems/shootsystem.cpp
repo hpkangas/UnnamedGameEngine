@@ -27,7 +27,7 @@ void ShootSystem::updateShootComponents(ShootComponent &shootComponent,
 
   // TODO data from json
   if (positionComponent.facingRight) {
-    shootComponent.launchVelocity = {44.0f, velocityComponent.velocity.y};
+    shootComponent.launchVelocity = {20.0f, velocityComponent.velocity.y};
     shootComponent.launchPosition = {positionComponent.position.x + 61,
                                      positionComponent.position.y + 57};
   } else {

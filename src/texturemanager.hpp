@@ -1,27 +1,26 @@
+#ifndef TEXTUREMANAGER_HPP
+#define TEXTUREMANAGER_HPP
 #pragma once
 #include <SDL2/SDL_image.h>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#ifndef TEXTUREMANAGER_HPP
-#define TEXTUREMANAGER_HPP
 
 struct Texture {
   SDL_Texture *texture = nullptr;
   std::string name;
-  int id = -1;
 };
 
-struct TextureManager {
-  inline static std::vector<Texture> textures;
-  inline static std::unordered_map<std::string, int> textureIndexes;
+namespace TextureManager {
+inline std::vector<Texture> textures;
+inline std::unordered_map<std::string, int> textureIndexes;
 
-  static void loadTextures();
-  static void clean();
+void loadTextures();
+void clean();
 
-  static Texture loadTexture(const std::string &fileName);
-  static int getTextureIndex(const std::string &textureName);
-};
+Texture loadTexture(const std::string &fileName);
+int getTextureIndex(const std::string &textureName);
+}; // namespace TextureManager
 // namespace TextureManager
 
 #endif
