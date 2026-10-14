@@ -35,23 +35,23 @@ void AISystem::update(SceneInfo &currentLevel) const {
       break;
 
     case AI_STATE::WALKING:
-      SDL_Rect const *attackRect;
 
       if (facingRight) {
         velx = 4;
       } else {
         velx = -4;
       }
-      attackRect = &attackComponent.collisionRect;
 
       if (collisionComponent.collisionTileTypeRight == TILE::SOLID ||
-          collisionComponent.collisionTileTypeDown == TILE::NONE) {
+          collisionComponent.collisionTileTypeDown == TILE::EMPTY) {
         velx = -4;
       } else if (collisionComponent.collisionTileTypeLeft == TILE::SOLID ||
-                 collisionComponent.collisionTileTypeDown == TILE::NONE) {
+                 collisionComponent.collisionTileTypeDown == TILE::EMPTY) {
         velx = 4;
       }
 
+      SDL_Rect const *attackRect;
+      attackRect = &attackComponent.collisionRect;
       if (playerHealthState != HEALTH_STATE::DEAD &&
           Physics::attackCollision(*attackRect, player.collisionRect)) {
         aiComponent.state = AI_STATE::ATTACKING;

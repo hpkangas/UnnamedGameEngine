@@ -34,7 +34,7 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
   }
 
   switch (collisionComponent.collisionTileTypeDown) {
-  case TILE::NONE:
+  case TILE::EMPTY:
     if (controlComponent.controlState != CONTROL_STATE::AIRBORNE) {
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     }
@@ -61,322 +61,322 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
       }
     }
 
-      if (controlComponent.controlState == CONTROL_STATE::SHOOTING) {
-        if (shootComponent.currentShootingFrame == shootComponent.shootingFrames) {
-          shootComponent.currentShootingFrame = 0;
-          if (!inputShoot) {
-            shootComponent.shooting = false;
-            canShoot = true;
-            controlComponent.controlState = CONTROL_STATE::NORMAL;
-          }
-        } else {
-          shootComponent.shooting = true;
-          shootComponent.currentShootingFrame++;
-          break;
-        }
-      }
-
-      break;
-
-    case TILE::SEMISOLID:
-      break;
-
-    case TILE::LADDER:
-      break;
-
-    case TILE::LADDERSTART:
-      if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
-        if (velocityComponent.velocity.y == 0) {
+    if (controlComponent.controlState == CONTROL_STATE::SHOOTING) {
+      if (shootComponent.currentShootingFrame == shootComponent.shootingFrames) {
+        shootComponent.currentShootingFrame = 0;
+        if (!inputShoot) {
+          shootComponent.shooting = false;
+          canShoot = true;
           controlComponent.controlState = CONTROL_STATE::NORMAL;
         }
+      } else {
+        shootComponent.shooting = true;
+        shootComponent.currentShootingFrame++;
+        break;
       }
-
-      break;
-
-    default:
-      break;
     }
+
+    break;
+
+  case TILE::SEMISOLID:
+    break;
+
+  case TILE::LADDER:
+    break;
+
+  case TILE::LADDERSTART:
+    if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
+      if (velocityComponent.velocity.y == 0) {
+        controlComponent.controlState = CONTROL_STATE::NORMAL;
+      }
+    }
+
+    break;
+
+  default:
+    break;
   }
+}
 
-  void ControlSystem::takeInput() {
-    SDL_Event event;
+void ControlSystem::takeInput() {
+  SDL_Event event;
 
-    while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_QUIT) {
-        Scene::isRunning = false;
-        System::isRunning = false;
-        return;
-      }
-    }
-
-    const Uint8 *keyboardStateArray = SDL_GetKeyboardState(nullptr);
-    if (keyboardStateArray[SDL_SCANCODE_F1]) {
-      Scene::isRunning = false;
-      return;
-    }
-    if (keyboardStateArray[SDL_SCANCODE_F2]) {
+  while (SDL_PollEvent(&event)) {
+    if (event.type == SDL_QUIT) {
       Scene::isRunning = false;
       System::isRunning = false;
       return;
     }
-    if (keyboardStateArray[SDL_SCANCODE_RIGHT]) {
-      inputR = true;
-    }
-    if (!keyboardStateArray[SDL_SCANCODE_RIGHT]) {
-      inputR = false;
-    }
-
-    if (keyboardStateArray[SDL_SCANCODE_LEFT]) {
-      inputL = true;
-    }
-    if (!keyboardStateArray[SDL_SCANCODE_LEFT]) {
-      inputL = false;
-    }
-
-    if (keyboardStateArray[SDL_SCANCODE_A]) {
-      inputAttack = true;
-    }
-    if (!keyboardStateArray[SDL_SCANCODE_A]) {
-      canAttack = true;
-      inputAttack = false;
-    }
-
-    if (keyboardStateArray[SDL_SCANCODE_S]) {
-      inputShoot = true;
-    }
-    if (!keyboardStateArray[SDL_SCANCODE_S]) {
-      canShoot = true;
-      inputShoot = false;
-    }
-
-    if (keyboardStateArray[SDL_SCANCODE_D]) {
-      inputJump = true;
-    }
-    if (!keyboardStateArray[SDL_SCANCODE_D]) {
-      canJump = true;
-      inputJump = false;
-    }
-
-    if (keyboardStateArray[SDL_SCANCODE_UP]) {
-      inputU = true;
-    }
-    if (!keyboardStateArray[SDL_SCANCODE_UP]) {
-      inputU = false;
-    }
-
-    if (keyboardStateArray[SDL_SCANCODE_DOWN]) {
-      inputD = true;
-    }
-    if (!keyboardStateArray[SDL_SCANCODE_DOWN]) {
-      inputD = false;
-    }
-
-    if (keyboardStateArray[SDL_SCANCODE_R]) {
-      inputResetCharacter = true;
-    }
   }
 
-  void ControlSystem::handleInput(entt::entity selectedPlayer) {
-    auto &reg = currentLevel->registry;
-    ControlComponent &controlComponent = reg.get<ControlComponent>(selectedPlayer);
-    PositionComponent &positionComponent = reg.get<PositionComponent>(selectedPlayer);
-    VelocityComponent &velocityComponent = reg.get<VelocityComponent>(selectedPlayer);
-    CollisionComponent const &collisionComponent = reg.get<CollisionComponent>(selectedPlayer);
+  const Uint8 *keyboardStateArray = SDL_GetKeyboardState(nullptr);
+  if (keyboardStateArray[SDL_SCANCODE_F1]) {
+    Scene::isRunning = false;
+    return;
+  }
+  if (keyboardStateArray[SDL_SCANCODE_F2]) {
+    Scene::isRunning = false;
+    System::isRunning = false;
+    return;
+  }
+  if (keyboardStateArray[SDL_SCANCODE_RIGHT]) {
+    inputR = true;
+  }
+  if (!keyboardStateArray[SDL_SCANCODE_RIGHT]) {
+    inputR = false;
+  }
 
-    // for debugging
-    if (inputResetCharacter) {
-      velocityComponent.velocity.x = 0;
-      velocityComponent.velocity.y = 0;
-      positionComponent.position.x = 0;
-      positionComponent.position.y = 0;
+  if (keyboardStateArray[SDL_SCANCODE_LEFT]) {
+    inputL = true;
+  }
+  if (!keyboardStateArray[SDL_SCANCODE_LEFT]) {
+    inputL = false;
+  }
+
+  if (keyboardStateArray[SDL_SCANCODE_A]) {
+    inputAttack = true;
+  }
+  if (!keyboardStateArray[SDL_SCANCODE_A]) {
+    canAttack = true;
+    inputAttack = false;
+  }
+
+  if (keyboardStateArray[SDL_SCANCODE_S]) {
+    inputShoot = true;
+  }
+  if (!keyboardStateArray[SDL_SCANCODE_S]) {
+    canShoot = true;
+    inputShoot = false;
+  }
+
+  if (keyboardStateArray[SDL_SCANCODE_D]) {
+    inputJump = true;
+  }
+  if (!keyboardStateArray[SDL_SCANCODE_D]) {
+    canJump = true;
+    inputJump = false;
+  }
+
+  if (keyboardStateArray[SDL_SCANCODE_UP]) {
+    inputU = true;
+  }
+  if (!keyboardStateArray[SDL_SCANCODE_UP]) {
+    inputU = false;
+  }
+
+  if (keyboardStateArray[SDL_SCANCODE_DOWN]) {
+    inputD = true;
+  }
+  if (!keyboardStateArray[SDL_SCANCODE_DOWN]) {
+    inputD = false;
+  }
+
+  if (keyboardStateArray[SDL_SCANCODE_R]) {
+    inputResetCharacter = true;
+  }
+}
+
+void ControlSystem::handleInput(entt::entity selectedPlayer) {
+  auto &reg = currentLevel->registry;
+  ControlComponent &controlComponent = reg.get<ControlComponent>(selectedPlayer);
+  PositionComponent &positionComponent = reg.get<PositionComponent>(selectedPlayer);
+  VelocityComponent &velocityComponent = reg.get<VelocityComponent>(selectedPlayer);
+  CollisionComponent const &collisionComponent = reg.get<CollisionComponent>(selectedPlayer);
+
+  // for debugging
+  if (inputResetCharacter) {
+    velocityComponent.velocity.x = 0;
+    velocityComponent.velocity.y = 0;
+    positionComponent.position.x = 0;
+    positionComponent.position.y = 0;
+    controlComponent.controlState = CONTROL_STATE::AIRBORNE;
+    // Camera::focusArea = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
+    // Camera::offset = {0, -200};
+    return;
+  }
+
+  bool noInput = true;
+
+  switch (controlComponent.controlState) {
+  case CONTROL_STATE::NORMAL:
+
+    if (inputR && !inputL) {
+      if (velocityComponent.velocity.x < 0) {
+        transformSystem->stopX(velocityComponent, positionComponent);
+      }
+      transformSystem->moveRight(velocityComponent);
+      noInput = false;
+    }
+
+    if (inputL && !inputR) {
+      if (velocityComponent.velocity.x > 0) {
+        transformSystem->stopX(velocityComponent, positionComponent);
+      }
+      transformSystem->moveLeft(velocityComponent);
+      noInput = false;
+    }
+
+    if (inputU) {
+      noInput = false;
+      if (controlComponent.canClimb) {
+
+        positionComponent.position.x = collisionComponent.collidedUpTilePos.x;
+
+        transformSystem->stopX(velocityComponent, positionComponent);
+        controlComponent.controlState = CONTROL_STATE::CLIMBING;
+        return;
+      }
+    }
+
+    if (inputD) {
+      noInput = false;
+      if (controlComponent.canClimb) {
+        positionComponent.position.x = collisionComponent.collidedDownTilePos.x;
+
+        transformSystem->stopX(velocityComponent, positionComponent);
+        transformSystem->stopY(velocityComponent, positionComponent);
+        controlComponent.controlState = CONTROL_STATE::CLIMBING;
+        return;
+      }
+    }
+
+    if (inputJump && canJump) {
+      noInput = false;
+      transformSystem->jump(velocityComponent);
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-      // Camera::focusArea = {SCREENWIDTH * 1 / 4, SCREENWIDTH * 3 / 4, 0, 0};
-      // Camera::offset = {0, -200};
+      canJump = false;
+    }
+
+    if (inputAttack && canAttack) {
+      noInput = false;
+      controlComponent.controlState = CONTROL_STATE::ATTACKING;
+      canAttack = false;
+    }
+
+    if (inputShoot && canShoot) {
+      noInput = false;
+      controlComponent.controlState = CONTROL_STATE::SHOOTING;
+      std::cout << "shooting \n";
+      canShoot = false;
+    }
+
+    if (noInput) {
+      transformSystem->stopX(velocityComponent, positionComponent);
+    }
+
+    break;
+
+  case CONTROL_STATE::AIRBORNE:
+
+    if (inputR && !inputL) {
+      noInput = false;
+      if (velocityComponent.velocity.x < 0) {
+        transformSystem->stopX(velocityComponent, positionComponent);
+      }
+      transformSystem->moveRight(velocityComponent);
+    }
+
+    if (inputL && !inputR) {
+      noInput = false;
+      if (velocityComponent.velocity.x > 0) {
+        transformSystem->stopX(velocityComponent, positionComponent);
+      }
+      transformSystem->moveLeft(velocityComponent);
+    }
+
+    if (inputU) {
+
+      if (controlComponent.canClimb) {
+        std::cout << "can climb from air \n";
+        positionComponent.position.x = collisionComponent.collidedUpTilePos.x;
+
+        transformSystem->stopX(velocityComponent, positionComponent);
+        transformSystem->stopY(velocityComponent, positionComponent);
+        controlComponent.controlState = CONTROL_STATE::CLIMBING;
+      }
+    }
+
+    if (inputD) {
+
+      if (controlComponent.canClimb) {
+        positionComponent.position.x = collisionComponent.collidedDownTilePos.x;
+
+        transformSystem->stopX(velocityComponent, positionComponent);
+        transformSystem->stopY(velocityComponent, positionComponent);
+        controlComponent.controlState = CONTROL_STATE::CLIMBING;
+      }
+    }
+
+    if (noInput) {
+      transformSystem->stopX(velocityComponent, positionComponent);
+    }
+
+    break;
+
+  case CONTROL_STATE::FALLING:
+
+    break;
+
+  case CONTROL_STATE::CLIMBING:
+
+    if (inputR && !inputL && !inputU && !inputD) {
+      controlComponent.controlState = CONTROL_STATE::AIRBORNE;
+      transformSystem->moveRight(velocityComponent);
       return;
     }
 
-    bool noInput = true;
-
-    switch (controlComponent.controlState) {
-    case CONTROL_STATE::NORMAL:
-
-      if (inputR && !inputL) {
-        if (velocityComponent.velocity.x < 0) {
-          transformSystem->stopX(velocityComponent, positionComponent);
-        }
-        transformSystem->moveRight(velocityComponent);
-        noInput = false;
-      }
-
-      if (inputL && !inputR) {
-        if (velocityComponent.velocity.x > 0) {
-          transformSystem->stopX(velocityComponent, positionComponent);
-        }
-        transformSystem->moveLeft(velocityComponent);
-        noInput = false;
-      }
-
-      if (inputU) {
-        noInput = false;
-        if (controlComponent.canClimb) {
-
-          positionComponent.position.x = collisionComponent.collidedUpTilePos.x;
-
-          transformSystem->stopX(velocityComponent, positionComponent);
-          controlComponent.controlState = CONTROL_STATE::CLIMBING;
-          return;
-        }
-      }
-
-      if (inputD) {
-        noInput = false;
-        if (controlComponent.canClimb) {
-          positionComponent.position.x = collisionComponent.collidedDownTilePos.x;
-
-          transformSystem->stopX(velocityComponent, positionComponent);
-          transformSystem->stopY(velocityComponent, positionComponent);
-          controlComponent.controlState = CONTROL_STATE::CLIMBING;
-          return;
-        }
-      }
-
-      if (inputJump && canJump) {
-        noInput = false;
-        transformSystem->jump(velocityComponent);
-        controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-        canJump = false;
-      }
-
-      if (inputAttack && canAttack) {
-        noInput = false;
-        controlComponent.controlState = CONTROL_STATE::ATTACKING;
-        canAttack = false;
-      }
-
-      if (inputShoot && canShoot) {
-        noInput = false;
-        controlComponent.controlState = CONTROL_STATE::SHOOTING;
-        std::cout << "shooting \n";
-        canShoot = false;
-      }
-
-      if (noInput) {
-        transformSystem->stopX(velocityComponent, positionComponent);
-      }
-
-      break;
-
-    case CONTROL_STATE::AIRBORNE:
-
-      if (inputR && !inputL) {
-        noInput = false;
-        if (velocityComponent.velocity.x < 0) {
-          transformSystem->stopX(velocityComponent, positionComponent);
-        }
-        transformSystem->moveRight(velocityComponent);
-      }
-
-      if (inputL && !inputR) {
-        noInput = false;
-        if (velocityComponent.velocity.x > 0) {
-          transformSystem->stopX(velocityComponent, positionComponent);
-        }
-        transformSystem->moveLeft(velocityComponent);
-      }
-
-      if (inputU) {
-
-        if (controlComponent.canClimb) {
-          std::cout << "can climb from air \n";
-          positionComponent.position.x = collisionComponent.collidedUpTilePos.x;
-
-          transformSystem->stopX(velocityComponent, positionComponent);
-          transformSystem->stopY(velocityComponent, positionComponent);
-          controlComponent.controlState = CONTROL_STATE::CLIMBING;
-        }
-      }
-
-      if (inputD) {
-
-        if (controlComponent.canClimb) {
-          positionComponent.position.x = collisionComponent.collidedDownTilePos.x;
-
-          transformSystem->stopX(velocityComponent, positionComponent);
-          transformSystem->stopY(velocityComponent, positionComponent);
-          controlComponent.controlState = CONTROL_STATE::CLIMBING;
-        }
-      }
-
-      if (noInput) {
-        transformSystem->stopX(velocityComponent, positionComponent);
-      }
-
-      break;
-
-    case CONTROL_STATE::FALLING:
-
-      break;
-
-    case CONTROL_STATE::CLIMBING:
-
-      if (inputR && !inputL && !inputU && !inputD) {
-        controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-        transformSystem->moveRight(velocityComponent);
-        return;
-      }
-
-      if (inputL && !inputR && !inputU && !inputD) {
-        controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-        transformSystem->moveLeft(velocityComponent);
-        return;
-      }
-
-      if (inputU) {
-        if (collisionComponent.collisionTileTypeUp != TILE::LADDER &&
-            collisionComponent.collisionTileTypeUp != TILE::LADDERSTART &&
-            collisionComponent.collisionTileTypeDown != TILE::LADDER &&
-            collisionComponent.collisionTileTypeDown != TILE::LADDERSTART) {
-        } else {
-          transformSystem->stopX(velocityComponent, positionComponent);
-          transformSystem->moveUp(velocityComponent);
-        }
-
-        return;
-      }
-
-      if (inputD) {
-
-        if (collisionComponent.collisionTileTypeDown != TILE::LADDER &&
-            collisionComponent.collisionTileTypeDown != TILE::LADDERSTART) {
-          controlComponent.controlState = CONTROL_STATE::NORMAL;
-          transformSystem->stopY(velocityComponent, positionComponent);
-
-        } else {
-          transformSystem->stopX(velocityComponent, positionComponent);
-          transformSystem->moveDown(velocityComponent);
-        }
-        return;
-      }
-
-      transformSystem->stopY(velocityComponent, positionComponent);
-      break;
-
-    case CONTROL_STATE::ATTACKING:
-
-      break;
-
-    default:
-      break;
+    if (inputL && !inputR && !inputU && !inputD) {
+      controlComponent.controlState = CONTROL_STATE::AIRBORNE;
+      transformSystem->moveLeft(velocityComponent);
+      return;
     }
-  }
 
-  void ControlSystem::resetInput() {
-    inputR = false;
-    inputL = false;
-    inputD = false;
-    inputU = false;
-    inputJump = false;
-    inputAttack = false;
-    inputShoot = false;
-    inputResetCharacter = false;
+    if (inputU) {
+      if (collisionComponent.collisionTileTypeUp != TILE::LADDER &&
+          collisionComponent.collisionTileTypeUp != TILE::LADDERSTART &&
+          collisionComponent.collisionTileTypeDown != TILE::LADDER &&
+          collisionComponent.collisionTileTypeDown != TILE::LADDERSTART) {
+      } else {
+        transformSystem->stopX(velocityComponent, positionComponent);
+        transformSystem->moveUp(velocityComponent);
+      }
+
+      return;
+    }
+
+    if (inputD) {
+
+      if (collisionComponent.collisionTileTypeDown != TILE::LADDER &&
+          collisionComponent.collisionTileTypeDown != TILE::LADDERSTART) {
+        controlComponent.controlState = CONTROL_STATE::NORMAL;
+        transformSystem->stopY(velocityComponent, positionComponent);
+
+      } else {
+        transformSystem->stopX(velocityComponent, positionComponent);
+        transformSystem->moveDown(velocityComponent);
+      }
+      return;
+    }
+
+    transformSystem->stopY(velocityComponent, positionComponent);
+    break;
+
+  case CONTROL_STATE::ATTACKING:
+
+    break;
+
+  default:
+    break;
   }
+}
+
+void ControlSystem::resetInput() {
+  inputR = false;
+  inputL = false;
+  inputD = false;
+  inputU = false;
+  inputJump = false;
+  inputAttack = false;
+  inputShoot = false;
+  inputResetCharacter = false;
+}

@@ -9,6 +9,7 @@ void HealthSystem::update() {
     h.damageTaken = 0;
     if (h.currentHealth <= 0) {
       h.healthState = HEALTH_STATE::DEAD;
+      currentLevel->destroyEntity(entity);
     }
   }
 }

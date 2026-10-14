@@ -45,6 +45,8 @@ struct Scene {
                    const VelocityComponent &velocityComponent) const;
   void centerCamera(const PositionComponent &transformComponent) const;
 
+  void destroyEntities();
+
   // template <typename T> T *GetComponent(int entity) {
   //   for (auto &c : currentLevel.components) {
   //     if (c.first == entity) {

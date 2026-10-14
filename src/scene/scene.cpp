@@ -63,6 +63,8 @@ void Scene::update() {
 
   updateCamera(currentLevel.registry.get<PositionComponent>(selectedPlayer),
                currentLevel.registry.get<VelocityComponent>(selectedPlayer));
+
+  destroyEntities();
 }
 
 void Scene::render() const { renderSystem.render(); }
@@ -87,4 +89,17 @@ void Scene::updateCamera(const PositionComponent &positionComponent,
 void Scene::centerCamera(const PositionComponent &transformComponent) const {
   Camera::updateOffsetRelativeToScreen(transformComponent.position.x,
                                        transformComponent.position.y);
+}
+
+void Scene::destroyEntities() {
+  auto currentTime = SDL_GetTicks64();
+  for (auto it = currentLevel.entitiesToBeDestroyed.begin(); it != currentLevel.entitiesToBeDestroyed.end();) {
+    Uint64 entityDestroyTime = it->second;
+    if (currentTime - entityDestroyTime >= 10000) { // 1000 milliseconds = 1 second
+      currentLevel.registry.destroy(it->first);
+      it = currentLevel.entitiesToBeDestroyed.erase(it);
+    } else {
+      ++it;
+    }
+  }
 }

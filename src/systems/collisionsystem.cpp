@@ -7,7 +7,7 @@ void CollisionSystem::update() {
   handleProjectileCollisions();
 }
 
-void CollisionSystem::handleTileCollisions(){
+void CollisionSystem::handleTileCollisions() {
   auto &reg = currentLevel->registry;
   auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
   for (auto entity : view) {
@@ -15,12 +15,11 @@ void CollisionSystem::handleTileCollisions(){
     VelocityComponent &velocityComponent = view.get<VelocityComponent>(entity);
     PositionComponent &positionComponent = view.get<PositionComponent>(entity);
     handleHorizontalBlockCollision(velocityComponent, positionComponent, cc);
-    
-    
+
     GravityComponent *gc = reg.try_get<GravityComponent>(entity);
     if (gc) {
-    handleDownTileCollision(velocityComponent, positionComponent, cc, *gc);
-    handleUpTileCollision(velocityComponent, positionComponent, cc, *gc);
+      handleDownTileCollision(velocityComponent, positionComponent, cc, *gc);
+      handleUpTileCollision(velocityComponent, positionComponent, cc, *gc);
     }
   }
 }
@@ -31,7 +30,7 @@ void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityCompone
                                               GravityComponent const &gc) const {
   switch (cc.collisionTileTypeDown) {
 
-  case TILE::NONE:
+  case TILE::EMPTY:
     break;
 
   case TILE::SOLID:
@@ -64,7 +63,7 @@ void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent
 
   switch (cc.collisionTileTypeUp) {
 
-  case TILE::NONE:
+  case TILE::EMPTY:
     break;
 
   case TILE::SOLID:
@@ -85,6 +84,8 @@ void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent
   case TILE::LADDERSTART:
 
     break;
+  case TILE::NONE:
+    break;
   }
 }
 
@@ -96,12 +97,20 @@ void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocity
   }
 }
 
-void CollisionSystem::handleProjectileCollisions(){
+void CollisionSystem::handleProjectileCollisions() {
   auto &reg = currentLevel->registry;
-  auto view = reg.view<ProjectileComponent, CollisionComponent>();
+  auto view = reg.view<ProjectileComponent, CollisionComponent, HealthComponent>();
   for (auto projectile : reg.view<ProjectileComponent>()) {
     ProjectileComponent &pc = reg.get<ProjectileComponent>(projectile);
     CollisionComponent const &cc = reg.get<CollisionComponent>(projectile);
+    HealthComponent &hc = reg.get<HealthComponent>(projectile);
+
+    bool collided =
+        cc.tileCollisionDown || cc.tileCollisionUp || cc.tileCollisionLeft || cc.tileCollisionRight;
+
+    if (collided) {
+      hc.damageTaken = pc.damage;
+    }
 
     for (auto collidedEntity : cc.collisionIds) {
       if (collidedEntity == pc.shooterEntity) {
@@ -111,20 +120,11 @@ void CollisionSystem::handleProjectileCollisions(){
         auto &health = reg.get<HealthComponent>(collidedEntity);
         if (health.healthState != HEALTH_STATE::DEAD) {
           health.damageTaken = pc.damage;
-          pc.collided = true;
-
+          hc.damageTaken = pc.damage;
         }
       }
     }
 
-    destroyProjectileEntity(pc, projectile);
-
   }
 }
 
-void CollisionSystem::destroyProjectileEntity(ProjectileComponent const &pc,
-                                                entt::entity entity) const {
-  if (pc.collided) {
-    currentLevel->registry.destroy(entity);
-  }
-}

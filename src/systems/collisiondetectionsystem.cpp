@@ -3,8 +3,8 @@
 #include "../components/positioncomponent.hpp"
 #include "../components/projectilecomponent.hpp"
 #include "../components/velocitycomponent.hpp"
-#include "../utilities/physics.hpp"
 #include "../utilities/constants.hpp"
+#include "../utilities/physics.hpp"
 #include <cstdio>
 
 void CollisionDetectionSystem::update() {

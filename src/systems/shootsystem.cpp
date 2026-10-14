@@ -8,12 +8,11 @@ void ShootSystem::update() {
 
   for (auto entity : view) {
     ShootComponent &sc = view.get<ShootComponent>(entity);
-    PositionComponent const &tc = view.get<PositionComponent>(entity);
-    VelocityComponent const &vc = view.get<VelocityComponent>(entity);
-
-    updateShootComponents(sc, tc, vc);
-
     if (sc.shooting) {
+      PositionComponent const &tc = view.get<PositionComponent>(entity);
+      VelocityComponent const &vc = view.get<VelocityComponent>(entity);
+
+      updateShootComponents(sc, tc, vc);
       if (sc.currentShootingFrame == sc.launchFrame) {
         createProjectile(sc);
       }

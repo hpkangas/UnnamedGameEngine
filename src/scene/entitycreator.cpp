@@ -289,7 +289,7 @@ void EntityCreator::createEmptyTile(Position position, SceneInfo &level) {
   auto entity = level.registry.create();
 
   level.registry.emplace<PositionComponent>(entity, position.x, position.y);
-  level.registry.emplace<TileComponent>(entity, TILE::NONE, position.x / 128, position.y / 128);
+  level.registry.emplace<TileComponent>(entity, TILE::EMPTY, position.x / 128, position.y / 128);
 }
 
 void EntityCreator::createBlockEntity(Position position, int sourceX, SceneInfo &level) {

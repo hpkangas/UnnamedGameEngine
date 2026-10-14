@@ -26,7 +26,6 @@ public:
 
   void handleProjectileCollisions();
 
-  void destroyProjectileEntity(ProjectileComponent const &pc, entt::entity entity) const;
 };
 
 #endif
