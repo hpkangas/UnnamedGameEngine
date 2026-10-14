@@ -1,5 +1,6 @@
 #include "collisionsystem.hpp"
 #include "../components/healthcomponent.hpp"
+#include "../components/aicomponent.hpp"
 #include <cstdio>
 
 void CollisionSystem::update() {
@@ -99,11 +100,13 @@ void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocity
 
 void CollisionSystem::handleProjectileCollisions() {
   auto &reg = currentLevel->registry;
-  auto view = reg.view<ProjectileComponent, CollisionComponent, HealthComponent>();
+  auto view = reg.view<ProjectileComponent, CollisionComponent, HealthComponent, PositionComponent, VelocityComponent>();
   for (auto projectile : reg.view<ProjectileComponent>()) {
     ProjectileComponent &pc = reg.get<ProjectileComponent>(projectile);
     CollisionComponent const &cc = reg.get<CollisionComponent>(projectile);
     HealthComponent &hc = reg.get<HealthComponent>(projectile);
+    PositionComponent &posc = reg.get<PositionComponent>(projectile);
+    VelocityComponent &vc = reg.get<VelocityComponent>(projectile);
 
     bool collided =
         cc.tileCollisionDown || cc.tileCollisionUp || cc.tileCollisionLeft || cc.tileCollisionRight;
@@ -116,11 +119,15 @@ void CollisionSystem::handleProjectileCollisions() {
       if (collidedEntity == pc.shooterEntity) {
         continue;
       }
-      if (reg.any_of<HealthComponent>(collidedEntity)) {
+      if (reg.any_of<HealthComponent>(collidedEntity) && reg.any_of<AIComponent>(collidedEntity)) {
         auto &health = reg.get<HealthComponent>(collidedEntity);
         if (health.healthState != HEALTH_STATE::DEAD) {
           health.damageTaken = pc.damage;
           hc.damageTaken = pc.damage;
+
+          //move projectile far away. Or should it be destroyed immediately?
+          posc.position = {-1000,-1000};
+          vc.velocity = {0, 0};
         }
       }
     }
