@@ -38,7 +38,7 @@ void ShootSystem::updateShootComponents(ShootComponent &shootComponent,
 
 void ShootSystem::createProjectile(ShootComponent const &shootComponent) const {
   // EntityCreator creator;
-  auto projectileEntity = EntityCreator::createProjectile(
+  auto projectileEntity = EntityCreator::createEntity(
       "arrow", shootComponent.launchPosition, shootComponent.launchVelocity, *currentLevel);
   auto &projectileComponent = currentLevel->registry.get<ProjectileComponent>(projectileEntity);
   projectileComponent.shooterEntity = shootComponent.shooterEntity;

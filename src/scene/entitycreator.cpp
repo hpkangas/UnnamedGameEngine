@@ -65,7 +65,9 @@ static bool loadEntityTemplatesOnce() {
     std::cout << "EntityCreator: json parse error: " << e.what() << std::endl;
     g_entityTemplates = nlohmann::json(); // empty
     return false;
+    ifs.close();
   }
+  ifs.close();
   return true;
 }
 
@@ -79,12 +81,7 @@ static nlohmann::json findTemplateByType(const std::string_view &type,
   }
   for (auto const &entDef : g_entityTemplates["entities"]) {
     if (entDef.value("type", "") == type) {
-      if (variant.empty()) {
         return entDef;
-      }
-      if (entDef.value("variant", "") == variant) {
-        return entDef;
-      }
     }
   }
   return nlohmann::json();
@@ -117,7 +114,8 @@ entt::entity createEntityFromTemplate(const nlohmann::json &def, Position positi
     int texIndex = textureIndexFromName(sprite.texture);
     SDL_Rect src = sprite.sourceRect;
     SDL_Rect dst = {position.x, position.y, src.w, src.h};
-    level.registry.emplace<RenderComponent>(entity, src, dst, SDL_FLIP_NONE, texIndex, sprite.layer);
+    level.registry.emplace<RenderComponent>(entity, src, dst, SDL_FLIP_NONE, texIndex,
+                                            sprite.layer);
     if (def.contains("animation")) {
       auto &ac = level.registry.emplace<AnimationComponent>(entity);
       auto animationKey = def["animation"];
@@ -235,28 +233,8 @@ entt::entity createEntityFromTemplate(const nlohmann::json &def, Position positi
   return entity;
 }
 
-entt::entity EntityCreator::createPC(Position position, SceneInfo &level) {
-  position.x = position.x * Constants::TILE_SIZE;
-  position.y = position.y * Constants::TILE_SIZE;
-  auto tpl = findTemplateByType("player");
-  if (!tpl.is_null()) {
-    return createEntityFromTemplate(tpl, position, Velocity(0, 0), level);
-  }
-  return entt::null;
-}
-
-entt::entity EntityCreator::createEnemy(Position position, SceneInfo &level) {
-  position.x = position.x * Constants::TILE_SIZE;
-  position.y = position.y * Constants::TILE_SIZE;
-  auto tpl = findTemplateByType("enemy");
-  if (!tpl.is_null()) {
-    return createEntityFromTemplate(tpl, position, Velocity(0, 0), level);
-  }
-  return entt::null;
-}
-
-entt::entity EntityCreator::createProjectile(std::string templateName, Position position,
-                                             Velocity velocity, SceneInfo &level) {
+entt::entity EntityCreator::createEntity(std::string templateName, Position position,
+                                         Velocity velocity, SceneInfo &level) {
   auto tpl = findTemplateByType(templateName);
   if (!tpl.is_null()) {
     return createEntityFromTemplate(tpl, position, velocity, level);
@@ -264,90 +242,10 @@ entt::entity EntityCreator::createProjectile(std::string templateName, Position 
   return entt::null;
 }
 
-void EntityCreator::createBlock(std::string const &gameObjectType, Position position,
-                                SceneInfo &level) {
+entt::entity EntityCreator::createEntityOnTilePosition(std::string templateName, Position position,
+                                         Velocity velocity, SceneInfo &level) {
   position.x = position.x * Constants::TILE_SIZE;
   position.y = position.y * Constants::TILE_SIZE;
-  auto tpl = findTemplateByType(gameObjectType);
-  if (!tpl.is_null()) {
-    createEntityFromTemplate(tpl, position, Velocity(0, 0), level);
-    return;
-  }
+  return createEntity(templateName, position, velocity, level);
 }
 
-void EntityCreator::createBlock1(Position position, SceneInfo &level) {
-  createBlockEntity(position, 0, level);
-}
-void EntityCreator::createBlock2(Position position, SceneInfo &level) {
-  createBlockEntity(position, 128, level);
-}
-void EntityCreator::createBlock3(Position position, SceneInfo &level) {
-  createBlockEntity(position, 256, level);
-}
-
-void EntityCreator::createEmptyTile(Position position, SceneInfo &level) {
-  auto entity = level.registry.create();
-
-  level.registry.emplace<PositionComponent>(entity, position.x, position.y);
-  level.registry.emplace<TileComponent>(entity, TILE::EMPTY, position.x / 128, position.y / 128);
-}
-
-void EntityCreator::createBlockEntity(Position position, int sourceX, SceneInfo &level) {
-  auto entity = level.registry.create();
-
-  SDL_Rect const sourceRect = {sourceX, 0, 128, 128};
-  SDL_Rect const destinationRect = {position.x, position.y, sourceRect.w, sourceRect.h};
-
-  level.registry.emplace<PositionComponent>(entity, position.x, position.y);
-  level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1, RENDER_LAYER::TILE);
-  level.registry.emplace<CollisionComponent>(entity, destinationRect);
-  level.registry.emplace<TileComponent>(entity, TILE::SOLID, position.x / 128, position.y / 128);
-}
-
-// void EntityCreator::createSemiSolidBlockEntity(Position position, int sourceX, SceneInfo &level) {
-//   auto entity = level.registry.create();
-
-//   SDL_Rect const sourceRect = {sourceX, 0, 128, 128};
-//   SDL_Rect const destinationRect = {position.x, position.y, sourceRect.w, sourceRect.h};
-//   level.registry.emplace<PositionComponent>(entity, position.x, position.y);
-//   level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
-//   level.registry.emplace<CollisionComponent>(entity, sourceRect);
-//   level.registry.emplace<TileComponent>(entity, TILE::SEMISOLID, position.x / 128,
-//                                         position.y / 128);
-// }
-
-// void EntityCreator::createLadder(Position position, SceneInfo &level) {
-//   auto entity = level.registry.create();
-
-//   SDL_Rect const sourceRect = {0, 192, 128, 128};
-//   SDL_Rect const destinationRect = {position.x, position.y, sourceRect.w, sourceRect.h};
-//   SDL_Rect const collisionRect = {position.x, position.y, 128, 128};
-
-//   level.registry.emplace<PositionComponent>(entity, position.x, position.y);
-//   level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
-//   level.registry.emplace<CollisionComponent>(entity, collisionRect);
-//   level.registry.emplace<TileComponent>(entity, TILE::LADDER, position.x / 128, position.y / 128);
-// }
-
-// void EntityCreator::createLadderStart(Position position, SceneInfo &level) {
-//   auto entity = level.registry.create();
-
-//   SDL_Rect const sourceRect = {0, 192, 128, 64};
-//   SDL_Rect const destinationRect = {position.x, position.y, sourceRect.w, sourceRect.h};
-//   SDL_Rect const collisionRect = {position.x, position.y, 128, 64};
-
-//   level.registry.emplace<PositionComponent>(entity, position.x, position.y);
-//   level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 1);
-//   level.registry.emplace<CollisionComponent>(entity, collisionRect);
-//   level.registry.emplace<TileComponent>(entity, TILE::LADDERSTART, position.x / 128,
-//                                         position.y / 128);
-// }
-
-// void EntityCreator::createUI(Position position, SceneInfo &level) {
-//   auto entity = level.registry.create();
-//   SDL_Rect const sourceRect = {0, 0, 31, 31};
-//   SDL_Rect const destinationRect = {position.x, position.y, sourceRect.w, sourceRect.h};
-
-//   level.registry.emplace<PositionComponent>(entity, position.x, position.y);
-//   level.registry.emplace<RenderComponent>(entity, sourceRect, destinationRect, SDL_FLIP_NONE, 2);
-// }
