@@ -19,10 +19,10 @@ struct CollisionComponent {
   bool tileCollisionLeft = false;
   bool tileCollisionRight = false;
 
-  TILE collisionTileTypeLeft = TILE::NONE;
-  TILE collisionTileTypeRight = TILE::NONE;
-  TILE collisionTileTypeDown = TILE::NONE;
-  TILE collisionTileTypeUp = TILE::NONE;
+  TILE collisionTileTypeLeft = TILE::EMPTY;
+  TILE collisionTileTypeRight = TILE::EMPTY;
+  TILE collisionTileTypeDown = TILE::EMPTY;
+  TILE collisionTileTypeUp = TILE::EMPTY;
 
   Utils::Position collidedDownTilePos = {0, 0};
   Utils::Position collidedUpTilePos = {0, 0};

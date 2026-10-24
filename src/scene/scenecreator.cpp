@@ -47,7 +47,9 @@ void SceneCreator::createEntitiesFromJson(nlohmann::json const &levelJson, Scene
     y++;
     x = 0;
     for (auto col : row.value().items()) {
-      createTileFromJson(col.value(), x, y, level);
+      if (col.value() != "" ) {
+        createTileFromJson(col.value(), x, y, level);
+      }
       x++;
     }
   }

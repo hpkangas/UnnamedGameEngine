@@ -3,10 +3,9 @@
 #include "../utilities/utils.hpp"
 #include "../include/json/json.hpp"
 
-enum class TILE { NONE = -1, EMPTY = 0, SOLID = 1, SEMISOLID = 2, LADDER = 3, LADDERSTART = 4 };
+enum class TILE { EMPTY = 0, SOLID = 1, SEMISOLID = 2, LADDER = 3, LADDERSTART = 4 };
 
 NLOHMANN_JSON_SERIALIZE_ENUM(TILE, {
-  {TILE::NONE, "NONE"},
   {TILE::EMPTY, "EMPTY"},
   {TILE::SOLID, "SOLID"},
   {TILE::SEMISOLID, "SEMISOLID"},
