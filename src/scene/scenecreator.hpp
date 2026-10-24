@@ -6,7 +6,7 @@
 #include "../include/json/json.hpp"
 
 namespace SceneCreator {
-SceneInfo createLevel(SDL_RWops *Handle);
+SceneInfo createLevel();
 void createTileFromJson(std::string currentValue, int x, int y, SceneInfo &level);
 nlohmann::json getLevelJson(std::string const &filePath);
 void createEntitiesFromJson(nlohmann::json const &levelJson, SceneInfo &level);

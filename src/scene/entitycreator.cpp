@@ -221,7 +221,7 @@ entt::entity createEntityFromTemplate(const nlohmann::json &def, Position positi
   }
 
   if (def.contains("tile")) {
-    auto tile = static_cast<TILE>(def.value("tile", 1));
+    auto tile = def["tile"];
     level.registry.emplace<TileComponent>(entity, tile, position.x / 128, position.y / 128);
   }
 

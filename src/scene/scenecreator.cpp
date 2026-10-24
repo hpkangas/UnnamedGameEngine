@@ -9,7 +9,7 @@
 #include <ostream>
 #include <string>
 
-SceneInfo SceneCreator::createLevel(SDL_RWops *file) {
+SceneInfo SceneCreator::createLevel() {
   SceneInfo level;
 
   static nlohmann::json levelJson;

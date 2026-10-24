@@ -10,14 +10,7 @@
 #include <iostream>
 
 bool Scene::init() {
-  const char *fileName = "level2.csv";
-  SDL_RWops *file = SDL_RWFromFile(fileName, "rb");
-  if (file == nullptr) {
-    std::cout << "Error: " << SDL_GetError() << std::endl;
-    Scene::isRunning = false;
-    return false;
-  } else {
-    currentLevel = SceneCreator::createLevel(file);
+    currentLevel = SceneCreator::createLevel();
     selectedPlayer = currentLevel.playerEntity;
 
     animationSystem.currentLevel = &currentLevel;
@@ -37,7 +30,7 @@ bool Scene::init() {
 
     Scene::isRunning = true;
     return true;
-  }
+  
 }
 
 void Scene::update() {
