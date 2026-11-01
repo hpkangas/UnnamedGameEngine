@@ -169,10 +169,10 @@ void CollisionDetectionSystem::resetCollisions(CollisionComponent &collisionComp
   collisionComponent.tileCollisionUp = false;
   collisionComponent.tileCollisionDown = false;
 
-  collisionComponent.collisionTileTypeDown = TILE::NONE;
-  collisionComponent.collisionTileTypeLeft = TILE::NONE;
-  collisionComponent.collisionTileTypeRight = TILE::NONE;
-  collisionComponent.collisionTileTypeUp = TILE::NONE;
+  collisionComponent.collisionTileTypeDown = TILE::EMPTY;
+  collisionComponent.collisionTileTypeLeft = TILE::EMPTY;
+  collisionComponent.collisionTileTypeRight = TILE::EMPTY;
+  collisionComponent.collisionTileTypeUp = TILE::EMPTY;
 
   collisionComponent.collisionIds.clear();
 }

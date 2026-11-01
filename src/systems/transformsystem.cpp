@@ -1,4 +1,5 @@
 #include "transformsystem.hpp"
+#include "../utilities/constants.hpp"
 
 void TransformSystem::updateAll() const {
   auto view = currentLevel->registry.view<PositionComponent, VelocityComponent>();
@@ -9,7 +10,8 @@ void TransformSystem::updateAll() const {
   }
 }
 
-void TransformSystem::moveRight(VelocityComponent &velocityComponent) const {
+void TransformSystem::moveRight(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const {
+  positionComponent.facingRight = true;
   if (velocityComponent.velocity.x + playerSpeed > playerSpeedMax) {
     velocityComponent.velocity.x = playerSpeedMax;
   } else {
@@ -17,7 +19,8 @@ void TransformSystem::moveRight(VelocityComponent &velocityComponent) const {
   }
 }
 
-void TransformSystem::moveLeft(VelocityComponent &velocityComponent) const {
+void TransformSystem::moveLeft(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const {
+  positionComponent.facingRight = false;
   if (velocityComponent.velocity.x - playerSpeed < -playerSpeedMax) {
     velocityComponent.velocity.x = -playerSpeedMax;
   } else {
@@ -77,20 +80,14 @@ void TransformSystem::update(VelocityComponent &velocityComponent, PositionCompo
   const int xpos = positionComponent.position.x;
   const int ypos = positionComponent.position.y;
 
-  if (xvel > 0) {
-    positionComponent.facingRight = true;
-  } else if (xvel < 0) {
-    positionComponent.facingRight = false;
-  }
-
   //TODO magic numbers
   if (!(xvel == 0)) {
     positionComponent.position.x = xpos + xvel;
-    positionComponent.tilePosition.x = positionComponent.position.x / 128;
+    positionComponent.tilePosition.x = positionComponent.position.x / Constants::TILE_SIZE;
   }
 
   if (!(yvel == 0)) {
     positionComponent.position.y = ypos + yvel;
-    positionComponent.tilePosition.y = positionComponent.position.y / 128;
+    positionComponent.tilePosition.y = positionComponent.position.y / Constants::TILE_SIZE;
   }
 }

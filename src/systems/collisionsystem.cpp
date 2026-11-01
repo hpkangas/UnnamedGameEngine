@@ -1,6 +1,6 @@
 #include "collisionsystem.hpp"
-#include "../components/healthcomponent.hpp"
 #include "../components/aicomponent.hpp"
+#include "../components/healthcomponent.hpp"
 #include <cstdio>
 
 void CollisionSystem::update() {
@@ -35,7 +35,7 @@ void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityCompone
     break;
 
   case TILE::SOLID:
-    if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
+    if (gc.gravityState == GRAVITY_STATE::AIRBORNE || velocityComponent.velocity.y > 0 && gc.gravityState == GRAVITY_STATE::GROUNDED) {
       transformSystem->stopY(velocityComponent, positionComponent, cc.yposDif);
     }
     break;
@@ -85,22 +85,22 @@ void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent
   case TILE::LADDERSTART:
 
     break;
-  case TILE::NONE:
-    break;
   }
 }
 
 void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocityComponent,
                                                      PositionComponent &positionComponent,
                                                      CollisionComponent const &cc) const {
-  if (cc.collisionTileTypeLeft == TILE::SOLID || cc.collisionTileTypeRight == TILE::SOLID) {
+  if (cc.collisionTileTypeLeft == TILE::SOLID || cc.collisionTileTypeRight == TILE::SOLID ||
+  cc.collisionTileTypeLeft == TILE::LADDERSTART || cc.collisionTileTypeRight == TILE::LADDERSTART) {
     transformSystem->stopX(velocityComponent, positionComponent, cc.xposDif);
   }
 }
 
 void CollisionSystem::handleProjectileCollisions() {
   auto &reg = currentLevel->registry;
-  auto view = reg.view<ProjectileComponent, CollisionComponent, HealthComponent, PositionComponent, VelocityComponent>();
+  auto view = reg.view<ProjectileComponent, CollisionComponent, HealthComponent, PositionComponent,
+                       VelocityComponent>();
   for (auto projectile : reg.view<ProjectileComponent>()) {
     ProjectileComponent &pc = reg.get<ProjectileComponent>(projectile);
     CollisionComponent const &cc = reg.get<CollisionComponent>(projectile);
@@ -125,13 +125,11 @@ void CollisionSystem::handleProjectileCollisions() {
           health.damageTaken = pc.damage;
           hc.damageTaken = pc.damage;
 
-          //move projectile far away. Or should it be destroyed immediately?
-          posc.position = {-1000,-1000};
+          // move projectile far away. Or should it be destroyed immediately?
+          posc.position = {-1000, -1000};
           vc.velocity = {0, 0};
         }
       }
     }
-
   }
 }
-

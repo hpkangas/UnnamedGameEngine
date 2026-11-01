@@ -15,8 +15,8 @@ public:
 
   void updateAll() const;
   void update(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
-  void moveRight(VelocityComponent &velocityComponent) const;
-  void moveLeft(VelocityComponent &velocityComponent) const;
+  void moveRight(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
+  void moveLeft(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
   void moveUp(VelocityComponent &velocityComponent) const;
   void moveDown(VelocityComponent &velocityComponent) const;
   void stopX(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;

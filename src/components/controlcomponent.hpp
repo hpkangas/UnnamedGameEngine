@@ -13,7 +13,8 @@ enum class CONTROL_STATE {
 struct ControlComponent {
   explicit ControlComponent(CONTROL_STATE state) : controlState(state) {}
 
-  bool canClimb = false;
+  bool canClimbDown = false;
+  bool canClimbUp = false;
   CONTROL_STATE controlState = CONTROL_STATE::NORMAL;
 };
 #endif

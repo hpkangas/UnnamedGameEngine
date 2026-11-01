@@ -13,8 +13,6 @@ public:
   void update() const;
 
 private:
-  void updateGravity(CollisionComponent const &collisionComponent,
-                     GravityComponent &gravityComponent,
-                     VelocityComponent &velocityComponent) const;
+  void updateGravity(GravityComponent &gc, VelocityComponent &vc, entt::entity entity) const;
 };
 #endif

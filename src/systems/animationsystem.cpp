@@ -5,6 +5,7 @@
 #include "../components/healthcomponent.hpp"
 #include "../components/positioncomponent.hpp"
 #include "../components/velocitycomponent.hpp"
+#include "../components/controlcomponent.hpp"
 #include "../utilities/constants.hpp"
 #include <cstdio>
 
@@ -36,6 +37,7 @@ void AnimationSystem::determineAnimationState(AnimationComponent &animationCompo
   AttackComponent const *attackComponent = reg.try_get<AttackComponent>(entity);
   ShootComponent const *shootComponent = reg.try_get<ShootComponent>(entity);
   HealthComponent const *healthComponent = reg.try_get<HealthComponent>(entity);
+  ControlComponent const *controlComponent = reg.try_get<ControlComponent>(entity);
 
   if (healthComponent != nullptr && healthComponent->healthState == HEALTH_STATE::DEAD) {
     animationComponent.animationState = ANIMATION_STATE::DEATH;
@@ -70,7 +72,8 @@ void AnimationSystem::determineAnimationState(AnimationComponent &animationCompo
     // doesn't work when you stop
     // climbing needs a lot of rework
     // TODO triggers when airborne
-    if (velocityComponent->velocity.y != 0) {
+    if (controlComponent != nullptr) {
+      if(controlComponent->controlState == CONTROL_STATE::CLIMBING)
       animationComponent.animationState = ANIMATION_STATE::CLIMBING;
     }
 
