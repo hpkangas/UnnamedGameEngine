@@ -216,7 +216,9 @@ entt::entity createEntityFromTemplate(const nlohmann::json &def, Position positi
   }
 
   if (def.contains("collision")) {
-    SDL_Rect collisionRect = {position.x, position.y, sprite.sourceRect.w, sprite.sourceRect.h};
+    auto collision = def["collision"];
+    SDL_Rect collisionRect = {collision.value("x", position.x), collision.value("y", position.y),
+                              collision.value("w", 0), collision.value("h", 0)};
     level.registry.emplace<CollisionComponent>(entity, collisionRect);
   }
 
