@@ -5,6 +5,8 @@
 #include "../scene/sceneinfo.hpp"
 
 class TransformSystem {
+
+  //TODO get from json
   float playerJumpSpeed = -16.0f;
   float playerSpeed = 0.4f;
   float playerSpeedMax = 8.0f;

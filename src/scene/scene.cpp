@@ -39,9 +39,9 @@ void Scene::update() {
   AISystem.update(currentLevel);
 
   gravitySystem.update();
-
+  
   collisionDetectionSystem.update();
-
+  
   collisionSystem.update();
 
   transformSystem.updateAll();

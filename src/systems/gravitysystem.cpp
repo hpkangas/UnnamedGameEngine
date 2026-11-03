@@ -1,6 +1,5 @@
 #include "gravitysystem.hpp"
 #include "../components/controlcomponent.hpp"
-#include <iostream>
 
 constexpr float GRAVITY_UNIT = 0.75f;
 constexpr float MAX_GRAVITY = 11.0;
@@ -24,30 +23,24 @@ void GravitySystem::updateGravity(GravityComponent &gravityComponent,
 
   if (reg.any_of<CollisionComponent>(entity)) {
     collisionComponent = &reg.get<CollisionComponent>(entity);
-    auto down = collisionComponent->collisionTileTypeDown;
-    auto up = collisionComponent->collisionTileTypeUp;
-    if (down == TILE::EMPTY || down == TILE::LADDER) {
+
+    const auto &downTileTypes = collisionComponent->collidedDownTileTypes;
+    const auto &upTileTypes = collisionComponent->collidedUpTileTypes;
+
+    if (downTileTypes.hasTileType(TILE::LADDER) && downTileTypes.hasTileType(TILE::SOLID)) {
+      gravityComponent.gravityState = GRAVITY_STATE::GROUNDED;
+    } else if (downTileTypes.hasTileType(TILE::SOLID) ||
+               downTileTypes.hasTileType(TILE::LADDERSTART)) {
+      gravityComponent.gravityState = GRAVITY_STATE::GROUNDED;
+    } else {
       gravityComponent.gravityState = GRAVITY_STATE::AIRBORNE;
     }
-
-    if (up == TILE::LADDER &&
-        down == TILE::SOLID) {
-      gravityComponent.gravityState = GRAVITY_STATE::GROUNDED;
-    }
-
-    if (down == TILE::SOLID ||
-        down == TILE::LADDERSTART) {
-      gravityComponent.gravityState = GRAVITY_STATE::GROUNDED;
-    }
   }
-  
+
   if (reg.any_of<ControlComponent>(entity)) {
     controlComponent = &reg.get<ControlComponent>(entity);
     if (controlComponent && controlComponent->controlState == CONTROL_STATE::CLIMBING) {
       gravityComponent.gravityState = GRAVITY_STATE::GROUNDED;
-    }
-    if (controlComponent && controlComponent->controlState == CONTROL_STATE::AIRBORNE) {
-      gravityComponent.gravityState = GRAVITY_STATE::AIRBORNE;
     }
   }
 

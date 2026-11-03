@@ -8,7 +8,6 @@
 #include "SDL_stdinc.h"
 #include "transformsystem.hpp"
 #include <cstdio>
-#include <iostream>
 
 void ControlSystem::update(entt::entity &selectedPlayer) {
 
@@ -27,20 +26,19 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
   AttackComponent &attackComponent = reg.get<AttackComponent>(selectedPlayer);
   HealthComponent const &healthComponent = reg.get<HealthComponent>(selectedPlayer);
   ShootComponent &shootComponent = reg.get<ShootComponent>(selectedPlayer);
-
   if (healthComponent.healthState == HEALTH_STATE::DEAD) {
     controlComponent.controlState = CONTROL_STATE::DEAD;
     return;
   }
 
-  switch (collisionComponent.collisionTileTypeDown) {
-  case TILE::EMPTY:
+  const auto &downTileTypes = collisionComponent.collidedDownTileTypes;
+  const auto &upTileTypes = collisionComponent.collidedUpTileTypes;
+
+  if (downTileTypes.empty()) {
     if (controlComponent.controlState != CONTROL_STATE::AIRBORNE) {
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     }
-    break;
-
-  case TILE::SOLID:
+  } else if (downTileTypes.hasTileType(TILE::SOLID)) {
     if (controlComponent.controlState == CONTROL_STATE::AIRBORNE &&
         velocityComponent.velocity.y == 0) {
       controlComponent.controlState = CONTROL_STATE::NORMAL;
@@ -57,7 +55,6 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
       } else {
         attackComponent.attacking = true;
         attackComponent.currentAttackFrames++;
-        break;
       }
     }
 
@@ -72,62 +69,11 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
       } else {
         shootComponent.shooting = true;
         shootComponent.currentShootingFrame++;
-        break;
       }
     }
-
-    break;
-
-  case TILE::SEMISOLID:
-    break;
-
-  case TILE::LADDER:
-    controlComponent.canClimbDown = true;
-    if (velocityComponent.velocity.x != 0 &&
-        controlComponent.controlState == CONTROL_STATE::CLIMBING) {
-      controlComponent.controlState = CONTROL_STATE::AIRBORNE;
-    }
-
-    break;
-
-  case TILE::LADDERSTART:
-    if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
-      if (velocityComponent.velocity.y == 0) {
-        controlComponent.controlState = CONTROL_STATE::NORMAL;
-      }
-    }
-    controlComponent.canClimbDown = true;
-    break;
-
-  default:
-    break;
   }
 
-  switch (collisionComponent.collisionTileTypeUp) {
-
-  case TILE::EMPTY:
-    if (collisionComponent.collisionTileTypeDown == TILE::LADDER ||
-        collisionComponent.collisionTileTypeDown == TILE::LADDERSTART &&
-            controlComponent.controlState == CONTROL_STATE::CLIMBING) {
-      controlComponent.canClimbUp = true;
-    }
-    break;
-  case TILE::SOLID:
-    break;
-  case TILE::SEMISOLID:
-    break;
-  case TILE::LADDER:
-    controlComponent.canClimbUp = true;
-    if (collisionComponent.collisionTileTypeDown == TILE::LADDER &&
-        controlComponent.controlState == CONTROL_STATE::NORMAL) {
-      controlComponent.canClimbDown = false;
-    }
-    break;
-  case TILE::LADDERSTART:
-    controlComponent.canClimbUp = true;
-    break;
-  }
-
+  checkClimbing(velocityComponent, controlComponent, collisionComponent);
 }
 
 void ControlSystem::takeInput() {
@@ -347,8 +293,8 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
 
   case CONTROL_STATE::CLIMBING:
 
-    if (collisionComponent.collisionTileTypeDown != TILE::LADDERSTART &&
-        collisionComponent.collisionTileTypeUp != TILE::LADDERSTART) {
+    if (!collisionComponent.collidedDownTileTypes.hasTileType(TILE::LADDERSTART) &&
+        !collisionComponent.collidedUpTileTypes.hasTileType(TILE::LADDERSTART)) {
       if (inputR && !inputL && !inputU && !inputD) {
         controlComponent.controlState = CONTROL_STATE::AIRBORNE;
         transformSystem->stopY(velocityComponent, positionComponent);
@@ -370,8 +316,8 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
     }
 
     if (inputD) {
-      if (collisionComponent.collisionTileTypeDown != TILE::LADDER &&
-          collisionComponent.collisionTileTypeDown != TILE::LADDERSTART) {
+      if (!collisionComponent.collidedDownTileTypes.hasTileType(TILE::LADDER) &&
+          !collisionComponent.collidedDownTileTypes.hasTileType(TILE::LADDERSTART)) {
         controlComponent.controlState = CONTROL_STATE::NORMAL;
       } else if (controlComponent.canClimbDown) {
         transformSystem->moveDown(velocityComponent);
@@ -392,6 +338,49 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
 
   controlComponent.canClimbDown = false;
   controlComponent.canClimbUp = false;
+}
+
+void ControlSystem::checkClimbing(VelocityComponent &velocityComponent,
+                                  ControlComponent &controlComponent,
+                                  CollisionComponent const &collisionComponent) const {
+
+  const auto &downTileTypes = collisionComponent.collidedDownTileTypes;
+  const auto &upTileTypes = collisionComponent.collidedUpTileTypes;
+
+  if (downTileTypes.hasTileType(TILE::LADDER)) {
+    controlComponent.canClimbDown = true;
+    if (velocityComponent.velocity.x != 0 &&
+        controlComponent.controlState == CONTROL_STATE::CLIMBING) {
+      controlComponent.controlState = CONTROL_STATE::AIRBORNE;
+    }
+  }
+
+  if (downTileTypes.hasTileType(TILE::LADDERSTART)) {
+    if (controlComponent.controlState == CONTROL_STATE::AIRBORNE &&
+        velocityComponent.velocity.y == 0) {
+      controlComponent.controlState = CONTROL_STATE::NORMAL;
+    }
+    controlComponent.canClimbDown = true;
+  }
+
+  if (upTileTypes.empty()) {
+    if (downTileTypes.hasTileType(TILE::LADDER) ||
+        downTileTypes.hasTileType(TILE::LADDERSTART) &&
+            controlComponent.controlState == CONTROL_STATE::CLIMBING) {
+      controlComponent.canClimbUp = true;
+    }
+  }
+  if (upTileTypes.hasTileType(TILE::LADDER)) {
+    controlComponent.canClimbUp = true;
+    if (downTileTypes.hasTileType(TILE::LADDER) &&
+        controlComponent.controlState == CONTROL_STATE::NORMAL) {
+      controlComponent.canClimbDown = false;
+    }
+  }
+
+  if (upTileTypes.hasTileType(TILE::LADDERSTART)) {
+    controlComponent.canClimbUp = true;
+  }
 }
 
 void ControlSystem::resetInput() {

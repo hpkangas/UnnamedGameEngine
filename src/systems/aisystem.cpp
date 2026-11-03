@@ -42,11 +42,11 @@ void AISystem::update(SceneInfo &currentLevel) const {
         velx = -4;
       }
 
-      if (collisionComponent.collisionTileTypeRight == TILE::SOLID ||
-          collisionComponent.collisionTileTypeDown == TILE::EMPTY) {
+      if (collisionComponent.collidedRightTileTypes.hasTileType(TILE::SOLID) ||
+          collisionComponent.collidedDownTileTypes.hasTileType(TILE::EMPTY)) {
         velx = -4;
-      } else if (collisionComponent.collisionTileTypeLeft == TILE::SOLID ||
-                 collisionComponent.collisionTileTypeDown == TILE::EMPTY) {
+      } else if (collisionComponent.collidedLeftTileTypes.hasTileType(TILE::SOLID) ||
+                 collisionComponent.collidedDownTileTypes.hasTileType(TILE::EMPTY)) {
         velx = 4;
       }
 

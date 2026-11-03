@@ -29,31 +29,18 @@ void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityCompone
                                               PositionComponent &positionComponent,
                                               CollisionComponent const &cc,
                                               GravityComponent const &gc) const {
-  switch (cc.collisionTileTypeDown) {
+  if (cc.collidedDownTileTypes.hasTileType(TILE::SOLID)) {
 
-  case TILE::EMPTY:
-    break;
-
-  case TILE::SOLID:
-    if (gc.gravityState == GRAVITY_STATE::AIRBORNE || velocityComponent.velocity.y > 0 && gc.gravityState == GRAVITY_STATE::GROUNDED) {
+    if (gc.gravityState == GRAVITY_STATE::AIRBORNE ||
+        velocityComponent.velocity.y > 0 && gc.gravityState == GRAVITY_STATE::GROUNDED) {
       transformSystem->stopY(velocityComponent, positionComponent, cc.yposDif);
     }
-    break;
+  }
 
-  case TILE::SEMISOLID:
-    break;
-
-  case TILE::LADDER:
-    break;
-
-  case TILE::LADDERSTART:
+  if (cc.collidedDownTileTypes.hasTileType(TILE::LADDERSTART)) {
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
       transformSystem->stopY(velocityComponent, positionComponent, cc.yposDif);
     }
-    break;
-
-  default:
-    break;
   }
 }
 
@@ -62,37 +49,22 @@ void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent
                                             CollisionComponent const &cc,
                                             GravityComponent const &gc) const {
 
-  switch (cc.collisionTileTypeUp) {
-
-  case TILE::EMPTY:
-    break;
-
-  case TILE::SOLID:
-
+  if (cc.collidedUpTileTypes.hasTileType(TILE::SOLID)) {
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
       if (velocityComponent.velocity.y < 0) {
         transformSystem->stopY(velocityComponent, positionComponent, cc.yposDif);
       }
     }
-    break;
-
-  case TILE::SEMISOLID:
-    break;
-
-  case TILE::LADDER:
-    break;
-
-  case TILE::LADDERSTART:
-
-    break;
   }
 }
 
 void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocityComponent,
                                                      PositionComponent &positionComponent,
                                                      CollisionComponent const &cc) const {
-  if (cc.collisionTileTypeLeft == TILE::SOLID || cc.collisionTileTypeRight == TILE::SOLID ||
-  cc.collisionTileTypeLeft == TILE::LADDERSTART || cc.collisionTileTypeRight == TILE::LADDERSTART) {
+  if (cc.collidedLeftTileTypes.hasTileType(TILE::SOLID) ||
+      cc.collidedRightTileTypes.hasTileType(TILE::SOLID) ||
+      cc.collidedLeftTileTypes.hasTileType(TILE::LADDERSTART) ||
+      cc.collidedRightTileTypes.hasTileType(TILE::LADDERSTART)) {
     transformSystem->stopX(velocityComponent, positionComponent, cc.xposDif);
   }
 }

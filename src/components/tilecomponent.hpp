@@ -13,10 +13,19 @@ NLOHMANN_JSON_SERIALIZE_ENUM(TILE, {
   {TILE::LADDERSTART, "LADDERSTART"},
 })
 
+struct TileVector : std::vector<TILE> {
+
+  bool hasTileType(TILE tileType) const {
+    return std::find(this->begin(), this->end(), tileType) != this->end();
+  };
+
+};
+
 struct TileComponent {
   explicit TileComponent(TILE tile, int x, int y) : tile(tile), tilePosition({x, y}) {}
   TILE tile = TILE::EMPTY;
   Utils::Position tilePosition{0, 0};
 };
+
 
 #endif
