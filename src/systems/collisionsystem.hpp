@@ -3,14 +3,12 @@
 #define COLLISIONSYSTEM_HPP
 #include "../components/collisioncomponent.hpp"
 #include "../components/gravitycomponent.hpp"
-#include "../components/projectilecomponent.hpp"
+#include "../components/positioncomponent.hpp"
 #include "../components/velocitycomponent.hpp"
 #include "../scene/sceneinfo.hpp"
-#include "transformsystem.hpp"
 
 class CollisionSystem {
 public:
-  TransformSystem *transformSystem = nullptr;
   SceneInfo *currentLevel = nullptr;
 
   void update();

@@ -6,6 +6,7 @@
 #include "../utilities/constants.hpp"
 #include "../utilities/physics.hpp"
 #include <cstdio>
+#include <iostream>
 
 void CollisionDetectionSystem::update() {
 
@@ -43,9 +44,11 @@ void CollisionDetectionSystem::checkTileCollision(CollisionComponent &cc,
 
       if (vel.x < 0) {
         checkEntityLeftTileCollision(cc, *tileColl, vel, collisionTile);
+        checkEntityDownLeftTileCollision(cc, *tileColl, vel, collisionTile);
       }
       if (vel.x > 0) {
         checkEntityRightTileCollision(cc, *tileColl, vel, collisionTile);
+        checkEntityDownRightTileCollision(cc, *tileColl, vel, collisionTile);
       }
       // nyt tarkistaa joka framilla
       checkEntityDownTileCollision(cc, *tileColl, vel, collisionTile);
@@ -62,11 +65,6 @@ void CollisionDetectionSystem::checkTileCollisions() {
     PositionComponent const &pc = view.get<PositionComponent>(entity);
     VelocityComponent const &vc = view.get<VelocityComponent>(entity);
     checkTileCollision(cc, pc, vc);
-
-    // if (reg.any_of<ProjectileComponent>(entity)) {
-    //   ProjectileComponent &pc = reg.get<ProjectileComponent>(entity);
-    //   checkProjectileCollision(pc, cc);
-    // }
   }
 }
 
@@ -162,6 +160,30 @@ void CollisionDetectionSystem::checkEntityDownTileCollision(CollisionComponent &
   }
 }
 
+void CollisionDetectionSystem::checkEntityDownRightTileCollision(
+    CollisionComponent &objectCollision, CollisionComponent const &tileCollision, Velocity velocity,
+    TILE const &collisionTile) const {
+  if (Physics::collisionDownRight(objectCollision.collisionRect, tileCollision.collisionRect,
+                                  velocity)) {
+    if (collisionTile == TILE::SOLID || collisionTile == TILE::LADDERSTART) {
+
+      objectCollision.tileCollisionDownRight = true;
+    }
+  }
+}
+
+void CollisionDetectionSystem::checkEntityDownLeftTileCollision(
+    CollisionComponent &objectCollision, CollisionComponent const &tileCollision, Velocity velocity,
+    TILE const &collisionTile) const {
+  if (Physics::collisionDownLeft(objectCollision.collisionRect, tileCollision.collisionRect,
+                                 velocity)) {
+    if (collisionTile == TILE::SOLID || collisionTile == TILE::LADDERSTART) {
+
+      objectCollision.tileCollisionDownLeft = true;
+    }
+  }
+}
+
 void CollisionDetectionSystem::updateCollisionComponents() {
   auto &reg = currentLevel->registry;
   auto view = reg.view<CollisionComponent, PositionComponent>();
@@ -193,6 +215,9 @@ void CollisionDetectionSystem::resetCollisions(CollisionComponent &collisionComp
   collisionComponent.tileCollisionRight = false;
   collisionComponent.tileCollisionUp = false;
   collisionComponent.tileCollisionDown = false;
+
+  collisionComponent.tileCollisionDownRight = false;
+  collisionComponent.tileCollisionDownLeft = false;
 
   collisionComponent.collidedDownTileTypes.clear();
   collisionComponent.collidedUpTileTypes.clear();

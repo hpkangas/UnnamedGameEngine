@@ -28,6 +28,12 @@ public:
                                   Utils::Velocity velocity, TILE const &collisionTile) const;
   void checkEntityDownTileCollision(CollisionComponent &objectCollision, CollisionComponent const &tileCollision,
                                     Utils::Velocity velocity, TILE const &collisionTile) const;
+  
+  void checkEntityDownRightTileCollision(CollisionComponent &objectCollision, CollisionComponent const &tileCollision,
+                                    Utils::Velocity velocity, TILE const &collisionTile) const;
+
+  void checkEntityDownLeftTileCollision(CollisionComponent &objectCollision, CollisionComponent const &tileCollision,
+                                    Utils::Velocity velocity, TILE const &collisionTile) const;
 
   void resetCollisions(CollisionComponent &collisionComponent) const;
 

@@ -19,6 +19,8 @@ struct TileVector : std::vector<TILE> {
     return std::find(this->begin(), this->end(), tileType) != this->end();
   };
 
+  bool hasEmptyTile() const { return this->empty(); };
+
 };
 
 struct TileComponent {

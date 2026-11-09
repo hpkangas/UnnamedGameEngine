@@ -7,25 +7,22 @@
 class TransformSystem {
 
   //TODO get from json
-  float playerJumpSpeed = -16.0f;
-  float playerSpeed = 0.4f;
-  float playerSpeedMax = 8.0f;
-  float playerClimbingSpeedMax = 4.0f;
 
 public:
   SceneInfo *currentLevel = nullptr;
-
+  
   void updateAll() const;
   void update(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
-  void moveRight(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
-  void moveLeft(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
-  void moveUp(VelocityComponent &velocityComponent) const;
-  void moveDown(VelocityComponent &velocityComponent) const;
-  void stopX(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
-  void stopX(VelocityComponent &velocityComponent, PositionComponent &positionComponent, int xposDif) const;
-  void stopY(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
-  void stopY(VelocityComponent &velocityComponent, PositionComponent &positionComponent, int yposDif) const;
-  void jump(VelocityComponent &velocityComponent) const;
-  void resetJump(VelocityComponent &velocityComponent) const;
 };
+
+  void moveRight(VelocityComponent &velocityComponent, PositionComponent &positionComponent) ;
+  void moveLeft(VelocityComponent &velocityComponent, PositionComponent &positionComponent) ;
+  void moveUp(VelocityComponent &velocityComponent) ;
+  void moveDown(VelocityComponent &velocityComponent) ;
+  void stopX(VelocityComponent &velocityComponent, PositionComponent &positionComponent) ;
+  void stopX(VelocityComponent &velocityComponent, PositionComponent &positionComponent, int xposDif) ;
+  void stopY(VelocityComponent &velocityComponent, PositionComponent &positionComponent) ;
+  void stopY(VelocityComponent &velocityComponent, PositionComponent &positionComponent, int yposDif) ;
+  void jump(VelocityComponent &velocityComponent) ;
+  void resetJump(VelocityComponent &velocityComponent) ;
 #endif

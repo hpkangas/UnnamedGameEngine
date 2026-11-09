@@ -1,6 +1,8 @@
 #include "collisionsystem.hpp"
 #include "../components/aicomponent.hpp"
 #include "../components/healthcomponent.hpp"
+#include "../components/projectilecomponent.hpp"
+#include "transformsystem.hpp"
 #include <cstdio>
 
 void CollisionSystem::update() {
@@ -33,13 +35,13 @@ void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityCompone
 
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE ||
         velocityComponent.velocity.y > 0 && gc.gravityState == GRAVITY_STATE::GROUNDED) {
-      transformSystem->stopY(velocityComponent, positionComponent, cc.yposDif);
+      stopY(velocityComponent, positionComponent, cc.yposDif);
     }
   }
 
   if (cc.collidedDownTileTypes.hasTileType(TILE::LADDERSTART)) {
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
-      transformSystem->stopY(velocityComponent, positionComponent, cc.yposDif);
+      stopY(velocityComponent, positionComponent, cc.yposDif);
     }
   }
 }
@@ -52,7 +54,7 @@ void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent
   if (cc.collidedUpTileTypes.hasTileType(TILE::SOLID)) {
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
       if (velocityComponent.velocity.y < 0) {
-        transformSystem->stopY(velocityComponent, positionComponent, cc.yposDif);
+        stopY(velocityComponent, positionComponent, cc.yposDif);
       }
     }
   }
@@ -65,7 +67,7 @@ void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocity
       cc.collidedRightTileTypes.hasTileType(TILE::SOLID) ||
       cc.collidedLeftTileTypes.hasTileType(TILE::LADDERSTART) ||
       cc.collidedRightTileTypes.hasTileType(TILE::LADDERSTART)) {
-    transformSystem->stopX(velocityComponent, positionComponent, cc.xposDif);
+    stopX(velocityComponent, positionComponent, cc.xposDif);
   }
 }
 

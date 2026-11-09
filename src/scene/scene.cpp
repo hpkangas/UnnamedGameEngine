@@ -18,9 +18,7 @@ bool Scene::init() {
 
     collisionDetectionSystem.currentLevel = &currentLevel;
     collisionSystem.currentLevel = &currentLevel;
-    collisionSystem.transformSystem = &transformSystem;
     controlSystem.currentLevel = &currentLevel;
-    controlSystem.transformSystem = &transformSystem;
     gravitySystem.currentLevel = &currentLevel;
     transformSystem.currentLevel = &currentLevel;
     renderSystem.currentLevel = &currentLevel;

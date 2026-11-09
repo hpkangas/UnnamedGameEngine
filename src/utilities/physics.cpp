@@ -88,6 +88,33 @@ bool collisionRight(SDL_Rect const &player, SDL_Rect const &obj, Velocity const 
   return false;
 }
 
+bool collisionDownRight(SDL_Rect const &player, SDL_Rect const &obj,
+                        Velocity const playerVelocity) {
+
+  const int cornerX = player.x + player.w + playerVelocity.x;
+  const int cornerY = player.y + player.h + playerVelocity.y;
+  const int bRight = obj.x + obj.w;
+  const int bTop = obj.y;
+
+  const bool touchesLeft = cornerX == obj.x && cornerY >= obj.y && cornerY <= bTop;
+  const bool touchesTop = cornerY == bTop && cornerX >= obj.x && cornerX <= bRight;
+
+  return touchesLeft || touchesTop;
+}
+
+bool collisionDownLeft(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
+
+  const int cornerX = player.x + playerVelocity.x;
+  const int cornerY = player.y + player.h + playerVelocity.y;
+  const int bLeft = obj.x;
+  const int bTop = obj.y;
+
+  const bool touchesRight = cornerX == bLeft && cornerY >= obj.y && cornerY <= bTop;
+  const bool touchesTop = cornerY == bTop && cornerX >= bLeft && cornerX <= obj.x + obj.w;
+
+  return touchesRight || touchesTop;
+}
+
 bool attackCollision(SDL_Rect const &a, SDL_Rect const &b) {
   return checkCollision(a, b);
   // Velocity playerVelocity = {0, 0};

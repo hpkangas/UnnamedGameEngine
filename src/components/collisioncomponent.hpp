@@ -19,6 +19,9 @@ struct CollisionComponent {
   bool tileCollisionLeft = false;
   bool tileCollisionRight = false;
 
+  bool tileCollisionDownRight = false;
+  bool tileCollisionDownLeft = false;
+
   TileVector collidedDownTileTypes;
   TileVector collidedUpTileTypes;
   TileVector collidedLeftTileTypes;

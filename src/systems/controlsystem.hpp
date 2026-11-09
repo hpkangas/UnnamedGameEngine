@@ -2,8 +2,8 @@
 #define CONTROLSYSTEM_HPP
 #include "../components/collisioncomponent.hpp"
 #include "../components/controlcomponent.hpp"
+#include "../components/velocitycomponent.hpp"
 #include "../scene/sceneinfo.hpp"
-#include "transformsystem.hpp"
 
 class ControlSystem {
 
@@ -29,8 +29,6 @@ class ControlSystem {
 
 public:
   SceneInfo *currentLevel = nullptr;
-  //TODO non class function or static function for transformSystem
-  TransformSystem *transformSystem = nullptr;
   void update(entt::entity &selectedPlayer);
 };
 
