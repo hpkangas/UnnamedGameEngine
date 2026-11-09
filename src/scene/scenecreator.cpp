@@ -47,7 +47,7 @@ void SceneCreator::createEntitiesFromJson(nlohmann::json const &levelJson, Scene
     y++;
     x = 0;
     for (auto col : row.value().items()) {
-      if (col.value() != "" ) {
+      if (col.value() != "") {
         createTileFromJson(col.value(), x, y, level);
       }
       x++;
@@ -68,7 +68,7 @@ void SceneCreator::createEntitiesFromJson(nlohmann::json const &levelJson, Scene
 }
 
 void SceneCreator::createTileFromJson(std::string currentValue, int x, int y, SceneInfo &level) {
-  EntityCreator::createEntityOnTilePosition(currentValue, Position{x, y}, Velocity{0, 0}, level);
+  EntityCreator::createEntityOnTilePosition(currentValue, Position{x, y}, level);
 }
 
 void SceneCreator::editTileGrid(SceneInfo &level) {

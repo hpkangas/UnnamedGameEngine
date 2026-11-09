@@ -81,7 +81,7 @@ static nlohmann::json findTemplateByType(const std::string_view &type,
   }
   for (auto const &entDef : g_entityTemplates["entities"]) {
     if (entDef.value("type", "") == type) {
-        return entDef;
+      return entDef;
     }
   }
   return nlohmann::json();
@@ -94,8 +94,8 @@ static int textureIndexFromName(const std::string &textureName) {
   return TextureManager::getTextureIndex(textureName);
 }
 
-entt::entity createEntityFromTemplate(const nlohmann::json &def, Position position,
-                                      Velocity velocity, SceneInfo &level) {
+entt::entity createEntityFromTemplate(const nlohmann::json &def, Position position, Velocity vel,
+                                      SceneInfo &level) {
   if (def.is_null()) {
     return entt::null;
   }
@@ -105,6 +105,14 @@ entt::entity createEntityFromTemplate(const nlohmann::json &def, Position positi
   level.registry.emplace<PositionComponent>(entity, position.x, position.y);
 
   if (def.contains("velocity")) {
+    auto velocityDef = def["velocity"];
+    Velocity velocity;
+    if (vel.x == 0 && vel.y == 0) {
+      velocity = {velocityDef.value("x", 0.0f), velocityDef.value("y", 0.0f)};
+    } else {
+      velocity = vel;
+    }
+
     level.registry.emplace<VelocityComponent>(entity, velocity.x, velocity.y);
   }
 
@@ -236,6 +244,15 @@ entt::entity createEntityFromTemplate(const nlohmann::json &def, Position positi
 }
 
 entt::entity EntityCreator::createEntity(std::string templateName, Position position,
+                                         SceneInfo &level) {
+  auto tpl = findTemplateByType(templateName);
+  if (!tpl.is_null()) {
+    return createEntityFromTemplate(tpl, position, Velocity{0, 0}, level);
+  }
+  return entt::null;
+}
+
+entt::entity EntityCreator::createEntity(std::string templateName, Position position,
                                          Velocity velocity, SceneInfo &level) {
   auto tpl = findTemplateByType(templateName);
   if (!tpl.is_null()) {
@@ -245,9 +262,8 @@ entt::entity EntityCreator::createEntity(std::string templateName, Position posi
 }
 
 entt::entity EntityCreator::createEntityOnTilePosition(std::string templateName, Position position,
-                                         Velocity velocity, SceneInfo &level) {
+                                                       SceneInfo &level) {
   position.x = position.x * Constants::TILE_SIZE;
   position.y = position.y * Constants::TILE_SIZE;
-  return createEntity(templateName, position, velocity, level);
+  return createEntity(templateName, position, level);
 }
-

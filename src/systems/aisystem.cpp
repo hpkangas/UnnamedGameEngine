@@ -6,7 +6,6 @@
 #include "../components/positioncomponent.hpp"
 #include "../components/velocitycomponent.hpp"
 #include "../utilities/physics.hpp"
-#include <iostream>
 
 void AISystem::update(SceneInfo &currentLevel) const {
   auto &reg = currentLevel.registry;
