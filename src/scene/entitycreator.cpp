@@ -71,8 +71,7 @@ static bool loadEntityTemplatesOnce() {
   return true;
 }
 
-static nlohmann::json findTemplateByType(const std::string_view &type,
-                                         const std::string_view &variant = "") {
+static nlohmann::json findTemplateByType(const std::string_view &type) {
   if (!loadEntityTemplatesOnce()) {
     return nlohmann::json();
   }
@@ -176,9 +175,9 @@ entt::entity createEntityFromTemplate(const nlohmann::json &def, Position positi
 
   // Health
   if (def.contains("health")) {
-    level.registry.emplace<HealthComponent>(entity, def.value("health", 1));
-    auto &hc = level.registry.get<HealthComponent>(entity);
-    hc.currentHealth = def.value("health", hc.maxHealth);
+    auto healthDef = def["health"];
+    int maxHealth = healthDef.value("maxHealth",1);
+    level.registry.emplace<HealthComponent>(entity, maxHealth);
   }
 
   if (def.contains("attack")) {

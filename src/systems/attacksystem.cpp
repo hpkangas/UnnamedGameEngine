@@ -41,7 +41,6 @@ void AttackSystem::handleAttacks(AttackComponent const &attackComponent,
       }
     }
   }
-
   else {
     HealthComponent &healthComponent = view.get<HealthComponent>(playerEntity);
     CollisionComponent const &playerCollisionComponent = view.get<CollisionComponent>(playerEntity);

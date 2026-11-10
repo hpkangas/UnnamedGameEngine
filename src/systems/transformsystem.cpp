@@ -22,7 +22,6 @@ void TransformSystem::update(VelocityComponent &velocityComponent, PositionCompo
     positionComponent.facingRight = false;
   }
 
-  //TODO magic numbers
   if (!(xvel == 0)) {
     positionComponent.position.x = xpos + xvel;
     positionComponent.tilePosition.x = positionComponent.position.x / Constants::TILE_SIZE;

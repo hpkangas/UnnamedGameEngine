@@ -69,9 +69,6 @@ void AnimationSystem::determineAnimationState(AnimationComponent &animationCompo
       animationComponent.animationState = ANIMATION_STATE::PUSHING;
     }
 
-    // doesn't work when you stop
-    // climbing needs a lot of rework
-    // TODO triggers when airborne
     if (controlComponent != nullptr) {
       if(controlComponent->controlState == CONTROL_STATE::CLIMBING)
       animationComponent.animationState = ANIMATION_STATE::CLIMBING;
