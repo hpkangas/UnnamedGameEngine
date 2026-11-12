@@ -1,8 +1,11 @@
 #include "scenecreator.hpp"
+#include "../components/collisioncomponent.hpp"
+#include "../components/positioncomponent.hpp"
 #include "../components/tilecomponent.hpp"
 #include "../include/json/json.hpp"
 #include "entitycreator.hpp"
 #include <SDL2/SDL_rwops.h>
+#include "../utilities/constants.hpp"
 #include <cstdio>
 #include <fstream>
 #include <iostream>
@@ -56,7 +59,6 @@ void SceneCreator::createEntitiesFromJson(nlohmann::json const &levelJson, Scene
 
   level.levelLength = x;
   level.levelHeight = y;
-  editTileGrid(level);
 
   auto entities = levelJson["entities"];
   for (auto entity : entities.items()) {
@@ -65,6 +67,8 @@ void SceneCreator::createEntitiesFromJson(nlohmann::json const &levelJson, Scene
     int posY = entity.value().value("y", 0);
     createTileFromJson(type, posX, posY, level);
   }
+
+  editTileGrid(level);
 }
 
 void SceneCreator::createTileFromJson(std::string currentValue, int x, int y, SceneInfo &level) {
@@ -77,6 +81,16 @@ void SceneCreator::editTileGrid(SceneInfo &level) {
   auto tileView = level.registry.view<TileComponent>();
   for (entt::entity tileEntity : tileView) {
     TileComponent const &tile = level.registry.get<TileComponent>(tileEntity);
-    level.staticTileGrid.set(tile.tilePosition.x, tile.tilePosition.y, tileEntity);
+    PositionComponent const *position =
+        level.registry.try_get<PositionComponent>(tileEntity);
+    CollisionComponent const *collision =
+        level.registry.try_get<CollisionComponent>(tileEntity);
+    if (position && collision) {
+      level.staticTileGrid.addRectangle(position->position.x, position->position.y,
+                                        collision->collisionRect.w, collision->collisionRect.h,
+                                        Constants::TILE_SIZE, tileEntity);
+    } else {
+      level.staticTileGrid.add(tile.tilePosition.x, tile.tilePosition.y, tileEntity);
+    }
   }
 }

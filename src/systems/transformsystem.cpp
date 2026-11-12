@@ -1,11 +1,39 @@
 #include "transformsystem.hpp"
+#include "../components/collisioncomponent.hpp"
+#include "../components/tilecomponent.hpp"
 #include "../utilities/constants.hpp"
+
 void TransformSystem::updateAll() const {
-  auto view = currentLevel->registry.view<PositionComponent, VelocityComponent>();
+  auto &reg = currentLevel->registry;
+  auto view = reg.view<PositionComponent, VelocityComponent>();
   for (auto entity : view) {
     VelocityComponent &velocityComponent = view.get<VelocityComponent>(entity);
     PositionComponent &positionComponent = view.get<PositionComponent>(entity);
+    const int previousX = positionComponent.position.x;
+    const int previousY = positionComponent.position.y;
     update(velocityComponent, positionComponent);
+
+    TileComponent *tileComponent = reg.try_get<TileComponent>(entity);
+    if (!tileComponent ||
+        (previousX == positionComponent.position.x &&
+         previousY == positionComponent.position.y)) {
+      continue;
+    }
+
+    TileGrid &tileGrid = currentLevel->staticTileGrid;
+    CollisionComponent const *collision = reg.try_get<CollisionComponent>(entity);
+    if (collision) {
+      tileGrid.removeRectangle(previousX, previousY, collision->collisionRect.w,
+                               collision->collisionRect.h, Constants::TILE_SIZE, entity);
+      tileGrid.addRectangle(positionComponent.position.x, positionComponent.position.y,
+                            collision->collisionRect.w, collision->collisionRect.h,
+                            Constants::TILE_SIZE, entity);
+    } else {
+      tileGrid.remove(tileComponent->tilePosition.x, tileComponent->tilePosition.y, entity);
+      tileGrid.add(positionComponent.tilePosition.x, positionComponent.tilePosition.y, entity);
+    }
+
+    tileComponent->tilePosition = positionComponent.tilePosition;
   }
 }
 
@@ -95,4 +123,3 @@ void stopY(VelocityComponent &velocityComponent, PositionComponent &positionComp
   }
   velocityComponent.velocity.y = 0;
 }
-

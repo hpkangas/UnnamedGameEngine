@@ -7,12 +7,24 @@
 #include "../utilities/physics.hpp"
 #include <cstdio>
 #include <iostream>
+#include <unordered_set>
 
 void CollisionDetectionSystem::update() {
 
   CollisionDetectionSystem::updateCollisionComponents();
   CollisionDetectionSystem::checkTileCollisions();
   CollisionDetectionSystem::checkEntityCollisions();
+}
+
+void CollisionDetectionSystem::checkTileCollisions() {
+  auto &reg = currentLevel->registry;
+  auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
+  for (auto entity : view) {
+    CollisionComponent &cc = view.get<CollisionComponent>(entity);
+    PositionComponent const &pc = view.get<PositionComponent>(entity);
+    VelocityComponent const &vc = view.get<VelocityComponent>(entity);
+    checkTileCollision(cc, pc, vc);
+  }
 }
 
 void CollisionDetectionSystem::checkTileCollision(CollisionComponent &cc,
@@ -28,43 +40,34 @@ void CollisionDetectionSystem::checkTileCollision(CollisionComponent &cc,
   const int minTy = (cc.collisionRect.y - pad) / Constants::TILE_SIZE;
   const int maxTy = (cc.collisionRect.y + cc.collisionRect.h + pad) / Constants::TILE_SIZE;
 
+  std::unordered_set<entt::entity> checkedTiles;
   for (int ty = minTy; ty <= maxTy; ++ty) {
     for (int tx = minTx; tx <= maxTx; ++tx) {
-      entt::entity tileAtCoordinate = grid.at(tx, ty);
-      if (tileAtCoordinate == entt::null) {
-        continue;
-      }
+      for (entt::entity tileAtCoordinate : grid.at(tx, ty)) {
+        if (!checkedTiles.insert(tileAtCoordinate).second) {
+          continue;
+        }
 
-      CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(tileAtCoordinate);
-      TileComponent const *tileTile = reg.try_get<TileComponent>(tileAtCoordinate);
-      if (!tileColl || !tileTile) {
-        continue;
-      }
-      TILE const &collisionTile = tileTile->tile;
+        CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(tileAtCoordinate);
+        TileComponent const *tileTile = reg.try_get<TileComponent>(tileAtCoordinate);
+        if (!tileColl || !tileTile) {
+          continue;
+        }
+        TILE const &collisionTile = tileTile->tile;
 
-      if (vel.x < 0) {
-        checkEntityLeftTileCollision(cc, *tileColl, vel, collisionTile);
-        checkEntityDownLeftTileCollision(cc, *tileColl, vel, collisionTile);
+        if (vel.x < 0) {
+          checkEntityLeftTileCollision(cc, *tileColl, vel, collisionTile);
+          checkEntityDownLeftTileCollision(cc, *tileColl, vel, collisionTile);
+        }
+        if (vel.x > 0) {
+          checkEntityRightTileCollision(cc, *tileColl, vel, collisionTile);
+          checkEntityDownRightTileCollision(cc, *tileColl, vel, collisionTile);
+        }
+        // nyt tarkistaa joka framilla
+        checkEntityDownTileCollision(cc, *tileColl, vel, collisionTile);
+        checkEntityUpTileCollision(cc, *tileColl, vel, collisionTile);
       }
-      if (vel.x > 0) {
-        checkEntityRightTileCollision(cc, *tileColl, vel, collisionTile);
-        checkEntityDownRightTileCollision(cc, *tileColl, vel, collisionTile);
-      }
-      // nyt tarkistaa joka framilla
-      checkEntityDownTileCollision(cc, *tileColl, vel, collisionTile);
-      checkEntityUpTileCollision(cc, *tileColl, vel, collisionTile);
     }
-  }
-}
-
-void CollisionDetectionSystem::checkTileCollisions() {
-  auto &reg = currentLevel->registry;
-  auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
-  for (auto entity : view) {
-    CollisionComponent &cc = view.get<CollisionComponent>(entity);
-    PositionComponent const &pc = view.get<PositionComponent>(entity);
-    VelocityComponent const &vc = view.get<VelocityComponent>(entity);
-    checkTileCollision(cc, pc, vc);
   }
 }
 
