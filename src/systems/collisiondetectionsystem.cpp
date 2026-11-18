@@ -30,29 +30,34 @@ void CollisionDetectionSystem::checkTileCollision(CollisionComponent &cc,
 
   for (int ty = minTy; ty <= maxTy; ++ty) {
     for (int tx = minTx; tx <= maxTx; ++tx) {
-      entt::entity tileAtCoordinate = grid.at(tx, ty);
-      if (tileAtCoordinate == entt::null) {
+      std::vector<entt::entity> tileEntities = grid.at(tx, ty);
+      if (tileEntities.empty() || tileEntities.at(0) == entt::null) {
         continue;
       }
 
-      CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(tileAtCoordinate);
-      TileComponent const *tileTile = reg.try_get<TileComponent>(tileAtCoordinate);
-      if (!tileColl || !tileTile) {
-        continue;
-      }
-      TILE const &collisionTile = tileTile->tile;
+      for (entt::entity tileAtCoordinate : tileEntities) {
+        if (tileAtCoordinate == entt::null) {
+          continue;
+        }
+        CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(tileAtCoordinate);
+        TileComponent const *tileTile = reg.try_get<TileComponent>(tileAtCoordinate);
+        if (!tileColl || !tileTile) {
+          continue;
+        }
+        TILE const &collisionTile = tileTile->tile;
 
-      if (vel.x < 0) {
-        checkEntityLeftTileCollision(cc, *tileColl, vel, collisionTile);
-        checkEntityDownLeftTileCollision(cc, *tileColl, vel, collisionTile);
+        if (vel.x < 0) {
+          checkEntityLeftTileCollision(cc, *tileColl, vel, collisionTile);
+          checkEntityDownLeftTileCollision(cc, *tileColl, vel, collisionTile);
+        }
+        if (vel.x > 0) {
+          checkEntityRightTileCollision(cc, *tileColl, vel, collisionTile);
+          checkEntityDownRightTileCollision(cc, *tileColl, vel, collisionTile);
+        }
+        // nyt tarkistaa joka framilla
+        checkEntityDownTileCollision(cc, *tileColl, vel, collisionTile);
+        checkEntityUpTileCollision(cc, *tileColl, vel, collisionTile);
       }
-      if (vel.x > 0) {
-        checkEntityRightTileCollision(cc, *tileColl, vel, collisionTile);
-        checkEntityDownRightTileCollision(cc, *tileColl, vel, collisionTile);
-      }
-      // nyt tarkistaa joka framilla
-      checkEntityDownTileCollision(cc, *tileColl, vel, collisionTile);
-      checkEntityUpTileCollision(cc, *tileColl, vel, collisionTile);
     }
   }
 }

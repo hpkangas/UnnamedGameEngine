@@ -2,6 +2,7 @@
 #define TRANSFORMSYSTEM_HPP
 #include "../components/positioncomponent.hpp"
 #include "../components/velocitycomponent.hpp"
+#include "../components/collisioncomponent.hpp"
 #include "../scene/sceneinfo.hpp"
 
 class TransformSystem {
@@ -13,6 +14,7 @@ public:
   
   void updateAll() const;
   void update(VelocityComponent &velocityComponent, PositionComponent &positionComponent) const;
+  void updateTileGridPosition(CollisionComponent &collisionComponent, entt::entity entity) const;
 };
 
   void moveRight(VelocityComponent &velocityComponent, PositionComponent &positionComponent) ;

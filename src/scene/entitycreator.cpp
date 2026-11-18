@@ -243,7 +243,7 @@ entt::entity createEntityFromTemplate(const nlohmann::json &def, Position positi
 }
 
 entt::entity EntityCreator::createEntity(std::string templateName, Position position,
-                                         SceneInfo &level) {
+  SceneInfo &level) {
   auto tpl = findTemplateByType(templateName);
   if (!tpl.is_null()) {
     return createEntityFromTemplate(tpl, position, Velocity{0, 0}, level);

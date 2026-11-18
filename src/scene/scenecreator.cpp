@@ -54,8 +54,8 @@ void SceneCreator::createEntitiesFromJson(nlohmann::json const &levelJson, Scene
     }
   }
 
-  level.levelLength = x;
-  level.levelHeight = y;
+  level.levelLength = x+1000;
+  level.levelHeight = y+1000;
   editTileGrid(level);
 
   auto entities = levelJson["entities"];
@@ -72,7 +72,6 @@ void SceneCreator::createTileFromJson(std::string currentValue, int x, int y, Sc
 }
 
 void SceneCreator::editTileGrid(SceneInfo &level) {
-  // Bake the static-collider tile grid for O(1) neighbour queries.
   level.staticTileGrid.resize(level.levelLength, level.levelHeight + 1);
   auto tileView = level.registry.view<TileComponent>();
   for (entt::entity tileEntity : tileView) {
