@@ -41,22 +41,22 @@ void CollisionDetectionSystem::checkTileCollision(CollisionComponent &cc,
         }
         CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(tileAtCoordinate);
         TileComponent const *tileTile = reg.try_get<TileComponent>(tileAtCoordinate);
+        Velocity tileVel = {0, 0};
+        if (reg.try_get<VelocityComponent>(tileAtCoordinate)) {
+          tileVel = reg.try_get<VelocityComponent>(tileAtCoordinate)->velocity;
+        }
         if (!tileColl || !tileTile) {
           continue;
         }
         TILE const &collisionTile = tileTile->tile;
 
-        if (vel.x < 0) {
-          checkEntityLeftTileCollision(cc, *tileColl, vel, collisionTile);
-          checkEntityDownLeftTileCollision(cc, *tileColl, vel, collisionTile);
-        }
-        if (vel.x > 0) {
-          checkEntityRightTileCollision(cc, *tileColl, vel, collisionTile);
-          checkEntityDownRightTileCollision(cc, *tileColl, vel, collisionTile);
-        }
+        checkEntityLeftTileCollision(cc, *tileColl, vel, tileVel, collisionTile);
+        checkEntityDownLeftTileCollision(cc, *tileColl, vel, tileVel, collisionTile);
+        checkEntityRightTileCollision(cc, *tileColl, vel, tileVel, collisionTile);
+        checkEntityDownRightTileCollision(cc, *tileColl, vel, tileVel, collisionTile);
         // nyt tarkistaa joka framilla
-        checkEntityDownTileCollision(cc, *tileColl, vel, collisionTile);
-        checkEntityUpTileCollision(cc, *tileColl, vel, collisionTile);
+        checkEntityDownTileCollision(cc, *tileColl, vel, tileVel, collisionTile);
+        checkEntityUpTileCollision(cc, *tileColl, vel, tileVel, collisionTile);
       }
     }
   }
@@ -96,11 +96,12 @@ void CollisionDetectionSystem::checkEntityCollisions() {
 
 void CollisionDetectionSystem::checkEntityLeftTileCollision(CollisionComponent &objectCollision,
                                                             CollisionComponent const &tileCollision,
-                                                            Velocity velocity,
+                                                            Velocity objVel,
+                                                            Velocity const &tileVel,
                                                             TILE const &collisionTile) const {
 
-  if (Physics::collisionLeft(objectCollision.collisionRect, tileCollision.collisionRect,
-                             velocity)) {
+  if (Physics::collisionLeft(objectCollision.collisionRect, objVel, tileCollision.collisionRect,
+                             tileVel)) {
     if (collisionTile == TILE::SOLID) {
       objectCollision.xposDif = objectCollision.collisionRect.x -
                                 (tileCollision.collisionRect.x + tileCollision.collisionRect.w);
@@ -113,10 +114,10 @@ void CollisionDetectionSystem::checkEntityLeftTileCollision(CollisionComponent &
 }
 
 void CollisionDetectionSystem::checkEntityRightTileCollision(
-    CollisionComponent &objectCollision, CollisionComponent const &tileCollision, Velocity velocity,
-    TILE const &collisionTile) const {
-  if (Physics::collisionRight(objectCollision.collisionRect, tileCollision.collisionRect,
-                              velocity)) {
+    CollisionComponent &objectCollision, CollisionComponent const &tileCollision, Velocity objVel,
+    Velocity const &tileVel, TILE const &collisionTile) const {
+  if (Physics::collisionRight(objectCollision.collisionRect, objVel, tileCollision.collisionRect,
+                              tileVel)) {
     if (collisionTile == TILE::SOLID) {
       objectCollision.xposDif =
           (objectCollision.collisionRect.x + objectCollision.collisionRect.w) -
@@ -131,9 +132,10 @@ void CollisionDetectionSystem::checkEntityRightTileCollision(
 
 void CollisionDetectionSystem::checkEntityUpTileCollision(CollisionComponent &objectCollision,
                                                           CollisionComponent const &tileCollision,
-                                                          Velocity velocity,
+                                                          Velocity objVel, Velocity const &tileVel,
                                                           TILE const &collisionTile) const {
-  if (Physics::collisionUp(objectCollision.collisionRect, tileCollision.collisionRect, velocity)) {
+  if (Physics::collisionUp(objectCollision.collisionRect, objVel, tileCollision.collisionRect,
+                           tileVel)) {
     if (collisionTile == TILE::SOLID) {
       objectCollision.yposDif = (objectCollision.collisionRect.y) -
                                 (tileCollision.collisionRect.y + tileCollision.collisionRect.h);
@@ -148,10 +150,11 @@ void CollisionDetectionSystem::checkEntityUpTileCollision(CollisionComponent &ob
 
 void CollisionDetectionSystem::checkEntityDownTileCollision(CollisionComponent &objectCollision,
                                                             CollisionComponent const &tileCollision,
-                                                            Velocity velocity,
+                                                            Velocity objVel,
+                                                            Velocity const &tileVel,
                                                             TILE const &collisionTile) const {
-  if (Physics::collisionDown(objectCollision.collisionRect, tileCollision.collisionRect,
-                             velocity)) {
+  if (Physics::collisionDown(objectCollision.collisionRect, objVel, tileCollision.collisionRect,
+                             tileVel)) {
     if (collisionTile == TILE::SOLID || collisionTile == TILE::LADDERSTART) {
       objectCollision.yposDif =
           (objectCollision.collisionRect.y + objectCollision.collisionRect.h) -
@@ -166,10 +169,10 @@ void CollisionDetectionSystem::checkEntityDownTileCollision(CollisionComponent &
 }
 
 void CollisionDetectionSystem::checkEntityDownRightTileCollision(
-    CollisionComponent &objectCollision, CollisionComponent const &tileCollision, Velocity velocity,
-    TILE const &collisionTile) const {
+    CollisionComponent &objectCollision, CollisionComponent const &tileCollision, Velocity objVel,
+    Velocity const &tileVel, TILE const &collisionTile) const {
   if (Physics::collisionDownRight(objectCollision.collisionRect, tileCollision.collisionRect,
-                                  velocity)) {
+                                  objVel)) {
     if (collisionTile == TILE::SOLID || collisionTile == TILE::LADDERSTART) {
 
       objectCollision.tileCollisionDownRight = true;
@@ -178,10 +181,10 @@ void CollisionDetectionSystem::checkEntityDownRightTileCollision(
 }
 
 void CollisionDetectionSystem::checkEntityDownLeftTileCollision(
-    CollisionComponent &objectCollision, CollisionComponent const &tileCollision, Velocity velocity,
-    TILE const &collisionTile) const {
+    CollisionComponent &objectCollision, CollisionComponent const &tileCollision, Velocity objVel,
+    Velocity const &tileVel, TILE const &collisionTile) const {
   if (Physics::collisionDownLeft(objectCollision.collisionRect, tileCollision.collisionRect,
-                                 velocity)) {
+                                 objVel)) {
     if (collisionTile == TILE::SOLID || collisionTile == TILE::LADDERSTART) {
 
       objectCollision.tileCollisionDownLeft = true;

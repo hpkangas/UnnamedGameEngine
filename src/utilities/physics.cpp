@@ -1,8 +1,9 @@
 #include "physics.hpp"
 #include "utils.hpp"
 #include <cstdio>
-namespace Physics {
-bool checkCollision(SDL_Rect const &a, SDL_Rect const &b) {
+
+using namespace Physics;
+bool Physics::checkCollision(SDL_Rect const &a, SDL_Rect const &b) {
   // The sides of the rectangles
   int leftA, leftB;
   int rightA, rightB;
@@ -42,7 +43,7 @@ bool checkCollision(SDL_Rect const &a, SDL_Rect const &b) {
   return true;
 }
 
-bool checkLeft(SDL_Rect a, SDL_Rect b) {
+bool Physics::checkLeft(SDL_Rect a, SDL_Rect b) {
   int leftA, rightB;
   leftA = a.x;
   rightB = b.x + b.w;
@@ -52,74 +53,78 @@ bool checkLeft(SDL_Rect a, SDL_Rect b) {
   return true;
 }
 
-bool collisionDown(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
+bool Physics::collisionDown(SDL_Rect const &a, Velocity const aVel,
+                            SDL_Rect const &b, Velocity const bVel) {
 
-  if (player.y + player.h <= obj.y + obj.h) {
-    return player.y + player.h + playerVelocity.y >= obj.y && player.x < obj.x + obj.w &&
-           player.x + player.w > obj.x;
+  if (a.y + a.h <= b.y + b.h) {
+    return a.y + a.h + aVel.y >= b.y + bVel.y &&
+           a.x < b.x + b.w && a.x + a.w > b.x;
   }
   return false;
 }
 
-bool collisionUp(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
+bool Physics::collisionUp(SDL_Rect const &a, Velocity const aVel,
+                          SDL_Rect const &b, Velocity const bVel) {
 
-  if (player.y >= obj.y) {
-    return player.y + playerVelocity.y <= obj.y + obj.h && player.x < obj.x + obj.w &&
-           player.x + player.w > obj.x;
+  if (a.y >= b.y) {
+    return a.y + aVel.y <= b.y + b.h + bVel.y &&
+           a.x < b.x + b.w && a.x + a.w > b.x;
   }
   return false;
 }
 
-bool collisionLeft(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
+bool Physics::collisionLeft(SDL_Rect const &a, Velocity const aVel,
+                            SDL_Rect const &b, Velocity const bVel) {
 
-  if (player.x >= obj.x + obj.w) {
-    return player.x + playerVelocity.x < obj.x + obj.w && player.y < obj.y + obj.h &&
-           player.y + player.h > obj.y;
+  if (a.x >= b.x + b.w) {
+    return a.x + aVel.x < b.x + b.w + bVel.x &&
+           a.y < b.y + b.h && a.y + a.h > b.y;
   }
   return false;
 }
 
-bool collisionRight(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
+bool Physics::collisionRight(SDL_Rect const &a, Velocity const aVel,
+                             SDL_Rect const &b, Velocity const bVel) {
 
-  if (player.x + player.w <= obj.x) {
-    return player.x + player.w + playerVelocity.x > obj.x && player.y < obj.y + obj.h &&
-           player.y + player.h > obj.y;
+  if (a.x + a.w <= b.x) {
+    return a.x + a.w + aVel.x > b.x + bVel.x &&
+           a.y < b.y + b.h && a.y + a.h > b.y;
   }
   return false;
 }
 
-bool collisionDownRight(SDL_Rect const &player, SDL_Rect const &obj,
-                        Velocity const playerVelocity) {
+bool Physics::collisionDownRight(SDL_Rect const &a, SDL_Rect const &b,
+                                 Velocity const aVel) {
 
-  const int cornerX = player.x + player.w + playerVelocity.x;
-  const int cornerY = player.y + player.h + playerVelocity.y;
-  const int bRight = obj.x + obj.w;
-  const int bTop = obj.y;
+  const int cornerX = a.x + a.w + aVel.x;
+  const int cornerY = a.y + a.h + aVel.y;
+  const int bRight = b.x + b.w;
+  const int bTop = b.y;
 
-  const bool touchesLeft = cornerX == obj.x && cornerY >= obj.y && cornerY <= bTop;
-  const bool touchesTop = cornerY == bTop && cornerX >= obj.x && cornerX <= bRight;
+  const bool touchesLeft = cornerX == b.x && cornerY >= b.y && cornerY <= bTop;
+  const bool touchesTop = cornerY == bTop && cornerX >= b.x && cornerX <= bRight;
 
   return touchesLeft || touchesTop;
 }
 
-bool collisionDownLeft(SDL_Rect const &player, SDL_Rect const &obj, Velocity const playerVelocity) {
+bool Physics::collisionDownLeft(SDL_Rect const &a, SDL_Rect const &b,
+                                Velocity const aVel) {
 
-  const int cornerX = player.x + playerVelocity.x;
-  const int cornerY = player.y + player.h + playerVelocity.y;
-  const int bLeft = obj.x;
-  const int bTop = obj.y;
+  const int cornerX = a.x + aVel.x;
+  const int cornerY = a.y + a.h + aVel.y;
+  const int bLeft = b.x;
+  const int bTop = b.y;
 
-  const bool touchesRight = cornerX == bLeft && cornerY >= obj.y && cornerY <= bTop;
-  const bool touchesTop = cornerY == bTop && cornerX >= bLeft && cornerX <= obj.x + obj.w;
+  const bool touchesRight = cornerX == bLeft && cornerY >= b.y && cornerY <= bTop;
+  const bool touchesTop = cornerY == bTop && cornerX >= bLeft && cornerX <= b.x + b.w;
 
   return touchesRight || touchesTop;
 }
 
-bool attackCollision(SDL_Rect const &a, SDL_Rect const &b) {
-  return checkCollision(a, b);
+bool Physics::attackCollision(SDL_Rect const &a, SDL_Rect const &b) {
+  return Physics::checkCollision(a, b);
   // Velocity playerVelocity = {0, 0};
   // return collisionDown(player, obj, playerVelocity) || collisionUp(player, obj, playerVelocity)
   // ||
   //  collisionLeft(player, obj, playerVelocity) || collisionRight(player, obj, playerVelocity);
-}
 } // namespace Physics
