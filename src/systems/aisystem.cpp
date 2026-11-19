@@ -47,16 +47,16 @@ void AISystem::update(SceneInfo &currentLevel) const {
       velx = aiComponent.movingRight ? 4.0f : -4.0f;
 
       if (aiComponent.movingRight &&
-          (collisionComponent.collidedRightTileTypes.hasTileType(TILE::SOLID) ||
-           !collisionComponent.tileCollisionDownRight)) {
+          (collisionComponent.right.tileTypes.hasTileType(TILE::SOLID) ||
+           !collisionComponent.downRight.collision)) {
         aiComponent.movingRight = false;
         velx = -4.0f;
         break;
       }
 
       if (!aiComponent.movingRight &&
-          (collisionComponent.collidedLeftTileTypes.hasTileType(TILE::SOLID) ||
-           !collisionComponent.tileCollisionDownLeft)) {
+          (collisionComponent.left.tileTypes.hasTileType(TILE::SOLID) ||
+           !collisionComponent.downLeft.collision)) {
         aiComponent.movingRight = true;
         velx = 4.0f;
         break;

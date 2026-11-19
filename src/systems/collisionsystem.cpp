@@ -31,17 +31,17 @@ void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityCompone
                                               PositionComponent &positionComponent,
                                               CollisionComponent const &cc,
                                               GravityComponent const &gc) const {
-  if (cc.collidedDownTileTypes.hasTileType(TILE::SOLID)) {
+  if (cc.down.tileTypes.hasTileType(TILE::SOLID)) {
 
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE ||
         velocityComponent.velocity.y > 0 && gc.gravityState == GRAVITY_STATE::GROUNDED) {
-      stopY(velocityComponent, positionComponent, cc.yposDif);
+      stopY(velocityComponent, positionComponent, cc.down.positionDifference.y);
     }
   }
 
-  if (cc.collidedDownTileTypes.hasTileType(TILE::LADDERSTART)) {
+  if (cc.down.tileTypes.hasTileType(TILE::LADDERSTART)) {
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
-      stopY(velocityComponent, positionComponent, cc.yposDif);
+      stopY(velocityComponent, positionComponent, cc.down.positionDifference.y);
     }
   }
 }
@@ -51,10 +51,10 @@ void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent
                                             CollisionComponent const &cc,
                                             GravityComponent const &gc) const {
 
-  if (cc.collidedUpTileTypes.hasTileType(TILE::SOLID)) {
+  if (cc.up.tileTypes.hasTileType(TILE::SOLID)) {
     if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
       if (velocityComponent.velocity.y < 0) {
-        stopY(velocityComponent, positionComponent, cc.yposDif);
+        stopY(velocityComponent, positionComponent, cc.up.positionDifference.y);
       }
     }
   }
@@ -63,11 +63,13 @@ void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent
 void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocityComponent,
                                                      PositionComponent &positionComponent,
                                                      CollisionComponent const &cc) const {
-  if (cc.collidedLeftTileTypes.hasTileType(TILE::SOLID) ||
-      cc.collidedRightTileTypes.hasTileType(TILE::SOLID) ||
-      cc.collidedLeftTileTypes.hasTileType(TILE::LADDERSTART) ||
-      cc.collidedRightTileTypes.hasTileType(TILE::LADDERSTART)) {
-    stopX(velocityComponent, positionComponent, cc.xposDif);
+  if (cc.left.tileTypes.hasTileType(TILE::SOLID) ||
+      cc.left.tileTypes.hasTileType(TILE::LADDERSTART)) {
+    stopX(velocityComponent, positionComponent, cc.left.positionDifference.x);
+
+  } else if (cc.right.tileTypes.hasTileType(TILE::SOLID) ||
+             cc.right.tileTypes.hasTileType(TILE::LADDERSTART)) {
+    stopX(velocityComponent, positionComponent, cc.right.positionDifference.x);
   }
 }
 
@@ -82,8 +84,7 @@ void CollisionSystem::handleProjectileCollisions() {
     PositionComponent &posc = reg.get<PositionComponent>(projectile);
     VelocityComponent &vc = reg.get<VelocityComponent>(projectile);
 
-    bool collided =
-        cc.tileCollisionDown || cc.tileCollisionUp || cc.tileCollisionLeft || cc.tileCollisionRight;
+    bool collided = cc.down.collision || cc.up.collision || cc.left.collision || cc.right.collision;
 
     if (collided) {
       hc.damageTaken = pc.damage;

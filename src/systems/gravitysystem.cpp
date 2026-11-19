@@ -24,8 +24,8 @@ void GravitySystem::updateGravity(GravityComponent &gravityComponent,
   if (reg.any_of<CollisionComponent>(entity)) {
     collisionComponent = &reg.get<CollisionComponent>(entity);
 
-    const auto &downTileTypes = collisionComponent->collidedDownTileTypes;
-    const auto &upTileTypes = collisionComponent->collidedUpTileTypes;
+    const auto &downTileTypes = collisionComponent->down.tileTypes;
+    const auto &upTileTypes = collisionComponent->up.tileTypes;
 
     if (downTileTypes.hasTileType(TILE::LADDER) && downTileTypes.hasTileType(TILE::SOLID)) {
       gravityComponent.gravityState = GRAVITY_STATE::GROUNDED;

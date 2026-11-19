@@ -31,8 +31,8 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
     return;
   }
 
-  const auto &downTileTypes = collisionComponent.collidedDownTileTypes;
-  const auto &upTileTypes = collisionComponent.collidedUpTileTypes;
+  const auto &downTileTypes = collisionComponent.down.tileTypes;
+  const auto &upTileTypes = collisionComponent.up.tileTypes;
 
   if (downTileTypes.empty()) {
     if (controlComponent.controlState != CONTROL_STATE::AIRBORNE) {
@@ -198,8 +198,6 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
       noInput = false;
       if (controlComponent.canClimbUp) {
 
-        positionComponent.position.x = collisionComponent.collidedUpTilePos.x;
-
         stopX(velocityComponent, positionComponent);
         stopY(velocityComponent, positionComponent);
 
@@ -211,8 +209,6 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
     if (inputD) {
       noInput = false;
       if (controlComponent.canClimbDown) {
-        positionComponent.position.x = collisionComponent.collidedDownTilePos.x;
-
         stopX(velocityComponent, positionComponent);
         stopY(velocityComponent, positionComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
@@ -265,7 +261,6 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
 
     if (inputU) {
       if (controlComponent.canClimbUp) {
-        positionComponent.position.x = collisionComponent.collidedUpTilePos.x;
         stopX(velocityComponent, positionComponent);
         stopY(velocityComponent, positionComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
@@ -274,7 +269,6 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
 
     if (inputD) {
       if (controlComponent.canClimbDown) {
-        positionComponent.position.x = collisionComponent.collidedDownTilePos.x;
         stopX(velocityComponent, positionComponent);
         stopY(velocityComponent, positionComponent);
         controlComponent.controlState = CONTROL_STATE::CLIMBING;
@@ -293,8 +287,8 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
 
   case CONTROL_STATE::CLIMBING:
 
-    if (!collisionComponent.collidedDownTileTypes.hasTileType(TILE::LADDERSTART) &&
-        !collisionComponent.collidedUpTileTypes.hasTileType(TILE::LADDERSTART)) {
+    if (!collisionComponent.down.tileTypes.hasTileType(TILE::LADDERSTART) &&
+        !collisionComponent.up.tileTypes.hasTileType(TILE::LADDERSTART)) {
       if (inputR && !inputL && !inputU && !inputD) {
         controlComponent.controlState = CONTROL_STATE::AIRBORNE;
         stopY(velocityComponent, positionComponent);
@@ -316,8 +310,8 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
     }
 
     if (inputD) {
-      if (!collisionComponent.collidedDownTileTypes.hasTileType(TILE::LADDER) &&
-          !collisionComponent.collidedDownTileTypes.hasTileType(TILE::LADDERSTART)) {
+      if (!collisionComponent.down.tileTypes.hasTileType(TILE::LADDER) &&
+          !collisionComponent.up.tileTypes.hasTileType(TILE::LADDERSTART)) {
         controlComponent.controlState = CONTROL_STATE::NORMAL;
       } else if (controlComponent.canClimbDown) {
         moveDown(velocityComponent);
@@ -344,8 +338,8 @@ void ControlSystem::checkClimbing(VelocityComponent &velocityComponent,
                                   ControlComponent &controlComponent,
                                   CollisionComponent const &collisionComponent) const {
 
-  const auto &downTileTypes = collisionComponent.collidedDownTileTypes;
-  const auto &upTileTypes = collisionComponent.collidedUpTileTypes;
+  const auto &downTileTypes = collisionComponent.down.tileTypes;
+  const auto &upTileTypes = collisionComponent.up.tileTypes;
 
   if (downTileTypes.hasTileType(TILE::LADDER)) {
     controlComponent.canClimbDown = true;

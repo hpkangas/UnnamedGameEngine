@@ -6,6 +6,20 @@
 #include "tilecomponent.hpp"
 #include <vector>
 
+struct Collision {
+  bool collision = false;
+  TileVector tileTypes;
+  Utils::Position positionDifference = {0, 0};
+  Utils::Velocity collideeVelocity = {0, 0};
+
+  void reset() {
+    collision = false;
+    tileTypes.clear();
+    positionDifference = {0, 0};
+    collideeVelocity = {0, 0};
+  }
+};
+
 struct CollisionComponent {
   explicit CollisionComponent(SDL_Rect collision) : collisionRect(collision) {}
   SDL_Rect collisionRect{0, 0, 0, 0};
@@ -14,24 +28,13 @@ struct CollisionComponent {
 
   std::vector<entt::entity> collisionIds;
 
-  bool tileCollisionUp = false;
-  bool tileCollisionDown = false;
-  bool tileCollisionLeft = false;
-  bool tileCollisionRight = false;
+  Collision up;
+  Collision down;
+  Collision left;
+  Collision right;
 
-  bool tileCollisionDownRight = false;
-  bool tileCollisionDownLeft = false;
-
-  TileVector collidedDownTileTypes;
-  TileVector collidedUpTileTypes;
-  TileVector collidedLeftTileTypes;
-  TileVector collidedRightTileTypes;
-
-  Utils::Position collidedDownTilePos = {0, 0};
-  Utils::Position collidedUpTilePos = {0, 0};
-
-  int xposDif = 0;
-  int yposDif = 0;
+  Collision downRight;
+  Collision downLeft;
 };
 
 #endif
