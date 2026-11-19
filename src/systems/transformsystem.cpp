@@ -43,19 +43,18 @@ void TransformSystem::update(VelocityComponent &velocityComponent,
 
 void TransformSystem::updateTileGridPosition(CollisionComponent &collisionComponent,
                                              entt::entity entity) const {
+  auto &grid = currentLevel->staticTileGrid;
   int x = collisionComponent.collisionRect.x / Constants::TILE_SIZE;
   int y = collisionComponent.collisionRect.y / Constants::TILE_SIZE;
   int topRight = (collisionComponent.collisionRect.x + collisionComponent.collisionRect.w) /
                  Constants::TILE_SIZE;
-  int bottomLeft = (collisionComponent.collisionRect.x + collisionComponent.collisionRect.h) /
+  int bottomLeft = (collisionComponent.collisionRect.y + collisionComponent.collisionRect.h) /
                    Constants::TILE_SIZE;
-  auto &grid = currentLevel->staticTileGrid;
 
-  grid.addTileIfEmpty(x, y, entity);
-  grid.addTileIfEmpty(x, bottomLeft, entity);
-  grid.addTileIfEmpty(topRight, y, entity);
-  grid.addTileIfEmpty(topRight, bottomLeft, entity);
-
+  std::vector<Position> positions = {Position{x, y}, Position{x, bottomLeft}, Position{topRight, y},
+                                     Position{topRight, bottomLeft}};
+  grid.remove(entity);
+  grid.addTiles(positions, entity);
   grid.getCells(entity);
 }
 

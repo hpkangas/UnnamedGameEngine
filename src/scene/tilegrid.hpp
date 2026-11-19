@@ -4,15 +4,13 @@
 
 #include "../include/entt/entt.hpp"
 #include "../utilities/utils.hpp"
+#include <iostream>
 
-// Flat 2D array indexed by (tileX, tileY). Stores the entity of the
-// static collider occupying each cell, or `entt::null` if the cell has none.
 using Utils::Position;
+
 struct TileGrid {
   int width = 0;
   int height = 0;
-  // std::vector<entt::entity> ids;
-  // Physics::Position ennemmin? kuin pair
   std::map<Position, std::vector<entt::entity>> entityCellPositions;
 
   void resize(int w, int h) {
@@ -54,10 +52,31 @@ struct TileGrid {
     }
   }
 
-  void addTileIfEmpty(int tx, int ty, entt::entity entity){
-  if (at(tx, ty).at(0) == entt::null) {
-    set(tx, ty, entity);
-  }}
+  void addTiles(std::vector<Position> positions, entt::entity entity) {
+    for (const auto &pos : positions) {
+      set(pos.x, pos.y, entity);
+    }
+  }
+
+  bool isEmpty(int tx, int ty) const {
+    return at(tx, ty).empty() ||at(tx, ty).at(0) == entt::null;
+  }
+
+  bool areAllEmpty(std::vector<Position> positions) const {
+    for (const auto &pos : positions) {
+      if (!isEmpty(pos.x, pos.y)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void remove(entt::entity id) {
+    for (auto &it : entityCellPositions) {
+      auto &entities = it.second;
+      entities.erase(std::remove(entities.begin(), entities.end(), id), entities.end());
+    }
+  }
 
 };
 
