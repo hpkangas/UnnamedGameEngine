@@ -107,6 +107,7 @@ void CollisionDetectionSystem::checkEntityLeftTileCollision(CollisionComponent &
           0};
     }
 
+    objectCollision.left.velocity = tileVel;
     objectCollision.left.collision = true;
     objectCollision.left.tileTypes.emplace_back(collisionTile);
   }
@@ -124,6 +125,7 @@ void CollisionDetectionSystem::checkEntityRightTileCollision(
       0;
     }
 
+    objectCollision.right.velocity = tileVel;
     objectCollision.right.collision = true;
     objectCollision.right.tileTypes.emplace_back(collisionTile);
   }
@@ -158,7 +160,7 @@ void CollisionDetectionSystem::checkEntityDownTileCollision(CollisionComponent &
           0,(objectCollision.collisionRect.y + objectCollision.collisionRect.h) -
               tileCollision.collisionRect.y};
     }
-
+    objectCollision.down.velocity = tileVel;
     objectCollision.down.collision = true;
     objectCollision.down.tileTypes.emplace_back(collisionTile);
   }

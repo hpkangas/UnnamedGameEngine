@@ -24,10 +24,12 @@ void TransformSystem::update(VelocityComponent &velocityComponent,
   const int xpos = positionComponent.position.x;
   const int ypos = positionComponent.position.y;
 
-  if (xvel > 0) {
-    positionComponent.facingRight = true;
-  } else if (xvel < 0) {
-    positionComponent.facingRight = false;
+  if (velocityComponent.movedByOutsideForce) {
+    if (xvel > 0) {
+      positionComponent.facingRight = true;
+    } else if (xvel < 0) {
+      positionComponent.facingRight = false;
+    }
   }
 
   if (!(xvel == 0)) {
@@ -39,6 +41,8 @@ void TransformSystem::update(VelocityComponent &velocityComponent,
     positionComponent.position.y = ypos + yvel;
     positionComponent.tilePosition.y = positionComponent.position.y / Constants::TILE_SIZE;
   }
+
+  velocityComponent.movedByOutsideForce = false;
 }
 
 void TransformSystem::updateTileGridPosition(CollisionComponent &collisionComponent,
@@ -60,6 +64,8 @@ void TransformSystem::updateTileGridPosition(CollisionComponent &collisionCompon
 
 void moveRight(VelocityComponent &velocityComponent, PositionComponent &positionComponent) {
   positionComponent.facingRight = true;
+  velocityComponent.isMoved = true;
+
   if (velocityComponent.velocity.x + playerSpeed > playerSpeedMax) {
     velocityComponent.velocity.x = playerSpeedMax;
   } else {
@@ -69,6 +75,8 @@ void moveRight(VelocityComponent &velocityComponent, PositionComponent &position
 
 void moveLeft(VelocityComponent &velocityComponent, PositionComponent &positionComponent) {
   positionComponent.facingRight = false;
+  velocityComponent.isMoved = true;
+
   if (velocityComponent.velocity.x - playerSpeed < -playerSpeedMax) {
     velocityComponent.velocity.x = -playerSpeedMax;
   } else {
@@ -90,7 +98,7 @@ void moveDown(VelocityComponent &velocityComponent) {
   }
 }
 
-void jump(VelocityComponent &velocityComponent) { velocityComponent.velocity.y = playerJumpSpeed; }
+void jump(VelocityComponent &velocityComponent) { velocityComponent.velocity.y += playerJumpSpeed; }
 
 void resetJump(VelocityComponent &velocityComponent) {}
 

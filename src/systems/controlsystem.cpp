@@ -20,7 +20,7 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
 
   auto &reg = currentLevel->registry;
   ControlComponent &controlComponent = reg.get<ControlComponent>(selectedPlayer);
-  PositionComponent &transformComponent = reg.get<PositionComponent>(selectedPlayer);
+  PositionComponent &positionComponent = reg.get<PositionComponent>(selectedPlayer);
   VelocityComponent &velocityComponent = reg.get<VelocityComponent>(selectedPlayer);
   CollisionComponent const &collisionComponent = reg.get<CollisionComponent>(selectedPlayer);
   AttackComponent &attackComponent = reg.get<AttackComponent>(selectedPlayer);
@@ -74,6 +74,8 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
   }
 
   checkClimbing(velocityComponent, controlComponent, collisionComponent);
+  velocityComponent.isMoved = false;  
+
 }
 
 void ControlSystem::takeInput() {
@@ -183,6 +185,7 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
         stopX(velocityComponent, positionComponent);
       }
       moveRight(velocityComponent, positionComponent);
+      
       noInput = false;
     }
 

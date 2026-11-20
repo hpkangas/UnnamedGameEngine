@@ -10,13 +10,13 @@ struct Collision {
   bool collision = false;
   TileVector tileTypes;
   Utils::Position positionDifference = {0, 0};
-  Utils::Velocity collideeVelocity = {0, 0};
+  Utils::Velocity velocity = {0, 0};
 
   void reset() {
     collision = false;
     tileTypes.clear();
     positionDifference = {0, 0};
-    collideeVelocity = {0, 0};
+    velocity = {0, 0};
   }
 };
 

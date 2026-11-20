@@ -1,11 +1,11 @@
 #include "animationsystem.hpp"
 #include "../components/attackcomponent.hpp"
 #include "../components/collisioncomponent.hpp"
+#include "../components/controlcomponent.hpp"
 #include "../components/gravitycomponent.hpp"
 #include "../components/healthcomponent.hpp"
 #include "../components/positioncomponent.hpp"
 #include "../components/velocitycomponent.hpp"
-#include "../components/controlcomponent.hpp"
 #include "../utilities/constants.hpp"
 #include <cstdio>
 
@@ -59,19 +59,21 @@ void AnimationSystem::determineAnimationState(AnimationComponent &animationCompo
   }
 
   if (gravityState == GRAVITY_STATE::GROUNDED) {
-    if (velocityComponent->velocity.x != 0 && velocityComponent->velocity.y == 0) {
+    if (velocityComponent->isMoved) {
       animationComponent.animationState = ANIMATION_STATE::WALKING;
     } else {
       animationComponent.animationState = ANIMATION_STATE::STILL;
     }
 
-    if (collisionComponent->left.collision || collisionComponent->right.collision) {
+    if (velocityComponent->isMoved &&
+        (collisionComponent->left.collision || collisionComponent->right.collision)) {
       animationComponent.animationState = ANIMATION_STATE::PUSHING;
     }
 
     if (controlComponent != nullptr) {
-      if(controlComponent->controlState == CONTROL_STATE::CLIMBING)
-      animationComponent.animationState = ANIMATION_STATE::CLIMBING;
+      if (controlComponent->controlState == CONTROL_STATE::CLIMBING) {
+        animationComponent.animationState = ANIMATION_STATE::CLIMBING;
+      }
     }
 
   } else {
@@ -173,18 +175,15 @@ void AnimationSystem::animate(AnimationComponent &animationComponent, entt::enti
   }
 }
 
-
 void AnimationSystem::playFrame(RenderComponent &renderComponent, const int y,
                                 const int frame) const {
-  playFrame(renderComponent, y, renderComponent.sourceRect.w, renderComponent.sourceRect.h,
-            frame);
+  playFrame(renderComponent, y, renderComponent.sourceRect.w, renderComponent.sourceRect.h, frame);
 }
 
-void AnimationSystem::playFrame(RenderComponent &renderComponent, const int y,
-                                const int w, const int h, const int frame) const {
-  renderComponent.sourceRect = { w * frame, y, w, h};
+void AnimationSystem::playFrame(RenderComponent &renderComponent, const int y, const int w,
+                                const int h, const int frame) const {
+  renderComponent.sourceRect = {w * frame, y, w, h};
 }
-
 
 void AnimationSystem::resetAnimation(AnimationComponent &animationComponent) const {
   if (animationComponent.previousAnimationState != animationComponent.animationState) {

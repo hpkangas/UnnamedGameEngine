@@ -37,6 +37,10 @@ void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityCompone
         velocityComponent.velocity.y > 0 && gc.gravityState == GRAVITY_STATE::GROUNDED) {
       stopY(velocityComponent, positionComponent, cc.down.positionDifference.y);
     }
+
+    if (velocityComponent.velocity.x == 0 && velocityComponent.velocity.y == 0) {
+      velocityComponent.setVelocityFromOutside(cc.down.velocity);
+    }
   }
 
   if (cc.down.tileTypes.hasTileType(TILE::LADDERSTART)) {
@@ -67,9 +71,15 @@ void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocity
       cc.left.tileTypes.hasTileType(TILE::LADDERSTART)) {
     stopX(velocityComponent, positionComponent, cc.left.positionDifference.x);
 
+    velocityComponent.setVelocityFromOutside(cc.left.velocity);
+
   } else if (cc.right.tileTypes.hasTileType(TILE::SOLID) ||
              cc.right.tileTypes.hasTileType(TILE::LADDERSTART)) {
     stopX(velocityComponent, positionComponent, cc.right.positionDifference.x);
+
+    if (cc.right.velocity.x != 0) {
+      velocityComponent.setVelocityFromOutside(cc.right.velocity);
+    }
   }
 }
 
