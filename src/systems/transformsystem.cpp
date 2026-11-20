@@ -24,13 +24,12 @@ void TransformSystem::update(VelocityComponent &velocityComponent,
   const int xpos = positionComponent.position.x;
   const int ypos = positionComponent.position.y;
 
-  if (velocityComponent.movedByOutsideForce) {
-    if (xvel > 0) {
-      positionComponent.facingRight = true;
-    } else if (xvel < 0) {
-      positionComponent.facingRight = false;
-    }
-  }
+  //this is causing issues
+  //   if (xvel > 0) {
+  //     positionComponent.facingRight = true;
+  //   } else if (xvel < 0) {
+  //     positionComponent.facingRight = false;
+  // }
 
   if (!(xvel == 0)) {
     positionComponent.position.x = xpos + xvel;
@@ -42,7 +41,6 @@ void TransformSystem::update(VelocityComponent &velocityComponent,
     positionComponent.tilePosition.y = positionComponent.position.y / Constants::TILE_SIZE;
   }
 
-  velocityComponent.movedByOutsideForce = false;
 }
 
 void TransformSystem::updateTileGridPosition(CollisionComponent &collisionComponent,
@@ -64,7 +62,7 @@ void TransformSystem::updateTileGridPosition(CollisionComponent &collisionCompon
 
 void moveRight(VelocityComponent &velocityComponent, PositionComponent &positionComponent) {
   positionComponent.facingRight = true;
-  velocityComponent.isMoved = true;
+  velocityComponent.isMoving = true;
 
   if (velocityComponent.velocity.x + playerSpeed > playerSpeedMax) {
     velocityComponent.velocity.x = playerSpeedMax;
@@ -75,7 +73,7 @@ void moveRight(VelocityComponent &velocityComponent, PositionComponent &position
 
 void moveLeft(VelocityComponent &velocityComponent, PositionComponent &positionComponent) {
   positionComponent.facingRight = false;
-  velocityComponent.isMoved = true;
+  velocityComponent.isMoving = true;
 
   if (velocityComponent.velocity.x - playerSpeed < -playerSpeedMax) {
     velocityComponent.velocity.x = -playerSpeedMax;

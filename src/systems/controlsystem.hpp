@@ -21,7 +21,7 @@ class ControlSystem {
   bool inputChangeCharacter = false;
   bool inputResetCharacter = false;
   bool inputJump = false;
-  bool canJump = true;
+  bool canJump = false;
   bool inputAttack = false;
   bool inputShoot = false;
   bool canAttack = false;

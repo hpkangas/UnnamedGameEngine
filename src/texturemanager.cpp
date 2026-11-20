@@ -10,7 +10,7 @@
 #include <vector>
 
 namespace fs = std::filesystem;
-
+using namespace TextureManager;
 Texture TextureManager::loadTexture(const std::string &fileName) {
   SDL_Surface *tempSurface = IMG_Load(fileName.c_str());
 

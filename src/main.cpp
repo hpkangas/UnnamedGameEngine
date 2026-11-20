@@ -9,7 +9,7 @@
 int main(int argc, char const *argv[]) {
   System system;
 
-  system.init("Totally not Lost Vikings", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+  system.init("My Cool Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
               Constants::SCREENWIDTH, Constants::SCREENHEIGHT, false);
 
   while (system.running()) {

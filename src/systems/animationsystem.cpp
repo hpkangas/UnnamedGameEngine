@@ -59,13 +59,13 @@ void AnimationSystem::determineAnimationState(AnimationComponent &animationCompo
   }
 
   if (gravityState == GRAVITY_STATE::GROUNDED) {
-    if (velocityComponent->isMoved) {
+    if (velocityComponent->isMoving) {
       animationComponent.animationState = ANIMATION_STATE::WALKING;
     } else {
       animationComponent.animationState = ANIMATION_STATE::STILL;
     }
 
-    if (velocityComponent->isMoved &&
+    if (velocityComponent->isMoving &&
         (collisionComponent->left.collision || collisionComponent->right.collision)) {
       animationComponent.animationState = ANIMATION_STATE::PUSHING;
     }

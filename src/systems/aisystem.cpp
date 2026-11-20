@@ -36,28 +36,25 @@ void AISystem::update(SceneInfo &currentLevel) const {
       break;
 
     case AI_STATE::NORMAL:
-
-      if (facingRight) {
-        velx = 4;
-      } else {
-        facingRight = false;
-        velx = -4;
+      if (velocityComponent.velocity.x != 0) {
+        velocityComponent.isMoving = true;
       }
 
       velx = aiComponent.movingRight ? 4.0f : -4.0f;
 
-      if (aiComponent.movingRight &&
-          (collisionComponent.right.tileTypes.hasTileType(TILE::SOLID) ||
-           !collisionComponent.downRight.collision)) {
+      if (aiComponent.movingRight && (collisionComponent.right.tileTypes.hasTileType(TILE::SOLID) ||
+                                      !collisionComponent.downRight.collision)) {
         aiComponent.movingRight = false;
+        facingRight = false;
         velx = -4.0f;
         break;
       }
 
-      if (!aiComponent.movingRight &&
-          (collisionComponent.left.tileTypes.hasTileType(TILE::SOLID) ||
-           !collisionComponent.downLeft.collision)) {
+      if (!aiComponent.movingRight && (collisionComponent.left.tileTypes.hasTileType(TILE::SOLID) ||
+                                       !collisionComponent.downLeft.collision)) {
         aiComponent.movingRight = true;
+        facingRight = true;
+
         velx = 4.0f;
         break;
       }

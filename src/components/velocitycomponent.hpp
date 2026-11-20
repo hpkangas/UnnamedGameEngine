@@ -8,15 +8,9 @@ constexpr float playerSpeedMax = 8.0f;
 constexpr float playerClimbingSpeedMax = 4.0f;
 
 struct VelocityComponent {
-  Utils::Velocity velocity{0, 0};
-  bool isMoved = false;
-  bool movedByOutsideForce = false;
-
-  void setVelocityFromOutside(Utils::Velocity outsideForce){
-      velocity += outsideForce;
-  }
-
   VelocityComponent(float x, float y) : velocity({x, y}) {}
+  Utils::Velocity velocity{0, 0};
+  bool isMoving = false;
 };
 
 #endif

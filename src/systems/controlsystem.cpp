@@ -39,8 +39,7 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
       controlComponent.controlState = CONTROL_STATE::AIRBORNE;
     }
   } else if (downTileTypes.hasTileType(TILE::SOLID)) {
-    if (controlComponent.controlState == CONTROL_STATE::AIRBORNE &&
-        velocityComponent.velocity.y == 0) {
+    if (controlComponent.controlState == CONTROL_STATE::AIRBORNE) {
       controlComponent.controlState = CONTROL_STATE::NORMAL;
     }
 
@@ -74,8 +73,7 @@ void ControlSystem::determineControlState(entt::entity selectedPlayer) {
   }
 
   checkClimbing(velocityComponent, controlComponent, collisionComponent);
-  velocityComponent.isMoved = false;  
-
+  velocityComponent.isMoving = false;
 }
 
 void ControlSystem::takeInput() {
@@ -185,7 +183,7 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
         stopX(velocityComponent, positionComponent);
       }
       moveRight(velocityComponent, positionComponent);
-      
+
       noInput = false;
     }
 
