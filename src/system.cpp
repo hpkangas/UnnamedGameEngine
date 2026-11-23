@@ -1,7 +1,6 @@
 #include "system.hpp"
 #include "SDL_ttf.h"
 #include "texturemanager.hpp"
-#include <cstddef>
 #include <iostream>
 
 void System::init(const char *title, const int xpos, const int ypos, const int width,

@@ -312,7 +312,7 @@ void ControlSystem::handleInput(entt::entity selectedPlayer) {
 
     if (inputD) {
       if (!collisionComponent.down.tileTypes.hasTileType(TILE::LADDER) &&
-          !collisionComponent.up.tileTypes.hasTileType(TILE::LADDERSTART)) {
+          !collisionComponent.down.tileTypes.hasTileType(TILE::LADDERSTART)) {
         controlComponent.controlState = CONTROL_STATE::NORMAL;
       } else if (controlComponent.canClimbDown) {
         moveDown(velocityComponent);

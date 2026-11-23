@@ -2,7 +2,6 @@
 #ifndef COLLISIONSYSTEM_HPP
 #define COLLISIONSYSTEM_HPP
 #include "../components/collisioncomponent.hpp"
-#include "../components/gravitycomponent.hpp"
 #include "../components/positioncomponent.hpp"
 #include "../components/velocitycomponent.hpp"
 #include "../scene/sceneinfo.hpp"
@@ -15,12 +14,9 @@ public:
 
   void handleTileCollisions();
 
-  void handleDownTileCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc,
-                               GravityComponent const &ctrlc) const;
-
-  void handleUpTileCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc,
-                             GravityComponent const &ctrlc) const;
-  void handleHorizontalBlockCollision(VelocityComponent &velocityComponent, PositionComponent &positionComponent, CollisionComponent const &cc) const;
+  void handleDownTileCollision(VelocityComponent &vc, PositionComponent &pc, CollisionComponent const &cc) const;
+  void handleUpTileCollision(VelocityComponent &vc, PositionComponent &pc, CollisionComponent const &cc) const;
+  void handleHorizontalBlockCollision(VelocityComponent &vc, PositionComponent &pc, CollisionComponent const &cc) const;
 
   void handleProjectileCollisions();
 

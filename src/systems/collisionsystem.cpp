@@ -15,68 +15,59 @@ void CollisionSystem::handleTileCollisions() {
   auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
   for (auto entity : view) {
     CollisionComponent const &cc = view.get<CollisionComponent>(entity);
-    VelocityComponent &velocityComponent = view.get<VelocityComponent>(entity);
-    PositionComponent &positionComponent = view.get<PositionComponent>(entity);
-    handleHorizontalBlockCollision(velocityComponent, positionComponent, cc);
+    VelocityComponent &vc = view.get<VelocityComponent>(entity);
+    PositionComponent &pc = view.get<PositionComponent>(entity);
+    handleHorizontalBlockCollision(vc, pc, cc);
 
-    GravityComponent *gc = reg.try_get<GravityComponent>(entity);
-    if (gc) {
-      handleDownTileCollision(velocityComponent, positionComponent, cc, *gc);
-      handleUpTileCollision(velocityComponent, positionComponent, cc, *gc);
-    }
+    handleDownTileCollision(vc, pc, cc);
+    handleUpTileCollision(vc, pc, cc);
   }
 }
 
-void CollisionSystem::handleDownTileCollision(VelocityComponent &velocityComponent,
-                                              PositionComponent &positionComponent,
-                                              CollisionComponent const &cc,
-                                              GravityComponent const &gc) const {
+void CollisionSystem::handleDownTileCollision(VelocityComponent &vc,
+                                              PositionComponent &pc,
+                                              CollisionComponent const &cc) const {
+
   if (cc.down.tileTypes.hasTileType(TILE::SOLID)) {
+    stopY(vc, pc, cc.down.positionDifference.y);
 
-    if (gc.gravityState == GRAVITY_STATE::AIRBORNE ||
-        velocityComponent.velocity.y > 0 && gc.gravityState == GRAVITY_STATE::GROUNDED) {
-      stopY(velocityComponent, positionComponent, cc.down.positionDifference.y);
-    }
-
-    if (velocityComponent.isMoving) {
-      velocityComponent.velocity.y += cc.down.velocity.y;
+    if (vc.isMoving) {
+      vc.velocity.y += cc.down.velocity.y;
     } else {
-      velocityComponent.velocity += cc.down.velocity;
+      vc.velocity += cc.down.velocity;
     }
   }
 
   if (cc.down.tileTypes.hasTileType(TILE::LADDERSTART)) {
-    if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
-      stopY(velocityComponent, positionComponent, cc.down.positionDifference.y);
+    if (!vc.isMoving) {
+      //TODO Teleports out of ladderstart tile to top but requires design decisions about lerping etc
+      stopY(vc, pc, cc.down.positionDifference.y);
     }
   }
 }
 
-void CollisionSystem::handleUpTileCollision(VelocityComponent &velocityComponent,
-                                            PositionComponent &positionComponent,
-                                            CollisionComponent const &cc,
-                                            GravityComponent const &gc) const {
+void CollisionSystem::handleUpTileCollision(VelocityComponent &vc,
+                                            PositionComponent &pc,
+                                            CollisionComponent const &cc) const {
 
   if (cc.up.tileTypes.hasTileType(TILE::SOLID)) {
-    if (gc.gravityState == GRAVITY_STATE::AIRBORNE) {
-      if (velocityComponent.velocity.y < 0) {
-        stopY(velocityComponent, positionComponent, cc.up.positionDifference.y);
-      }
+    if (vc.velocity.y < 0) {
+      stopY(vc, pc, cc.up.positionDifference.y);
     }
   }
 }
 
-void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &velocityComponent,
-                                                     PositionComponent &positionComponent,
+void CollisionSystem::handleHorizontalBlockCollision(VelocityComponent &vc,
+                                                     PositionComponent &pc,
                                                      CollisionComponent const &cc) const {
   if (cc.left.tileTypes.hasTileType(TILE::SOLID) ||
       cc.left.tileTypes.hasTileType(TILE::LADDERSTART)) {
-    stopX(velocityComponent, positionComponent, cc.left.positionDifference.x);
-    velocityComponent.velocity.x += cc.left.velocity.x;
+    stopX(vc, pc, cc.left.positionDifference.x);
+    vc.velocity.x += cc.left.velocity.x;
   } else if (cc.right.tileTypes.hasTileType(TILE::SOLID) ||
              cc.right.tileTypes.hasTileType(TILE::LADDERSTART)) {
-    stopX(velocityComponent, positionComponent, cc.right.positionDifference.x);
-      velocityComponent.velocity.x += cc.right.velocity.x;
+    stopX(vc, pc, cc.right.positionDifference.x);
+    vc.velocity.x += cc.right.velocity.x;
   }
 }
 

@@ -24,13 +24,6 @@ void TransformSystem::update(VelocityComponent &velocityComponent,
   const int xpos = positionComponent.position.x;
   const int ypos = positionComponent.position.y;
 
-  //this is causing issues
-  //   if (xvel > 0) {
-  //     positionComponent.facingRight = true;
-  //   } else if (xvel < 0) {
-  //     positionComponent.facingRight = false;
-  // }
-
   if (!(xvel == 0)) {
     positionComponent.position.x = xpos + xvel;
     positionComponent.tilePosition.x = positionComponent.position.x / Constants::TILE_SIZE;
@@ -40,7 +33,6 @@ void TransformSystem::update(VelocityComponent &velocityComponent,
     positionComponent.position.y = ypos + yvel;
     positionComponent.tilePosition.y = positionComponent.position.y / Constants::TILE_SIZE;
   }
-
 }
 
 void TransformSystem::updateTileGridPosition(CollisionComponent &collisionComponent,
@@ -83,6 +75,7 @@ void moveLeft(VelocityComponent &velocityComponent, PositionComponent &positionC
 }
 
 void moveUp(VelocityComponent &velocityComponent) {
+  velocityComponent.isMoving = true;
   velocityComponent.velocity.y = velocityComponent.velocity.y - 8;
   if (velocityComponent.velocity.y < -playerClimbingSpeedMax) {
     velocityComponent.velocity.y = -playerClimbingSpeedMax;
@@ -90,13 +83,18 @@ void moveUp(VelocityComponent &velocityComponent) {
 }
 
 void moveDown(VelocityComponent &velocityComponent) {
+  velocityComponent.isMoving = true;
   velocityComponent.velocity.y = velocityComponent.velocity.y + 8;
   if (velocityComponent.velocity.y > playerClimbingSpeedMax) {
     velocityComponent.velocity.y = playerClimbingSpeedMax;
   }
 }
 
-void jump(VelocityComponent &velocityComponent) { velocityComponent.velocity.y += playerJumpSpeed; }
+void jump(VelocityComponent &velocityComponent) {
+  velocityComponent.isMoving = true;
+  velocityComponent.velocity.y = 0;
+  velocityComponent.velocity.y += playerJumpSpeed;
+}
 
 void resetJump(VelocityComponent &velocityComponent) {}
 

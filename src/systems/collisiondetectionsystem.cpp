@@ -14,9 +14,21 @@ void CollisionDetectionSystem::update() {
   CollisionDetectionSystem::checkEntityCollisions();
 }
 
+void CollisionDetectionSystem::checkTileCollisions() {
+  auto &reg = currentLevel->registry;
+  auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
+  for (auto entity : view) {
+    CollisionComponent &cc = view.get<CollisionComponent>(entity);
+    PositionComponent const &pc = view.get<PositionComponent>(entity);
+    VelocityComponent const &vc = view.get<VelocityComponent>(entity);
+    checkTileCollision(cc, pc, vc, entity);
+  }
+}
+
 void CollisionDetectionSystem::checkTileCollision(CollisionComponent &cc,
                                                   PositionComponent const &position,
-                                                  VelocityComponent const &velocity) const {
+                                                  VelocityComponent const &velocity,
+                                                  entt::entity const entity) const {
   auto &reg = currentLevel->registry;
   const Velocity &vel = velocity.velocity;
 
@@ -35,9 +47,10 @@ void CollisionDetectionSystem::checkTileCollision(CollisionComponent &cc,
       }
 
       for (entt::entity tileAtCoordinate : tileEntities) {
-        if (tileAtCoordinate == entt::null) {
+        if (tileAtCoordinate == entt::null || tileAtCoordinate == entity) {
           continue;
         }
+        
         CollisionComponent const *tileColl = reg.try_get<CollisionComponent>(tileAtCoordinate);
         TileComponent const *tileTile = reg.try_get<TileComponent>(tileAtCoordinate);
         Velocity tileVel = {0, 0};
@@ -55,38 +68,6 @@ void CollisionDetectionSystem::checkTileCollision(CollisionComponent &cc,
         checkEntityDownRightTileCollision(cc, *tileColl, vel, tileVel, collisionTile);
         checkEntityDownTileCollision(cc, *tileColl, vel, tileVel, collisionTile);
         checkEntityUpTileCollision(cc, *tileColl, vel, tileVel, collisionTile);
-      }
-    }
-  }
-}
-
-void CollisionDetectionSystem::checkTileCollisions() {
-  auto &reg = currentLevel->registry;
-  auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
-  for (auto entity : view) {
-    CollisionComponent &cc = view.get<CollisionComponent>(entity);
-    PositionComponent const &pc = view.get<PositionComponent>(entity);
-    VelocityComponent const &vc = view.get<VelocityComponent>(entity);
-    checkTileCollision(cc, pc, vc);
-  }
-}
-
-void CollisionDetectionSystem::checkEntityCollisions() {
-  auto &reg = currentLevel->registry;
-  auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
-  std::vector<entt::entity> entities(view.begin(), view.end());
-
-  for (std::size_t i = 0; i < entities.size(); ++i) {
-    for (std::size_t j = i + 1; j < entities.size(); ++j) {
-      auto a = entities[i];
-      auto b = entities[j];
-
-      auto &collisionA = view.get<CollisionComponent>(a);
-      auto &collisionB = view.get<CollisionComponent>(b);
-
-      if (Physics::checkCollision(collisionA.collisionRect, collisionB.collisionRect)) {
-        collisionA.collisionIds.emplace_back(b);
-        collisionB.collisionIds.emplace_back(a);
       }
     }
   }
@@ -186,6 +167,27 @@ void CollisionDetectionSystem::checkEntityDownLeftTileCollision(
     if (collisionTile == TILE::SOLID || collisionTile == TILE::LADDERSTART) {
 
       objectCollision.downLeft.collision = true;
+    }
+  }
+}
+
+void CollisionDetectionSystem::checkEntityCollisions() {
+  auto &reg = currentLevel->registry;
+  auto view = reg.view<CollisionComponent, PositionComponent, VelocityComponent>();
+  std::vector<entt::entity> entities(view.begin(), view.end());
+
+  for (std::size_t i = 0; i < entities.size(); ++i) {
+    for (std::size_t j = i + 1; j < entities.size(); ++j) {
+      auto a = entities[i];
+      auto b = entities[j];
+
+      auto &collisionA = view.get<CollisionComponent>(a);
+      auto &collisionB = view.get<CollisionComponent>(b);
+
+      if (Physics::checkCollision(collisionA.collisionRect, collisionB.collisionRect)) {
+        collisionA.collisionIds.emplace_back(b);
+        collisionB.collisionIds.emplace_back(a);
+      }
     }
   }
 }

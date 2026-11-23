@@ -19,7 +19,7 @@ public:
   void checkTileCollisions();
 
   void checkTileCollision(CollisionComponent &object, PositionComponent const &position,
-                          VelocityComponent const &velocity) const;
+                          VelocityComponent const &velocity, entt::entity const entity) const;
 
   void checkEntityLeftTileCollision(CollisionComponent &objectCollision,
                                     CollisionComponent const &tileCollision, Velocity objVel,

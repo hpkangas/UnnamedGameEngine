@@ -4,7 +4,6 @@
 
 #include "../include/entt/entt.hpp"
 #include "../utilities/utils.hpp"
-#include <iostream>
 
 using Utils::Position;
 
